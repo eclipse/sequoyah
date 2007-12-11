@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="qemureactDevice"
+         name="qemureactDevice"
+         point="org.eclipse.tml.device">
+      <device
+            copyright="Motorola Inc. 2007"
+            description="Mobile Emulator for QEMUARM"
+            handler="org.eclipse.tml.device.qemureact.handler.QEmuReactDeviceHandler"
+            icon="icons/full/obj16/qemureact.gif"
+            id="org.eclipse.tml.device.qemureact.qemureactDevice"
+            name="QEmuReact Mobile Device"
+            provider="Eclipse.org"
+            version="0.2.0">
+      </device>
+   </extension>
+   <extension
+         id="org.eclipse.tml.device.qemureact.qemureactDevice"
+         name="startService"
+         point="org.eclipse.tml.serviceDefinition">
+      <service
+            handler="org.eclipse.tml.device.qemureact.handler.QEmuReactStartHandler"
+            id="org.eclipse.tml.service.start.startService">
+      </service>
+   </extension>
+   <extension
+         id="org.eclipse.tml.device.qemureact.qemureactDevice"
+         name="refreshService"
+         point="org.eclipse.tml.serviceDefinition">
+      <service
+            id="org.eclipse.tml.service.stop.refreshService">
+      </service>
+   </extension>
+
+</plugin>

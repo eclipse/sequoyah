@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="qemuarmDevice"
+         name="qemuarmDevice"
+         point="org.eclipse.tml.device">
+      <device
+            copyright="Motorola Inc. 2007"
+            description="Mobile Emulator for QEMUARM"
+            handler="org.eclipse.tml.device.qemuarm.handler.QEmuARMDeviceHandler"
+            icon="icons/full/obj16/qemuarm.gif"
+            id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
+            name="QEmuARM Mobile Device"
+            provider="Eclipse.org"
+            version="0.2.0">
+      </device>
+   </extension>
+   <extension
+         id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
+         name="startService"
+         point="org.eclipse.tml.serviceDefinition">
+      <service
+            id="org.eclipse.tml.service.start.startService">
+      </service>
+   </extension>
+   <extension
+         id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
+         name="stopService"
+         point="org.eclipse.tml.serviceDefinition">
+      <service
+            id="org.eclipse.tml.service.stop.stopService">
+      </service>
+   </extension>
+
+</plugin>

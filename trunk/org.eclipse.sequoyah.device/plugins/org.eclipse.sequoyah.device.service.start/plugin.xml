@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="startService"
+         name="startService"
+         point="org.eclipse.tml.service">
+      <service
+            copyright="Motorola Inc. 2007"
+            description="Service to Start a mobile device"
+            handler="org.eclipse.tml.service.start.handler.StartServiceHandler"
+            icon="icons/full/obj16/start.gif"
+            id="org.eclipse.tml.service.start.startService"
+            name="Start Service"
+            provider="Eclipse.org"
+            version="0.2.0">
+      </service>
+   </extension>
+
+</plugin>
