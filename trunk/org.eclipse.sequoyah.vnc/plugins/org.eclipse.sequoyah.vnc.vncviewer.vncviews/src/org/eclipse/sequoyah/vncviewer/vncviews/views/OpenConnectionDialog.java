@@ -1,0 +1,208 @@
+/********************************************************************************
+ * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Initial Contributor:
+ * Daniel Franco (Motorola)
+ *
+ * Contributors:
+ * {Name} (company) - description of contribution.
+ ********************************************************************************/
+
+package org.eclipse.tml.vncviewer.vncviews.views;
+
+import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+
+
+
+
+public class OpenConnectionDialog extends TitleAreaDialog {
+
+
+	
+	private Text hostText;
+	private Text portText;
+	private Combo protocolVersion;
+	
+	public OpenConnectionDialog(Shell parent) {
+		super(parent);
+		
+
+	}
+	
+	
+
+	protected Point getInitialSize() {
+
+		return new Point(260, 290);
+		//return super.getInitialSize();
+	}
+	
+	
+	
+	protected Control createDialogArea(Composite parent) {
+	
+	
+		Composite external = createDefaultComposite(parent, 1, 15);
+		Composite fields = createDefaultComposite(external, 2, 0);
+		
+		
+		int width, height, cols;
+
+		setTitle("New VNC connection");
+		setMessage("Enter values for the connection parameters");
+		
+		cols = 20;
+
+		Label hostLabel = new Label(fields, SWT.RIGHT);
+		hostText = new Text(fields, parent.getStyle() | SWT.BORDER);
+		
+		Label portLabel = new Label(fields, SWT.RIGHT);
+		portText = new Text(fields, parent.getStyle() | SWT.BORDER);
+		
+		GC gc = new GC(hostText.getDisplay());
+		width = gc.getFontMetrics().getAverageCharWidth() * cols;
+		height = gc.getFontMetrics().getHeight();
+
+		GridData gridData = new GridData();
+		gridData.heightHint = height;
+		gridData.widthHint = width;
+
+		hostLabel.setText("Host:");
+		hostText.setLayoutData(gridData);
+		hostText.setSize(hostText.computeSize(width, height));
+		
+		portLabel.setText("Port:");
+		portText.setSize(portText.computeSize(width, height));
+		portText.setLayoutData(gridData);
+		
+		createCombo(external);
+		
+		return external;
+	
+	}
+	
+	
+	protected void okPressed() {
+	
+				
+		String host = hostText.getText();
+		String version;
+		int port = Integer.valueOf(portText.getText()).intValue();
+		
+		
+		version = protocolVersion.getItem(protocolVersion.getSelectionIndex());
+		
+		VNCViewerView.start(host, port, version);
+		
+		super.okPressed();
+		
+	}
+	
+	
+	
+	@Override
+	protected void cancelPressed() {
+	
+		VNCViewerView.stop();
+		super.cancelPressed();
+	}
+	
+	
+	/**
+	 * @param parent
+	 * @param columns
+	 * @return
+	 */
+	private Composite createDefaultComposite(Composite parent, int columns, int left) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+
+		if (columns > 0) {
+			layout.numColumns = columns;
+		}
+
+
+		layout.marginLeft = left;
+		layout.marginTop = 5;
+		//layout.marginBottom = 15;
+
+		composite.setLayout(layout);
+
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		composite.setLayoutData(data);
+
+		return composite;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+
+     * Creates the widgets that will be used to manipulate the devices and configuration at the view
+     *
+     * @param composite The parent composite of the device widgets
+     */
+    private void createCombo(Composite composite)
+
+    {
+
+    	
+        Composite comboComposite = new Composite(composite, SWT.NULL);
+
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
+
+        comboComposite.setLayoutData(data);
+        GridLayout configAndDescriptionCompositeLayout = new GridLayout();
+
+        comboComposite.setLayout(configAndDescriptionCompositeLayout);
+
+        //comboComposite.setBackground(BACKGROUND_COLOR);
+
+ 
+
+        Label configListLabel = new Label(comboComposite, SWT.NONE);
+
+        configListLabel.setText("VNC Protocol used as base:");
+
+        //configListLabel.setBackground(BACKGROUND_COLOR);
+
+
+        
+        Combo protocolCombo = new Combo(comboComposite, SWT.READ_ONLY);
+        data  = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        protocolCombo.setLayoutData(data);
+ 
+        protocolCombo.add("VNC 3.3");
+        protocolCombo.add("VNC 3.7");
+        protocolCombo.add("VNC 3.8");
+        protocolCombo.select(2);
+        
+        this.protocolVersion = protocolCombo;
+    
+    }
+    
+
+
+}
