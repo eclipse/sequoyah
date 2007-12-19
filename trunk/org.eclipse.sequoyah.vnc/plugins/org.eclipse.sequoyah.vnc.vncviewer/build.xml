@@ -153,11 +153,15 @@
 		</copy>
 		<copy todir="${destination.temp.folder}/org.eclipse.tml.vncviewer_0.1.0" failonerror="true" overwrite="false">
 			<fileset dir="${basedir}">
-				<include name="plugin.xml"/>
 				<include name="META-INF/"/>
 				<include name="icons/"/>
 				<include name="plugin.properties"/>
 				<include name="about.html"/>
+				<include name="resources/"/>
+				<include name="bin/"/>
+				<include name="build.properties"/>
+				<include name="build.xml"/>
+				<include name="javaCompiler...args"/>
 			</fileset>
 		</copy>
 	</target>
@@ -174,7 +178,16 @@
 				<include name="META-INF/"/>
 				<include name="icons/"/>
 				<include name="plugin.properties"/>
-				<include name="plugin.xml"/>
+				<include name=".classpath"/>
+				<include name=".cvsignore"/>
+				<include name=".project"/>
+				<include name="@dot/"/>
+				<include name="bin/"/>
+				<include name="build.properties"/>
+				<include name="build.xml"/>
+				<include name="javaCompiler...args"/>
+				<include name="resources/"/>
+				<include name="src/"/>
 			</fileset>
 		</copy>
 	</target>
@@ -197,7 +210,7 @@
 	</target>
 
 	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
-		<eclipse.convertPath fileSystemPath="C:/cde/workspaces/tml0.1/org.eclipse.tml.vncviewer" property="resourcePath"/>
+		<eclipse.convertPath fileSystemPath="C:/cde/workspaces/tml-demo/org.eclipse.tml.vncviewer" property="resourcePath"/>
 		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
 	</target>
 
