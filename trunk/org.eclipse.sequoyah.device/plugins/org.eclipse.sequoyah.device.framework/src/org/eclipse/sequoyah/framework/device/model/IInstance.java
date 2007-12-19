@@ -13,16 +13,22 @@
 
 package org.eclipse.tml.framework.device.model;
 
+import java.util.Properties;
+
 
 
 
 public interface IInstance {
+	public int getPID();
+	public void setPID(int pid);
 	public String getId();
 	public void setId(String id);
 	public String getName();
 	public void setName(String name);
 	public String getDevice();
 	public void setDevice(String deviceId);
-	public IStatus getStatus();
-	public void setStatus(IStatus status);
+	public String getStatus();
+	public void setStatus(String status);
+	public Properties getProperties();
+	public void setProperties(Properties properties);
 }

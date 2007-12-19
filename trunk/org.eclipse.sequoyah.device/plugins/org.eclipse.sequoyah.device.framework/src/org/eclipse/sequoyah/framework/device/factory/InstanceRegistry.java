@@ -10,7 +10,6 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-
 package org.eclipse.tml.framework.device.factory;
 
 import java.util.ArrayList;
@@ -24,8 +23,12 @@ import org.eclipse.tml.framework.device.model.IInstanceRegistry;
 public class InstanceRegistry implements IInstanceRegistry {
 	private List<IInstance> instances;
 	private static InstanceRegistry _instance;
+	private boolean dirty;
+	private List<IInstanceListeners> listeners;
 
 	private InstanceRegistry(){
+		dirty=false;
+		listeners = new ArrayList<IInstanceListeners>();
 		instances = new ArrayList<IInstance>();
 	}
 	
@@ -58,6 +61,31 @@ public class InstanceRegistry implements IInstanceRegistry {
 	
 	public void clear(){
 		this.instances.clear();
+	}
+
+	public void setDirty(boolean dirty) {		
+		this.dirty = dirty;
+		if (dirty) {
+			notifyDirty();
+		}
+	}
+	
+	public boolean isDirty() {		
+		return dirty;
+	}
+	
+	public void addListener(IInstanceListeners listener){
+		listeners.add(listener);
+	}
+
+	public void removeListener(IInstanceListeners listener){
+		listeners.remove(listener);
+	}
+
+	public void notifyDirty(){
+		for (IInstanceListeners listener:listeners){
+			listener.dirtyChanged();
+		}
 	}
 
 }

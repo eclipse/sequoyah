@@ -14,6 +14,7 @@
 package org.eclipse.tml.service.start.handler;
 
 import org.eclipse.tml.framework.device.model.IInstance;
+import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 import org.eclipse.tml.service.start.StartServicePlugin;
 import org.eclipse.tml.service.start.StartServiceResources;
@@ -28,4 +29,8 @@ public class StartServiceHandler extends ServiceHandler {
 		StartServicePlugin.logInfo(StartServiceResources.TML_Start_Service_Update+"->"+instance.getName());
 	}
 	
+	@Override
+	public IServiceHandler newInstance() {		
+		return new StartServiceHandler();
+	}
 }

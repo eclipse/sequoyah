@@ -13,8 +13,7 @@
 package org.eclipse.tml.framework.device;
 
 import org.eclipse.tml.common.utilities.BasePlugin;
-import org.eclipse.tml.framework.device.manager.DeviceManager;
-import org.eclipse.tml.framework.device.manager.ServiceManager;
+import org.eclipse.tml.framework.status.StatusManager;
 import org.eclipse.ui.IStartup;
 import org.osgi.framework.BundleContext;
 
@@ -27,6 +26,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	public static final String PLUGIN_ID = "org.eclipse.tml.framework.device";
 	public static final String DEVICE_ID = "org.eclipse.tml.device";
 	public static final String SERVICE_ID = "org.eclipse.tml.service";
+	public static final String STATUS_ID = "org.eclipse.tml.status";
 	public static final String SERVICE_DEF_ID = "org.eclipse.tml.serviceDefinition";
 	public static final String ICON_DEVICE= "ICON_DEVICE";
 	public static final String ICON_SERVICE = "ICON_SERVICE";
@@ -39,6 +39,13 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	public static final String ICON_STOP = "ICON_STOP";
 	public static final String ICON_REFRESH = "ICON_REFRESH";
 	public static final String ICON_INACTIVE = "ICON_INACTIVE";
+	public static final String ICON_PROPERTY = "ICON_PROPERTY";
+	public static final String TML_STATUS_UNAVAILABLE = "UNAVAILABLE";
+	public static final String TML_STATUS_IDLE="IDLE";
+	public static final String TML_STATUS_OFF="OFF";
+	public static final String TML_STATUS_INACTIVE ="INACTIVE";
+	
+	
 
 	// The shared instance
 	private static DevicePlugin plugin;
@@ -93,9 +100,11 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 		putImageInRegistry(ICON_GAMEBOARD, path+"gameboard.gif");
 		putImageInRegistry(ICON_NEW_BOOK, path+"newbook.gif");
 		putImageInRegistry(ICON_REMOVE, path+"remove.gif");
+		putImageInRegistry(ICON_PROPERTY, path+"property.gif");
 	}
 
 	public void earlyStartup() {
+		StatusManager.getInstance().listStatus();
 	}
 
 

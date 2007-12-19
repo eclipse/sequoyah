@@ -1,3 +1,15 @@
+/********************************************************************************
+ * Copyright (c) 2007 Motorola Inc.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * Fabio Fantato (Motorola)
+ * 
+ * Contributors:
+ * name (company) - description.
+ ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view;
 
 import java.util.Iterator;
@@ -21,6 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.tml.framework.device.factory.IInstanceListeners;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.manager.DeviceManager;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
@@ -28,12 +41,12 @@ import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
 import org.eclipse.tml.framework.device.model.IService;
-import org.eclipse.tml.framework.device.model.IStatus;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandlerAction;
 import org.eclipse.tml.framework.device.ui.view.provider.InstanceContentProvider;
 import org.eclipse.tml.framework.device.ui.view.provider.InstanceLabelProvider;
 import org.eclipse.tml.framework.device.ui.view.sorter.InstanceSorter;
 import org.eclipse.tml.framework.device.ui.view.sorter.StatusSorter;
+import org.eclipse.tml.framework.status.LabelStatus;
 import org.eclipse.ui.part.ViewPart;
 
 
@@ -41,7 +54,7 @@ import org.eclipse.ui.part.ViewPart;
  * Insert the type's description here.
  * @see ViewPart
  */
-public class InstanceView extends ViewPart {
+public class InstanceView extends ViewPart implements IInstanceListeners {
 	protected TreeViewer treeViewer;
 	protected Text text;
 	protected InstanceLabelProvider labelProvider;
@@ -58,6 +71,7 @@ public class InstanceView extends ViewPart {
 	 * The constructor.
 	 */
 	public InstanceView() {
+		InstanceRegistry.getInstance().addListener(this);
 	}
 
 	/*
@@ -136,8 +150,8 @@ public class InstanceView extends ViewPart {
 						} else if (domain instanceof IDevice) {
 							domain = ((IDevice)domain).getParent();							
 							InstanceManager.getInstance().setInstance((IInstance)domain);
-						} else if (domain instanceof IStatus) {
-							domain = ((IStatus)domain).getParent();
+						} else if (domain instanceof LabelStatus) {
+							domain = ((LabelStatus)domain).getInstance();
 							InstanceManager.getInstance().setInstance((IInstance)domain);
 						}
 					}
@@ -297,9 +311,11 @@ public class InstanceView extends ViewPart {
 		
 		
 		for (IService service:device.getServices()){
-			newItem = new MenuItem(menu, SWT.PUSH);			
-	        newItem.setText(service.getName());
-	        newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
+			newItem = new MenuItem(menu, SWT.PUSH);		
+				newItem.setImage(service.getImage().createImage());
+				newItem.setEnabled((service.getStatusTransitions(instance.getStatus())!=null));
+				newItem.setText(service.getName());
+				newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
 		}
 	}
 	
@@ -357,5 +373,11 @@ public class InstanceView extends ViewPart {
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {}
+
+	public void dirtyChanged() {
+		treeViewer.setInput(getInitalInput());
+		treeViewer.refresh();
+		treeViewer.expandAll();
+	}
 
 }

@@ -22,6 +22,12 @@
          point="org.eclipse.tml.serviceDefinition">
       <service
             id="org.eclipse.tml.service.start.startService">
+         <status
+               endId="IDLE"
+               haltId="OFF"
+               handler="org.eclipse.tml.device.qemuarm.handler.StartStatusHandler"
+               startId="OFF">
+         </status>
       </service>
    </extension>
    <extension
@@ -30,7 +36,73 @@
          point="org.eclipse.tml.serviceDefinition">
       <service
             id="org.eclipse.tml.service.stop.stopService">
+         <status
+               endId="OFF"
+               haltId="IDLE"
+               handler="org.eclipse.tml.device.qemuarm.handler.StopStatusHandler"
+               startId="IDLE">
+         </status>
+         <status
+               endId="OFF"
+               haltId="IDLE-VNC"
+               handler="org.eclipse.tml.device.qemuarm.handler.StopStatusHandler"
+               startId="IDLE-VNC">
+         </status>
       </service>
+   </extension>
+   <extension
+
+          id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
+
+          name="vncViewerService"
+
+          point="org.eclipse.tml.serviceDefinition">
+
+       <service
+
+             id="org.eclipse.tml.service.vncviewer.vncViewerService">
+
+          <status
+
+                endId="IDLE-VNC"
+
+                haltId="IDLE"
+
+                handler="org.eclipse.tml.device.qemuarm.handler.VNCStatusHandler"
+
+                startId="IDLE">
+
+          </status>
+          <status
+                endId="IDLE-VNC"
+                haltId="IDLE-VNC"
+                handler="org.eclipse.tml.device.qemuarm.handler.VNCStatusHandler"
+                startId="IDLE-VNC">
+          </status></service>
+
+    </extension>
+   <extension
+         id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
+         name="unplugVncViewerService"
+         point="org.eclipse.tml.serviceDefinition">
+      <service
+            id="org.eclipse.tml.service.vncviewer.unplugVncViewerService">
+         <status
+               endId="IDLE"
+               haltId="IDLE-VNC"
+               handler="org.eclipse.tml.device.qemuarm.handler.UnplugVNCStatusHandler"
+               startId="IDLE-VNC">
+         </status>
+      </service>
+   </extension>
+   <extension
+         id="IDLE-VNC"
+         point="org.eclipse.tml.status">
+      <status
+            id="IDLE-VNC"
+            image="icons/full/obj16/qemuarm.gif"
+            name="IDLE-VNC">
+      </status>
    </extension>
 
 </plugin>

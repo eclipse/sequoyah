@@ -16,6 +16,7 @@ package org.eclipse.tml.device.qemureact.handler;
 import org.eclipse.tml.device.qemureact.QEmuReactPlugin;
 import org.eclipse.tml.device.qemureact.QEmuReactResources;
 import org.eclipse.tml.framework.device.model.IInstance;
+import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 
 public class QEmuReactStartHandler extends ServiceHandler {
@@ -27,5 +28,10 @@ public class QEmuReactStartHandler extends ServiceHandler {
 
 	public void updatingService(IInstance instance) {
 		// no action
+	}
+
+	@Override
+	public IServiceHandler newInstance() {		
+		return new QEmuReactStartHandler();
 	}
 }

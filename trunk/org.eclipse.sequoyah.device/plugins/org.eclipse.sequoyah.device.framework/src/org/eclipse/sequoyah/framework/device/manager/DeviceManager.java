@@ -29,6 +29,7 @@ import org.eclipse.tml.framework.device.factory.ServiceFactory;
 import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
+import org.eclipse.tml.framework.status.StatusManager;
 
 public class DeviceManager {
 	private static DeviceManager _instance;
@@ -37,10 +38,10 @@ public class DeviceManager {
 	private Map<String,List<IService>> servicesForDevice;
 
 	private DeviceManager(){
-		devices = new HashMap<String,IDevice>();
-		servicesForDevice = new HashMap<String,List<IService>>();
-		devicesForInstance = new HashMap<IInstance,IDevice>();
-		loadDevices();
+			devices = new HashMap<String,IDevice>();
+			servicesForDevice = new HashMap<String,List<IService>>();
+			devicesForInstance = new HashMap<IInstance,IDevice>();		
+			loadDevices();		
 	}
 	
 	public static DeviceManager getInstance() {
@@ -54,6 +55,7 @@ public class DeviceManager {
 		devices.clear();
 		servicesForDevice.clear();
 		Collection<String> devicesIds = PluginUtils.getInstalledPlugins(DevicePlugin.DEVICE_ID);
+		StatusManager.getInstance();
 		DeviceRegistry.getInstance().clear();
 		for (String deviceId:devicesIds){
 			IDevice device = DeviceFactory.createDevice(deviceId);

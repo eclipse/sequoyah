@@ -14,6 +14,7 @@
 package org.eclipse.tml.service.stop.handler;
 
 import org.eclipse.tml.framework.device.model.IInstance;
+import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 import org.eclipse.tml.service.stop.StopServicePlugin;
 import org.eclipse.tml.service.stop.StopServiceResources;
@@ -28,4 +29,8 @@ public class StopServiceHandler extends ServiceHandler {
 		StopServicePlugin.logInfo(StopServiceResources.TML_Stop_Service_Update+"->"+instance.getName());
 	}
 	
+	@Override
+	public IServiceHandler newInstance() {		
+		return new StopServiceHandler();
+	}
 }

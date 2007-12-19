@@ -44,6 +44,9 @@
 
    <element name="service">
       <complexType>
+         <sequence>
+            <element ref="status" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
@@ -58,6 +61,42 @@
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.tml.framework.device.model.handler.ServiceHandler:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="status">
+      <complexType>
+         <attribute name="startId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="endId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="haltId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="handler" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.tml.framework.status.StatusHandler:"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -13,21 +13,33 @@
 
 package org.eclipse.tml.framework.device.internal.model;
 
+import java.util.Properties;
+
 import org.eclipse.tml.framework.device.model.IInstance;
-import org.eclipse.tml.framework.device.model.IStatus;
 
 public class MobileInstance implements IInstance {
 	private String id;
 	private String name;
 	private String deviceId;
-	private IStatus status;
+	private String status;
+	private Properties properties;
+	private int pid;
 	
 	public MobileInstance(String id){
 		this.id = id;
+		this.pid=0;
 	}
 	
 	public String getId() {
 		return id;
+	}
+	
+	public int getPID(){
+		return pid;
+	}
+	
+	public void setPID(int pid){
+		this.pid=pid;
 	}
 	
 	public String getName() {
@@ -50,21 +62,29 @@ public class MobileInstance implements IInstance {
 		this.deviceId = deviceId;
 	}
 	
-	public IStatus getStatus(){
+	public String getStatus(){
 		return status;
 	};
 	
-	public void setStatus(IStatus status){
-		status.setParent(this);
+	public void setStatus(String status){
 		this.status = status;
 	};
 		
-
+	public Properties getProperties(){
+		return this.properties;
+	}
+	
+	public void setProperties(Properties properties){
+		this.properties = properties;
+	}
+		
+	
 	public String toString(){
 		return "[Device Instance: " +
 				"id=" + (id==null?"":id) +
 				",name=" + (name==null?"":name) +
 				",device=" + (deviceId==null?"":deviceId) +
+				",status=" + (status==null?"":status) +
 				"]";
 	}
 	

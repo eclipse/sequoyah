@@ -10,7 +10,6 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-
 package org.eclipse.tml.framework.device.model.handler;
 
 public interface IDeviceHandler {

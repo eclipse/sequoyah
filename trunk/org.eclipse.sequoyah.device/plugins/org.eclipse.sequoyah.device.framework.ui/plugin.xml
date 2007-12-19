@@ -27,5 +27,12 @@
          name="Instance View">
    </view>
 </extension>
-
+<extension
+      point="org.eclipse.ui.perspectives">
+   <perspective
+         class="org.eclipse.tml.framework.device.ui.DevicePerspectiveFactory"
+         id="org.eclipse.tml.device.perspective"
+         name="TmL perspective">
+   </perspective>
+</extension>
 </plugin>

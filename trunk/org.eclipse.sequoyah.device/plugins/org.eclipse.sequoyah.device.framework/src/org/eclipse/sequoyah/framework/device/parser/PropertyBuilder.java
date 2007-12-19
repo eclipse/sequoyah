@@ -20,53 +20,53 @@ import java.util.List;
 
 import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.framework.device.DevicePlugin;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+//import org.jdom.Document;
+//import org.jdom.Element;
+//import org.jdom.JDOMException;
+//import org.jdom.input.SAXBuilder;
+//import org.jdom.output.XMLOutputter;
 
 public class PropertyBuilder {
 
 	public static void write(File file){
-		Element config = new Element(XMLConstants.TAG_CONFIG);
-		Property property = new Property("TEST");
-		property.setName("test name");
-		property.setDescription("test description");
-		property.setRule(XMLConstants.RULE_READ_ONLY);
-		property.setScope(XMLConstants.SCOPE_SERVICE);
-		Element prop = Property.writeIntoElement(property);
-		config.addContent(prop);
-		Document doc = new Document();		
-		doc.setRootElement(config);   
-		XMLOutputter xout = new XMLOutputter();   
-		try {
-			xout.output(doc, new FileOutputStream(file));
-		} catch (IOException e) {
-			DevicePlugin.logError(e.getMessage(),e);
-		} 
+//		Element config = new Element(XMLConstants.TAG_CONFIG);
+//		Property property = new Property("TEST");
+//		property.setName("test name");
+//		property.setDescription("test description");
+//		property.setRule(XMLConstants.RULE_READ_ONLY);
+//		property.setScope(XMLConstants.SCOPE_SERVICE);
+//		Element prop = Property.writeIntoElement(property);
+//		config.addContent(prop);
+//		Document doc = new Document();		
+//		doc.setRootElement(config);   
+//		XMLOutputter xout = new XMLOutputter();   
+//		try {
+//			xout.output(doc, new FileOutputStream(file));
+//		} catch (IOException e) {
+//			DevicePlugin.logError(e.getMessage(),e);
+//		} 
 	}
 	
 	
 	public static void read(File file){
-		SAXBuilder sb = new SAXBuilder();
-	    Document d;
-		try {
-			d = sb.build(file);   
-			Element config = d.getRootElement();   
-			List elements = config.getChildren();   
-			Iterator i = elements.iterator();   
-			while (i.hasNext()) {   
-				Element element = (Element) i.next();
-				Property property = Property.readFromElement(element);  
-				DevicePlugin.logInfo(property.toString());
-			} 
-		}
-	    catch (JDOMException e) {
-	    	DevicePlugin.logError(e.getMessage(),e);
-		} catch (IOException e) {
-			DevicePlugin.logError(e.getMessage(),e);
-		}
+//		SAXBuilder sb = new SAXBuilder();
+//	    Document d;
+//		try {
+//			d = sb.build(file);   
+//			Element config = d.getRootElement();   
+//			List elements = config.getChildren();   
+//			Iterator i = elements.iterator();   
+//			while (i.hasNext()) {   
+//				Element element = (Element) i.next();
+//				Property property = Property.readFromElement(element);  
+//				DevicePlugin.logInfo(property.toString());
+//			} 
+//		}
+//	    catch (JDOMException e) {
+//	    	DevicePlugin.logError(e.getMessage(),e);
+//		} catch (IOException e) {
+//			DevicePlugin.logError(e.getMessage(),e);
+//		}
 	}
 	
 	public static void read(){

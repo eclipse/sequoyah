@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="vncViewerService"
+         name="vncViewerService"
+         point="org.eclipse.tml.service">
+      <service
+            copyright="Motorola Inc. 2007"
+            description="Service to Start the VNC Viewer"
+            handler="org.eclipse.tml.service.vncviewer.handler.VNCViewerServiceHandler"
+            icon="icons/full/obj16/vnc.gif"
+            id="org.eclipse.tml.service.vncviewer.vncViewerService"
+            name="Connect VNC"
+            provider="Eclipse.org"
+            version="0.2.0">
+      </service>
+   </extension>
+ <extension
+         id="unplugVncViewerService"
+         name="unplugVncViewerService"
+         point="org.eclipse.tml.service">
+      <service
+            copyright="Motorola Inc. 2007"
+            description="Service to stop the VNC Viewer"
+            handler="org.eclipse.tml.service.vncviewer.handler.UnplugVNCViewerServiceHandler"
+            icon="icons/full/obj16/vnc.gif"
+            id="org.eclipse.tml.service.vncviewer.unplugVncViewerService"
+            name="Disconnect VNC"
+            provider="Eclipse.org"
+            version="0.2.0">
+      </service>
+   </extension>
+</plugin>

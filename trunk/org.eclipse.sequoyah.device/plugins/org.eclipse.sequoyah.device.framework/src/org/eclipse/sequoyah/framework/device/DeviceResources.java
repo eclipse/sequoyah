@@ -27,6 +27,7 @@ public class DeviceResources extends NLS {
 	public static String TML_Error;
 	public static String TML_Resource_Not_Available;
 	public static String TML_Handler_Not_Instanced;
+	public static String TML_STATUS_UNAVAILABLE;
 		
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, DeviceResources.class);

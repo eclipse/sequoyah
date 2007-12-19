@@ -12,8 +12,8 @@
  ********************************************************************************/
 package org.eclipse.tml.framework.device.parser;
 
-import org.jdom.Attribute;
-import org.jdom.Element;
+//import org.jdom.Attribute;
+//import org.jdom.Element;
 
 
 public class Property {
@@ -27,28 +27,28 @@ public class Property {
 		this.id = id;
 	}
 	
-	public static Property readFromElement(Element element){
-		Property property = new Property(element.getAttributeValue(XMLConstants.TAG_ID));
-		property.setName(element.getChildText(XMLConstants.TAG_NAME));
-		property.setDescription(element.getChildText(XMLConstants.TAG_DESCRIPTION));
-		property.setScope(element.getChildText(XMLConstants.TAG_SCOPE));
-		property.setRule(element.getChildText(XMLConstants.TAG_RULE));
-		return property;
-	}
+//	public static Property readFromElement(Element element){
+//		Property property = new Property(element.getAttributeValue(XMLConstants.TAG_ID));
+//		property.setName(element.getChildText(XMLConstants.TAG_NAME));
+//		property.setDescription(element.getChildText(XMLConstants.TAG_DESCRIPTION));
+//		property.setScope(element.getChildText(XMLConstants.TAG_SCOPE));
+//		property.setRule(element.getChildText(XMLConstants.TAG_RULE));
+//		return property;
+//	}
+//	
+//	public static Element writeIntoElement(Property property) {
+//		Element element = new Element(XMLConstants.TAG_PROPERTY);
+//		element.setAttribute(new Attribute(XMLConstants.TAG_ID,property.getId()));
+//		element.addContent(new Element(XMLConstants.TAG_NAME).setText(property.getName()));
+//		element.addContent(new Element(XMLConstants.TAG_DESCRIPTION).setText(property.getDescription()));
+//		element.addContent(new Element(XMLConstants.TAG_SCOPE).setText(property.getScope()));
+//		element.addContent(new Element(XMLConstants.TAG_RULE).setText(property.getRule()));			
+//		return element;
+//	}
 	
-	public static Element writeIntoElement(Property property) {
-		Element element = new Element(XMLConstants.TAG_PROPERTY);
-		element.setAttribute(new Attribute(XMLConstants.TAG_ID,property.getId()));
-		element.addContent(new Element(XMLConstants.TAG_NAME).setText(property.getName()));
-		element.addContent(new Element(XMLConstants.TAG_DESCRIPTION).setText(property.getDescription()));
-		element.addContent(new Element(XMLConstants.TAG_SCOPE).setText(property.getScope()));
-		element.addContent(new Element(XMLConstants.TAG_RULE).setText(property.getRule()));			
-		return element;
-	}
-	
-	public Element writeIntoElement() {
-		return writeIntoElement(this);
-	}
+//	public Element writeIntoElement() {
+//		return writeIntoElement(this);
+//	}
 	
 
 	public String getId() {

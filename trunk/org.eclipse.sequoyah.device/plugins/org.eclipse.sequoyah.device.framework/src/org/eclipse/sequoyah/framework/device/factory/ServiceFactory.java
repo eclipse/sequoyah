@@ -10,10 +10,13 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-
 package org.eclipse.tml.framework.device.factory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tml.common.utilities.PluginUtils;
@@ -25,9 +28,16 @@ import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
 import org.eclipse.tml.framework.device.internal.model.MobileService;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
+import org.eclipse.tml.framework.status.IStatusHandler;
+import org.eclipse.tml.framework.status.IStatusTransition;
+import org.eclipse.tml.framework.status.MobileStatusTransition;
 
 public class ServiceFactory {
 	private static final String ELEMENT_SERVICE = "service";
+	private static final String ELEMENT_STATUS = "status";
+	private static final String ATR_START_ID = "startId";
+	private static final String ATR_END_ID = "endId";
+	private static final String ATR_HALT_ID = "haltId";
 	private static final String ATR_ID = "id";
 	private static final String ATR_NAME = "name";
 	private static final String ATR_ICON = "icon";
@@ -39,8 +49,9 @@ public class ServiceFactory {
 	
 	
 	@SuppressWarnings("deprecation")
-	public static IService createService(String serviceId,IServiceHandler handler) throws TmLException {
-		IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.SERVICE_ID, serviceId);
+	public static IService createService(IExtension originalPlugin,String serviceId,IServiceHandler handler) throws TmLException {
+		IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.SERVICE_ID, serviceId);		
+		List<IStatusTransition> statusList = new ArrayList<IStatusTransition>();
 		if (fromPlugin==null) {
 			throw new TmLException();
 		}		
@@ -70,11 +81,28 @@ public class ServiceFactory {
 		} catch (CoreException e) {
 			TmLExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}
+		if (originalPlugin!=null) {
+			List<IConfigurationElement> statusElementList = PluginUtils.getPluginElementList(originalPlugin, ELEMENT_SERVICE, ELEMENT_STATUS);
+			for (IConfigurationElement statusElement:statusElementList){
+				String startId = statusElement.getAttribute(ATR_START_ID);
+				String endId	= statusElement.getAttribute(ATR_END_ID);
+				String haltId	= statusElement.getAttribute(ATR_HALT_ID);
+				IStatusHandler handlerStatus = null;
+				try {
+					handlerStatus = (IStatusHandler)statusElement.createExecutableExtension(ATR_HANDLER);
+				} catch (CoreException e) {
+					TmLExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
+				}
+				IStatusTransition transition = new MobileStatusTransition(startId,endId,haltId,handlerStatus);
+				statusList.add(transition);
+			}		
+		}	
+		service.setStatusTransitions(statusList);
 		return service;
 	}
 	
 	public static IService createService(String serviceId) throws TmLException {
-		return createService(serviceId,null);
+		return createService(null,serviceId,null);
 	}
 	
 	public static IService createService(IExtension fromPlugin) throws TmLException {
@@ -85,7 +113,7 @@ public class ServiceFactory {
 		} catch (CoreException e) {
 			// empty is a valid value
 		}
-		return createService(id,handler);		
+		return createService(fromPlugin,id,handler);		
 	}
 	
 }

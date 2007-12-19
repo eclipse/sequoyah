@@ -14,8 +14,10 @@
 package org.eclipse.tml.common.utilities;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -376,6 +378,33 @@ public class PluginUtils
 
         return attributeValue;
     }
+    
+     
+    
+    public static List<IConfigurationElement> getPluginElementList(IExtension fromExtension, String element,String subElement)
+    {
+    	List<IConfigurationElement> listValue = new ArrayList<IConfigurationElement>();
+
+        if (fromExtension != null)
+        {
+            IConfigurationElement[] ceArray = fromExtension.getConfigurationElements();
+
+            for (IConfigurationElement ce : ceArray)
+            {
+                if ((ce != null) && ce.getName().equals(element))
+                {
+                	 IConfigurationElement[] sceArray = ce.getChildren(subElement);
+                	 for (IConfigurationElement sce : sceArray)
+                     {
+                         listValue.add(sce);                     
+                     }
+                }
+            }
+        }
+
+        return listValue;
+    }
+    
     
     /**
      * Returns a plugin attribute using the extension as parameter.

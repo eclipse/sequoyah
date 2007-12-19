@@ -10,14 +10,21 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-
 package org.eclipse.tml.framework.device.model.handler;
 
+import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.framework.device.model.IInstance;
+import org.eclipse.tml.framework.device.model.IService;
+import org.eclipse.tml.framework.status.IStatusTransition;
 
-public interface IServiceHandler {
+public interface IServiceHandler extends Cloneable {
 	public void setParent(IServiceHandler handler);
 	public IServiceHandler getParent();
-	public void run(IInstance instance);
-	public void updatingService(IInstance instance);
+	public void run(IInstance instance) throws TmLException;
+	public void updatingService(IInstance instance);	
+	public void setService(IService service);		
+	public IService getService();
+	public Object clone();
+	public IServiceHandler newInstance();
 }
+

@@ -1,3 +1,15 @@
+/********************************************************************************
+ * Copyright (c) 2007 Motorola Inc.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * Fabio Fantato (Motorola)
+ * 
+ * Contributors:
+ * name (company) - description.
+ ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.provider;
 
 import java.util.HashMap;
@@ -7,9 +19,11 @@ import java.util.Map;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.IDeviceRegistry;
 import org.eclipse.tml.framework.device.model.IService;
+import org.eclipse.tml.framework.status.IStatusTransition;
 
 public class DeviceLabelProvider extends LabelProvider {	
 	private Map imageCache = new HashMap(11);
@@ -25,7 +39,9 @@ public class DeviceLabelProvider extends LabelProvider {
 			descriptor = ((IDevice)element).getImage();
 		} else if (element instanceof IService) {
 			descriptor = ((IService)element).getImage();
-		} else {
+		} else if (element instanceof IStatusTransition) {
+			descriptor = DevicePlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_BOOK);
+		}else {
 			throw unknownElement(element);
 		}
 
@@ -52,6 +68,8 @@ public class DeviceLabelProvider extends LabelProvider {
 			}
 		} else if (element instanceof IService) {
 			return ((IService)element).getName();
+		}else if (element instanceof IStatusTransition) {
+			return ((IStatusTransition)element).toString();
 		} else {
 			throw unknownElement(element);
 		}

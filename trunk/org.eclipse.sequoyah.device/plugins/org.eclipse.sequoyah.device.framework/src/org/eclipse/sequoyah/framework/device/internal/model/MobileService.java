@@ -13,13 +13,16 @@
 
 package org.eclipse.tml.framework.device.internal.model;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
+import org.eclipse.tml.framework.status.IStatusTransition;
 
 public class MobileService implements IService {
 	private String id;
@@ -31,9 +34,11 @@ public class MobileService implements IService {
 	private String version;
 	private IServiceHandler handler;
 	private IDevice parent;
+	private Map<String,IStatusTransition> statusMap;
 	
 	public MobileService(String id){
 		this.id = id;
+		this.statusMap = new HashMap<String,IStatusTransition>();
 	}
 	
 	public String getId() {
@@ -60,6 +65,13 @@ public class MobileService implements IService {
 	public IServiceHandler getHandler() {
 		return handler;
 	}
+	public Collection<IStatusTransition> getStatusTransitions(){		
+		return statusMap.values();
+	}
+	
+	public IStatusTransition getStatusTransitions(String startId) {
+		return statusMap.get(startId);		
+	}
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -82,7 +94,13 @@ public class MobileService implements IService {
 		this.version = version;
 	}
 	public void setHandler(IServiceHandler handler) {
-		this.handler = handler;
+		this.handler = (IServiceHandler)handler.clone();
+		this.handler.setService(this);
+	}
+	public void setStatusTransitions(List<IStatusTransition> statusList) {
+		for (IStatusTransition status:statusList){
+			this.statusMap.put(status.getStartId(), status);	
+		}
 	}
 
 	public Object clone(){
@@ -119,5 +137,7 @@ public class MobileService implements IService {
 	public void setParent(IDevice device) {
 		this.parent = device;
 	}
+
+	
 	
 }

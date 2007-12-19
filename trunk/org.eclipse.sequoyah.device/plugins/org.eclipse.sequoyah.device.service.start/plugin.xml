@@ -16,5 +16,15 @@
             version="0.2.0">
       </service>
    </extension>
+   
+   
+    <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+    <launchConfigurationType
+        name="Emulator Instance"
+        delegate="org.eclipse.tml.service.start.launcher.DeviceInstanceLaunchConfigurationDelegate"
+        modes="run, debug"               
+        id="org.eclipse.tml.service.start.launcher">        
+    </launchConfigurationType>
+   </extension>
 
 </plugin>

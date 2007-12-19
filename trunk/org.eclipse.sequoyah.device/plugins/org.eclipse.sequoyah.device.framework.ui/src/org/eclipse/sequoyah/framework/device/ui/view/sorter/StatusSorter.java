@@ -1,3 +1,15 @@
+/********************************************************************************
+ * Copyright (c) 2007 Motorola Inc.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * Fabio Fantato (Motorola)
+ * 
+ * Contributors:
+ * name (company) - description.
+ ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.sorter;
 
 import org.eclipse.jface.viewers.ContentViewer;
@@ -10,7 +22,7 @@ import org.eclipse.tml.framework.device.model.IInstance;
 public class StatusSorter extends ViewerSorter {
 
 	public int category(Object element) {
-		if (element instanceof IInstance) {
+		if (element instanceof String) {
 			return 0;
 		} 
 		return 1;
@@ -22,8 +34,8 @@ public class StatusSorter extends ViewerSorter {
 		if (cat1 != cat2) return cat1 - cat2;
 		String name1, name2;
 		if (cat1==0) {
-			 name1 = ((IInstance)e1).getStatus().getStatus().name();
-			 name2 = ((IInstance)e2).getStatus().getStatus().name();
+			 name1 = (String)e1;
+			 name2 = (String)e2;
 		} else { 
 				name1 = e1.toString();
 			    name2 = e2.toString();

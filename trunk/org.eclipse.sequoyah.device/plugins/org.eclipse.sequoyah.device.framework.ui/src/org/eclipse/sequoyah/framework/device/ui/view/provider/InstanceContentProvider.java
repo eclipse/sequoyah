@@ -1,3 +1,15 @@
+/********************************************************************************
+ * Copyright (c) 2007 Motorola Inc.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * Fabio Fantato (Motorola)
+ * 
+ * Contributors:
+ * name (company) - description.
+ ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.provider;
 
 import java.util.LinkedList;
@@ -6,11 +18,12 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.tml.framework.device.IPropertyConstants;
 import org.eclipse.tml.framework.device.manager.DeviceManager;
 import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
-import org.eclipse.tml.framework.device.model.InactiveMobileStatus;
+import org.eclipse.tml.framework.status.LabelStatus;
 
 public class InstanceContentProvider implements ITreeContentProvider {
 	private static Object[] EMPTY_ARRAY = new Object[0];
@@ -47,14 +60,14 @@ public class InstanceContentProvider implements ITreeContentProvider {
 		}
 		if(newInput != null) {
 			addListenerTo((IInstanceRegistry)newInput);
-		}
+		}		
 	}
 	
 	/** Because the domain model does not have a richer
 	 * listener model, recursively remove this listener
 	 * from each child box of the given box. */
 	protected void removeListenerFrom(IInstanceRegistry box) {
-	//	box.removeListener(this);
+		//box.removeListener(this);
 		//for (Iterator iterator = box.getBoxes().iterator(); iterator.hasNext();) {
 			//MovingBox aBox = (MovingBox) iterator.next();
 			//removeListenerFrom(aBox);
@@ -85,10 +98,12 @@ public class InstanceContentProvider implements ITreeContentProvider {
 			List child = new LinkedList();
 			IDevice device = DeviceManager.getInstance().getDevice(instance);
 			if (device==null) {
-				child.add(new InactiveMobileStatus());	
+				//child.add(new InactiveMobileStatus());	
 			} else {
 				child.add(device);
-				child.add(instance.getStatus());				
+				child.add(new LabelStatus(instance,instance.getStatus()));
+				String properties = "Host="+instance.getProperties().getProperty(IPropertyConstants.HOST)+instance.getProperties().getProperty(IPropertyConstants.DISPLAY);
+				child.add(properties);
 			}				
 			return child.toArray();
 		} 

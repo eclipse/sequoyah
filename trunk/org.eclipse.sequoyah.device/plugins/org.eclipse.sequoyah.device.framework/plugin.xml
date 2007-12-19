@@ -3,12 +3,40 @@
 <plugin>
    <extension-point id="org.eclipse.tml.device" name="Device definition" schema="schema/org.eclipse.tml.device.exsd"/>   
    <extension-point id="org.eclipse.tml.service" name="Service definition" schema="schema/org.eclipse.tml.service.exsd"/>
-   <extension-point id="org.eclipse.tml.serviceDefinition" name="Service Definition customized for Mobile Device" schema="schema/org.eclipse.tml.serviceDefinition.exsd"/>   
+   <extension-point id="org.eclipse.tml.serviceDefinition" name="Service Definition customized for Mobile Device" schema="schema/org.eclipse.tml.serviceDefinition.exsd"/>
+   <extension-point id="org.eclipse.tml.status" name="Status" schema="schema/org.eclipse.tml.status.exsd"/>   
    <extension
          point="org.eclipse.ui.startup">
       <startup
             class="org.eclipse.tml.framework.device.DevicePlugin">
       </startup>
+   </extension>
+   <extension
+         id="INACTIVE"
+         point="org.eclipse.tml.status">
+      <status
+            id="INACTIVE"
+            image="icons/full/obj16/inactive.gif"
+            name="INACTIVE">
+      </status>
+   </extension>
+    <extension
+          id="OFF"
+          point="org.eclipse.tml.status">
+      <status
+            id="OFF"
+            image="icons/full/obj16/stop.gif"
+            name="OFF">
+      </status>
+   </extension>
+    <extension
+          id="IDLE"
+          point="org.eclipse.tml.status">
+      <status
+            id="IDLE"
+            image="icons/full/obj16/start.gif"
+            name="IDLE">
+      </status>
    </extension>
   
 </plugin>

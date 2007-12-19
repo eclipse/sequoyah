@@ -10,7 +10,6 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-
 package org.eclipse.tml.framework.device.factory;
 
 import java.net.URL;

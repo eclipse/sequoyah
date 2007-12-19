@@ -13,8 +13,12 @@
 
 package org.eclipse.tml.framework.device.model;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
+import org.eclipse.tml.framework.status.IStatusTransition;
 
 
 public interface IService {
@@ -55,5 +59,11 @@ public interface IService {
 	void setParent(IDevice device);
 	
 	Object clone();
+	
+	Collection<IStatusTransition> getStatusTransitions();
+	
+	IStatusTransition getStatusTransitions(String startId);
+	
+	void setStatusTransitions(List<IStatusTransition> status);
 	
 }
