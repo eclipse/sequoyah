@@ -20,10 +20,12 @@ import java.util.Properties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
 import org.eclipse.tml.vncviewer.graphics.RemoteDisplayFactory;
 import org.eclipse.tml.vncviewer.graphics.swt.SWTRemoteDisplay;
 import org.eclipse.tml.vncviewer.network.IProtoClient;
 import org.eclipse.tml.vncviewer.network.ProtocolFactory;
+import org.eclipse.tml.vncviewer.network.VNCKeyEvent;
 import org.eclipse.ui.part.ViewPart;
 
 
@@ -38,7 +40,7 @@ public class VNCViewerView extends ViewPart{
 	private static boolean running=false;
 
 	
-	private static IProtoClient protocol;
+	public static IProtoClient protocol;
 
 
 	public void createPartControl(Composite parent) {
@@ -104,6 +106,11 @@ public class VNCViewerView extends ViewPart{
 	    		gc.dispose();		
 	    		
 			}
+			
+			
+			
+			
+
 		}
  	}
 
@@ -117,7 +124,12 @@ public class VNCViewerView extends ViewPart{
 			if (swtDisplay.isActive()) {
 				swtDisplay.stop();
 			}
+			
+			
+	
 		}
+		
+		
 	}
 	
 }

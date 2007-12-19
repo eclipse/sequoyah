@@ -10,3 +10,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.tml.vncviewer
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.tml.vncviewer.vncviews.views
+Bundle-Vendor: Eclipse.org
