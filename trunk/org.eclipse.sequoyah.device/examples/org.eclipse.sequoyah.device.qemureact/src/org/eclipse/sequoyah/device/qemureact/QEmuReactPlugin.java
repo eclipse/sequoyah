@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Motorola) - bug#221733 - code revisited
  ********************************************************************************/
 package org.eclipse.tml.device.qemureact;
 
@@ -22,6 +22,7 @@ public class QEmuReactPlugin extends BasePlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.tml.device.qemureact";
+	public static final String WIZARD_ID = "org.eclipse.tml.device.qemureact.qemureactWizard";
 	public static final String DEVICE_ID = "org.eclipse.tml.device.qemureact.qemureactDevice";
 	
 	public static final String ICON_DEVICE_QEMUREACT = "ICON_DEVICE_QEMUREACT";

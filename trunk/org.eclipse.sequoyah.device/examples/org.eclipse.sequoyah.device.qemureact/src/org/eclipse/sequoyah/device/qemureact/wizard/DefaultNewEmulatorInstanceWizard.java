@@ -25,7 +25,7 @@ import org.eclipse.tml.framework.device.wizard.ui.AbstractNewEmulatorInstanceWiz
 public class DefaultNewEmulatorInstanceWizard extends AbstractNewEmulatorInstanceWizard {
 	
 	public DefaultNewEmulatorInstanceWizard(){
-		super(QEmuReactPlugin.DEVICE_ID,QEmuReactPlugin.PLUGIN_ID);		
+		super(QEmuReactPlugin.DEVICE_ID,QEmuReactPlugin.WIZARD_ID);		
 	}
 		
 }

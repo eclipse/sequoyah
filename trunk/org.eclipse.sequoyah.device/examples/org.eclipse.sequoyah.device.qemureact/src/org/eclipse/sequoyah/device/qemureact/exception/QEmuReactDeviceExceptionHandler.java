@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Motorola) - bug#221733 - code revisited
  ********************************************************************************/
 
 package org.eclipse.tml.device.qemureact.exception;
