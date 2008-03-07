@@ -8,12 +8,11 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Motorola) - bug#221733 - code revisited
  ********************************************************************************/
 package org.eclipse.tml.framework.device.wizard;
 
 import org.eclipse.tml.common.utilities.BasePlugin;
-import org.eclipse.tml.framework.device.manager.DeviceManager;
 import org.eclipse.ui.IStartup;
 import org.osgi.framework.BundleContext;
 

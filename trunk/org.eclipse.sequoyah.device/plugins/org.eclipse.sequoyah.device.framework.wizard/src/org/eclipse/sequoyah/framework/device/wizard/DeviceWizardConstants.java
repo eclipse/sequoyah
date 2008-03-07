@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Fantato (Motorola) - bug#221733 - code revisited
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.wizard;
@@ -27,11 +27,11 @@ public interface DeviceWizardConstants {
 	/**
 	 * Extension ID for New Wizard of Emulator Instances
 	 */
-	public static final String EXTENSION_INSTANCE_ID = "org.eclipse.tml.emulator.core.wizard";
+	public static final String EXTENSION_INSTANCE_ID = "org.eclipse.tml.device.wizard";
 
 
 	public static final String PROPERTIES_FILENAME = "instance.properties";
-	public static final String PROPERTIES_FILENAME_FULL = "/org/eclipse/tml/emulator/core/wizard/resources/instance.properties";
+	public static final String PROPERTIES_FILENAME_FULL = "/org/eclipse/tml/device/wizard/resources/instance.properties";
 
 	
 	/**

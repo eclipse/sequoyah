@@ -8,12 +8,13 @@
  * Fabio Fantato (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Fantato (Motorola) - bug#221733 - code revisited
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.wizard.ui;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -22,12 +23,14 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.tml.framework.device.manager.DeviceManager;
+import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.IInstanceBuilder;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardConstants;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardPlugin;
 import org.eclipse.tml.framework.device.wizard.model.DefaultInstanceBuilder;
 import org.eclipse.tml.framework.device.wizard.model.DeviceWizardBean;
+import org.eclipse.tml.framework.device.wizard.model.IWizardPropertyPage;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -46,14 +49,14 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
 	private IWorkbench workbench;
 	private DeviceWizardBean bean;
 	private IDevice device;
-	private String pluginId;
+	private String wizardId;
 
 	
 	
-	public AbstractNewEmulatorInstanceWizard(String deviceId,String pluginId){
-		this.pluginId = pluginId;
-		device = DeviceManager.getInstance().getDevice(pluginId);
-		//DeviceWizardPlugin.logInfo("Device for Wizard:"+device.getName());
+	public AbstractNewEmulatorInstanceWizard(String deviceId,String wizardId){
+		this.wizardId = wizardId;
+		device = DeviceManager.getInstance().getDevice(deviceId);
+		DeviceWizardPlugin.logInfo("Device for Wizard:"+device.getName());
 	}
 	
 	/*
@@ -159,10 +162,8 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
 	 * Add a properties page
 	 */
 	@SuppressWarnings("unchecked")
-	public void addPropertiesPage() {
-		if (bean.hasPropertyPage()) {
+	public void addPropertiesPage() {			
 			addPage(bean.getPropertyPage(),bean.getPropertyTitle(), bean.getPropertyDescription());
-		}
 	}
 
 	/**
@@ -181,11 +182,15 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
 	 * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
 	 */
 	public IWizardPage getNextPage(IWizardPage page) {
+		
 		IWizardPage nextPage = null;
 		if (nextPage == null && page != null)
 			nextPage = super.getNextPage(page);
 		if (nextPage != null)
 			nextPage.setPreviousPage(page);
+		if (page.getName().equals(DeviceWizardConstants.PAGE_PROJECT)) {
+			nextPage =  getPage(DeviceWizardConstants.PAGE_PROPERTY);
+		}
 		return nextPage;
 	}
 
@@ -200,7 +205,8 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
 			final IInstanceBuilder projectBuilder = getProjectBuilder(); 
 			WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 				protected void execute(IProgressMonitor monitor) {
-					//EmulatorProjectManager.getInstance().createProject(getExtensionId(),projectBuilder,monitor);
+					DeviceWizardPlugin.logInfo("Instance creation for Wizard:"+getExtensionId());					
+					InstanceManager.getInstance().createProject(getDevice(),projectBuilder,monitor);
 				}
 			};
 			getContainer().run(false, true, op);
@@ -238,28 +244,22 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
 	
 
 	public IInstanceBuilder getProjectBuilder(){
-		return new DefaultInstanceBuilder(getDefaultProjectPage(),getPropertiesFile(),getPropertiesPath());
+		return new DefaultInstanceBuilder(getDefaultProjectPage(),getProperties());
 	}
 	
 	
-	public String getExtensionNatureId() {
-		return device.getId();
+	public IDevice getDevice() {
+		return device;
 	}
 		
 	
 	public String getExtensionId() {
-		return this.pluginId;
+		return this.wizardId;
 	}
 
 	
-	public String getPropertiesFile() {
-		return "";
+	public Properties getProperties() {
+		return ((IWizardPropertyPage)getPage(DeviceWizardConstants.PAGE_PROPERTY)).getProperties();
 	}
 	
-	
-	public String getPropertiesPath() {
-		return "";
-		
-	}
-
 }

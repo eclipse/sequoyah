@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Fantato (Motorola) - bug#221736 - new instance wizard
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.wizard.model;
@@ -19,6 +19,7 @@ import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardConstants;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardPlugin;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardResources;
+import org.eclipse.tml.framework.device.wizard.ui.WizardNewPropertyPage;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 /**
@@ -178,11 +179,20 @@ public class DeviceWizardBean {
 	 * @return
 	 */
 	public WizardPage getPropertyPage(){
-		WizardPage page = customizer.getCustomizedPropertyPage();
-		if (page==null) {
-			page = null;
+		//WizardPage page = customizer.getCustomizedPropertyPage();
+		//if (page==null) {
+		//	page = null;
+		//}
+		//return page;
+		
+		WizardPage page = null; 
+		if (hasPropertyPage()) {
+			page = customizer.getCustomizedPropertyPage();
+		} else {
+			page = new WizardNewPropertyPage(DeviceWizardConstants.PAGE_PROPERTY);
 		}
 		return page;
+		
 	}
 	
 	/**
