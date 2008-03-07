@@ -28,7 +28,7 @@ public class Logger
 
     static
     {
-        log = LoggerFactory.getLogger(LoggerConstants.LOG_SIMPLE, Logger.class);
+       // log = LoggerFactory.getLogger(LoggerConstants.LOG_SIMPLE, Logger.class);
     }
 
     /**
@@ -41,6 +41,9 @@ public class Logger
     @SuppressWarnings("unchecked")
 	public static ILogger log(Class _class)
     {
+    	if (log==null) {
+    		log = LoggerFactory.getLogger(LoggerConstants.LOG_SIMPLE, Logger.class);
+    	}
         log.configureLogger(_class);
 
         return log;
