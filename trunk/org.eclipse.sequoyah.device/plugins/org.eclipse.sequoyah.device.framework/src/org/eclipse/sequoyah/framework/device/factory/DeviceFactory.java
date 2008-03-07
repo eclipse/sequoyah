@@ -8,15 +8,12 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Motorola) - bug#221733 - code revisited
  ********************************************************************************/
 package org.eclipse.tml.framework.device.factory;
 
-import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.common.utilities.exception.TmLExceptionHandler;
@@ -26,8 +23,6 @@ import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
 import org.eclipse.tml.framework.device.internal.model.MobileDevice;
 import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
-
-import com.sun.jndi.toolkit.url.UrlUtil;
 
 public class DeviceFactory {
 	private static final String ELEMENT_DEVICE = "device";
@@ -60,6 +55,7 @@ public class DeviceFactory {
 		device.setProvider(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_PROVIDER));
 		device.setCopyright(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE,ATR_COPYRIGHT));
 		device.setVersion(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_VERSION));
+		device.setDefaultProperties(DevicePlugin.DEFAULT_PROPERTIES);
 		try {
 			device.setHandler((IDeviceHandler)PluginUtils.getExecutableAttribute(fromPlugin, ELEMENT_DEVICE, ATR_HANDLER));
 		} catch (CoreException e) {

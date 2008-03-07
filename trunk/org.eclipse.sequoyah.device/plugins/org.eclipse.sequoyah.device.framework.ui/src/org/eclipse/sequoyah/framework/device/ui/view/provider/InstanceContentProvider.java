@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Motorola) - bug#221733 - code revisited
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.provider;
 
@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.tml.framework.device.IPropertyConstants;
+import org.eclipse.tml.common.utilities.IPropertyConstants;
 import org.eclipse.tml.framework.device.manager.DeviceManager;
 import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.IInstance;

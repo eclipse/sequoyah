@@ -8,17 +8,20 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Motorola) - bug#221733 - code revisited
  ********************************************************************************/
 package org.eclipse.tml.framework.device.manager;
 
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.tml.common.utilities.IPropertyConstants;
 import org.eclipse.tml.framework.device.DevicePlugin;
-import org.eclipse.tml.framework.device.IPropertyConstants;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.internal.model.MobileInstance;
+import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.IInstance;
+import org.eclipse.tml.framework.device.model.IInstanceBuilder;
 
 public class InstanceManager {
 	private static InstanceManager _instance;
@@ -35,9 +38,9 @@ public class InstanceManager {
 		return _instance;
 	}
 	
-	public void loadInstances(){
-		    InstanceRegistry registry = InstanceRegistry.getInstance();			
-		    if (!registry.isDirty()) {
+	public void loadInstances(){		
+		    InstanceRegistry registry = InstanceRegistry.getInstance();
+		    if (!registry.isDirty()) {		    	
 		    	registry.clear();
 		    	String deviceId1 = "org.eclipse.tml.device.qemuarm.qemuarmDevice";
 		    	String deviceId2 = "org.eclipse.tml.device.qemureact.qemureactDevice";
@@ -101,6 +104,17 @@ public class InstanceManager {
 		instance.setStatus(status);
 		instance.setProperties((Properties)properties.clone());
 		return instance;		
+	}
+
+	public void createProject(IDevice device, IInstanceBuilder projectBuilder,
+			IProgressMonitor monitor) {
+		IInstance inst = createInstance(projectBuilder.getProjectName(), device.getId(),DevicePlugin.TML_STATUS_OFF,projectBuilder.getProperties());
+    	if (currentInstance==null) {
+    		currentInstance = inst;
+    	}
+    	InstanceRegistry registry = InstanceRegistry.getInstance();		
+    	registry.addInstance(inst);
+    	registry.setDirty(true);
 	}
 		
 }

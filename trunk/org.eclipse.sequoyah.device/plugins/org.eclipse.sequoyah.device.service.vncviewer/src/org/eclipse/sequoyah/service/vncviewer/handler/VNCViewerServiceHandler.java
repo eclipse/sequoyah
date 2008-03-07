@@ -13,7 +13,7 @@
 
 package org.eclipse.tml.service.vncviewer.handler;
 
-import org.eclipse.tml.framework.device.IPropertyConstants;
+import org.eclipse.tml.common.utilities.IPropertyConstants;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;

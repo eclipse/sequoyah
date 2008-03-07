@@ -13,6 +13,8 @@
 
 package org.eclipse.tml.framework.device.model;
 
+import java.util.Properties;
+
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -29,7 +31,7 @@ public interface IInstanceBuilder {
 	 * @return
 	 */
 	public IPath getLocationPath();
-	public String getPropertiesFile();
-	public String getPropertiesPath();
+	public Properties getProperties();
+	public String getProperty(String key);
 	
 }

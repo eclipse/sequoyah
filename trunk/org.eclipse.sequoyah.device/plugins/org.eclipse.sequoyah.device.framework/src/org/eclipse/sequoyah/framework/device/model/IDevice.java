@@ -8,12 +8,13 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Motorola) - bug#221733 - code revisited
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.model;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
@@ -61,4 +62,8 @@ public interface IDevice {
 	void setParent(IInstance instance);
 	
 	Object clone();
+	
+	public Properties getDefaultProperties();
+	
+	public void setDefaultProperties(Properties properties);
 }

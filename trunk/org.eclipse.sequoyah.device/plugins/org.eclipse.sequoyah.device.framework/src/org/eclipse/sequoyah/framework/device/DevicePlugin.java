@@ -12,7 +12,10 @@
  ********************************************************************************/
 package org.eclipse.tml.framework.device;
 
+import java.util.Properties;
+
 import org.eclipse.tml.common.utilities.BasePlugin;
+import org.eclipse.tml.common.utilities.IPropertyConstants;
 import org.eclipse.tml.framework.status.StatusManager;
 import org.eclipse.ui.IStartup;
 import org.osgi.framework.BundleContext;
@@ -44,8 +47,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	public static final String TML_STATUS_IDLE="IDLE";
 	public static final String TML_STATUS_OFF="OFF";
 	public static final String TML_STATUS_INACTIVE ="INACTIVE";
-	
-	
+	public static final Properties DEFAULT_PROPERTIES = new Properties();	
 
 	// The shared instance
 	private static DevicePlugin plugin;
@@ -104,6 +106,9 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	}
 
 	public void earlyStartup() {
+		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.HOST, IPropertyConstants.DEFAULT_HOST);
+		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.DISPLAY, IPropertyConstants.DEFAULT_DISPLAY);
+		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.PORT, IPropertyConstants.DEFAULT_PORT);
 		StatusManager.getInstance().listStatus();
 	}
 

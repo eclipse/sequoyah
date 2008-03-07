@@ -8,13 +8,14 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Motorola) - bug#221733 - code revisited
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.internal.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tml.framework.device.model.IDevice;
@@ -33,6 +34,7 @@ public class MobileDevice implements IDevice {
 	private IDeviceHandler handler;
 	private List<IService> services;
 	private IInstance parent;
+	private Properties properties;
 	
 	public MobileDevice(String id){
 		this.id = id;
@@ -122,7 +124,14 @@ public class MobileDevice implements IDevice {
 		return newDevice;
 	}
 	
+	public Properties getDefaultProperties(){
+		return this.properties;
+	}
 	
+	public void setDefaultProperties(Properties properties){
+		this.properties = properties;
+	}
+		
 
 	public String toString(){
 		return "[Device: " +
