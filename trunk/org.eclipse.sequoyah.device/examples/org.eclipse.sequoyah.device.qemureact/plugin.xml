@@ -78,7 +78,7 @@
     </extension>
     <extension
          id="qemureactWizard"
-         name="QemuARM Device Instance Wizard"
+         name="QemuReact Device Instance Wizard"
          point="org.eclipse.ui.newWizards">
      <category
 	   id = "org.eclipse.ui.emulators"
@@ -86,12 +86,12 @@
 	 </category>
       <wizard
             canFinishEarly="true"
-            class="org.eclipse.tml.device.qemureact.wizard.DefaultNewEmulatorInstanceWizard"
             category="org.eclipse.ui.emulators"
-            icon="icons/full/cview16/emulator_ban.gif"
+            class="org.eclipse.tml.device.qemureact.wizard.DefaultNewEmulatorInstanceWizard"
             hasPages="true"
+            icon="icons/full/cview16/emulator_wiz.gif"
             id="qemureactWizard"
-            name="QEmuARM Device Instance Wizard"
+            name="QemuReact Device Instance Wizard"
             project="true">
             <description>Create a new QEmu ReactOS device instance</description>
       </wizard>
