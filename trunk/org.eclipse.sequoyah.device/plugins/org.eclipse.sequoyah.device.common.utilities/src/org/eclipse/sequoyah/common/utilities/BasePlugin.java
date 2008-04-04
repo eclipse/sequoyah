@@ -157,31 +157,31 @@ public abstract class BasePlugin extends AbstractUIPlugin
 	
 	public static void logInfo(String message) 
 	{
-		log.info(message);
+		getLogger().info(message);
 	}
 
 	
 	public static void logWarning(String message) 
 	{
-		log.warn(message);
+		getLogger().warn(message);
 	}
 
 	
 	public static void logError(String message) 
 	{
-		log.error(message);
+		getLogger().error(message);
 	}
 
 	
 	public static void logError(String message, Throwable exception) 
 	{
-		log.error(message, exception);
+		getLogger().error(message, exception);
 	}
 
 	
 	public static void logDebugMessage(String prefix, String message) 
 	{		
-		log.debug(prefix+"-"+message);
+		getLogger().debug(prefix+"-"+message);
 	}
 
 	/**
@@ -217,16 +217,21 @@ public abstract class BasePlugin extends AbstractUIPlugin
     /**
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
-    public void start(BundleContext context) throws Exception {
-        
-        super.start(context);
-        
-		// logger
+    public void start(BundleContext context) throws Exception {     
+        super.start(context);		
+    }
+    
+    public void setLogger(ILogger logger) {
+    	log = logger;
+    }
+    
+    public static void setDefaultLogger() {
+    	// logger
 	    if (log == null) {
 	    	log = LoggerFactory.getLogger(LoggerConstants.LOG_SIMPLE);
-	    	log.info("Loading " + this.getClass()); //$NON-NLS-1$
 	    }
     }
+     
     
     /**
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
@@ -387,8 +392,12 @@ public abstract class BasePlugin extends AbstractUIPlugin
      * the logger, since helper methods are already provided in this class.
      * Use with care.
      */
-    public ILogger getLogger() 
+    public static ILogger getLogger() 
     {
+    	// logger
+	    if (log == null) {
+	    	setDefaultLogger();
+	    }
     	return log;
     }        
 
