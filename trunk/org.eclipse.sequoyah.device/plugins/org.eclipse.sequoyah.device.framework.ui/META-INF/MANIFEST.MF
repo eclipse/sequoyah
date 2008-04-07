@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TmL Device UI Plug-in (Incubation)
 Bundle-SymbolicName: org.eclipse.tml.framework.device.ui;singleton:=true
-Bundle-Version: 0.1.0
+Bundle-Version: 0.2.0
 Bundle-Localization: plugin
 Bundle-Activator: org.eclipse.tml.framework.device.ui.DeviceUIPlugin
 Bundle-Vendor: Eclipse.org
