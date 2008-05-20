@@ -8,47 +8,40 @@
  * Daniel Franco (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
 
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
-import java.util.Properties;
-
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
+import org.eclipse.tml.protocol.PluginProtocolActionDelegate;
+import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.vncviewer.graphics.RemoteDisplayFactory;
 import org.eclipse.tml.vncviewer.graphics.swt.SWTRemoteDisplay;
-import org.eclipse.tml.vncviewer.network.IProtoClient;
-import org.eclipse.tml.vncviewer.network.ProtocolFactory;
-import org.eclipse.tml.vncviewer.network.VNCKeyEvent;
 import org.eclipse.ui.part.ViewPart;
 
-
 /**
- * The VNCViewerView class implements the Eclipse View that contains a VNC viewer. 
+ * The VNCViewerView class implements the Eclipse View that contains a VNC
+ * viewer.
  */
-public class VNCViewerView extends ViewPart{
-	
+public class VNCViewerView extends ViewPart {
 
 	private static SWTRemoteDisplay swtDisplay;
-	
-	private static boolean running=false;
 
-	
-	public static IProtoClient protocol;
+	private static boolean running = false;
 
+	public static IProtocolImplementer protocol;
 
 	public void createPartControl(Composite parent) {
-		//swtDisplay = new SWTRemoteDisplay(parent);
-		
-		swtDisplay = (SWTRemoteDisplay) RemoteDisplayFactory.getDisplay("SWTDisplay", parent);
+		// swtDisplay = new SWTRemoteDisplay(parent);
+
+		swtDisplay = (SWTRemoteDisplay) RemoteDisplayFactory.getDisplay(
+				"SWTDisplay", parent);
 		running = true;
-		
+
 		if (VNCViewerView.protocol != null) {
 			try {
 				swtDisplay.start(protocol);
@@ -56,10 +49,9 @@ public class VNCViewerView extends ViewPart{
 				// TODO handle properly
 				e.printStackTrace();
 			}
-		} 
-		
-	}
+		}
 
+	}
 
 	public void setFocus() {
 		if (swtDisplay != null) {
@@ -67,69 +59,64 @@ public class VNCViewerView extends ViewPart{
 		}
 	}
 
-
 	public void dispose() {
-		
+
 		running = false;
-		if (swtDisplay != null) swtDisplay.dispose();
+		if (swtDisplay != null)
+			swtDisplay.dispose();
 		super.dispose();
 	}
-
 
 	/**
 	 * Performs the start action into the VNC Component.
 	 */
-	synchronized public static void start(String host, int port, String protoVersion){
-		
+	synchronized public static void start(String host, int port,
+			String protoVersion) {
+
 		if ((running) && (swtDisplay != null)) {
-			
+
 			if (swtDisplay.isActive()) {
 				swtDisplay.stop();
 			}
-			
+
 			try {
-				
-				IProtoClient protocol = ProtocolFactory.getProtocol(protoVersion);
 
-				VNCViewerView.protocol = protocol;
-				
-				protocol.runProtocol(host, port);
+				String protocolId = ProtocolIdTranslator
+						.getProtocolId(protoVersion);
+
+				VNCViewerView.protocol = PluginProtocolActionDelegate
+						.startClientProtocol(protocolId, host);
+
 				swtDisplay.start(protocol);
-				//swtDisplay.start(host, port, protocol);
 
-			} catch (Exception e){
-	
-				log(VNCViewerView.class).error("Viewer could not be started: " + e.getMessage());
-	
+			} catch (Exception e) {
+
+				log(VNCViewerView.class).error(
+						"Viewer could not be started: " + e.getMessage());
+
 				GC gc = new GC(swtDisplay.getCanvas());
-	    		gc.fillRectangle(0, 0, swtDisplay.getScreenWidth(), swtDisplay.getScreenHeight());
-	    		gc.dispose();		
-	    		
+				gc.fillRectangle(0, 0, swtDisplay.getScreenWidth(), swtDisplay
+						.getScreenHeight());
+				gc.dispose();
+
 			}
-			
-			
-			
-			
 
 		}
- 	}
+	}
 
 	/**
 	 * Performs the stop action into the VNC Component.
 	 */
-	synchronized public static void stop(){
-		
+	synchronized public static void stop() {
+
 		if ((running) && (swtDisplay != null)) {
-			
+
 			if (swtDisplay.isActive()) {
 				swtDisplay.stop();
 			}
-			
-			
-	
+
 		}
-		
-		
+
 	}
-	
+
 }

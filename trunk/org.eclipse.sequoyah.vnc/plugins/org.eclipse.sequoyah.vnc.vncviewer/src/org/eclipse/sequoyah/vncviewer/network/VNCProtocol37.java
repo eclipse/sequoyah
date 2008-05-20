@@ -8,131 +8,120 @@
  * Daniel Franco (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
 
-import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
+import java.io.DataInputStream;
+import java.io.OutputStream;
 
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
 
 /**
- *  This class implements the version 3.7 of the RFB Protocol.
+ * This class implements the version 3.7 of the RFB Protocol.
  */
 public class VNCProtocol37 extends VNCProtocol {
 
-
-	
 	/**
 	 * Constant that represents the RFB protocol version.
 	 */
-	static final String RFB_VERSION = "RFB 003.007\n"; /* used to compare the implemented version with the server version */
-	
+	static final String RFB_VERSION = "RFB 003.007\n"; /*
+	 * used to compare the
+	 * implemented version
+	 * with the server
+	 * version
+	 */
+
 	/**
 	 * Constant that defines the number of bytes read in the handshake phase.
 	 */
-	static final int HANDSHAKE_MESSAGE_SIZE = 12; /* number of bytes read in the handshake phase */
-	
-	
-
-
-	public VNCProtocol37(IVNCPainter vncPainter) {
-		
-		super();
-		setVncPainter(vncPainter);
-
-	}
-	
-
+	static final int HANDSHAKE_MESSAGE_SIZE = 12; /*
+	 * number of bytes read in
+	 * the handshake phase
+	 */
 
 	/**
-	 *  This method compares each byte of the RFB Protocol client version using the String sent by the Server.
+	 * This method compares each byte of the RFB Protocol client version using
+	 * the String sent by the Server.
 	 */
 	protected void compareVersion(byte[] b) throws Exception {
-		
-		
+
 		String serverVersion = new String(b);
 		boolean versionOk = false;
-		
+
 		if (serverVersion.equals(RFB_VERSION)) {
 
 			versionOk = true;
-		
-		}
-		else if ( (serverVersion.length() == RFB_VERSION.length()) &&  serverVersion.subSequence(0, 10).equals(RFB_VERSION.substring(0, 10))) {
+
+		} else if ((serverVersion.length() == RFB_VERSION.length())
+				&& serverVersion.subSequence(0, 10).equals(
+						RFB_VERSION.substring(0, 10))) {
 			// the last number of the version String
 			if (serverVersion.charAt(10) > RFB_VERSION.charAt(10)) {
-					versionOk = true;
+				versionOk = true;
 			}
 		}
-	
+
 		if (!versionOk) {
-			throw new ProtoClientException("Wrong protocol version.");
+			throw new ProtocolException("Wrong protocol version.");
 		}
-		
-	
+
 	}
 
-	
-	
-	
-	
-	private void handshakeFail() throws Exception {
+	private void handshakeFail(DataInputStream in) throws Exception {
 
 		int failReasonLength;
 		String failReason = "";
-		
+
 		failReasonLength = in.readInt();
-		for (int j=0; j<failReasonLength ; j++){
+		for (int j = 0; j < failReasonLength; j++) {
 			failReason += in.readByte();
-			
+
 		}
-		
+
 		throw new Exception("Connection failed: " + failReason);
-	
+
 	}
-	
+
 	/**
 	 * Implements the handshake phase of the RFB Protocol.
 	 */
-	protected void handShake() throws Exception {
+	protected void handShake(DataInputStream in, OutputStream out)
+			throws Exception {
 
-	
 		@SuppressWarnings("unused")
 		int secTypesNumber;
 		int rfbSecTypes[];
-	
-		
+
 		byte[] b = new byte[HANDSHAKE_MESSAGE_SIZE];
-		byte[] ver37 =  {82, 70, 66, 32, 48, 48, 51, 46, 48, 48, 55, 10}; /* version 3.7 message */
-		
+		byte[] ver37 = { 82, 70, 66, 32, 48, 48, 51, 46, 48, 48, 55, 10 }; /*
+		 * version
+		 * 3.7
+		 * message
+		 */
+
 		in.readFully(b, 0, HANDSHAKE_MESSAGE_SIZE);
-		
+
 		compareVersion(b);
 		out.write(ver37);
-		
-		
+
 		// Security types handling
 		secTypesNumber = in.readByte();
-		
+
 		if (secTypesNumber > 0) {
 			rfbSecTypes = new int[secTypesNumber];
-			
-			for (int i=0; i < secTypesNumber  ;i++) {
-				rfbSecTypes[i] = in.readByte(); 
+
+			for (int i = 0; i < secTypesNumber; i++) {
+				rfbSecTypes[i] = in.readByte();
 			}
-			
-			out.write((byte) 1);  // NONE
+
+			out.write((byte) 1); // NONE
+		} else {
+			handshakeFail(in);
 		}
-		else {
-			handshakeFail();
-		}
-		
-		
+
 		/* The Sec-types handling is not implemented yet */
-	}	
+	}
 
 }
-
-
-
