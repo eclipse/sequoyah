@@ -1,0 +1,75 @@
+/********************************************************************************
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Initial Contributor:
+ * Fabio Rigo
+ *
+ * Contributors:
+ * {Name} (company) - description of contribution.
+ ********************************************************************************/
+package org.eclipse.tml.protocol.lib.msgdef.databeans;
+
+/**
+ * DESCRIPTION: This class is the bean that represents a variable size data
+ * element. It contains setters and getters to all information contained at the
+ * element specification. <br>
+ * 
+ * RESPONSIBILITY: Hold and provide data regarding a variable size data element
+ * 
+ * COLABORATORS: IMsgDataBean: interface being implemented.<br>
+ * ProtocolMsgDefinition: The bean the represents the entire message definition.
+ * It contains several instances of IMsgDataBean, including this one.<br>
+ * 
+ * USAGE: The class is intended to be instantiated when creating message
+ * definitions. By using the information contained here the protocol engine
+ * class is able to parse and serialize a variable size data element defined by
+ * the message definition.<br>
+ * 
+ */
+public class VariableSizeDataBean implements IMsgDataBean {
+	// Element fields, as defined in the ProtocolMessage extension point
+	private boolean isSizeFieldSigned;
+	private int sizeFieldSizeInBytes;
+	private String valueFieldName;
+	private String value;
+
+	/*
+	 * Getters section
+	 */
+	public boolean isSizeFieldSigned() {
+		return isSizeFieldSigned;
+	}
+
+	public int getSizeFieldSizeInBytes() {
+		return sizeFieldSizeInBytes;
+	}
+
+	public String getValueFieldName() {
+		return valueFieldName;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	/*
+	 * Setters section
+	 */
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public void setSizeFieldSigned(boolean isSizeFieldSigned) {
+		this.isSizeFieldSigned = isSizeFieldSigned;
+	}
+
+	public void setSizeFieldSizeInBytes(int sizeFieldSizeInBytes) {
+		this.sizeFieldSizeInBytes = sizeFieldSizeInBytes;
+	}
+
+	public void setValueFieldName(String valueFieldName) {
+		this.valueFieldName = valueFieldName;
+	}
+}
