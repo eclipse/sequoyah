@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.tml.framework.device.wizard;singleton=true
+Bundle-SymbolicName: org.eclipse.tml.framework.device.wizard;singleton:=true
 Bundle-Version: 0.2.0
 Bundle-Localization: plugin
 Bundle-Activator: org.eclipse.tml.framework.device.wizard.DeviceWizardPlugin

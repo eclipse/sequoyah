@@ -19,5 +19,4 @@ Export-Package: org.eclipse.tml.framework.device,
  org.eclipse.tml.framework.device.model.handler,
  org.eclipse.tml.framework.device.parser,
  org.eclipse.tml.framework.status
-Bundle-ClassPath: lib/jdom.jar,
- .
+Bundle-ClassPath: .

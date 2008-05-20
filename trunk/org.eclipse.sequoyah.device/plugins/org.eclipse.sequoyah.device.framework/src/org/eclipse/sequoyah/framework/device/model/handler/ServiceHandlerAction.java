@@ -41,7 +41,7 @@ public class ServiceHandlerAction implements Listener {
     		 try {
     			 serviceHandler.run(instance);
     		 } catch (TmLException te){
-    			 DevicePlugin.logError(te.getMessage());
+    			 DevicePlugin.logError(text+"-"+te.getMessage());
     		 }
     	 }
      }

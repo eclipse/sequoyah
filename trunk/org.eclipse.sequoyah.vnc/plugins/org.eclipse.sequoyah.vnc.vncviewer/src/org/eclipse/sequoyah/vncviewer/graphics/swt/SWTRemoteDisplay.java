@@ -359,11 +359,6 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay{
 
 	//synchronized public void start(String host, int port, IProtoClient protocol) throws Exception{
 	synchronized public void start(IProtoClient protocol) throws Exception{		
-		
-
-		this.host = host;
-		this.port = port;
-		
 		try {
 			
 			/*
