@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,17 +8,19 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.model;
 
+import org.eclipse.core.runtime.IAdaptable;
 import java.util.Properties;
 
-
-
-
-public interface IInstance {
+/**
+ * Interface which defines the requirements of the device instance classes 
+ * @author Fabio Fantato
+ */
+public interface IInstance extends IAdaptable {
 	public int getPID();
 	public void setPID(int pid);
 	public String getId();

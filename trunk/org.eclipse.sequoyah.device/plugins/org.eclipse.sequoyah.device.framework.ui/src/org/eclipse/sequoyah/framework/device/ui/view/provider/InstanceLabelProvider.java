@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2008 Motorola Inc.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,13 +8,14 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.provider;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -27,8 +28,20 @@ import org.eclipse.tml.framework.status.IStatus;
 import org.eclipse.tml.framework.status.LabelStatus;
 import org.eclipse.tml.framework.status.StatusRegistry;
 
-public class InstanceLabelProvider extends LabelProvider {	
-	private Map imageCache = new HashMap(11);
+/**
+ * 
+ * @author Fabio Fantato
+ *
+ */
+public class InstanceLabelProvider extends LabelProvider {
+
+	private static final String DEVICE = "Device";
+	private static final String INSTANCE_REGISTRY = "Instance registry";
+	private static final String NO_DEVICE = "No device";
+	private static final String NO_STATUS = "No status";
+	private static final String PROPERTIES = "Properties";
+	
+	private Map imageCache = new HashMap(20);
 	
 	/*
 	 * @see ILabelProvider#getImage(Object)
@@ -44,7 +57,7 @@ public class InstanceLabelProvider extends LabelProvider {
 			descriptor = status.getImage();
 		} else if (element instanceof IDevice) {
 			descriptor = ((IDevice)element).getImage();
-		}else if (element instanceof String) {
+		}else if (element instanceof String || element instanceof Properties) {
 			descriptor = DevicePlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_PROPERTY);;
 		} else {
 			throw unknownElement(element);
@@ -64,11 +77,11 @@ public class InstanceLabelProvider extends LabelProvider {
 	 */
 	public String getText(Object element) {
 		if (element instanceof IInstanceRegistry) {
-			return "Instance Registry";
+			return InstanceLabelProvider.INSTANCE_REGISTRY;
 		} else if (element instanceof IInstance) {			
 			String name = ((IInstance)element).getName();			
 			if((name == null)) {
-				return "Device";
+				return InstanceLabelProvider.DEVICE;
 			} else {
 				return name;
 			}
@@ -79,18 +92,20 @@ public class InstanceLabelProvider extends LabelProvider {
 				name = status.getName();
 			}
 			if((name == null)) {
-				return "no status";
+				return InstanceLabelProvider.NO_STATUS;
 			} else {
 				return name;
 			}
 		} else if (element instanceof IDevice) {
 			if((element == null)) {
-				return "no device";
+				return InstanceLabelProvider.NO_DEVICE;
 			} else {
 				return ((IDevice)element).getName();
 			}
 		} else if (element instanceof String) {
 			return (String)element;
+		} else if (element instanceof Properties) {
+			return InstanceLabelProvider.PROPERTIES;
 		} else {
 			throw unknownElement(element);
 		}

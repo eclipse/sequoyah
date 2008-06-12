@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007 - 2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,7 +8,8 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data
+ *                                                                    persistence
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui;
@@ -27,6 +28,7 @@ public class DeviceUIResources extends NLS {
 	public static String TML_Error;
 	public static String TML_Resource_Not_Available;
 	public static String TML_Handler_Not_Instanced;
+	public static String TML_Instance_Name_Duplicated_Error;
 		
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, DeviceUIResources.class);

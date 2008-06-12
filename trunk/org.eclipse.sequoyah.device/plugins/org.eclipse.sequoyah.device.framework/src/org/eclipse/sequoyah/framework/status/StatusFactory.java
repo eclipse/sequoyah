@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,22 +8,18 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup.
  ********************************************************************************/
 package org.eclipse.tml.framework.status;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tml.common.utilities.PluginUtils;
-import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.common.utilities.exception.TmLExceptionHandler;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionHandler;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
-import org.eclipse.tml.framework.device.internal.model.MobileService;
-import org.eclipse.tml.framework.device.model.IService;
-import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
+
 
 public class StatusFactory {
 	private static final String ELEMENT_STATUS = "status";

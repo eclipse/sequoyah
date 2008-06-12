@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,22 +9,29 @@
  * 
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
+ * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.provider;
 
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.tml.common.utilities.IPropertyConstants;
 import org.eclipse.tml.framework.device.manager.DeviceManager;
 import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
 import org.eclipse.tml.framework.status.LabelStatus;
 
+/**
+ * 
+ * @author Fabio Fantato
+ *
+ */
 public class InstanceContentProvider implements ITreeContentProvider {
 	private static Object[] EMPTY_ARRAY = new Object[0];
 	protected TreeViewer viewer;
@@ -34,9 +41,6 @@ public class InstanceContentProvider implements ITreeContentProvider {
 	 */
 	public void dispose() {}
 
-	/*
-	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
-	 */
 	/**
 	* Notifies this content provider that the given viewer's input
 	* has been switched to a different element.
@@ -52,6 +56,7 @@ public class InstanceContentProvider implements ITreeContentProvider {
 	*   did not previously have an input
 	* @param newInput the new input element, or <code>null</code> if the viewer
 	*   does not have an input
+	* @see IContentProvider#inputChanged(Viewer, Object, Object)
 	*/
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TreeViewer)viewer;
@@ -63,20 +68,14 @@ public class InstanceContentProvider implements ITreeContentProvider {
 		}		
 	}
 	
-	/** Because the domain model does not have a richer
-	 * listener model, recursively remove this listener
-	 * from each child box of the given box. */
 	protected void removeListenerFrom(IInstanceRegistry box) {
 		//box.removeListener(this);
 		//for (Iterator iterator = box.getBoxes().iterator(); iterator.hasNext();) {
-			//MovingBox aBox = (MovingBox) iterator.next();
-			//removeListenerFrom(aBox);
+		//	MovingBox aBox = (MovingBox) iterator.next();
+		//	removeListenerFrom(aBox);
 		//}
 	}
-	
-	/** Because the domain model does not have a richer
-	 * listener model, recursively add this listener
-	 * to each child box of the given box. */
+
 	protected void addListenerTo(IInstanceRegistry box) {
 		//box.addListener(this);
 		//for (Iterator iterator = box.getBoxes().iterator(); iterator.hasNext();) {
@@ -84,7 +83,6 @@ public class InstanceContentProvider implements ITreeContentProvider {
 		//	addListenerTo(aBox);
 		//}
 	}
-	
 	
 	/*
 	 * @see ITreeContentProvider#getChildren(Object)
@@ -102,9 +100,19 @@ public class InstanceContentProvider implements ITreeContentProvider {
 			} else {
 				child.add(device);
 				child.add(new LabelStatus(instance,instance.getStatus()));
-				String properties = "Host="+instance.getProperties().getProperty(IPropertyConstants.HOST)+instance.getProperties().getProperty(IPropertyConstants.DISPLAY);
+				Properties properties = instance.getProperties();
 				child.add(properties);
 			}				
+			return child.toArray();
+		} else if (parentElement instanceof Properties) {
+			Properties properties = (Properties) parentElement;
+			List child = new LinkedList();
+			for (Enumeration e = properties.keys();
+					e.hasMoreElements() ;) {
+		    	String key = (String) e.nextElement();
+		        String value = properties.getProperty(key);
+		        child.add(key + " = " + value);
+		    }
 			return child.toArray();
 		} 
 		return EMPTY_ARRAY;
@@ -130,6 +138,4 @@ public class InstanceContentProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
-
-	
 }

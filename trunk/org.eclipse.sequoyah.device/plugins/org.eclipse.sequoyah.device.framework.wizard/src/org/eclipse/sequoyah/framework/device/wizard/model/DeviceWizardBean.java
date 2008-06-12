@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2008 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,8 @@
  *
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221736 - new instance wizard
+ * Otávio Ferranti (Eldorado Research Institute) - bug#221733 - removing the
+ *                          project location field from the default project page
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.wizard.model;
@@ -20,7 +22,7 @@ import org.eclipse.tml.framework.device.wizard.DeviceWizardConstants;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardPlugin;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardResources;
 import org.eclipse.tml.framework.device.wizard.ui.WizardNewPropertyPage;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.tml.framework.device.wizard.ui.WizardNewProjectPage;
 
 /**
  * Provide all information about Wizard Extension Point
@@ -139,7 +141,7 @@ public class DeviceWizardBean {
 		if (hasProjectPage()) {
 			page = customizer.getCustomizedProjectPage();
 		} else {
-			page = new WizardNewProjectCreationPage(DeviceWizardConstants.PAGE_PROJECT);
+			page = new WizardNewProjectPage(DeviceWizardConstants.PAGE_PROJECT);
 		}
 		return page;
 	}

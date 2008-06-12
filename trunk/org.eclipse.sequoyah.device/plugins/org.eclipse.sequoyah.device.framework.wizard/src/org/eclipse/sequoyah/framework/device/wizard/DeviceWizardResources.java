@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,7 +8,8 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Added a 
+ *                                                            new message string.
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.wizard;
@@ -32,7 +33,7 @@ public class DeviceWizardResources extends NLS {
 	public static String TML_Emulator_Wizard_Plugin_Name;
 	public static String TML_Emulator_Wizard_Project_Title;
 	public static String TML_Emulator_Wizard_Project_Description;
-
+	public static String TML_Emulator_Wizard_Project_Description_Duplicated_Error;
 	
 	public static String msg_new_wizard_emulator_title;
 	public static String msg_new_wizard_emulator_description;

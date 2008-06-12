@@ -35,4 +35,17 @@
          name="TmL perspective">
    </perspective>
 </extension>
+<extension
+      point="org.eclipse.ui.propertyPages">
+   <page
+         class="org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditor"
+         id="org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditorDefault"
+         name="Instance Properties">
+      <enabledWhen>
+         <instanceof
+               value="org.eclipse.tml.framework.device.internal.model.MobileInstance">
+         </instanceof>
+      </enabledWhen>
+   </page>
+</extension>
 </plugin>

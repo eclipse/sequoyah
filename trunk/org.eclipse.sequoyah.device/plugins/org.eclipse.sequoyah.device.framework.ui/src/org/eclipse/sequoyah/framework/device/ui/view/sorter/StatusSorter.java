@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2008 Motorola Inc.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,19 +8,21 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup.
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.sorter;
 
-import org.eclipse.jface.viewers.ContentViewer;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.tml.framework.device.model.IInstance;
 
+/**
+ * @author Fabio Fantato
+ */
 public class StatusSorter extends ViewerSorter {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
+	 */
 	public int category(Object element) {
 		if (element instanceof String) {
 			return 0;
@@ -28,6 +30,9 @@ public class StatusSorter extends ViewerSorter {
 		return 1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	 */
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		int cat1 = category(e1);
 		int cat2 = category(e2);

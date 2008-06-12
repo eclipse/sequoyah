@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view;
 
@@ -18,11 +18,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -30,9 +30,13 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.factory.IInstanceListeners;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.manager.DeviceManager;
@@ -46,32 +50,115 @@ import org.eclipse.tml.framework.device.ui.view.provider.InstanceContentProvider
 import org.eclipse.tml.framework.device.ui.view.provider.InstanceLabelProvider;
 import org.eclipse.tml.framework.device.ui.view.sorter.InstanceSorter;
 import org.eclipse.tml.framework.device.ui.view.sorter.StatusSorter;
-import org.eclipse.tml.framework.status.LabelStatus;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.part.ViewPart;
-
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Insert the type's description here.
  * @see ViewPart
  */
-public class InstanceView extends ViewPart implements IInstanceListeners {
+public class InstanceView extends ViewPart implements IInstanceListeners, IPartListener2 {
+	
+	private static final String MENU_DELETE = "Delete";
+	private static final String MENU_PROPERTIES = "Properties";
+	private static final String MENU_SORT_BY = "Sort by";
+	private static final String ACTION_DEVICES = "Devices";
+	private static final String ACTION_STATUS = "Status";
+	private static final String PROPERTY_EDITOR_ID = "org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditorDefault";
+	
 	protected TreeViewer treeViewer;
 	protected Text text;
 	protected InstanceLabelProvider labelProvider;
-	
-	protected Action onlyBoardGamesAction, atLeatThreeItems;
+	protected boolean enablePropertiesMenu = false;	
 	protected Action instanceSorterAction,statusSorterAction;
-	protected Action addBookAction, removeAction;
-	protected ViewerFilter onlyBoardGamesFilter, atLeastThreeFilter;
 	protected ViewerSorter instanceSorter,statusSorter;
-	
 	protected IInstanceRegistry root;
-	
+
 	/**
-	 * The constructor.
+	 * Constructor - Insert the type's description here
 	 */
 	public InstanceView() {
 		InstanceRegistry.getInstance().addListener(this);
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partClosed(IWorkbenchPartReference ref) {
+		// TODO How do we know if the closed view is this one ?
+		if (ref.getPart(false) == this) {
+			InstanceRegistry.getInstance().removeListener(InstanceView.this);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partActivated(IWorkbenchPartReference partRef) { }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partBroughtToTop(IWorkbenchPartReference partRef) {	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partDeactivated(IWorkbenchPartReference partRef) { }
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partHidden(IWorkbenchPartReference partRef) { }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partInputChanged(IWorkbenchPartReference partRef) {	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partOpened(IWorkbenchPartReference partRef) { }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partVisible(IWorkbenchPartReference partRef) { }
+
+	/*
+	 * Menu handler
+	 */
+	private class MenuDeleteListener implements Listener {
+		public void handleEvent(Event event) {
+			removeSelected();
+		}
+	}
+	
+	/**
+	 * Menu handler
+	 */
+	private class MenuPropertiesListener implements Listener {
+		public void handleEvent(Event event) {
+		
+			IAdaptable adaptable = InstanceManager.getInstance().getCurrentInstance();
+			
+			Shell shell = new Shell();
+			PreferenceDialog dialog = PreferencesUtil.createPropertyDialogOn(
+					shell,
+					adaptable,
+					InstanceView.PROPERTY_EDITOR_ID,
+					new String[] {},
+					null);
+			dialog.open();
+		}
 	}
 
 	/*
@@ -99,6 +186,8 @@ public class InstanceView extends ViewPart implements IInstanceListeners {
 		
 		// Create the tree viewer as a child of the composite parent
 		treeViewer = new TreeViewer(parent);
+		
+		// TODO - Provider sem Viewer
 		treeViewer.setContentProvider(new InstanceContentProvider());
 		labelProvider = new InstanceLabelProvider();
 		treeViewer.setLabelProvider(labelProvider);
@@ -117,7 +206,6 @@ public class InstanceView extends ViewPart implements IInstanceListeners {
 		createFiltersAndSorters();
 		createActions();
 		createMenus();
-		createToolbar();
 		hookListeners();
 		
 		treeViewer.setInput(getInitalInput());
@@ -130,8 +218,11 @@ public class InstanceView extends ViewPart implements IInstanceListeners {
 	}
 
 	protected void hookListeners() {
-		    treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+	    treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
+				
+				enablePropertiesMenu = false;
+
 				// if the selection is empty clear the label
 				if(event.getSelection().isEmpty()) {
 					text.setText("");
@@ -139,6 +230,7 @@ public class InstanceView extends ViewPart implements IInstanceListeners {
 				}
 				if(event.getSelection() instanceof IStructuredSelection) {
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+					
 					StringBuffer toShow = new StringBuffer();
 					for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
 						Object domain = iterator.next();
@@ -147,12 +239,7 @@ public class InstanceView extends ViewPart implements IInstanceListeners {
 							toShow.append(value);
 							toShow.append(", ");
 							InstanceManager.getInstance().setInstance((IInstance)domain);
-						} else if (domain instanceof IDevice) {
-							domain = ((IDevice)domain).getParent();							
-							InstanceManager.getInstance().setInstance((IInstance)domain);
-						} else if (domain instanceof LabelStatus) {
-							domain = ((LabelStatus)domain).getInstance();
-							InstanceManager.getInstance().setInstance((IInstance)domain);
+							enablePropertiesMenu = true;
 						}
 					}
 					// remove the trailing comma space pair
@@ -166,99 +253,37 @@ public class InstanceView extends ViewPart implements IInstanceListeners {
 	}
 	
 	protected void createActions() {
-//		onlyBoardGamesAction = new Action("Only Board Games") {
-//			public void run() {
-//				updateFilter(onlyBoardGamesAction);
-//			}
-//		};
-//		onlyBoardGamesAction.setChecked(false);
-//		
-//		atLeatThreeItems = new Action("Boxes With At Least Three Items") {
-//			public void run() {
-//				updateFilter(atLeatThreeItems);
-//			}
-//		};
-//		atLeatThreeItems.setChecked(false);
-//		
-//		booksBoxesGamesAction = new Action("Books, Boxes, Games") {
-//			public void run() {
-//				updateSorter(booksBoxesGamesAction);
-//			}
-//		};
-//		booksBoxesGamesAction.setChecked(false);
-//		
-		instanceSorterAction = new Action("Devices") {
+		instanceSorterAction = new Action(InstanceView.ACTION_DEVICES) {
 			public void run() {
 				updateSorter(instanceSorterAction);
 			}
 		};
 		instanceSorterAction.setChecked(false);
 		
-		statusSorterAction = new Action("Status") {
+		statusSorterAction = new Action(InstanceView.ACTION_STATUS) {
 			public void run() {
 				updateSorter(statusSorterAction);
 			}
 		};
 		statusSorterAction.setChecked(false);
-		
-		
-//		
-//		addBookAction = new Action("Add Book") {
-//			public void run() {
-//				addNewBook();
-//			}			
-//		};
-//		addBookAction.setToolTipText("Add a New Book");
-//		addBookAction.setImageDescriptor(DevicePlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_NEW_BOOK));
-//
-//		removeAction = new Action("Delete") {
-//			public void run() {
-//				removeSelected();
-//			}			
-//		};
-//		removeAction.setToolTipText("Delete");
-//		removeAction.setImageDescriptor(DevicePlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_REMOVE));		
-	}
-	
-	/** Add a new book to the selected moving box.
-	 * If a moving box is not selected, use the selected
-	 * obect's moving box. 
-	 * 
-	 * If nothing is selected add to the root. */
-	protected void addNewBook() {
-//		MovingBox receivingBox;
-//		if (treeViewer.getSelection().isEmpty()) {
-//			receivingBox = root;
-//		} else {
-//			IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-//			Model selectedDomainObject = (Model) selection.getFirstElement();
-//			if (!(selectedDomainObject instanceof MovingBox)) {
-//				receivingBox = selectedDomainObject.getParent();
-//			} else {
-//				receivingBox = (MovingBox) selectedDomainObject;
-//			}
-//		}
-//		receivingBox.add(Book.newBook());
 	}
 
 	/** Remove the selected domain object(s).
 	 * If multiple objects are selected remove all of them.
 	 * 
-	 * If nothing is selected do nothing. */
+	 * If nothing is selected do nothing.
+	 */
 	protected void removeSelected() {
-//		if (treeViewer.getSelection().isEmpty()) {
-//			return;
-//		}
-//		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-//		/* Tell the tree to not redraw until we finish
-//		 * removing all the selected children. */
-//		treeViewer.getTree().setRedraw(false);
-//		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
-//			Model model = (Model) iterator.next();
-//			MovingBox parent = model.getParent();
-//			parent.remove(model);
-//		}
-//		treeViewer.getTree().setRedraw(true);
+		if (treeViewer.getSelection().isEmpty()) {
+			return;
+		}
+		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+		InstanceRegistry instanceRegistry = InstanceRegistry.getInstance();
+		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+			IInstance instance = (IInstance) iterator.next();
+			InstanceRegistry.getInstance().removeInstance(instance);
+		}
+		instanceRegistry.setDirty(true);
 	}
 	
 	protected void createMenus() {
@@ -272,54 +297,53 @@ public class InstanceView extends ViewPart implements IInstanceListeners {
 		fillMenu(rootMenuManager);
 	}
 
-
 	protected void fillMenu(IMenuManager rootMenuManager) {
-		//IMenuManager filterSubmenu = new MenuManager("Filters");
-		//rootMenuManager.add(filterSubmenu);
-		//filterSubmenu.add(onlyBoardGamesAction);
-		//filterSubmenu.add(atLeatThreeItems);
-		
-		IMenuManager sortSubmenu = new MenuManager("Sort By");
+		IMenuManager sortSubmenu = new MenuManager(InstanceView.MENU_SORT_BY);
 		rootMenuManager.add(sortSubmenu);
 		sortSubmenu.add(instanceSorterAction);
 		sortSubmenu.add(statusSorterAction);
 		
-		
 		final Menu menu = new Menu(treeViewer.getTree()); 
 		treeViewer.getTree().setMenu(menu); 
-	    menu.addMenuListener(new MenuAdapter() { 
-	         public void menuShown(MenuEvent e) { 
-	            // Get rid of existing menu items 
-	            MenuItem[] items = menu.getItems(); 
-	            for (int i = 0; i < items.length; i++) { 
-	               ((MenuItem) items[i]).dispose(); 
-	            } 
-	            fillMenuContext(menu,InstanceManager.getInstance().getCurrentInstance());	           
-	         } 
-	      }); 
+		menu.addMenuListener(new MenuAdapter() { 
+			public void menuShown(MenuEvent e) { 
+		        // Get rid of existing menu items 
+		        MenuItem[] items = menu.getItems(); 
+		        for (int i = 0; i < items.length; i++) { 
+		           ((MenuItem) items[i]).dispose(); 
+		        }
+		        if (enablePropertiesMenu == true) {
+		        	fillMenuContext(menu,InstanceManager.getInstance().getCurrentInstance());	           
+		        }
+			}
+		}); 
 	}
 
-	protected void fillMenuContext(Menu menu,IInstance instance) {
+	protected void fillMenuContext(Menu menu, IInstance instance) {
         IDevice device = DeviceManager.getInstance().getDevice(instance);
 		MenuItem newItem = null;
 		
 		newItem = new MenuItem(menu, SWT.PUSH);
-	    newItem.setText("Properties");
-        newItem.addListener(SWT.Selection,  new ServiceHandlerAction("properties"));
+	    newItem.setText(InstanceView.MENU_DELETE);
+        newItem.addListener(SWT.Selection, new MenuDeleteListener());
+        newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
         
 		newItem = new MenuItem(menu, SWT.SEPARATOR);
-		
-		
+        
+		newItem = new MenuItem(menu, SWT.PUSH);
+	    newItem.setText(InstanceView.MENU_PROPERTIES);
+        newItem.addListener(SWT.Selection, new MenuPropertiesListener());
+        
+		newItem = new MenuItem(menu, SWT.SEPARATOR);
+				
 		for (IService service:device.getServices()){
 			newItem = new MenuItem(menu, SWT.PUSH);		
-				newItem.setImage(service.getImage().createImage());
-				newItem.setEnabled((service.getStatusTransitions(instance.getStatus())!=null));
-				newItem.setText(service.getName());
-				newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
+			newItem.setImage(service.getImage().createImage());
+			newItem.setEnabled((service.getStatusTransitions(instance.getStatus())!=null));
+			newItem.setText(service.getName());
+			newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
 		}
 	}
-	
-	
 	
 	protected void updateSorter(Action action) {
 		if(action == instanceSorterAction) {			
@@ -339,33 +363,9 @@ public class InstanceView extends ViewPart implements IInstanceListeners {
 		}
 			
 	}
-	
-	/* Multiple filters can be enabled at a time. */
-	protected void updateFilter(Action action) {
-//		if(action == atLeatThreeItems) {
-//			if(action.isChecked()) {
-//				treeViewer.addFilter(atLeastThreeFilter);
-//			} else {
-//				treeViewer.removeFilter(atLeastThreeFilter);
-//			}
-//		} else if(action == onlyBoardGamesAction) {
-//			if(action.isChecked()) {
-//				treeViewer.addFilter(onlyBoardGamesFilter);
-//			} else {
-//				treeViewer.removeFilter(onlyBoardGamesFilter);
-//			}
-//		}
-	}
-	
-	protected void createToolbar() {
-//		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
-//		toolbarManager.add(addBookAction);
-//		toolbarManager.add(removeAction);
-	}
-	
-	
+
 	public IInstanceRegistry getInitalInput() {
-		InstanceManager.getInstance().loadInstances();
+		InstanceManager.getInstance();
 		return InstanceRegistry.getInstance();
 	}
 
@@ -379,5 +379,4 @@ public class InstanceView extends ViewPart implements IInstanceListeners {
 		treeViewer.refresh();
 		treeViewer.expandAll();
 	}
-
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2008 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
+ * Otávio Ferranti (Motorola) - bug#221733 - Enhancing the device instance wizard
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.wizard.ui;
@@ -31,10 +32,10 @@ import org.eclipse.tml.framework.device.wizard.DeviceWizardPlugin;
 import org.eclipse.tml.framework.device.wizard.model.DefaultInstanceBuilder;
 import org.eclipse.tml.framework.device.wizard.model.DeviceWizardBean;
 import org.eclipse.tml.framework.device.wizard.model.IWizardPropertyPage;
+import org.eclipse.tml.framework.device.wizard.model.IWizardProjectPage;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 /**
  * Define an abstract class to provide new wizard emulator instance features.
@@ -50,11 +51,13 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
 	private DeviceWizardBean bean;
 	private IDevice device;
 	private String wizardId;
+	private String pluginId;
 
 	
 	
-	public AbstractNewEmulatorInstanceWizard(String deviceId,String wizardId){
+	public AbstractNewEmulatorInstanceWizard(String pluginId, String deviceId,String wizardId){
 		this.wizardId = wizardId;
+		this.pluginId = pluginId;
 		device = DeviceManager.getInstance().getDevice(deviceId);
 		DeviceWizardPlugin.logInfo("Device for Wizard:"+device.getName());
 	}
@@ -83,7 +86,7 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
 		if (bean != null) {
 			setNeedsProgressMonitor(bean.needsProgressMonitor());
 			setForcePreviousAndNextButtons(bean.forcePreviousAndNextButtons());
-			setDefaultPageImageDescriptor(DeviceWizardPlugin.imageDescriptorFromPlugin(getExtensionId(), bean.getImage()));
+			setDefaultPageImageDescriptor(DeviceWizardPlugin.imageDescriptorFromPlugin(pluginId, bean.getImage()));
 			setWindowTitle(bean.getTitle());
 		}
 	}
@@ -237,8 +240,8 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
 		return this.selection;
 	}
 	
-	public WizardNewProjectCreationPage getDefaultProjectPage() {
-		return (WizardNewProjectCreationPage)getPage(DeviceWizardConstants.PAGE_PROJECT);
+	public IWizardProjectPage getDefaultProjectPage() {
+		return (IWizardProjectPage)getPage(DeviceWizardConstants.PAGE_PROJECT);
 	}
 	
 	
