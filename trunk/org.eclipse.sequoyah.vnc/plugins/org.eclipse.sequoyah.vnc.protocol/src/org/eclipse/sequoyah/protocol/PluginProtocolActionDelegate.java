@@ -7,7 +7,8 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
+ * Daniel Barboza Franco - Bug [233062] - Protocol connection port is static.
  ********************************************************************************/
 package org.eclipse.tml.protocol;
 
@@ -60,8 +61,9 @@ public class PluginProtocolActionDelegate {
 	 * @throws ProtocolException
 	 *             DOCUMENT ME!!
 	 */
-	public static IProtocolImplementer startClientProtocol(String protocolId,
-			String host) throws IOException, ProtocolException {
+	public static IProtocolImplementer startClientProtocol(String protocolId, 
+			String host, int port,
+			Map parameters) throws IOException, ProtocolException {
 
 		PluginProtocolModel model = PluginProtocolModel.getInstance();
 		Map<Long, ProtocolMsgDefinition> allMessages = model
@@ -73,12 +75,11 @@ public class PluginProtocolActionDelegate {
 		IProtocolImplementer protocolImplementer = model
 				.getProtocolImplementer(protocolId);
 		boolean isBigEndianProtocol = model.isBigEndianProtocol(protocolId);
-		int port = model.getServerPort(protocolId);
-
+		
 		ProtocolActionDelegate.startClientProtocol(allMessages,
 				incomingMessages, outgoingMessages, protocolImplementer,
-				isBigEndianProtocol, host, port);
-
+				isBigEndianProtocol, host, port, parameters);
+		
 		return protocolImplementer;
 	}
 
