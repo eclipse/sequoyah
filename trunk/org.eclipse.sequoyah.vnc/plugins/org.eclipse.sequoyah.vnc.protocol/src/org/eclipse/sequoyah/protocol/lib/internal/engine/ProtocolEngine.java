@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -95,6 +95,11 @@ public class ProtocolEngine {
 	 * The host to which the socket is connected.
 	 */
 	private String host;
+	
+	/**
+	 * General parameters associated to the protocol implementation, initialized by the protocol user.
+	 */
+	private Map parameters;
 
 	/**
 	 * The port to which the socket is connected.
@@ -147,6 +152,8 @@ public class ProtocolEngine {
 	 *            The host to connect to.
 	 * @param port
 	 *            The port to connect to.
+	 * @param parameters
+	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.
 	 * @param isServer
 	 *            True if the engine will run as server; false if it will run as
 	 *            client
@@ -159,10 +166,10 @@ public class ProtocolEngine {
 	 *             If the protocol fails to initialize.
 	 */
 	public synchronized void startProtocol(
-			IProtocolImplementer protocolImplementer, String host, int port,
+			IProtocolImplementer protocolImplementer, String host, int port, Map parameters,
 			boolean isServer) throws UnknownHostException, IOException,
 			ProtocolException {
-		startProtocol(protocolImplementer, host, port, -1, isServer);
+		startProtocol(protocolImplementer, host, port, parameters, -1, isServer);
 	}
 
 	/**
@@ -174,6 +181,8 @@ public class ProtocolEngine {
 	 *            The host to connect to.
 	 * @param port
 	 *            The port to connect to.
+	 * @param parameters
+	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.
 	 * @param timeout
 	 *            The maximum time to wait for the connection to remote site to
 	 *            open.
@@ -189,12 +198,14 @@ public class ProtocolEngine {
 	 *             If the protocol fails to initialize.
 	 */
 	public synchronized void startProtocol(
-			IProtocolImplementer protocolImplementer, String host, int port,
+			IProtocolImplementer protocolImplementer, String host, int port, Map parameters,
 			int timeout, boolean isServer) throws UnknownHostException,
 			IOException, ProtocolException {
 		// Stores the host and port, that will be used if a restart is necessary
 		this.host = host;
 		this.port = port;
+		
+		this.parameters = parameters;
 		this.isServer = isServer;
 		if (protocolImplementer != null) {
 			this.protocolImplementer = protocolImplementer;
@@ -216,9 +227,9 @@ public class ProtocolEngine {
 
 		// Delegate the initialization to the concrete protocol class
 		if (isServer) {
-			this.protocolImplementer.serverInit(in, out);
+			this.protocolImplementer.serverInit(in, out, parameters);
 		} else {
-			this.protocolImplementer.clientInit(in, out);
+			this.protocolImplementer.clientInit(in, out, parameters);
 		}
 
 		// After all initialization is done, start the consumer thread, which
@@ -236,6 +247,8 @@ public class ProtocolEngine {
 	 * @param connectedSocket
 	 *            The socket that needs to be used by the engine to send and
 	 *            receive messages
+	 * @param parameters
+	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.
 	 * @param isServer
 	 *            True if the engine will run as server; false if it will run as
 	 *            client
@@ -244,11 +257,12 @@ public class ProtocolEngine {
 	 * @throws ProtocolException
 	 */
 	public synchronized void startProtocol(
-			IProtocolImplementer protocolImplementer, Socket connectedSocket,
+			IProtocolImplementer protocolImplementer, Socket connectedSocket, Map parameters,
 			boolean isServer) throws IOException, ProtocolException {
 		this.socket = connectedSocket;
 		this.host = socket.getInetAddress().getHostAddress();
 		this.port = socket.getPort();
+		this.parameters = parameters;
 		this.isServer = isServer;
 		if (protocolImplementer != null) {
 			this.protocolImplementer = protocolImplementer;
@@ -261,9 +275,9 @@ public class ProtocolEngine {
 
 		// Delegate the initialization to the concrete protocol class
 		if (isServer) {
-			this.protocolImplementer.serverInit(in, out);
+			this.protocolImplementer.serverInit(in, out, parameters);
 		} else {
-			this.protocolImplementer.clientInit(in, out);
+			this.protocolImplementer.clientInit(in, out, parameters);
 		}
 
 		// After all initialization is done, start the consumer thread, which
@@ -304,7 +318,7 @@ public class ProtocolEngine {
 			stopProtocol();
 		}
 
-		startProtocol(null, host, port, isServer);
+		startProtocol(null, host, port, parameters ,isServer);
 	}
 
 	/**

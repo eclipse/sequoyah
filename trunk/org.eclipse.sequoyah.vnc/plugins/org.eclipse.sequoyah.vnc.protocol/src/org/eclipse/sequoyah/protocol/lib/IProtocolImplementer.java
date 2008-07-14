@@ -7,12 +7,13 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
 import java.io.DataInputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
 
@@ -48,12 +49,14 @@ public interface IProtocolImplementer {
 	 *            The input stream where to read data sent by the server
 	 * @param out
 	 *            The output stream where to write data to send to the server
+	 * @param parameters
+	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.            
 	 * 
 	 * @throws ProtocolException
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
-	void serverInit(DataInputStream in, OutputStream out)
+	void serverInit(DataInputStream in, OutputStream out, Map parameters)
 			throws ProtocolException;
 
 	/**
@@ -74,6 +77,6 @@ public interface IProtocolImplementer {
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
-	void clientInit(DataInputStream in, OutputStream out)
+	void clientInit(DataInputStream in, OutputStream out, Map parameters)
 			throws ProtocolException;
 }

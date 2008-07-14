@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -274,7 +274,7 @@ public class ServerModel implements IModel {
 
 						final ProtocolEngine eng = factory
 								.getServerProtocolEngine();
-						eng.startProtocol(protocolImplementer, s, true);
+						eng.startProtocol(protocolImplementer, s, null, true);
 
 						Collection<ProtocolEngine> allClients = connectedClients
 								.get(protocolImplementer);

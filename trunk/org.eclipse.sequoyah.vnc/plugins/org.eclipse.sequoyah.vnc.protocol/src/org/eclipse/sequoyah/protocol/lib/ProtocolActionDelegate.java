@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -60,6 +60,8 @@ public class ProtocolActionDelegate {
 	 *            The host where the server is running
 	 * @param port
 	 *            The ported where the server is listening for requests at host
+	 * @param parameters
+	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.           
 	 * 
 	 * @throws UnknownHostException
 	 *             DOCUMENT ME!!
@@ -68,18 +70,20 @@ public class ProtocolActionDelegate {
 	 * @throws ProtocolException
 	 *             DOCUMENT ME!!
 	 */
+	
 	public static void startClientProtocol(
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolImplementer protocolImplementer,
-			boolean isBigEndianProtocol, String host, int port)
+			Boolean isBigEndianProtocol,
+			String host, int port,
+			Map<String, Object> parameters)
 			throws UnknownHostException, IOException, ProtocolException {
 
 		ClientModel model = ClientModel.getInstance();
 		model.startClientProtocol(allMessages, incomingMessages,
-				outgoingMessages, protocolImplementer, isBigEndianProtocol,
-				host, port);
+				outgoingMessages, protocolImplementer, isBigEndianProtocol, host, port, parameters);
 	}
 
 	/**
