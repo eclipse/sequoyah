@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
+ * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -48,9 +49,10 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 
 	protected Point getInitialSize() {
 
-		return new Point(260, 290);
+		return new Point(260, 310);
 		//return super.getInitialSize();
 	}
+	
 	
 	
 	
@@ -75,7 +77,7 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		portText = new Text(fields, parent.getStyle() | SWT.BORDER);
 		
 		Label passwordLabel = new Label(fields, SWT.RIGHT);
-		passwordText= new Text(fields, parent.getStyle() | SWT.BORDER);
+		passwordText= new Text(fields, parent.getStyle() | SWT.BORDER | SWT.PASSWORD);
 
 		GC gc = new GC(hostText.getDisplay());
 		width = gc.getFontMetrics().getAverageCharWidth() * cols;
@@ -144,7 +146,7 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		}
 
 
-		layout.marginLeft = left;
+		layout.marginLeft = left + 5;
 		layout.marginTop = 5;
 		//layout.marginBottom = 15;
 
