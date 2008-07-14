@@ -8,7 +8,7 @@
  * Daniel Franco (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics;
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tml.vncviewer.config.EclipsePropertiesFileHandler;
 import org.eclipse.tml.vncviewer.config.IPropertiesFileHandler;
 import org.eclipse.tml.vncviewer.config.VNCConfiguration;
-import org.eclipse.tml.vncviewer.graphics.swt.SWTRemoteDisplay;
+import org.eclipse.tml.vncviewer.graphics.swt.img.SWTRemoteDisplayImg;
 
 
 public class RemoteDisplayFactory {
@@ -40,13 +40,11 @@ public class RemoteDisplayFactory {
 		IPropertiesFileHandler propertiesFileHandler = new EclipsePropertiesFileHandler();
 		VNCConfiguration configurator = new VNCConfiguration(DEFAULT_PROPERTIES_FILE, propertiesFileHandler);
 		
-		//Properties config = configurator.getConfigurationProperties("C:/temp/vnc_viewer.conf");
-		//Properties config = configurator.getDefaultConfigurationProperties();
-		
 		Properties config = configurator.getConfigurationProperties();
 	
 		if (display.equals("SWTDisplay")){
-			return new SWTRemoteDisplay(parent, config, propertiesFileHandler);
+//			return new SWTRemoteDisplayImgData(parent, config, propertiesFileHandler);
+			return new SWTRemoteDisplayImg(parent, config, propertiesFileHandler);
 		}
 	
 		return null;

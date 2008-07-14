@@ -15,9 +15,12 @@ package org.eclipse.tml.vncviewer.graphics.swt;
 
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
+import java.io.DataInputStream;
+
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.tml.vncviewer.network.IVNCPainter;
 import org.eclipse.tml.vncviewer.network.PixelFormat;
+import org.eclipse.tml.vncviewer.network.RectHeader;
 
 /**
  * This class renders the screen sent by a VNC Server using SWT.
@@ -100,16 +103,22 @@ public class VNCSWTPainter implements IVNCPainter, ISWTPainter {
 			imgData.getPixels(0, y, fbWidth * height, pixels, 0);
 		}
 
-		/*
-		 * The area effectively painted is composed by: 1) the rectangle of data
-		 * sent by the server 2) the gap between the framebuffer's left border
-		 * and the rectangle 3) the padding between the rectangle and the
-		 * framebuffer's right border
-		 * 
-		 * x x+w _________________ | | y |_ _ _ ____ _ _ _| | 2 | 1 | 3 | y+h |_ _
-		 * _|___| _ _ _| |________________|
-		 */
 
+		/*
+		 * The area effectively painted is composed by:
+		 *   1) the rectangle of data sent by the server
+		 *   2) the gap between the framebuffer's left border and the rectangle
+		 *   3) the padding between the rectangle and the framebuffer's right border
+		 *   
+		 *            x   x+w
+		 *      _________________ 
+		 *      |                |
+		 * y    |_ _ _ ____ _ _ _|
+		 *      |  2  | 1 |  3   |
+		 * y+h  |_ _ _|___| _ _ _|
+		 *      |________________|
+		 */
+		
 		for (int j = 0; j < (pixelsNum); j++) {
 			int pixel;
 			int line = ((int) (j / width));
@@ -185,6 +194,22 @@ public class VNCSWTPainter implements IVNCPainter, ISWTPainter {
 
 	public int getWidth() {
 		return fbWidth;
+	}
+
+	public int[] getSupportedEncodings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void processRectangle(RectHeader rectHeader, DataInputStream in)
+			throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateRectangle(int x1, int y1, int x2, int y2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

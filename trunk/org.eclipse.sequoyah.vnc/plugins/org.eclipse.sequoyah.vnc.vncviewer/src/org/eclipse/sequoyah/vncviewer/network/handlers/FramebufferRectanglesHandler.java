@@ -7,11 +7,9 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Barboza Franco (Motorola) - Integration with code from bug 227793 to correctly deal with the redesigned painting process.
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.network.handlers;
-
-import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,8 +22,8 @@ import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.IRawDataHandler;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
-import org.eclipse.tml.vncviewer.graphics.swt.VNCSWTPainter;
-import org.eclipse.tml.vncviewer.network.PixelFormat;
+import org.eclipse.tml.vncviewer.network.IVNCPainter;
+import org.eclipse.tml.vncviewer.network.RectHeader;
 import org.eclipse.tml.vncviewer.network.VNCProtocol;
 
 /**
@@ -42,6 +40,10 @@ import org.eclipse.tml.vncviewer.network.VNCProtocol;
  */
 public class FramebufferRectanglesHandler implements IRawDataHandler {
 
+	private int current_rect = 1;
+	private int x0, y0 = Integer.MAX_VALUE;
+	private int x1,y1 = 0;
+	
 	public Map<String, Object> readRawDataFromStream(InputStream dataStream,
 			IMessageFieldsStore currentlyReadFields,
 			IProtocolImplementer protocolImplementer, boolean isBigEndian)
@@ -51,52 +53,59 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 		// read
 		int w = (Integer) currentlyReadFields.getFieldValue("width");
 		int h = (Integer) currentlyReadFields.getFieldValue("height");
-		int pixelsNum = w * h;
 
 		Map<String, Object> fieldsMap = new HashMap<String, Object>();
 
 		if (protocolImplementer instanceof VNCProtocol) {
-			// Gets the pixel format, that defines how the pixels are
-			// transmitted
-			// in this VNC connection.
-			VNCSWTPainter painter = (VNCSWTPainter) ((VNCProtocol) protocolImplementer)
-					.getVncPainter();
-			PixelFormat pixelFormat = painter.getPixelFormat();
+			// Collects the painter where the rectangles will be processed
+			// from the protocol implementer instance
+			VNCProtocol vncProtocol = (VNCProtocol) protocolImplementer;
+			IVNCPainter painter = vncProtocol.getVncPainter();
 
-			// final int bytesNum = pixelsNum * 4;
-			final int bytesNum = pixelsNum
-					* ((pixelFormat.getBitsPerPixel()) / 8);
+			
+			int x = (Integer) currentlyReadFields.getFieldValue("x-position");
+			int y = (Integer) currentlyReadFields.getFieldValue("y-position");
+			int width = (Integer) currentlyReadFields.getFieldValue("width");
+			int height = (Integer) currentlyReadFields.getFieldValue("height");
+			int encoding = (Integer) currentlyReadFields.getFieldValue("encodingType");
+			//byte[] data = (byte[]) currentlyReadFields.getFieldValue("pixelsData");
 
-			byte pixelsb[] = new byte[bytesNum];
-			int bytesRead = 0;
-
-			// Read the array of pixels from the VNC Server
-			while (bytesRead < bytesNum) {
-				int numRead;
-
-				try {
-					numRead = dataStream.read(pixelsb, bytesRead, bytesNum
-							- bytesRead);
-				} catch (IOException ioe) {
-					log(VNCProtocol.class).error(
-							"Rectangle message error: " + ioe.getMessage());
-					throw new ProtocolException("Rectangle message error.");
-				}
-
-				if (numRead >= 0) {
-					bytesRead += numRead;
-				}
+			// Process the rectangle data into the painter
+				
+			try {
+				painter.processRectangle(new RectHeader(x, y, width, height, encoding), ((VNCProtocol)protocolImplementer).getInputStream());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
-			// Stores the pixel data into the map to be returned to the
-			// framework
-			fieldsMap.put("pixelsData", pixelsb);
+			int numRect = (Integer)currentlyReadFields.getFieldValue("numberOfRectangles");
+				
+				
+			x0 =Math.min(x0, x);
+			y0 =Math.min(y0, y);
+			x1 =Math.max(x1, x+w);
+			y1 =Math.max(y1, y+h);
+			
+			if (current_rect == numRect) {
+				current_rect = 1;
+
+				painter.updateRectangle(x0, y0, x1, y1);
+					
+				x0 = y0 = Integer.MAX_VALUE;
+				x1 = y1 = 0;
+
+			}
+			else { 
+				current_rect += 1;
+			}
+			
 		}
 
 		return fieldsMap;
 	}
 
-		public void writeRawDataToStream(ByteArrayOutputStream dataStream,
+	public void writeRawDataToStream(ByteArrayOutputStream dataStream,
 			ProtocolMessage messageToGetInformationFrom,
 			IProtocolImplementer protocolImplementer, boolean isBigEndian)
 			throws ProtocolException {

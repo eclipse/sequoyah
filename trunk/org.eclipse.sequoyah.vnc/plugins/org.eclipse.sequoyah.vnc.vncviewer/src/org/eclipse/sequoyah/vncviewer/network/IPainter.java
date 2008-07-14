@@ -28,16 +28,7 @@ public interface IPainter {
 	 * @param height the screen's height
 	 */
 	public void setSize(int width, int height);
-	
-	
-	/**
-	 * Performs the rendering of the screen data sent by the server.
-	 * This method must be called after all the rectangles of data
-	 * were sent to the painter. 
-	 */
-	public void render();
-	
-	
+
 	/**
 	 * Return the screen width.
 	 */

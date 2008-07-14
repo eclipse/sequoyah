@@ -8,7 +8,7 @@
  * Daniel Franco (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -36,6 +36,7 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 	private Text hostText;
 	private Text portText;
 	private Combo protocolVersion;
+	private Text passwordText;
 	
 	public OpenConnectionDialog(Shell parent) {
 		super(parent);
@@ -73,6 +74,9 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		Label portLabel = new Label(fields, SWT.RIGHT);
 		portText = new Text(fields, parent.getStyle() | SWT.BORDER);
 		
+		Label passwordLabel = new Label(fields, SWT.RIGHT);
+		passwordText= new Text(fields, parent.getStyle() | SWT.BORDER);
+
 		GC gc = new GC(hostText.getDisplay());
 		width = gc.getFontMetrics().getAverageCharWidth() * cols;
 		height = gc.getFontMetrics().getHeight();
@@ -89,6 +93,10 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		portText.setSize(portText.computeSize(width, height));
 		portText.setLayoutData(gridData);
 		
+		passwordLabel.setText("Password:");
+		passwordText.setSize(passwordText.computeSize(width, height));
+		passwordText.setLayoutData(gridData);
+
 		createCombo(external);
 		
 		return external;
@@ -101,12 +109,12 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 				
 		String host = hostText.getText();
 		String version;
+
 		int port = Integer.valueOf(portText.getText()).intValue();
-		
-		
 		version = protocolVersion.getItem(protocolVersion.getSelectionIndex());
-		
-		VNCViewerView.start(host, port, version);
+		String password = passwordText.getText();
+
+		VNCViewerView.start(host, port, version, password);
 		
 		super.okPressed();
 		

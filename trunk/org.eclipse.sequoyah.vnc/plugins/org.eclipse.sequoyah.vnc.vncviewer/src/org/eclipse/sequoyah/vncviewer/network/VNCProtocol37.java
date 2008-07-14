@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
+ * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
@@ -122,6 +123,11 @@ public class VNCProtocol37 extends VNCProtocol {
 		}
 
 		/* The Sec-types handling is not implemented yet */
+	}
+	
+	@Override
+	protected String getVersion() {
+		return RFB_VERSION;
 	}
 
 }

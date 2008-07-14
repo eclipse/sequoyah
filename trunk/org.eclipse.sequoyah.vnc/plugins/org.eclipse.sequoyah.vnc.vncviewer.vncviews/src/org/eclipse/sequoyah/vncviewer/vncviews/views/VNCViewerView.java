@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
+ * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -21,25 +22,25 @@ import org.eclipse.tml.protocol.PluginProtocolActionDelegate;
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.vncviewer.graphics.RemoteDisplayFactory;
 import org.eclipse.tml.vncviewer.graphics.swt.SWTRemoteDisplay;
+import org.eclipse.tml.vncviewer.network.VNCProtocol;
 import org.eclipse.ui.part.ViewPart;
 
+
 /**
- * The VNCViewerView class implements the Eclipse View that contains a VNC
- * viewer.
+ * The VNCViewerView class implements the Eclipse View that contains a VNC viewer. 
  */
-public class VNCViewerView extends ViewPart {
+public class VNCViewerView extends ViewPart{
+	
 
 	private static SWTRemoteDisplay swtDisplay;
-
+	
 	private static boolean running = false;
 
 	public static IProtocolImplementer protocol;
 
 	public void createPartControl(Composite parent) {
-		// swtDisplay = new SWTRemoteDisplay(parent);
 
-		swtDisplay = (SWTRemoteDisplay) RemoteDisplayFactory.getDisplay(
-				"SWTDisplay", parent);
+		swtDisplay = (SWTRemoteDisplay) RemoteDisplayFactory.getDisplay("SWTDisplay", parent);
 		running = true;
 
 		if (VNCViewerView.protocol != null) {
@@ -59,20 +60,20 @@ public class VNCViewerView extends ViewPart {
 		}
 	}
 
+
 	public void dispose() {
 
 		running = false;
-		if (swtDisplay != null)
-			swtDisplay.dispose();
+		if (swtDisplay != null) swtDisplay.dispose();
 		super.dispose();
 	}
+
 
 	/**
 	 * Performs the start action into the VNC Component.
 	 */
-	synchronized public static void start(String host, int port,
-			String protoVersion) {
-
+	synchronized public static void start(String host, int port, String protoVersion, String password){
+		
 		if ((running) && (swtDisplay != null)) {
 
 			if (swtDisplay.isActive()) {
@@ -87,36 +88,40 @@ public class VNCViewerView extends ViewPart {
 				VNCViewerView.protocol = PluginProtocolActionDelegate
 						.startClientProtocol(protocolId, host);
 
+				//protocol.setPainter(swtDisplay.getPainter());
+
+				((VNCProtocol)protocol).setPassword(password);
+				
 				swtDisplay.start(protocol);
 
-			} catch (Exception e) {
-
-				log(VNCViewerView.class).error(
-						"Viewer could not be started: " + e.getMessage());
-
+			} catch (Exception e){
+	
+				log(VNCViewerView.class).error("Viewer could not be started: " + e.getMessage());
+	
 				GC gc = new GC(swtDisplay.getCanvas());
-				gc.fillRectangle(0, 0, swtDisplay.getScreenWidth(), swtDisplay
-						.getScreenHeight());
-				gc.dispose();
-
+	    		gc.fillRectangle(0, 0, swtDisplay.getScreenWidth(), swtDisplay.getScreenHeight());
+	    		gc.dispose();		
+	    		
 			}
-
 		}
 	}
 
 	/**
 	 * Performs the stop action into the VNC Component.
 	 */
-	synchronized public static void stop() {
-
+	synchronized public static void stop(){
+		
 		if ((running) && (swtDisplay != null)) {
 
 			if (swtDisplay.isActive()) {
 				swtDisplay.stop();
 			}
-
+			
+			
+	
 		}
-
+		
+		
 	}
-
+	
 }

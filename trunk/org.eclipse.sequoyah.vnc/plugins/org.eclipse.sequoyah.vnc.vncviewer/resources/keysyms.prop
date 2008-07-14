@@ -2,3 +2,9 @@
 
 XK_Control_L=0xFFE3
 XK_Shift_L=0xFFE1
+
+
+XK_Left=0xFF51
+XK_Up=0xFF52
+XK_Right=0xFF53
+XK_Down=0xFF54

@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
+ * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -22,6 +23,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.vncviewer.config.IPropertiesFileHandler;
 import org.eclipse.tml.vncviewer.config.IVNCProperties;
+import org.eclipse.tml.vncviewer.network.VNCKeyEvent;
+import org.eclipse.tml.vncviewer.network.VNCMouseEvent;
+
 
 /**
  * This class provides translations from SWT events to VNC specific information.
@@ -31,11 +35,6 @@ public class SWTVNCEventTranslator {
 	private boolean shiftPressed = false;
 	private boolean buttonPressed = false;
 
-	// private static Hashtable <Integer, Integer> swtKeysymsMap;
-
-	/*
-	 * private static Properties keysyms; private static Properties swtkeys;
-	 */
 	private Hashtable<Integer, Integer> swtToKeysymCodes;
 
 	private Properties configProperties;
@@ -48,135 +47,46 @@ public class SWTVNCEventTranslator {
 		this.propertiesFileHandler = propertiesFileHandler;
 
 		initKeysyms();
-
+	
 	}
+	
+	
 
-	/*
-	 * public static void addSWTKeysymAssociation(int swtKey, int keysymValue){
-	 * 
-	 * if (swtKeysymsMap == null) { swtKeysymsMap = new Hashtable(); }
-	 * 
-	 * swtKeysymsMap.put(new Integer(swtKey), new Integer(keysymValue)); }
-	 */
+	public void initKeysyms(){
+	
+		String swtkeysymsFile = configProperties.getProperty(IVNCProperties.KEYSYM_SWT_PROPERTIES_FILE);
+		String keysymsFile = configProperties.getProperty(IVNCProperties.KEYSYM_PROPERTIES_FILE);
+		String swtkeysFile = configProperties.getProperty(IVNCProperties.SWTKEYS_PROPERTIES_FILE);				
 
-	/*
-	 * private static Properties loadPropertiesFile(String filename) {
-	 * 
-	 * Properties properties = new Properties();
-	 * 
-	 * File propFile = new File (filename);
-	 * 
-	 * try { properties.load( new FileInputStream(propFile)); } catch
-	 * (IOException e) { //TODO handle properly e.printStackTrace(); }
-	 * 
-	 * return properties; }
-	 */
-
-	/*
-	 * private static Properties loadDefaultPropertiesFile(String filename) {
-	 * 
-	 * Properties properties = new Properties(); Bundle pluginBundle =
-	 * VNCViewerPlugin.getDefault().getBundle(); URL vncViewerConf =
-	 * pluginBundle.getResource(filename);
-	 * 
-	 * try { InputStream vncViewerConfStream = vncViewerConf.openStream();
-	 * properties.load(vncViewerConfStream); } catch (IOException e) { // TODO
-	 * handle properly e.printStackTrace(); }
-	 * 
-	 * 
-	 * return properties; }
-	 */
-
-	public void initKeysyms() {
-
-		/*
-		 * addSWTKeysymAssociation(SWT.MouseUp, VNCMouseEvent.MOUSE_UP);
-		 * addSWTKeysymAssociation(SWT.MouseDown, VNCMouseEvent.MOUSE_DOWN);
-		 * addSWTKeysymAssociation(SWT.MouseMove, VNCMouseEvent.MOUSE_MOVE);
-		 */
-
-		// InputStream inStream;
-		// URL url =
-		// WorkbenchPlugin.getDefault().getBundle().getResource("C:/temp/SWT_to_keysyms.prop");
-		// //project.getFile(getEditorInput().getName());
-		// url.get
-		// IFile ifile;
-		// ifile.
-		// inStream = ifile.getContents();
-		// VNCViewerPlugin.getDefault().getWorkbench().
-		/*
-		 * VNCConfiguration configurator = new VNCConfiguration(); Properties
-		 * conf = configurator.getDefaultConfigurationProperties();
-		 * 
-		 * String swtkeysymsFile =
-		 * conf.getProperty(IVNCProperties.KEYSYM_SWT_PROPERTIES_FILE); String
-		 * keysymsFile =
-		 * conf.getProperty(IVNCProperties.KEYSYM_PROPERTIES_FILE); String
-		 * swtkeysFile =
-		 * conf.getProperty(IVNCProperties.SWTKEYS_PROPERTIES_FILE);
-		 */
-
-		String swtkeysymsFile = configProperties
-				.getProperty(IVNCProperties.KEYSYM_SWT_PROPERTIES_FILE);
-		String keysymsFile = configProperties
-				.getProperty(IVNCProperties.KEYSYM_PROPERTIES_FILE);
-		String swtkeysFile = configProperties
-				.getProperty(IVNCProperties.SWTKEYS_PROPERTIES_FILE);
-
-		Properties keysymSwt = propertiesFileHandler
-				.loadPropertiesFile(swtkeysymsFile);
-		Properties keysyms = propertiesFileHandler
-				.loadPropertiesFile(keysymsFile);
-		Properties swtkeys = propertiesFileHandler
-				.loadPropertiesFile(swtkeysFile);
-
+		Properties keysymSwt = propertiesFileHandler.loadPropertiesFile(swtkeysymsFile);
+		Properties keysyms = propertiesFileHandler.loadPropertiesFile(keysymsFile);
+		Properties swtkeys = propertiesFileHandler.loadPropertiesFile(swtkeysFile);
+		
+		
 		swtToKeysymCodes = new Hashtable();
 
 		/* Generates the SWT x Keysym map from files */
-		for (Enumeration<Object> swtcodes = keysymSwt.keys(); swtcodes
-				.hasMoreElements();) {
-
+		for (Enumeration <Object> swtcodes = keysymSwt.keys() ; swtcodes.hasMoreElements() ;) {
+			
 			String key = (String) swtcodes.nextElement();
-
+			
 			Integer swtCode = new Integer(swtkeys.getProperty(key));
-
-			// Integer keysymCode = new
-			// Integer(keysyms.getProperty(keysymSwt.getProperty(key)));
-			Integer keysymCode = Integer.decode(keysyms.getProperty(keysymSwt
-					.getProperty(key)));
-
+			Integer keysymCode = Integer.decode(keysyms.getProperty(keysymSwt.getProperty(key)));	
+			
 			swtToKeysymCodes.put(swtCode, keysymCode);
-
-		}
+			
+		} 
+		
 
 	}
-
+	
+	
+	
 	/**
-	 * Returns a Protocol Message from a given mouse SWT Event.
-	 * 
-	 * @param swtEvent
-	 *            the Event to be translated.
+	 * Returns a MouseEvent from a given SWT Event.
+	 * @param swtEvent the Event to be translated.
 	 */
 	public ProtocolMessage getMouseEventMessage(Event swtEvent) {
-
-		// button mask
-		switch (swtEvent.type) {
-
-		case (SWT.MouseUp):
-			buttonPressed = false;
-
-			break;
-
-		case (SWT.MouseDown):
-			buttonPressed = true;
-
-			break;
-
-		case (SWT.MouseMove):
-		default:
-			break;
-
-		}
 
 		// Creates the mouse event message, providing the
 		// necessary coordinates
@@ -189,10 +99,8 @@ public class SWTVNCEventTranslator {
 	}
 
 	/**
-	 * Returns a ProtocolMessage from a given key SWT Event.
-	 * 
-	 * @param swtEvent
-	 *            the Event to be translated.
+	 * Returns a KeyEvent from a given SWT Event.
+	 * @param swtEvent the Event to be translated.
 	 */
 	public ProtocolMessage getKeyEventMessage(Event swtEvent) {
 
@@ -225,9 +133,7 @@ public class SWTVNCEventTranslator {
 
 	/**
 	 * Returns a keysym from a given keyCode.
-	 * 
-	 * @param swtKeyCode
-	 *            the keyCode to be translated.
+	 * @param swtKeyCode the keyCode to be translated. 
 	 */
 	public int getKeysym(int swtKeyCode) {
 
@@ -237,29 +143,11 @@ public class SWTVNCEventTranslator {
 
 		if (keysymObj != null) {
 			keysym = keysymObj.intValue();
-		} else {
+		}
+		else {
 			keysym = swtKeyCode;
 		}
-
-		// swtKeyCode
-
-		/*
-		 * switch (swtKeyCode) {
-		 * 
-		 * case(SWT.CONTROL): keysym = KeysymConstants.XK_CONTROL_L; break;
-		 * 
-		 * case(SWT.SHIFT): keysym = KeysymConstants.XK_SHIFT_L; break;
-		 * 
-		 * case(SWT.ALT): keysym = KeysymConstants.XK_ALT_L; break;
-		 * 
-		 * 
-		 * default:
-		 * 
-		 * 
-		 * keysym = swtKeyCode; break; }
-		 * 
-		 */
-
+		
 		return keysym;
 	}
 

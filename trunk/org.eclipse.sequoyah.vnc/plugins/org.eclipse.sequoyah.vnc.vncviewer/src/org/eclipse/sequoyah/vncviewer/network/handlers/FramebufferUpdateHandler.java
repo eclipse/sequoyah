@@ -15,6 +15,7 @@ import org.eclipse.tml.protocol.lib.IMessageHandler;
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.vncviewer.network.IVNCPainter;
+import org.eclipse.tml.vncviewer.network.RectHeader;
 import org.eclipse.tml.vncviewer.network.VNCProtocol;
 
 /**
@@ -33,37 +34,8 @@ public class FramebufferUpdateHandler implements IMessageHandler {
 
 	public ProtocolMessage handleMessage(
 			IProtocolImplementer protocolImplementer, ProtocolMessage message) {
-
-		if (protocolImplementer instanceof VNCProtocol) {
-			// Collects the painter where the rectangles will be processed
-			// from the protocol implementer instance
-			VNCProtocol vncProtocol = (VNCProtocol) protocolImplementer;
-			IVNCPainter painter = vncProtocol.getVncPainter();
-
-			String iteratableBlockId = "rectangle";
-			int numRectangles = (Integer) message
-					.getFieldValue("numberOfRectangles");
-
-			for (int i = 0; i < numRectangles; i++) {
-				// Collects all rectangle data
-				int x = (Integer) message.getFieldValue("x-position",
-						iteratableBlockId, i);
-				int y = (Integer) message.getFieldValue("y-position",
-						iteratableBlockId, i);
-				int width = (Integer) message.getFieldValue("width",
-						iteratableBlockId, i);
-				int height = (Integer) message.getFieldValue("height",
-						iteratableBlockId, i);
-				int encoding = (Integer) message.getFieldValue("encodingType",
-						iteratableBlockId, i);
-				byte[] data = (byte[]) message.getFieldValue("pixelsData",
-						iteratableBlockId, i);
-
-				// Process the rectangle data into the painter
-				painter.processRectangle(encoding, data, x, y, width, height);
-			}
-		}
-
+		
+		
 		return null;
 	}
 }

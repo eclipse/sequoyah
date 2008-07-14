@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
+ * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -22,6 +23,7 @@ import java.util.TimerTask;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -34,7 +36,11 @@ import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.vncviewer.config.IPropertiesFileHandler;
 import org.eclipse.tml.vncviewer.config.IVNCProperties;
 import org.eclipse.tml.vncviewer.graphics.IRemoteDisplay;
+import org.eclipse.tml.vncviewer.graphics.swt.img.Painter;
+import org.eclipse.tml.vncviewer.network.IVNCPainter;
 import org.eclipse.tml.vncviewer.network.VNCProtocol;
+import org.eclipse.tml.vncviewer.network.IProtoClient;
+import org.eclipse.tml.vncviewer.network.VNCKeyEvent;
 
 /**
  * This class implements the GUI part of a Remote Desktop Viewer. It also uses a
@@ -42,7 +48,8 @@ import org.eclipse.tml.vncviewer.network.VNCProtocol;
  */
 public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
-	private Canvas canvas;
+	//private IProtocolImplementer protoClient;
+	protected Canvas canvas;
 	private VNCProtocol protoClient;
 	private Image screen = null;
 	// private ImageData imgData;
@@ -110,21 +117,19 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 		this.setLayout(parent.getLayout());
 
+		//canvas = new Canvas(this, getCanvasStyle());
 		canvas = new Canvas(this, SWT.BACKGROUND);
-
 		eventTranslator = new SWTVNCEventTranslator(configProperties,
 				propertiesFileHandler);
 
 		initConfiguration();
 
-		/*
-		 * protoClient = ProtocolFactory.getProtocol(PROTOCOL_VERSION);
-		 * 
-		 * painter = (ISWTPainter) protoClient.getPainter();
-		 */
-		// painter.setImageData(imgData);
 	}
 
+	protected int getCanvasStyle() {
+		return SWT.BACKGROUND;  
+	}
+	
 	private void initConfiguration() {
 
 		connectionRetries = Integer.valueOf(
@@ -154,9 +159,6 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	 * Adds a KeyListener.
 	 */
 	private void addKeyListener() {
-
-		final SWTRemoteDisplay swtDisplay = this;
-
 		keyListener = new Listener() {
 			public void handleEvent(Event event) {
 				final Event ev = event;
@@ -164,25 +166,13 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 				if (isActive()) {
 
 					try {
-						swtDisplay.keyEvent(ev);
-						swtDisplay.updateScreen();
+						keyEvent(ev);
+						updateRequest(true);
 					} catch (Exception e) {
-
 						log(SWTRemoteDisplay.class).error(
 								"Remote Display error on key event.");
-
-						/*
-						 * Label label; label = new
-						 * org.eclipse.swt.widgets.Label(swtDisplay.getParent(),
-						 * SWT.NONE); label.setText(NOT_AVAILABLE_MESSAGE);
-						 */
 					}
 				}
-
-				GC gc = new GC(getCanvas());
-				gc.drawImage(getScreen(), 0, 0);
-				gc.dispose();
-
 			}
 
 		};
@@ -191,7 +181,6 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			public void run() {
 				canvas.addListener(SWT.KeyDown, keyListener);
 				canvas.addListener(SWT.KeyUp, keyListener);
-
 			}
 		});
 	}
@@ -200,9 +189,6 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	 * Adds a MouseListener.
 	 */
 	private void addMouseListener() {
-
-		final SWTRemoteDisplay swtDisplay = this;
-
 		mouseListener = new Listener() {
 			public void handleEvent(Event event) {
 				final Event ev = event;
@@ -210,30 +196,14 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 				if (isActive()) {
 
 					try {
-						boolean incremental;
-						swtDisplay.mouseEvent(ev);
-
-						incremental = (ev.type == SWT.MouseUp) ? false : true;
-						swtDisplay.updateRequest(incremental);
-					} catch (Exception e) {
-
+						mouseEvent(ev);
+					} 
+					catch (Exception e) {
 						log(SWTRemoteDisplay.class).error(
 								"Remote Display error on key event.");
-
-						/*
-						 * Label label; label = new
-						 * org.eclipse.swt.widgets.Label(swtDisplay.getParent(),
-						 * SWT.NONE); label.setText(NOT_AVAILABLE_MESSAGE);
-						 */
 					}
 				}
-
-				GC gc = new GC(getCanvas());
-				gc.drawImage(getScreen(), 0, 0);
-				gc.dispose();
-
 			}
-
 		};
 
 		getCanvas().getDisplay().asyncExec(new Runnable() {
@@ -256,27 +226,17 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		final SWTRemoteDisplay swtDisplay = this;
 
 		refreshTimer.scheduleAtFixedRate(new TimerTask() {
-
 			public void run() {
-
 				display.syncExec(new Runnable() {
 					public void run() {
-
 						try {
-							updateScreen();
+							updateRequest(true);
 						} catch (Exception e) {
 							refreshTimer.cancel();
 							log(SWTRemoteDisplay.class).error(
 									"Update screen error: " + e.getMessage());
 						}
-
-						if (swtDisplay.isActive() && !canvas.isDisposed()) {
-
-							GC gc = new GC(getCanvas());
-							gc.drawImage(getScreen(), 0, 0);
-							gc.dispose();
-
-						} else {
+						if (!swtDisplay.isActive() || canvas.isDisposed()) {
 							refreshTimer.cancel();
 						}
 					}
@@ -327,7 +287,6 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 				PluginProtocolActionDelegate.restartProtocol(protoClient);
 				start(protoClient);
-				// start(host, port, protoClient);
 			} else {
 				throw new Exception(
 						"Number of connection retries exceeded the limit of "
@@ -345,14 +304,14 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		if (protocol instanceof VNCProtocol) {
 			try {
 
-				/*
-				 * if (protoClient != null) { protoClient.stopProtocol(); }
-				 */
 				protoClient = (VNCProtocol) protocol;
-				painter = (ISWTPainter) protoClient.getVncPainter();
 
 				protoClient.setPaintEnabled(true);
+				protoClient.setVncPainter((IVNCPainter)painter);
 
+				((Painter)painter).setPixelFormat(protoClient.getPixelFormat());
+				((IVNCPainter)painter).setSize(protoClient.getWidth(), protoClient.getHeight());
+				
 				addRefreshTimer();
 				addKeyListener();
 				addMouseListener();
@@ -388,14 +347,15 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 		// repaints the background to the default color
 		if (canvas != null) {
+			Point p = canvas.getSize();
 			GC gc = new GC(canvas);
-			gc.fillRectangle(0, 0, painter.getWidth(), painter.getHeight());
+			gc.fillRectangle(0, 0, p.x, p.y);
 			gc.dispose();
 		}
 
 	}
 
-	private void updateRequest(boolean incremental) throws Exception {
+	protected void updateRequest(boolean incremental) throws Exception {
 
 		try {
 			// Creates a update request message, setting the request
@@ -422,9 +382,6 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			screen.dispose();
 		}
 
-		screen = new Image(canvas.getDisplay(), painter.getImageData()
-				.scaledTo((int) (painter.getWidth() * zoomFactor),
-						(int) (painter.getHeight() * zoomFactor)));
 	}
 
 	public void updateScreen() throws Exception {
@@ -436,8 +393,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		try {
 
 			ProtocolMessage message = eventTranslator.getKeyEventMessage(event);
-			PluginProtocolActionDelegate.sendMessageToServer(protoClient,
-					message);
+			PluginProtocolActionDelegate.sendMessageToServer(protoClient, message);
 
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
@@ -452,10 +408,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	public void mouseEvent(Event event) throws Exception {
 
 		try {
-			ProtocolMessage message = eventTranslator
-					.getMouseEventMessage(event);
-			PluginProtocolActionDelegate.sendMessageToServer(protoClient,
-					message);
+			ProtocolMessage message = eventTranslator.getMouseEventMessage(event);
+			PluginProtocolActionDelegate.sendMessageToServer(protoClient, message);
 
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
@@ -517,8 +471,10 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	public void dispose() {
 
 		try {
-			// protoClient.stopProtocol();
-			protoClient.setPaintEnabled(false); // There are no UI components
+			if (protoClient != null) {
+				// protoClient.stopProtocol();
+				protoClient.setPaintEnabled(false); // There are no UI components
+			}
 			// paint the images for now on.
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
@@ -560,9 +516,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	}
 
 	public void setBackground(Color color) {
-
 		super.setBackground(color);
-
 		if (canvas != null) {
 			canvas.setBackground(color);
 		}

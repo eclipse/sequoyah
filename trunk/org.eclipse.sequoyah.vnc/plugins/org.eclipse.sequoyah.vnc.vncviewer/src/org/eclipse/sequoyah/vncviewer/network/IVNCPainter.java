@@ -8,11 +8,12 @@
  * Daniel Franco (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
 
+import java.io.DataInputStream;
 
 
 
@@ -25,14 +26,17 @@ public interface IVNCPainter extends IPainter{
 	public void setPixelFormat(PixelFormat pixelFormat);
 	
 	/**
-	 * Process a rectangle of data sent by the VNC Server.
-	 * @param encoding the encoding used to represent the data.
-	 * @param data the rectangle data
-	 * @param x the x coordinate
-	 * @param y the y coordinate
-	 * @param width the rectangle's width
-	 * @param  height the rectangle's height
+	 * Returns the PixelFormat object.
+	 * @return the PixelFormat
 	 */
-	public void processRectangle(int encoding, byte[] data, int x, int y, int width, int height);
+	public PixelFormat getPixelFormat();
 	
+	/**
+	 * Process a rectangle of data sent by the VNC Server.
+	 */
+	public void processRectangle(RectHeader rectHeader, DataInputStream in) throws Exception;
+
+	void updateRectangle(int x1, int y1, int x2, int y2);
+
+	int[] getSupportedEncodings();	
 }

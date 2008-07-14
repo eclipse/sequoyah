@@ -16,6 +16,7 @@ package org.eclipse.tml.vncviewer.network;
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
 import java.io.DataInputStream;
+import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
 
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
 
@@ -27,32 +28,34 @@ import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
  * Protocol specification.
  */
 public class PixelFormat {
+	
+	private int 
+		/* The variables below are explained in the VNC Protocol Specification - aka The RFB Protocol */
+		bitsPerPixel,
+		depth,
+		bigEndianFlag,
+		trueColourFlag,
+		
+		redMax,
+		greenMax,
+		blueMax,
+		
+		redShift,
+		greenShift,
+		blueShift;
+	
+	private static int paddingSize = 3;  /* the padding is a number of unused bytes that completes an Word of data */
 
-	private int
-	/*
-	 * The variables below are explained in the VNC Protocol Specification - aka
-	 * The RFB Protocol
-	 */
-	bitsPerPixel, depth, bigEndianFlag, trueColourFlag,
-
-	redMax, greenMax, blueMax,
-
-	redShift, greenShift, blueShift;
-
-	private static int paddingSize = 3; /*
-										 * the padding is a number of unused
-										 * bytes that completes an Word of data
-										 */
 
 	public PixelFormat() {
 
 	}
 
+	
 	/**
 	 * Gets the pixel data from the server.
 	 * 
-	 * @param in
-	 *            the DataInputStream that reads data coming from the server.
+	 * @param in the DataInputStream that reads data coming from the server.
 	 */
 	public void getPixelFormat(DataInputStream in) throws ProtocolException {
 
@@ -72,17 +75,16 @@ public class PixelFormat {
 
 			byte[] padding = new byte[paddingSize];
 			in.readFully(padding);
-
-		} catch (Exception e) {
-			log(PixelFormat.class).error(
-					"Pixel Format read error: " + e.getMessage());
+			
+		}
+		catch (Exception e){
+			log(PixelFormat.class).error("Pixel Format read error: " + e.getMessage());
 			throw new ProtocolException("Pixel Format read error.");
 		}
 	}
 
 	/**
 	 * Gets the bitsPerPixel value.
-	 * 
 	 * @return the bitsPerPixel value.
 	 */
 	public int getBitsPerPixel() {
@@ -91,7 +93,6 @@ public class PixelFormat {
 
 	/**
 	 * Gets the depth value.
-	 * 
 	 * @return the depth value.
 	 */
 	public int getDepth() {
@@ -100,7 +101,6 @@ public class PixelFormat {
 
 	/**
 	 * Gets the bigEndianFlag value.
-	 * 
 	 * @return the bigEndianFlag value.
 	 */
 	public int getBigEndianFlag() {
@@ -109,7 +109,6 @@ public class PixelFormat {
 
 	/**
 	 * Gets the trueColourFlag value.
-	 * 
 	 * @return the trueColourFlag value.
 	 */
 	public int getTrueColourFlag() {
@@ -118,7 +117,6 @@ public class PixelFormat {
 
 	/**
 	 * Gets the redMax value.
-	 * 
 	 * @return the redMax value.
 	 */
 	public int getRedMax() {
@@ -127,7 +125,6 @@ public class PixelFormat {
 
 	/**
 	 * Gets the greenMax value.
-	 * 
 	 * @return the greenMax value.
 	 */
 	public int getGreenMax() {
@@ -136,7 +133,6 @@ public class PixelFormat {
 
 	/**
 	 * Gets the blueMax value.
-	 * 
 	 * @return the blueMax value.
 	 */
 	public int getBlueMax() {
@@ -145,7 +141,6 @@ public class PixelFormat {
 
 	/**
 	 * Gets the redShift value.
-	 * 
 	 * @return the redShift value.
 	 */
 	public int getRedShift() {
@@ -154,7 +149,6 @@ public class PixelFormat {
 
 	/**
 	 * Gets the greenShift value.
-	 * 
 	 * @return the greenShift value.
 	 */
 	public int getGreenShift() {
@@ -163,11 +157,12 @@ public class PixelFormat {
 
 	/**
 	 * Gets the blueShift value.
-	 * 
 	 * @return the blueShift value.
 	 */
 	public int getBlueShift() {
 		return blueShift;
 	}
 
+
 }
+

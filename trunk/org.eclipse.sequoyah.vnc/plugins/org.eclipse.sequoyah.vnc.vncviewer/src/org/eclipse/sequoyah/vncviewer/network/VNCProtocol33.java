@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
+ * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
@@ -33,7 +34,41 @@ public class VNCProtocol33 extends VNCProtocol {
 	 * version
 	 */
 
-	/**
+	@Override
+	protected String getVersion() {
+		return RFB_VERSION;
+	}
+
+	@Override
+	protected int[] readSecurityTypes() throws Exception {
+		int[] result = null;
+		int secType = in.readInt();
+		switch (secType) {
+		case SECURITY_TYPE_INVALID:
+			handshakeFail();
+			break;
+		case SECURITY_TYPE_NONE:
+		case SECURITY_TYPE_VNC:
+			result = new int[1];
+			result[0] = secType;
+			break;
+		default:
+			throw new Exception("VNC security negotiation error: Unknown security type" );
+		}
+		return result;
+	}
+
+	@Override
+	protected void sendSecurityType(int securityType) throws Exception {
+	}
+
+	@Override
+	protected void readAuthenticationResult() throws Exception {
+		
+		/* Version 3.3 doesn't have SecurityResult */
+	}
+	
+		/**
 	 * Constant that defines the number of bytes read in the handshake phase.
 	 */
 	static final int HANDSHAKE_MESSAGE_SIZE = 12; /*

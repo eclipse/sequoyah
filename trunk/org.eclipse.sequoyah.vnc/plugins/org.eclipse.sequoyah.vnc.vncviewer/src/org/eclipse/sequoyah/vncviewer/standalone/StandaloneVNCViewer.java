@@ -8,7 +8,7 @@
  * Daniel Franco (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.standalone;
@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tml.vncviewer.graphics.swt.SWTRemoteDisplay;
+import org.eclipse.tml.vncviewer.graphics.swt.imgdata.SWTRemoteDisplayImgData;
 
 
 /**
@@ -96,7 +97,7 @@ public class StandaloneVNCViewer {
 	 */
 	public static void updateScreenLoop(Composite parent) {
 		
-		final SWTRemoteDisplay vncswt = new SWTRemoteDisplay(parent, new Properties(), null);
+		final SWTRemoteDisplay vncswt = new SWTRemoteDisplayImgData(parent, new Properties(), null);
 	
 		try {
 			//vncswt.start(host, port, null);
