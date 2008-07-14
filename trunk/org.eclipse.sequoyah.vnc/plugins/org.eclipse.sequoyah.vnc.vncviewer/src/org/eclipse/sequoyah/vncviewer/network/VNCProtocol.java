@@ -10,6 +10,8 @@
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
+ * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
+ * Daniel Barboza Franco - Bug [233062] - Protocol connection port is static.
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
@@ -17,16 +19,13 @@ package org.eclipse.tml.vncviewer.network;
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
-
-import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
 import java.io.OutputStream;
+import java.util.Map;
 
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
-import org.eclipse.tml.vncviewer.graphics.swt.VNCSWTPainter;
+import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
 
 /**
  * Abstract class that defines the main behavior of the VNC Protocol.
@@ -119,6 +118,7 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 	public final static int BELL = 2;
 
 	private boolean paintEnabled;
+	private Map parameters;
 	
 	/**
 	 * Constant used to represent the Server Cut Text RFB Server message.   
@@ -326,7 +326,6 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 	    DesEncoder des = new DesEncoder(pwd);
 	    des.encode(challenge, challenge);
 		out.write(challenge);
-		
 	}
 	
 	protected void readAuthenticationResult() throws Exception {
@@ -336,11 +335,14 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		}
 	}
 	
-	public void clientInit(DataInputStream in, OutputStream out)
+	public void clientInit(DataInputStream in, OutputStream out, Map parameters)
 			throws ProtocolException {
 
 		this.in = in;
 		this.out = out;
+		this.parameters = parameters;
+		
+		setPassword((String)parameters.get("password"));
 		
 		try {
 			negotiateProtocol();
@@ -376,7 +378,7 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		
 	}
 
-	public void serverInit(DataInputStream in, OutputStream out)
+	public void serverInit(DataInputStream in, OutputStream out, Map parameters)
 			throws ProtocolException {
 
 	}
