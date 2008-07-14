@@ -106,6 +106,13 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="visible" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Specify whether a service is visible on the UI.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

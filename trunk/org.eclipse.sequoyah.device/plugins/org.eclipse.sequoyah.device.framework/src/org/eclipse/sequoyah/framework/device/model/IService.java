@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Daniel Barboza Franco - Bug [239970] - Invisible Services
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.model;
@@ -65,5 +65,9 @@ public interface IService {
 	IStatusTransition getStatusTransitions(String startId);
 	
 	void setStatusTransitions(List<IStatusTransition> status);
+	
+	void setVisible(boolean visible);
+	
+	boolean isVisible();
 	
 }

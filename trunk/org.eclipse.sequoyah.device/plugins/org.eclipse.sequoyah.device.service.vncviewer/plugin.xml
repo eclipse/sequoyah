@@ -13,7 +13,8 @@
             id="org.eclipse.tml.service.vncviewer.vncViewerService"
             name="Connect VNC"
             provider="Eclipse.org"
-            version="0.2.0">
+            version="0.2.0"
+            visible="true">
       </service>
    </extension>
  <extension
@@ -28,7 +29,8 @@
             id="org.eclipse.tml.service.vncviewer.unplugVncViewerService"
             name="Disconnect VNC"
             provider="Eclipse.org"
-            version="0.2.0">
+            version="0.2.0"
+            visible="true">
       </service>
    </extension>
 </plugin>

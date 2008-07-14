@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Daniel Barboza Franco - Bug [239970] - Invisible Services
  ********************************************************************************/
 package org.eclipse.tml.framework.device.factory;
 
@@ -46,6 +46,7 @@ public class ServiceFactory {
 	private static final String ATR_COPYRIGHT = "copyright";
 	private static final String ATR_VERSION = "version";
 	private static final String ATR_HANDLER = "handler";
+	private static final String ATR_VISIBLE = "visible";
 	
 	
 	@SuppressWarnings("deprecation")
@@ -69,6 +70,7 @@ public class ServiceFactory {
 		service.setProvider(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_SERVICE, ATR_PROVIDER));
 		service.setCopyright(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_SERVICE,ATR_COPYRIGHT));
 		service.setVersion(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_SERVICE, ATR_VERSION));
+		service.setVisible(new Boolean(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_SERVICE, ATR_VISIBLE)));
 		try {
 			IServiceHandler originalHandler = (IServiceHandler)PluginUtils.getExecutableAttribute(fromPlugin, ELEMENT_SERVICE, ATR_HANDLER);
 			if (handler!=null) {

@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
+ * Daniel Barboza Franco (Motorola) - Bug [239970] - Invisible Services
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view;
 
@@ -187,7 +188,7 @@ public class InstanceView extends ViewPart implements IInstanceListeners, IPartL
 		// Create the tree viewer as a child of the composite parent
 		treeViewer = new TreeViewer(parent);
 		
-		// TODO - Provider sem Viewer
+		// TODO - Provider without Viewer
 		treeViewer.setContentProvider(new InstanceContentProvider());
 		labelProvider = new InstanceLabelProvider();
 		treeViewer.setLabelProvider(labelProvider);
@@ -336,12 +337,15 @@ public class InstanceView extends ViewPart implements IInstanceListeners, IPartL
         
 		newItem = new MenuItem(menu, SWT.SEPARATOR);
 				
+		// TODO: verify this code
 		for (IService service:device.getServices()){
-			newItem = new MenuItem(menu, SWT.PUSH);		
-			newItem.setImage(service.getImage().createImage());
-			newItem.setEnabled((service.getStatusTransitions(instance.getStatus())!=null));
-			newItem.setText(service.getName());
-			newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
+			if (service.isVisible()) {
+				newItem = new MenuItem(menu, SWT.PUSH);		
+				newItem.setImage(service.getImage().createImage());
+				newItem.setEnabled((service.getStatusTransitions(instance.getStatus())!=null));
+				newItem.setText(service.getName());
+				newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
+			}
 		}
 	}
 	

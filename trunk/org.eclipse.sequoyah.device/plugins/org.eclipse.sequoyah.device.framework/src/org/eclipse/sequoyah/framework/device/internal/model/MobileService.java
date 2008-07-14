@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Daniel Barboza Franco - Bug [239970] - Invisible Services
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.internal.model;
@@ -35,6 +35,7 @@ public class MobileService implements IService {
 	private IServiceHandler handler;
 	private IDevice parent;
 	private Map<String,IStatusTransition> statusMap;
+	private boolean visible;
 	
 	public MobileService(String id){
 		this.id = id;
@@ -113,6 +114,7 @@ public class MobileService implements IService {
 		newService.setVersion(this.version);
 		newService.setHandler(this.handler);
 		newService.setParent(this.parent);
+		newService.setVisible(this.visible);
 		return newService;
 	}
 	
@@ -136,6 +138,15 @@ public class MobileService implements IService {
 
 	public void setParent(IDevice device) {
 		this.parent = device;
+	}
+
+	public boolean isVisible() {
+		return this.visible;
+	}
+
+	
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 	
