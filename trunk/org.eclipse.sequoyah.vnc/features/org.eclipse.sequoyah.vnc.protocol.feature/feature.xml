@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.tml.common.feature"
+      id="org.eclipse.tml.protocol.feature"
       label="%featureName"
-      version="0.2.0.qualifier"
+      version="0.1.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.tml.common.utilities">
+      plugin="org.eclipse.tml.protocol">
 
    <description>
       %description
@@ -19,15 +19,15 @@
    </license>
 
    <url>
-      <update label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
-      <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
+      <update label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.1"/>
+      <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.1"/>
    </url>
 
    <plugin
-         id="org.eclipse.tml.common.utilities"
+         id="org.eclipse.tml.protocol"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.1.0"
          unpack="false"/>
 
 </feature>

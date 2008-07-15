@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tml.vnc.feature"
       label="%featureName"
-      version="0.1.0.qualifier"
+      version="0.4.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.tml.vncviewer">
 
@@ -24,31 +24,25 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.tml.protocol"/>
    </requires>
-
-   <plugin
-         id="org.eclipse.tml.protocol"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="org.eclipse.tml.vncviewer"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.4.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tml.vncviewer.vncviews"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.4.0"
          unpack="false"/>
 
 </feature>

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site
-      mirrorsURL="http://localhost/update/site.xml&amp;format=xml&amp;protocol=http">
-   <description url="http://localhost/update/">
-      http://download.eclipse.org/dsdp/tml/updates/0.1/
-http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/updates/0.1/site.xml&amp;format=xml&amp;protocol=http
-This is the Tool for mobile Linux Project 0.1 Update Site.
+      mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/updates/0.1/site.xml&amp;format=xml&amp;protocol=http">
+   <description url="http://download.eclipse.org/dsdp/tml/updates/0.1/">
+      This is the Tool for mobile Linux Project 0.1 Update Site.
    </description>
    <feature url="features/org.eclipse.tml.feature_0.1.0.200806261342.jar" id="org.eclipse.tml.feature" version="0.1.0.200806261342">
       <category name="TmL 0.1 Complete Package"/>
@@ -24,9 +22,12 @@ This is the Tool for mobile Linux Project 0.1 Update Site.
    <feature url="features/org.eclipse.tml.vnc.protocol.examples.feature_0.1.0.200806261342.jar" id="org.eclipse.tml.vnc.protocol.examples.feature" version="0.1.0.200806261342">
       <category name="TmL 0.1 Examples"/>
    </feature>
+   <feature url="features/org.eclipse.tml.protocol.feature_0.1.0.qualifier.jar" id="org.eclipse.tml.protocol.feature" version="0.1.0.qualifier">
+      <category name="TmL 0.1 Components"/>
+   </feature>
    <category-def name="TmL 0.1 Complete Package" label="TmL 0.1 Complete Package">
       <description>
-         Features and add-ons of the 0.1 release of Tools for mobile Linux (TmL)
+         Features and add-ons of the 0.1 release of Tools for mobile Linux (TmL). Include all components and the optionals samples.
       </description>
    </category-def>
    <category-def name="TmL 0.1 Common Package" label="TmL 0.1 Common Package">
