@@ -5,10 +5,10 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributors:
- * Fabio Fantato (Motorola)
+ * Fabio Fantato (Eldorado)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Fantato (Eldorado) - do not force to show console view
  ********************************************************************************/
 
 package org.eclipse.tml.common.utilities.logger;
@@ -53,7 +53,6 @@ public final class SimpleLogger implements ILogger
     {
     	MessageConsole console = new MessageConsole("console", null);
     	ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { console });
-    	ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
     	MessageConsoleStream stream = console.newMessageStream();
 
     	System.setOut(new PrintStream(stream));
