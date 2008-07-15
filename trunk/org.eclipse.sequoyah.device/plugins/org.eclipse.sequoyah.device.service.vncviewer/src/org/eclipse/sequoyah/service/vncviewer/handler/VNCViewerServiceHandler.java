@@ -8,7 +8,7 @@
  * Daniel Franco (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Daniel Barboza Franco (Motorola) - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  ********************************************************************************/
 
 package org.eclipse.tml.service.vncviewer.handler;
@@ -41,7 +41,7 @@ public class VNCViewerServiceHandler extends ServiceHandler {
 		String host = instance.getProperties().getProperty(IPropertyConstants.HOST);
 		int port = Integer.parseInt(instance.getProperties().getProperty(IPropertyConstants.PORT));
 		String protoVersion = "VNC 3.3";
-		
+		String password = instance.getProperties().getProperty(IPropertyConstants.PASSWORD);
 		
 		try {
 			
@@ -72,7 +72,7 @@ public class VNCViewerServiceHandler extends ServiceHandler {
 				}
 		}
 		
-		VNCViewerView.start(host, port, protoVersion);
+		VNCViewerView.start(host, port, protoVersion, password);
 		
 		
 		IProtocolImplementer protocol = VNCViewerView.protocol;
