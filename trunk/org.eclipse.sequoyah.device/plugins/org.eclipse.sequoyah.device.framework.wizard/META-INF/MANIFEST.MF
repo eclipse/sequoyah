@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.tml.framework.device.wizard;singleton:=true
 Bundle-Version: 0.2.0
 Bundle-Localization: plugin
 Bundle-Activator: org.eclipse.tml.framework.device.wizard.DeviceWizardPlugin
-Bundle-Vendor: %provideName
+Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.tml.common.utilities,
