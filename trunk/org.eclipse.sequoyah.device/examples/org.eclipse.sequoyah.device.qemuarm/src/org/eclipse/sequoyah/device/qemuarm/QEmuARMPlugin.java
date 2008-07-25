@@ -5,10 +5,10 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
- * Fabio Fantato (Motorola)
+ * Fabio Fantato (Eldorado Research Institute)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Eldorado Research Institute) - [221733] Persistence and New wizard for manage Device Instances
  ********************************************************************************/
 
 package org.eclipse.tml.device.qemuarm;
@@ -24,6 +24,7 @@ public class QEmuARMPlugin extends BasePlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.tml.device.qemuarm";
 	public static final String DEVICE_ID = "org.eclipse.tml.device.qemuarm.qemuarmDevice";
+	public static final String WIZARD_ID = "org.eclipse.tml.device.qemuarm.qemuarmWizard";
 	
 	public static final String ICON_DEVICE_QEMUARM = "ICON_DEVICE_QEMUARM";
 	

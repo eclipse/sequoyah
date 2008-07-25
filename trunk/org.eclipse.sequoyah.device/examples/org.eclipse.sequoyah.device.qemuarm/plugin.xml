@@ -17,6 +17,41 @@
       </device>
    </extension>
    <extension
+          point="org.eclipse.tml.device.wizard"
+          id="qemuarmWizard"
+          name="Settings for QEmuArm Emulator">
+          <settings
+                 needsProgressMonitor="true"
+                 forcePreviousAndNextButtons="true"
+                 canFinishEarly="false"
+         		 image="icons/full/cview16/emulator_ban.gif"
+         		 title="QemuARM Device Instance Wizard">
+          </settings>     
+          <customizer class ="org.eclipse.tml.device.qemuarm.wizard.DefaultWizardCustomizer" >          
+          </customizer>    
+    </extension>
+    <extension
+         id="qemuarmWizard"
+         name="QemuArm Device Instance Wizard"
+         point="org.eclipse.ui.newWizards">
+     <category
+	   id = "org.eclipse.ui.emulators"
+	   name="Emulators">
+	 </category>
+      <wizard
+            canFinishEarly="true"
+            category="org.eclipse.ui.emulators"
+            class="org.eclipse.tml.device.qemuarm.wizard.DefaultNewEmulatorInstanceWizard"
+            hasPages="true"
+            icon="icons/full/cview16/emulator_wiz.gif"
+            id="qemuarmWizard"
+            name="QemuArm Device Instance Wizard"
+            project="true">
+            <description>Create a new QEmu ARM device instance</description>
+      </wizard>
+   </extension>
+   
+   <extension
          id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
          name="startService"
          point="org.eclipse.tml.serviceDefinition">
