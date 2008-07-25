@@ -43,7 +43,7 @@
             category="org.eclipse.ui.emulators"
             class="org.eclipse.tml.device.qemuarm.wizard.DefaultNewEmulatorInstanceWizard"
             hasPages="true"
-            icon="icons/full/cview16/emulator_wiz.gif"
+            icon="icons/full/obj16/qemuarm.gif"
             id="qemuarmWizard"
             name="QemuArm Device Instance Wizard"
             project="true">
