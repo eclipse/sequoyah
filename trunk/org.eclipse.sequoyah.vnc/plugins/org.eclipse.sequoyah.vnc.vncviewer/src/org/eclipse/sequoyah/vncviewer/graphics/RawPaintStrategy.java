@@ -8,7 +8,7 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Barboza Franco (Motorola) - Bug [242129] - Raw enconding not implemented correctly
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
@@ -28,13 +28,7 @@ public class RawPaintStrategy extends AbstractPaintStrategy {
 		int pixels[] = new int[width*height];
 		IPainterContext pc = getContext();
 		
-		/*
-		for (int i = 0, e = width*height; i < e; i++) {
-			pixels[i] = pc.readPixel(in);
-		}
-		*/
-		
-		pc.readpixels(in, width, height);
+		pixels = pc.readpixels(in, width, height);
 		pc.setPixels(rh.getX(), rh.getY(), width, height, pixels, 0);
 	}
 

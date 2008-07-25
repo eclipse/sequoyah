@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Daniel Barboza Franco (Motorola) - Bug [227793] - Implementation of the several enc(...). A little improvement into the reading mechanism (readPixels()).
+ * Daniel Barboza Franco (Motorola) - Bug [242129] - Raw enconding not implemented correctly
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.network;
 
@@ -195,6 +196,7 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 				}
 			}
 
+			result[j] = pixel;
 		}
 
 		
