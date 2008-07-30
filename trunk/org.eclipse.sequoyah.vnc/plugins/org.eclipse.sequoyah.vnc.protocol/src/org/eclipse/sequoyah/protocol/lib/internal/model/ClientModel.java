@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -18,9 +19,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
@@ -102,7 +107,7 @@ public class ClientModel implements IModel {
 	 *             DOCUMENT ME!!
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
 	public void startClientProtocol(
@@ -110,13 +115,14 @@ public class ClientModel implements IModel {
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolImplementer protocolImplementer,
+			IProtocolExceptionHandler exceptionHandler,
 			Boolean isBigEndianProtocol,
 			String host, int port,
 			Map <String, Object> parameters)
-			throws UnknownHostException, IOException, ProtocolException {
+			throws UnknownHostException, IOException, ProtocolInitException {
 
 		ProtocolEngine eng = new ProtocolEngine(allMessages, incomingMessages,
-				outgoingMessages, isBigEndianProtocol);
+				outgoingMessages, exceptionHandler, isBigEndianProtocol);
 		eng.startProtocol(protocolImplementer, host, port, parameters, false);
 		runningEngines.put(protocolImplementer, eng);
 	}
@@ -148,11 +154,11 @@ public class ClientModel implements IModel {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
 	public void restartClientProtocol(IProtocolImplementer protocolImplementer)
-			throws IOException, ProtocolException {
+			throws IOException, ProtocolInitException {
 		ProtocolEngine eng = runningEngines.get(protocolImplementer);
 		if (eng != null) {
 			eng.restartProtocol();
@@ -172,11 +178,16 @@ public class ClientModel implements IModel {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolRawHandlingException
+	 *             DOCUMENT ME!!
+	 * @throws InvalidMessageException
+	 *             DOCUMENT ME!!
+	 * @throws InvalidDefinitionException
 	 *             DOCUMENT ME!!
 	 */
 	public void sendMessage(IProtocolImplementer protocolImplementer,
-			ProtocolMessage message) throws ProtocolException, IOException {
+			ProtocolMessage message) throws ProtocolRawHandlingException,
+			InvalidMessageException, InvalidDefinitionException, IOException {
 
 		ProtocolEngine eng = runningEngines.get(protocolImplementer);
 		if (eng != null) {

@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -15,7 +16,7 @@ import java.io.DataInputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
 
 /**
  * DESCRIPTION: This interface describes the contract to be used by an object
@@ -52,12 +53,12 @@ public interface IProtocolImplementer {
 	 * @param parameters
 	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.            
 	 * 
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
 	void serverInit(DataInputStream in, OutputStream out, Map parameters)
-			throws ProtocolException;
+			throws ProtocolInitException;
 
 	/**
 	 * Performs protocol initialization at client side. If this protocol
@@ -73,10 +74,10 @@ public interface IProtocolImplementer {
 	 * @param out
 	 *            The output stream where to write data to send to the client
 	 * 
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
 	void clientInit(DataInputStream in, OutputStream out, Map parameters)
-			throws ProtocolException;
+			throws ProtocolInitException;
 }

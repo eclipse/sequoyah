@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.model;
 
@@ -15,9 +15,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
 import org.eclipse.tml.protocol.internal.reader.ProtocolExtensionsReader;
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
 /**
@@ -93,11 +93,11 @@ public class PluginProtocolModel {
 	 * 
 	 * @return True if the protocol is big endian. False otherwise.
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	public boolean isBigEndianProtocol(String protocolId)
-			throws ProtocolException {
+			throws MalformedProtocolExtensionException {
 
 		ProtocolBean bean = protocolDataMap.get(protocolId);
 		if (bean == null) {
@@ -118,11 +118,11 @@ public class PluginProtocolModel {
 	 * 
 	 * @return A new instance of the implementer of the provided protocol
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	public IProtocolImplementer getProtocolImplementer(String protocolId)
-			throws ProtocolException {
+			throws MalformedProtocolExtensionException {
 
 		ProtocolBean bean = protocolDataMap.get(protocolId);
 		if (bean == null) {
@@ -141,10 +141,11 @@ public class PluginProtocolModel {
 	 * 
 	 * @return The number of the port that the protocol server binds to
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
-	public int getServerPort(String protocolId) throws ProtocolException {
+	public int getServerPort(String protocolId)
+			throws MalformedProtocolExtensionException {
 
 		ProtocolBean bean = protocolDataMap.get(protocolId);
 		if (bean == null) {
@@ -166,16 +167,17 @@ public class PluginProtocolModel {
 	 * @return A map containing all messages that belongs to the provided
 	 *         protocol
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	public Map<Long, ProtocolMsgDefinition> getAllProtocolMessages(
-			String protocolId) throws ProtocolException {
+			String protocolId) throws MalformedProtocolExtensionException {
 
 		Map<Long, ProtocolMsgDefinition> allMessages = allMessagesMap
 				.get(protocolId);
 		if (allMessages == null) {
-			allMessages = ProtocolExtensionsReader.readMessageDefinitions(protocolId);
+			allMessages = ProtocolExtensionsReader
+					.readMessageDefinitions(protocolId);
 		}
 
 		return allMessages;
@@ -189,15 +191,16 @@ public class PluginProtocolModel {
 	 * 
 	 * @return A collection of all client messages of the provided protocol
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	public Collection<String> getClientMessages(String protocolId)
-			throws ProtocolException {
+			throws MalformedProtocolExtensionException {
 
 		Collection<String> clientMessages = clientMessagesMap.get(protocolId);
 		if (clientMessages == null) {
-			clientMessages = ProtocolExtensionsReader.readClientMessages(protocolId);
+			clientMessages = ProtocolExtensionsReader
+					.readClientMessages(protocolId);
 		}
 
 		return clientMessages;
@@ -211,15 +214,16 @@ public class PluginProtocolModel {
 	 * 
 	 * @return A collection of all server messages of the provided protocol
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	public Collection<String> getServerMessages(String protocolId)
-			throws ProtocolException {
+			throws MalformedProtocolExtensionException {
 
 		Collection<String> serverMessages = serverMessagesMap.get(protocolId);
 		if (serverMessages == null) {
-			serverMessages = ProtocolExtensionsReader.readServerMessages(protocolId);
+			serverMessages = ProtocolExtensionsReader
+					.readServerMessages(protocolId);
 		}
 
 		return serverMessages;

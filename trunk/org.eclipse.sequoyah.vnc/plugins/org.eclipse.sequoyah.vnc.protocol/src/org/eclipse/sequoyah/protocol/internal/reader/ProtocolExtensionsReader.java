@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.reader;
 
@@ -24,11 +24,11 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
 import org.eclipse.tml.protocol.internal.model.ProtocolBean;
 import org.eclipse.tml.protocol.lib.IMessageHandler;
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.IRawDataHandler;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
 import org.eclipse.tml.protocol.lib.msgdef.NullMessageHandler;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 import org.eclipse.tml.protocol.lib.msgdef.databeans.FixedSizeDataBean;
@@ -61,11 +61,11 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * 
 	 * @return A bean containing all data referring to the provided protocol
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	public static ProtocolBean readProtocolImplDef(String protocolId)
-			throws ProtocolException {
+			throws MalformedProtocolExtensionException {
 		// Create the bean
 		ProtocolBean bean = new ProtocolBean();
 		bean.setProtocolId(protocolId);
@@ -86,11 +86,11 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 				bean
 						.setProtocolImplementerSeed((IProtocolImplementer) implementerSeedObj);
 			} else {
-				throw new ProtocolException(
+				throw new MalformedProtocolExtensionException(
 						"The protocol has not declared a valid implementer");
 			}
 		} catch (CoreException e) {
-			throw new ProtocolException(e.getMessage(), e);
+			throw new MalformedProtocolExtensionException(e.getMessage(), e);
 		}
 
 		return bean;
@@ -107,12 +107,12 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * @return A map containing all protocol messages read, having its code as
 	 *         key.
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             If the protocol extensions do not follow the specifications
 	 *             or are badly formed.
 	 */
 	public static Map<Long, ProtocolMsgDefinition> readMessageDefinitions(
-			String protocolId) throws ProtocolException {
+			String protocolId) throws MalformedProtocolExtensionException {
 		return getAllProtocolMessages(getAllParentProtocols(protocolId), true);
 	}
 
@@ -127,11 +127,11 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * @return A collection containing the ids of all messages that belongs to
 	 *         the server part of the protocol
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	public static Collection<String> readServerMessages(String protocolId)
-			throws ProtocolException {
+			throws MalformedProtocolExtensionException {
 		return getMessagesOrientations(getAllParentProtocols(protocolId),
 				PROTOCOL_MESSAGE_ORIENTATION_SERVER_ELEM);
 	}
@@ -147,11 +147,11 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * @return A collection containing the ids of all messages that belongs to
 	 *         the client part of the protocol
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	public static Collection<String> readClientMessages(String protocolId)
-			throws ProtocolException {
+			throws MalformedProtocolExtensionException {
 		return getMessagesOrientations(getAllParentProtocols(protocolId),
 				PROTOCOL_MESSAGE_ORIENTATION_CLIENT_ELEM);
 	}
@@ -262,13 +262,13 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * @return A map containing all protocol messages read, having its code as
 	 *         key.
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             If the protocol extensions do not follow the specifications
 	 *             or are badly formed.
 	 */
 	private static Map<Long, ProtocolMsgDefinition> getAllProtocolMessages(
 			List<String> protocols, boolean readFields)
-			throws ProtocolException {
+			throws MalformedProtocolExtensionException {
 		Map<Long, ProtocolMsgDefinition> messageDefCollection = new HashMap<Long, ProtocolMsgDefinition>();
 
 		// Get all Protocol Message extensions
@@ -316,14 +316,14 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * @param messageDefMap
 	 *            The map to store the read message.
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             If the message do not follow the specifications or is badly
 	 *             formed.
 	 */
 	private static void readMsgDefToCollection(
 			IConfigurationElement protocolMsgConf,
 			Map<Long, ProtocolMsgDefinition> messageDefMap, boolean readFields)
-			throws ProtocolException {
+			throws MalformedProtocolExtensionException {
 		try {
 			// Creates the bean and sets the message code to it
 			ProtocolMsgDefinition bean = new ProtocolMsgDefinition();
@@ -345,7 +345,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 				Object aObject = protocolMsgConf
 						.createExecutableExtension(PROTOCOL_MESSAGE_HANDLER_ATTR);
 				if (!(aObject instanceof IMessageHandler)) {
-					throw new ProtocolException(
+					throw new MalformedProtocolExtensionException(
 							"Error at message declaration. The message handler must be an instance of IMessageHandler");
 				} else {
 					handler = (IMessageHandler) aObject;
@@ -396,7 +396,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * 
 	 * @return A message field bean containing the definition of the field.
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             If the message field does not follow the specifications or is
 	 *             badly formed.
 	 * @throws CoreException
@@ -404,7 +404,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 *             cannot be created.
 	 */
 	private static IMsgDataBean readMsgData(IConfigurationElement msgDataConf)
-			throws ProtocolException, CoreException {
+			throws MalformedProtocolExtensionException, CoreException {
 		IMsgDataBean bean = null;
 
 		// Firstly, define the field type
@@ -468,7 +468,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			Object aObject = msgDataConf
 					.createExecutableExtension(PROTOCOL_MESSAGE_RAW_DATA_EXECUTABLE_ATTR);
 			if (!(aObject instanceof IRawDataHandler)) {
-				throw new ProtocolException(
+				throw new MalformedProtocolExtensionException(
 						"Error at message declaration. The raw data handler must be an instance of IRawDataHandler");
 			} else {
 				// Sets the bean with value collected
@@ -512,7 +512,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 		} else {
 			// If it is an unknown field (different from fixed, variable, raw
 			// data reader/writer, iteratable block)
-			throw new ProtocolException("Unkown data element");
+			throw new MalformedProtocolExtensionException("Unkown data element");
 		}
 
 		return bean;
@@ -538,12 +538,12 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 *         protocols) that are declared as server/client messages, depending
 	 *         on the provided messageOrientationElem parameter
 	 * 
-	 * @throws ProtocolException
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	private static Collection<String> getMessagesOrientations(
 			List<String> protocols, String messageOrientationElem)
-			throws ProtocolException {
+			throws MalformedProtocolExtensionException {
 
 		Collection<String> messageOrientations = new HashSet<String>();
 

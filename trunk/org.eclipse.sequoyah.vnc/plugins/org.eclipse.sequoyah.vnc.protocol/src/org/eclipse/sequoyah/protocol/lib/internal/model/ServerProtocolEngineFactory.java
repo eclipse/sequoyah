@@ -7,13 +7,14 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
@@ -54,6 +55,13 @@ public class ServerProtocolEngineFactory {
 	private Collection<String> outgoingMessages;
 
 	/**
+	 * The handler that was registered with the server protocol at the moment it
+	 * started listening to port. When constructing an engine object, it will be
+	 * provided for exception handling delegation.
+	 */
+	private IProtocolExceptionHandler exceptionHandler;
+
+	/**
 	 * True if the protocol is big endian, false if little endian
 	 */
 	private boolean isBigEndianProtocol;
@@ -78,10 +86,13 @@ public class ServerProtocolEngineFactory {
 	public ServerProtocolEngineFactory(
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
-			Collection<String> outgoingMessages, boolean isBigEndianProtocol) {
+			Collection<String> outgoingMessages,
+			IProtocolExceptionHandler exceptionHandler,
+			boolean isBigEndianProtocol) {
 		this.allMessages = allMessages;
 		this.incomingMessages = incomingMessages;
 		this.outgoingMessages = outgoingMessages;
+		this.exceptionHandler = exceptionHandler;
 		this.isBigEndianProtocol = isBigEndianProtocol;
 	}
 
@@ -92,7 +103,7 @@ public class ServerProtocolEngineFactory {
 	 */
 	public ProtocolEngine getServerProtocolEngine() {
 		ProtocolEngine eng = new ProtocolEngine(allMessages, incomingMessages,
-				outgoingMessages, isBigEndianProtocol);
+				outgoingMessages, exceptionHandler, isBigEndianProtocol);
 		return eng;
 	}
 
@@ -109,6 +120,10 @@ public class ServerProtocolEngineFactory {
 
 	public Collection<String> getOutgoingMessages() {
 		return outgoingMessages;
+	}
+
+	public IProtocolExceptionHandler getExceptionHandler() {
+		return exceptionHandler;
 	}
 
 	public boolean isBigEndianProtocol() {

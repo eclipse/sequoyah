@@ -7,11 +7,11 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
 
 /**
  * DESCRIPTION: This interface describes the contract to be used by an object
@@ -40,9 +40,9 @@ public interface IMessageHandler {
 	 * @return If a message should be sent in response to the handled one,
 	 *         return the response message. If not, return <code>null</code>.
 	 * 
-	 * @throws ProtocolException
+	 * @throws MessageHandleException
 	 *             If the message cannot be handled.
 	 */
 	ProtocolMessage handleMessage(IProtocolImplementer protocolImplementer,
-			ProtocolMessage message) throws ProtocolException;
+			ProtocolMessage message) throws MessageHandleException;
 }

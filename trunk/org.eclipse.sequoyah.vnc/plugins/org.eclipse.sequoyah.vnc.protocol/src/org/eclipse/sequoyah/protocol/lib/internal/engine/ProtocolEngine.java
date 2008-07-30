@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -24,11 +25,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.tml.protocol.lib.IMessageHandler;
+import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.IRawDataHandler;
 import org.eclipse.tml.protocol.lib.MessageFieldsStore;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidInputStreamDataException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
+import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.model.ClientModel;
 import org.eclipse.tml.protocol.lib.internal.model.IModel;
 import org.eclipse.tml.protocol.lib.internal.model.ServerModel;
@@ -87,6 +94,12 @@ public class ProtocolEngine {
 	private IProtocolImplementer protocolImplementer;
 
 	/**
+	 * The handler that was registered with the protocol at the moment it
+	 * started. It is used for exception handling customization by the user.
+	 */
+	private IProtocolExceptionHandler exceptionHandler;
+
+	/**
 	 * The socket opened to the other part of the communication.
 	 */
 	private Socket socket;
@@ -95,9 +108,10 @@ public class ProtocolEngine {
 	 * The host to which the socket is connected.
 	 */
 	private String host;
-	
+
 	/**
-	 * General parameters associated to the protocol implementation, initialized by the protocol user.
+	 * General parameters associated to the protocol implementation, initialized
+	 * by the protocol user.
 	 */
 	private Map parameters;
 
@@ -135,11 +149,14 @@ public class ProtocolEngine {
 	public ProtocolEngine(
 			Map<Long, ProtocolMsgDefinition> messageDefCollection,
 			Collection<String> incomingMessages,
-			Collection<String> outgoingMessages, boolean isBigEndianProtocol) {
+			Collection<String> outgoingMessages,
+			IProtocolExceptionHandler exceptionHandler,
+			boolean isBigEndianProtocol) {
 
 		this.messageDefCollection = messageDefCollection;
 		this.incomingMessages = incomingMessages;
 		this.outgoingMessages = outgoingMessages;
+		this.exceptionHandler = exceptionHandler;
 		this.isBigEndianProtocol = isBigEndianProtocol;
 	}
 
@@ -153,7 +170,8 @@ public class ProtocolEngine {
 	 * @param port
 	 *            The port to connect to.
 	 * @param parameters
-	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.
+	 *            A Map with parameters other than host and port, for
+	 *            customization purposes. Accepts null if apply.
 	 * @param isServer
 	 *            True if the engine will run as server; false if it will run as
 	 *            client
@@ -162,13 +180,13 @@ public class ProtocolEngine {
 	 *             If the provided host cannot be resolved.
 	 * @throws IOException
 	 *             If the communication socket cannot be opened.
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             If the protocol fails to initialize.
 	 */
 	public synchronized void startProtocol(
-			IProtocolImplementer protocolImplementer, String host, int port, Map parameters,
-			boolean isServer) throws UnknownHostException, IOException,
-			ProtocolException {
+			IProtocolImplementer protocolImplementer, String host, int port,
+			Map parameters, boolean isServer) throws UnknownHostException,
+			IOException, ProtocolInitException {
 		startProtocol(protocolImplementer, host, port, parameters, -1, isServer);
 	}
 
@@ -182,7 +200,8 @@ public class ProtocolEngine {
 	 * @param port
 	 *            The port to connect to.
 	 * @param parameters
-	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.
+	 *            A Map with parameters other than host and port, for
+	 *            customization purposes. Accepts null if apply.
 	 * @param timeout
 	 *            The maximum time to wait for the connection to remote site to
 	 *            open.
@@ -194,17 +213,17 @@ public class ProtocolEngine {
 	 *             If the provided host cannot be resolved.
 	 * @throws IOException
 	 *             If the communication socket cannot be opened.
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             If the protocol fails to initialize.
 	 */
 	public synchronized void startProtocol(
-			IProtocolImplementer protocolImplementer, String host, int port, Map parameters,
-			int timeout, boolean isServer) throws UnknownHostException,
-			IOException, ProtocolException {
+			IProtocolImplementer protocolImplementer, String host, int port,
+			Map parameters, int timeout, boolean isServer)
+			throws UnknownHostException, IOException, ProtocolInitException {
 		// Stores the host and port, that will be used if a restart is necessary
 		this.host = host;
 		this.port = port;
-		
+
 		this.parameters = parameters;
 		this.isServer = isServer;
 		if (protocolImplementer != null) {
@@ -248,17 +267,19 @@ public class ProtocolEngine {
 	 *            The socket that needs to be used by the engine to send and
 	 *            receive messages
 	 * @param parameters
-	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.
+	 *            A Map with parameters other than host and port, for
+	 *            customization purposes. Accepts null if apply.
 	 * @param isServer
 	 *            True if the engine will run as server; false if it will run as
 	 *            client
 	 * 
 	 * @throws IOException
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 */
 	public synchronized void startProtocol(
-			IProtocolImplementer protocolImplementer, Socket connectedSocket, Map parameters,
-			boolean isServer) throws IOException, ProtocolException {
+			IProtocolImplementer protocolImplementer, Socket connectedSocket,
+			Map parameters, boolean isServer) throws IOException,
+			ProtocolInitException {
 		this.socket = connectedSocket;
 		this.host = socket.getInetAddress().getHostAddress();
 		this.port = socket.getPort();
@@ -309,16 +330,16 @@ public class ProtocolEngine {
 	 *             known or inexistent.
 	 * @throws IOException
 	 *             If the communication socket cannot be opened or closed.
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             If the protocol fails to initialize.
 	 */
 	public void restartProtocol() throws UnknownHostException, IOException,
-			ProtocolException {
+			ProtocolInitException {
 		if (this.isConnected()) {
 			stopProtocol();
 		}
 
-		startProtocol(null, host, port, parameters ,isServer);
+		startProtocol(null, host, port, parameters, isServer);
 	}
 
 	/**
@@ -344,12 +365,23 @@ public class ProtocolEngine {
 	 * 
 	 * @param message
 	 *            The message to send.
-	 * @throws ProtocolException
-	 *             If the message provided contain erroneous or missing fields
-	 *             that prevents the message to be sent.
+	 * 
+	 * @throws InvalidMessageException
+	 *             If the data collected from the message is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidDefinitionException
+	 *             If the message definition does not contain all necessary
+	 *             information to encode the message.
+	 * @throws ProtocolRawHandlingException
+	 *             If it is not possible to write the data to the stream due to
+	 *             a generic reason.
+	 * @throws IOException
+	 *             If an output stream disconnection is detected while writing
+	 *             data.
 	 */
 	public synchronized final void sendMessage(ProtocolMessage message)
-			throws ProtocolException {
+			throws ProtocolRawHandlingException, InvalidMessageException,
+			InvalidDefinitionException, IOException {
 		// Can only send a message if the protocol is connected
 		if (isConnected()) {
 			// Creates a byte output stream to store all bytes that will be sent
@@ -385,7 +417,8 @@ public class ProtocolEngine {
 					}
 				} catch (IOException e) {
 					// The input stream is probably broken
-					handleIOExceptionOnStream(e);
+					handleIOExceptionOnStream();
+					throw e;
 				}
 			}
 		}
@@ -408,12 +441,21 @@ public class ProtocolEngine {
 	 * @param index
 	 *            The iteration index. Range: 0 ~~ (iteratableBlockLength - 1)
 	 * 
-	 * @throws ProtocolException
-	 *             If the message provided is not a valid message.
+	 * @throws InvalidMessageException
+	 *             If the data collected from the message is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidDefinitionException
+	 *             If the message definition does not contain all necessary
+	 *             information to encode the message.
+	 * @throws ProtocolRawHandlingException
+	 *             If it is not possible to write the data to the stream during
+	 *             a raw field handling.
 	 */
 	private void writeFilterMessageDef(IMsgDataBean messageDataDef,
 			ByteArrayOutputStream streamToWriteTo, ProtocolMessage message,
-			String iteratableBlockId, int index) throws ProtocolException {
+			String iteratableBlockId, int index)
+			throws ProtocolRawHandlingException, InvalidMessageException,
+			InvalidDefinitionException {
 		if (messageDataDef instanceof FixedSizeDataBean) {
 			writeFixedSizeDataToStream(streamToWriteTo,
 					(FixedSizeDataBean) messageDataDef, message);
@@ -441,15 +483,17 @@ public class ProtocolEngine {
 	 * @param message
 	 *            The message that is going to be sent.
 	 * 
-	 * @throws IOException
-	 *             If an error occurs while writing data to the output stream.
-	 * @throws ProtocolException
-	 *             If the message provided is not a valid message.
+	 * @throws InvalidMessageException
+	 *             If the data collected from the message is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidDefinitionException
+	 *             If the message definition does not contain all necessary
+	 *             information to encode the message.
 	 */
 	private void writeFixedSizeDataToStream(
 			ByteArrayOutputStream streamToWriteTo,
 			FixedSizeDataBean messageDataDef, ProtocolMessage message)
-			throws ProtocolException {
+			throws InvalidMessageException, InvalidDefinitionException {
 		// Retrieve data from the message definition object.
 		// The fields description and how to use then can be found at
 		// the ProtocolMessage extension point documentation.
@@ -476,12 +520,14 @@ public class ProtocolEngine {
 				// If a value is not defined, than raise a protocol exception
 				// to warn the caller that this it provided an invalid message
 				// object to this method.
-				throw new ProtocolException("Field does not contain a number");
+				throw new InvalidMessageException(
+						"Field does not contain a number");
 			}
 		} else {
 			// The definition of this fixed data does not contain all
 			// information it should have.
-			throw new ProtocolException("Incomplete fixed data element");
+			throw new InvalidDefinitionException(
+					"Incomplete fixed data element");
 		}
 	}
 
@@ -497,13 +543,17 @@ public class ProtocolEngine {
 	 * @param message
 	 *            The message that is going to be sent.
 	 * 
-	 * @throws ProtocolException
-	 *             If the message provided is not a valid message.
+	 * @throws InvalidMessageException
+	 *             If the data collected from the message is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidDefinitionException
+	 *             If the message definition does not contain all necessary
+	 *             information to encode the message.
 	 */
 	private void writeVariableSizeDataToStream(
 			ByteArrayOutputStream streamToWriteTo,
 			VariableSizeDataBean messageDataDef, ProtocolMessage message)
-			throws ProtocolException {
+			throws InvalidMessageException, InvalidDefinitionException {
 		// Retrieve data from the message definition object.
 		// The fields description and how to use then can be found at
 		// the ProtocolMessage extension point documentation.
@@ -537,13 +587,14 @@ public class ProtocolEngine {
 				// If a value is not defined, than raise a protocol exception
 				// to warn the caller that this it provided an invalid message
 				// object to this method.
-				throw new ProtocolException(
+				throw new InvalidMessageException(
 						"Value field does not contain a string");
 			}
 		} else {
 			// The definition of this fixed data does not contain all
 			// information it should have.
-			throw new ProtocolException("Incomplete fixed data element");
+			throw new InvalidDefinitionException(
+					"Incomplete fixed data element");
 		}
 	}
 
@@ -558,14 +609,13 @@ public class ProtocolEngine {
 	 * @param message
 	 *            The message that is going to be sent.
 	 * 
-	 * @throws IOException
-	 *             If an error occurs while writing data to the output stream.
-	 * @throws ProtocolException
-	 *             If the message provided is not a valid message.
+	 * @throws ProtocolRawHandlingException
+	 *             If it is not possible to write the data to the stream during
+	 *             a raw field handling.
 	 */
 	private void writeRawDataToStream(ByteArrayOutputStream streamToWriteTo,
 			RawDataBean messageDataDef, ProtocolMessage message)
-			throws ProtocolException {
+			throws ProtocolRawHandlingException {
 		// Creates a temporary output stream to provide to the raw data writer
 		// handler. Then delegates the write operation to the handler class.
 		ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
@@ -592,13 +642,21 @@ public class ProtocolEngine {
 	 * @param message
 	 *            The message that is going to be sent.
 	 * 
-	 * @throws ProtocolException
-	 *             If the message provided is not a valid message.
+	 * @throws InvalidMessageException
+	 *             If the data collected from the message is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidDefinitionException
+	 *             If the message definition does not contain all necessary
+	 *             information to encode the message.
+	 * @throws ProtocolRawHandlingException
+	 *             If it is not possible to write the data to the stream during
+	 *             a raw field handling.
 	 */
 	private void writeIteratableBlockToStream(
 			ByteArrayOutputStream streamToWriteTo,
 			IteratableBlockDataBean messageDataDef, ProtocolMessage message)
-			throws ProtocolException {
+			throws ProtocolRawHandlingException, InvalidMessageException,
+			InvalidDefinitionException {
 		// Retrieve data from the message definition object.
 		// The fields description and how to use then can be found at
 		// the ProtocolMessage extension point documentation.
@@ -628,7 +686,8 @@ public class ProtocolEngine {
 			// If the number of iterations is not defined, than raise a protocol
 			// exception to warn the caller that this it provided an invalid
 			// message object to this method.
-			throw new ProtocolException("Iterate on field value is not numeric");
+			throw new InvalidMessageException(
+					"Iterate on field value is not numeric");
 		}
 	}
 
@@ -683,13 +742,27 @@ public class ProtocolEngine {
 	 *            the message fields to be read from the input stream.
 	 * 
 	 * @throws IOException
-	 *             If an error occurs while reading data from the input stream.
-	 * @throws ProtocolException
-	 *             If the data retrieved from the input stream cannot be decoded
-	 *             to message fields.
+	 *             If an input stream disconnection is detected while reading
+	 *             data.
+	 * @throws InvalidMessageException
+	 *             If the data collected from the message is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidInputStreamDataException
+	 *             If the data collected from the input stream is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidDefinitionException
+	 *             If the message definition does not contain all necessary
+	 *             information to decode the message.
+	 * @throws ProtocolRawHandlingException
+	 *             If it is not possible to read/write the data from/to the
+	 *             stream during a raw field handling.
+	 * @throws MessageHandleException
+	 *             If the message cannot be handled.
 	 */
 	private void readReceivedMessage(long code, ProtocolMsgDefinition messageDef)
-			throws IOException, ProtocolException {
+			throws ProtocolRawHandlingException, InvalidDefinitionException,
+			InvalidInputStreamDataException, InvalidMessageException,
+			MessageHandleException, IOException {
 		// Certifies that the message definition is an incoming message
 		// definition.
 		if (isIncomingMessage(messageDef.getId())) {
@@ -734,14 +807,22 @@ public class ProtocolEngine {
 	 *            The iteration index. Range: 0 ~~ (iteratableBlockLength - 1)
 	 * 
 	 * @throws IOException
-	 *             If an error occurs while reading data from the input stream.
-	 * @throws ProtocolException
-	 *             If the data retrieved from the input stream cannot be decoded
-	 *             to message fields.
+	 *             If an input stream disconnection is detected while reading
+	 *             data.
+	 * @throws InvalidInputStreamDataException
+	 *             If the data collected from the input stream is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidDefinitionException
+	 *             If the message definition does not contain all necessary
+	 *             information to decode the message.
+	 * @throws ProtocolRawHandlingException
+	 *             If it is not possible to read the data from the stream during
+	 *             a raw field handling.
 	 */
 	private void readFilterMessageDef(IMsgDataBean messageDataDef,
 			ProtocolMessage message, String iterableBlockId, int index)
-			throws ProtocolException {
+			throws ProtocolRawHandlingException, InvalidDefinitionException,
+			InvalidInputStreamDataException, IOException {
 		if (messageDataDef instanceof FixedSizeDataBean) {
 			readFixedSizeData((FixedSizeDataBean) messageDataDef, message,
 					iterableBlockId, index);
@@ -772,13 +853,20 @@ public class ProtocolEngine {
 	 * @param index
 	 *            The iteration index. Range: 0 ~~ (iteratableBlockLength - 1)
 	 * 
-	 * @throws ProtocolException
-	 *             If the data retrieved from the input stream cannot be decoded
-	 *             to message fields.
+	 * @throws IOException
+	 *             If an input stream disconnection is detected while reading
+	 *             data.
+	 * @throws InvalidInputStreamDataException
+	 *             If the data collected from the input stream is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidDefinitionException
+	 *             If the message definition does not contain all necessary
+	 *             information to decode the message.
 	 */
 	private void readFixedSizeData(FixedSizeDataBean messageDataDef,
 			ProtocolMessage message, String iterableBlockId, int index)
-			throws ProtocolException {
+			throws InvalidDefinitionException, InvalidInputStreamDataException,
+			IOException {
 		// Retrieve data from the message definition object.
 		// The fields description and how to use then can be found at
 		// the ProtocolMessage extension point documentation.
@@ -799,7 +887,8 @@ public class ProtocolEngine {
 		} else {
 			// The definition of this fixed data does not contain all
 			// information it should have.
-			throw new ProtocolException("Incomplete fixed data element");
+			throw new InvalidDefinitionException(
+					"Incomplete fixed data element");
 		}
 	}
 
@@ -818,13 +907,20 @@ public class ProtocolEngine {
 	 * @param index
 	 *            The iteration index. Range: 0 ~~ (iteratableBlockLength - 1)
 	 * 
-	 * @throws ProtocolException
-	 *             If the data retrieved from the input stream cannot be decoded
-	 *             to message fields.
+	 * @throws IOException
+	 *             If an input stream disconnection is detected while reading
+	 *             data.
+	 * @throws InvalidInputStreamDataException
+	 *             If the data collected from the input stream is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidDefinitionException
+	 *             If the message definition does not contain all necessary
+	 *             information to decode the message.
 	 */
 	private void readVariableSizeData(VariableSizeDataBean messageDataDef,
 			ProtocolMessage message, String iterableBlockId, int index)
-			throws ProtocolException {
+			throws InvalidDefinitionException, InvalidInputStreamDataException,
+			IOException {
 		// Retrieve data from the message definition object.
 		// The fields description and how to use then can be found at
 		// the ProtocolMessage extension point documentation.
@@ -851,7 +947,8 @@ public class ProtocolEngine {
 							remainingBytes);
 				} catch (IOException e) {
 					// The input stream is probably broken
-					handleIOExceptionOnStream(e);
+					handleIOExceptionOnStream();
+					throw e;
 				}
 				readBytes += tempReadBytes;
 				remainingBytes -= tempReadBytes;
@@ -866,7 +963,8 @@ public class ProtocolEngine {
 		} else {
 			// The definition of this fixed data does not contain all
 			// information it should have.
-			throw new ProtocolException("Incomplete fixed data element");
+			throw new InvalidDefinitionException(
+					"Incomplete fixed data element");
 		}
 	}
 
@@ -885,14 +983,16 @@ public class ProtocolEngine {
 	 *            The iteration index. Range: 0 ~~ (iteratableBlockLength - 1)
 	 * 
 	 * @throws IOException
-	 *             If an error occurs while reading data from the input stream.
-	 * @throws ProtocolException
-	 *             If the data retrieved from the input stream cannot be decoded
-	 *             to message fields.
+	 *             If an input stream disconnection is detected while reading
+	 *             data.
+	 * @throws ProtocolRawHandlingException
+	 *             If it is not possible to read the data from the stream during
+	 *             a raw field handling.
+	 * 
 	 */
 	private void readRawData(RawDataBean messageDataDef,
 			ProtocolMessage message, String iterableBlockId, int index)
-			throws ProtocolException {
+			throws ProtocolRawHandlingException, IOException {
 		// Creates a temporary input stream for the raw data handler to use.
 		// Note that this input stream is a special one that does not allow
 		// closing, marking or reseting.
@@ -922,7 +1022,8 @@ public class ProtocolEngine {
 			}
 		} catch (IOException e) {
 			// The input stream is probably broken
-			handleIOExceptionOnStream(e);
+			handleIOExceptionOnStream();
+			throw e;
 		}
 	}
 
@@ -936,13 +1037,22 @@ public class ProtocolEngine {
 	 *            The message that is being read.
 	 * 
 	 * @throws IOException
-	 *             If an error occurs while reading data from the input stream.
-	 * @throws ProtocolException
-	 *             If the data retrieved from the input stream cannot be decoded
-	 *             to message fields.
+	 *             If an input stream disconnection is detected while reading
+	 *             data.
+	 * @throws InvalidInputStreamDataException
+	 *             If the data collected from the input stream is invalid,
+	 *             considering the message definition made.
+	 * @throws InvalidDefinitionException
+	 *             If the message definition does not contain all necessary
+	 *             information to decode the message.
+	 * @throws ProtocolRawHandlingException
+	 *             If it is not possible to read the data from the stream during
+	 *             a raw field handling.
 	 */
 	private void readIteratableBlock(IteratableBlockDataBean messageDataDef,
-			ProtocolMessage message) throws ProtocolException {
+			ProtocolMessage message) throws ProtocolRawHandlingException,
+			InvalidDefinitionException, InvalidInputStreamDataException,
+			IOException {
 		// Retrieve data from the message definition object.
 		// The fields description and how to use then can be found at
 		// the ProtocolMessage extension point documentation.
@@ -973,7 +1083,8 @@ public class ProtocolEngine {
 			// If the number of iterations is not defined, than raise a protocol
 			// exception to warn the caller that this it provided an invalid
 			// message object to this method.
-			throw new ProtocolException("Iterate on field value is not numeric");
+			throw new InvalidInputStreamDataException(
+					"Iterate on field value is not numeric");
 		}
 	}
 
@@ -991,13 +1102,15 @@ public class ProtocolEngine {
 	 * @return The number read from the input stream.
 	 * 
 	 * @throws IOException
-	 *             If an error occurs while reading data from the input stream.
-	 * @throws ProtocolException
-	 *             If the data retrieved from the input stream cannot be decoded
-	 *             to message fields.
+	 *             If an input stream disconnection is detected while reading
+	 *             data.
+	 * @throws InvalidInputStreamDataException
+	 *             If the data collected from the input stream is invalid,
+	 *             considering the message definition made.
 	 */
 	private Number getNumberDataFromInputStream(int numberOfBytes,
-			boolean isSigned) throws ProtocolException {
+			boolean isSigned) throws InvalidInputStreamDataException,
+			IOException {
 		Number value = null;
 		try {
 			switch (numberOfBytes) {
@@ -1030,11 +1143,13 @@ public class ProtocolEngine {
 				// Throw
 				// an exception to warn the caller that it provided an invalid
 				// parameter.
-				throw new ProtocolException("Unrecognized field size");
+				throw new InvalidInputStreamDataException(
+						"Unrecognized field size");
 			}
 		} catch (IOException e) {
 			// The input stream is probably broken
-			handleIOExceptionOnStream(e);
+			handleIOExceptionOnStream();
+			throw e;
 		}
 
 		return value;
@@ -1106,16 +1221,9 @@ public class ProtocolEngine {
 	}
 
 	/**
-	 * Common method for handling IOExceptions when reading/writting to streams
-	 * 
-	 * @param e
-	 *            the IOException to handle
-	 * 
-	 * @throws ProtocolException
-	 *             A ProtocolException that is thrown in place of IOException
+	 * Common method for handling IOExceptions when reading/writing to streams
 	 */
-	private void handleIOExceptionOnStream(IOException e)
-			throws ProtocolException {
+	private void handleIOExceptionOnStream() {
 
 		if (isConnected()) {
 			try {
@@ -1129,9 +1237,6 @@ public class ProtocolEngine {
 		model.cleanStoppedProtocols();
 		model = ServerModel.getInstance();
 		model.cleanStoppedProtocols();
-
-		throw new ProtocolException(
-				"The input stream seems to be closed or has reached its end", e);
 	}
 
 	/**
@@ -1163,7 +1268,7 @@ public class ProtocolEngine {
 		 * OVERVIEW: Each time the while loop repeats, a byte is consumed from
 		 * the input stream. The consumer continually tries to find a valid code
 		 * in the message definitions map. When such message definition is
-		 * found, then start reading it.
+		 * found, then start reading the message based on it.
 		 * 
 		 * @see java.lang.Runnable#run()
 		 */
@@ -1208,14 +1313,38 @@ public class ProtocolEngine {
 					// Handle exception only if the IOException was not caused
 					// by protocol disconnection
 					if (isRunning) {
-						// TODO This is a temporary exception handling
-						e.printStackTrace();
 						isRunning = false;
+						if (exceptionHandler != null) {
+							exceptionHandler.handleIOException(e);
+						}
 					}
 				} catch (Exception e) {
-					// TODO This is a temporary exception handling
-					e.printStackTrace();
 					isRunning = false;
+
+					if (exceptionHandler != null) {
+						// Delegate the exception to user
+						if (e instanceof IOException) {
+							exceptionHandler.handleIOException((IOException) e);
+						} else if (e instanceof ProtocolInitException) {
+							exceptionHandler
+									.handleProtocolInitException((ProtocolInitException) e);
+						} else if (e instanceof MessageHandleException) {
+							exceptionHandler
+									.handleMessageHandleException((MessageHandleException) e);
+						} else if (e instanceof InvalidMessageException) {
+							exceptionHandler
+									.handleInvalidMessageException((InvalidMessageException) e);
+						} else if (e instanceof InvalidInputStreamDataException) {
+							exceptionHandler
+									.handleInvalidInputStreamDataException((InvalidInputStreamDataException) e);
+						} else if (e instanceof InvalidDefinitionException) {
+							exceptionHandler
+									.handleInvalidDefinitionException((InvalidDefinitionException) e);
+						} else if (e instanceof ProtocolRawHandlingException) {
+							exceptionHandler
+									.handleProtocolRawHandlingException((ProtocolRawHandlingException) e);
+						}
+					}
 				}
 			}
 		}

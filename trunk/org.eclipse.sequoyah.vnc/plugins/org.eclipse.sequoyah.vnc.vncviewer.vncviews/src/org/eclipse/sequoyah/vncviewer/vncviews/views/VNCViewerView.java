@@ -12,6 +12,7 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Daniel Barboza Franco - Bug [233062] - Protocol connection port is static.
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -92,7 +93,8 @@ public class VNCViewerView extends ViewPart{
 
 				parameters.put("password", password);
 				VNCViewerView.protocol = PluginProtocolActionDelegate
-						.startClientProtocol(protocolId, host, port, parameters);
+						.startClientProtocol(protocolId, null, host, port,
+								parameters);
 
 
 				((VNCProtocol)protocol).setPassword(password);
@@ -121,12 +123,9 @@ public class VNCViewerView extends ViewPart{
 			if (swtDisplay.isActive()) {
 				swtDisplay.stop();
 			}
-			
-			
-	
+
 		}
-		
-		
+
 	}
-	
+
 }

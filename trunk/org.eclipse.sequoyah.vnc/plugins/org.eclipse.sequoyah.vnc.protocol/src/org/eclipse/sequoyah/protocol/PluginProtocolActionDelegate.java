@@ -9,6 +9,7 @@
  * Contributors:
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Daniel Barboza Franco - Bug [233062] - Protocol connection port is static.
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol;
 
@@ -16,11 +17,16 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
 import org.eclipse.tml.protocol.internal.model.PluginProtocolModel;
+import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.ProtocolActionDelegate;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
 /**
@@ -58,12 +64,15 @@ public class PluginProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
+	 *             DOCUMENT ME!!
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
-	public static IProtocolImplementer startClientProtocol(String protocolId, 
-			String host, int port,
-			Map parameters) throws IOException, ProtocolException {
+	public static IProtocolImplementer startClientProtocol(String protocolId,
+			IProtocolExceptionHandler exceptionHandler, String host, int port,
+			Map parameters) throws IOException, ProtocolInitException,
+			MalformedProtocolExtensionException {
 
 		PluginProtocolModel model = PluginProtocolModel.getInstance();
 		Map<Long, ProtocolMsgDefinition> allMessages = model
@@ -75,11 +84,11 @@ public class PluginProtocolActionDelegate {
 		IProtocolImplementer protocolImplementer = model
 				.getProtocolImplementer(protocolId);
 		boolean isBigEndianProtocol = model.isBigEndianProtocol(protocolId);
-		
+
 		ProtocolActionDelegate.startClientProtocol(allMessages,
 				incomingMessages, outgoingMessages, protocolImplementer,
-				isBigEndianProtocol, host, port, parameters);
-		
+				exceptionHandler, isBigEndianProtocol, host, port, parameters);
+
 		return protocolImplementer;
 	}
 
@@ -99,11 +108,14 @@ public class PluginProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
+	 *             DOCUMENT ME!!
+	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
-	public static IProtocolImplementer startServerProtocol(String protocolId)
-			throws IOException, ProtocolException {
+	public static IProtocolImplementer startServerProtocol(String protocolId,
+			IProtocolExceptionHandler exceptionHandler) throws IOException,
+			ProtocolInitException, MalformedProtocolExtensionException {
 
 		PluginProtocolModel model = PluginProtocolModel.getInstance();
 		Map<Long, ProtocolMsgDefinition> allMessages = model
@@ -119,7 +131,7 @@ public class PluginProtocolActionDelegate {
 
 		ProtocolActionDelegate.startServerProtocol(serverPort, allMessages,
 				incomingMessages, outgoingMessages, protocolImplementer,
-				isBigEndianProtocol);
+				exceptionHandler, isBigEndianProtocol);
 
 		return protocolImplementer;
 	}
@@ -147,11 +159,11 @@ public class PluginProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
 	public static void restartProtocol(IProtocolImplementer protocolImplementer)
-			throws IOException, ProtocolException {
+			throws IOException, ProtocolInitException {
 
 		ProtocolActionDelegate.restartProtocol(protocolImplementer);
 	}
@@ -168,12 +180,17 @@ public class PluginProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolRawHandlingException
+	 *             DOCUMENT ME!!
+	 * @throws InvalidMessageException
+	 *             DOCUMENT ME!!
+	 * @throws InvalidDefinitionException
 	 *             DOCUMENT ME!!
 	 */
 	public static void sendMessageToServer(
 			IProtocolImplementer protocolImplementer, ProtocolMessage message)
-			throws IOException, ProtocolException {
+			throws IOException, InvalidMessageException,
+			InvalidDefinitionException, ProtocolRawHandlingException {
 
 		ProtocolActionDelegate
 				.sendMessageToServer(protocolImplementer, message);

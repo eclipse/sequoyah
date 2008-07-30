@@ -12,6 +12,7 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Daniel Barboza Franco - Bug [233062] - Protocol connection port is static.
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
@@ -24,7 +25,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
 import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
 
 /**
@@ -79,52 +80,53 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 	 * Constant used to represent the Set Encondings RFB Client message.   
 	 */
 	public final static int SET_ENCODINGS = 2;
-	
+
 	/**
-	 * Constant used to represent the Framebuffer Update Request RFB Client message.   
+	 * Constant used to represent the Framebuffer Update Request RFB Client
+	 * message.
 	 */
 	public final static int FRAMEBUFFER_UPDATE_REQUEST = 3;
 
 	/**
-	 * Constant used to represent the Key Event RFB Client message.   
+	 * Constant used to represent the Key Event RFB Client message.
 	 */
 	public final static int KEY_EVENT = 4;
-	
+
 	/**
-	 * Constant used to represent the Pointer Event RFB Client message.   
+	 * Constant used to represent the Pointer Event RFB Client message.
 	 */
 	public final static int POINTER_EVENT = 5;
-	
+
 	/**
-	 * Constant used to represent the Client Cut Text RFB Client message.   
+	 * Constant used to represent the Client Cut Text RFB Client message.
 	 */
 	public final static int CLIENT_CUT_TEXT = 6;
-	
+
 	/* Server to Client message types */
-	
+
 	/**
-	 * Constant used to represent the Framebuffer Update RFB Server message.   
+	 * Constant used to represent the Framebuffer Update RFB Server message.
 	 */
 	public final static int FRAMEBUFFER_UPDATE = 0;
 
 	/**
-	 * Constant used to represent the Set Colour Map Entries RFB Server message.   
+	 * Constant used to represent the Set Colour Map Entries RFB Server message.
 	 */
 	public final static int SET_COLOUR_MAP_ENTRIES = 1;
-	
+
 	/**
-	 * Constant used to represent the Bell RFB Server message.   
+	 * Constant used to represent the Bell RFB Server message.
 	 */
 	public final static int BELL = 2;
 
 	private boolean paintEnabled;
 	private Map parameters;
-	
+
 	/**
-	 * Constant used to represent the Server Cut Text RFB Server message.   
+	 * Constant used to represent the Server Cut Text RFB Server message.
 	 */
 	public final static int SERVER_CUT_TEXT = 3;
-	
+
 	private static int SHARED_FLAG = 1;
 
 	public final static int RAW_ENCODING = 0;
@@ -137,6 +139,7 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 
 	/**
 	 * Returns the protocol version string
+	 * 
 	 * @return the protocol version string
 	 */
 	protected abstract String getVersion();
@@ -144,17 +147,15 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 	abstract protected void handShake(DataInputStream in, OutputStream out)
 			throws Exception;
 
-	
 	protected int[] getSupportedEncodings() {
-		//return painter.getSupportedEncodings();
+		// return painter.getSupportedEncodings();
 		return AbstractVNCPainter.getSupportedEncodingsStatic();
 	}
-	
+
 	/**
 	 * Implements the init phase of the RFB Protocol.
 	 */
-	private void initPhase()
-			throws Exception {
+	private void initPhase() throws Exception {
 
 		/* ClientInit */
 		out.write(SHARED_FLAG); // SharedFlag
@@ -178,15 +179,16 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		}
 
 		sendEncodingsPreferences(getSupportedEncodings(), out);
-		
+
 	}
 
-	void sendEncodingsPreferences(int[] encs, OutputStream out) throws IOException {
+	void sendEncodingsPreferences(int[] encs, OutputStream out)
+			throws IOException {
 		int length = encs.length;
 		byte[] b = new byte[4 + 4 * encs.length];
 
 		b[0] = (byte) SET_ENCODINGS;
-	    b[1] = (byte) 0;
+		b[1] = (byte) 0;
 		b[2] = (byte) ((length >> 8) & 0xff);
 		b[3] = (byte) (length & 0xff);
 
@@ -198,11 +200,10 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		}
 		out.write(b);
 	}
-	
-	
-	public String getServerName(){
+
+	public String getServerName() {
 		return serverName;
-		
+
 	}
 
 	public int getHeight() {
@@ -212,47 +213,47 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 	public int getWidth() {
 		return fbWidth;
 	}
-	
-	
-	
+
 	/**
-	 *  This method compares each byte of the RFB Protocol client version using the String sent by the Server.
+	 * This method compares each byte of the RFB Protocol client version using
+	 * the String sent by the Server.
 	 */
 	protected void compareVersion(byte[] b) throws Exception {
 		String clientVersion = getVersion();
 		String serverVersion = new String(b);
 		boolean versionOk = false;
-		
+
 		if (serverVersion.equals(clientVersion)) {
 			versionOk = true;
-		}
-		else if ( (serverVersion.length() == clientVersion.length()) &&  serverVersion.substring(0, 10).equals(clientVersion.substring(0, 10))) {
+		} else if ((serverVersion.length() == clientVersion.length())
+				&& serverVersion.substring(0, 10).equals(
+						clientVersion.substring(0, 10))) {
 			// the last number of the version String
 			if (serverVersion.charAt(10) > clientVersion.charAt(10)) {
-					versionOk = true;
+				versionOk = true;
 			}
 		}
 		if (!versionOk) {
 			throw new ProtoClientException("Wrong protocol version.");
 		}
 	}
-	
+
 	protected void negotiateProtocol() throws Exception {
 		byte[] b = new byte[PROTOCOL_VERSION_MESSAGE_SIZE];
 		in.readFully(b, 0, PROTOCOL_VERSION_MESSAGE_SIZE);
 		compareVersion(b);
 		out.write(getVersion().getBytes());
 	}
-	
+
 	protected void negotiateSecurity() throws Exception {
-		int [] securityTypes = readSecurityTypes();
+		int[] securityTypes = readSecurityTypes();
 		securityType = chooseSecurityType(securityTypes);
 		if (securityType != SECURITY_TYPE_INVALID) {
 			sendSecurityType(securityType);
 		}
 	}
 
-	protected int chooseSecurityType(int [] securityTypes ) throws Exception {
+	protected int chooseSecurityType(int[] securityTypes) throws Exception {
 		for (int i = 0; i < securityTypes.length; i++) {
 			if (securityTypeSupported(securityTypes[i])) {
 				return securityTypes[i];
@@ -262,34 +263,33 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 	}
 
 	protected int[] readSecurityTypes() throws Exception {
-		int [] result = null;
+		int[] result = null;
 		int secTypesNumber = in.readByte();
 		if (secTypesNumber > 0) {
 			result = new int[secTypesNumber];
-			for (int i=0; i < secTypesNumber  ;i++) {
-				result[i] = in.readByte(); 
+			for (int i = 0; i < secTypesNumber; i++) {
+				result[i] = in.readByte();
 			}
-		}
-		else {
+		} else {
 			handshakeFail();
 		}
 		return result;
 	}
 
 	protected void sendSecurityType(int securityType) throws Exception {
-		out.write((byte)securityType);
+		out.write((byte) securityType);
 	}
 
 	protected void handshakeFail() throws Exception {
 		int failReasonLength;
 		StringBuffer reason = new StringBuffer();
 		failReasonLength = in.readInt();
-		for (int j=0; j<failReasonLength ; j++){
-			reason.append((char)(in.readByte()));
+		for (int j = 0; j < failReasonLength; j++) {
+			reason.append((char) (in.readByte()));
 		}
 		throw new Exception("Handshake failed: " + reason.toString());
 	}
-	
+
 	protected boolean securityTypeSupported(int type) {
 		switch (type) {
 		case SECURITY_TYPE_NONE: // None
@@ -303,13 +303,14 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 	protected void authenticate() throws Exception {
 		switch (securityType) {
 		case SECURITY_TYPE_NONE:
-			//No op. We do not need to do anything else
+			// No op. We do not need to do anything else
 			break;
 		case SECURITY_TYPE_VNC:
 			authenticateVNC();
 			break;
 		default:
-			throw new Exception("Handshake failed: unsupported security type "+ securityType);
+			throw new Exception("Handshake failed: unsupported security type "
+					+ securityType);
 		}
 	}
 
@@ -317,69 +318,70 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		byte[] challenge = new byte[VNC_AUTHENTICATION_CHALLENGE_MESSAGE_SIZE];
 		in.readFully(challenge, 0, VNC_AUTHENTICATION_CHALLENGE_MESSAGE_SIZE);
 
-		byte[] pwd = {0,0,0,0,0,0,0,0};
-		byte[] pwdOrg = (password != null)?password.getBytes():new byte[0];
+		byte[] pwd = { 0, 0, 0, 0, 0, 0, 0, 0 };
+		byte[] pwdOrg = (password != null) ? password.getBytes() : new byte[0];
 		for (int i = 0; i < 8 && i < pwdOrg.length; i++) {
 			pwd[i] = pwdOrg[i];
 		}
-				
-	    DesEncoder des = new DesEncoder(pwd);
-	    des.encode(challenge, challenge);
+
+		DesEncoder des = new DesEncoder(pwd);
+		des.encode(challenge, challenge);
 		out.write(challenge);
 	}
-	
+
 	protected void readAuthenticationResult() throws Exception {
 		int securityResult = in.readInt();
 		if (securityResult != 0) {
 			handshakeFail();
 		}
 	}
-	
+
 	public void clientInit(DataInputStream in, OutputStream out, Map parameters)
-			throws ProtocolException {
+			throws ProtocolInitException {
 
 		this.in = in;
 		this.out = out;
 		this.parameters = parameters;
-		
-		setPassword((String)parameters.get("password"));
-		
+
+		setPassword((String) parameters.get("password"));
+
 		try {
 			negotiateProtocol();
-		}catch (Exception e) {
-			log(VNCProtocol.class).error("VNC protocol negotiation error: " + e.getMessage());
-			throw new ProtocolException("VNC protocol negotiation error.");
+		} catch (Exception e) {
+			log(VNCProtocol.class).error(
+					"VNC protocol negotiation error: " + e.getMessage());
+			throw new ProtocolInitException("VNC protocol negotiation error.");
 		}
 
 		try {
 			negotiateSecurity();
+		} catch (Exception e) {
+			log(VNCProtocol.class).error(
+					"VNC security negotiation error: " + e.getMessage());
+			throw new ProtocolInitException("VNC security negotiation error.");
 		}
-		catch (Exception e) {
-			log(VNCProtocol.class).error("VNC security negotiation error: " + e.getMessage());
-			throw new ProtocolException("VNC security negotiation error.");
-		}
-		
+
 		try {
 			authenticate();
 			readAuthenticationResult();
 		} catch (Exception e) {
-			log(VNCProtocol.class).error("VNC authenticate error: " + e.getMessage());
-			throw new ProtocolException("VNC authenticate error.");
+			log(VNCProtocol.class).error(
+					"VNC authenticate error: " + e.getMessage());
+			throw new ProtocolInitException("VNC authenticate error.");
 		}
-		
+
 		try {
 			initPhase();
+		} catch (Exception e) {
+			log(VNCProtocol.class).error(
+					"VNC Init Phase error: " + e.getMessage());
+			throw new ProtocolInitException("VNC Init Phase error.");
 		}
-		catch (Exception e){
-			log(VNCProtocol.class).error("VNC Init Phase error: " + e.getMessage());
-			throw new ProtocolException("VNC Init Phase error.");
-		}
-		
-		
+
 	}
 
 	public void serverInit(DataInputStream in, OutputStream out, Map parameters)
-			throws ProtocolException {
+			throws ProtocolInitException {
 
 	}
 

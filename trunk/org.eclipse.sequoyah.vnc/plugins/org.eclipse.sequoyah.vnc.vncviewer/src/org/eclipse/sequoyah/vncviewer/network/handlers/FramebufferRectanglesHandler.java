@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Daniel Barboza Franco (Motorola) - Integration with code from bug 227793 to correctly deal with the redesigned painting process.
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.network.handlers;
 
@@ -21,7 +22,7 @@ import org.eclipse.tml.protocol.lib.IMessageFieldsStore;
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.IRawDataHandler;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.vncviewer.network.IVNCPainter;
 import org.eclipse.tml.vncviewer.network.RectHeader;
 import org.eclipse.tml.vncviewer.network.VNCProtocol;
@@ -42,12 +43,12 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 
 	private int current_rect = 1;
 	private int x0, y0 = Integer.MAX_VALUE;
-	private int x1,y1 = 0;
-	
+	private int x1, y1 = 0;
+
 	public Map<String, Object> readRawDataFromStream(InputStream dataStream,
 			IMessageFieldsStore currentlyReadFields,
 			IProtocolImplementer protocolImplementer, boolean isBigEndian)
-			throws IOException, ProtocolException {
+			throws IOException, ProtocolRawHandlingException {
 
 		// Determine the number of pixels using the width and height already
 		// read
@@ -62,44 +63,46 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 			VNCProtocol vncProtocol = (VNCProtocol) protocolImplementer;
 			IVNCPainter painter = vncProtocol.getVncPainter();
 
-			
 			int x = (Integer) currentlyReadFields.getFieldValue("x-position");
 			int y = (Integer) currentlyReadFields.getFieldValue("y-position");
 			int width = (Integer) currentlyReadFields.getFieldValue("width");
 			int height = (Integer) currentlyReadFields.getFieldValue("height");
-			int encoding = (Integer) currentlyReadFields.getFieldValue("encodingType");
-			//byte[] data = (byte[]) currentlyReadFields.getFieldValue("pixelsData");
+			int encoding = (Integer) currentlyReadFields
+					.getFieldValue("encodingType");
+			// byte[] data = (byte[])
+			// currentlyReadFields.getFieldValue("pixelsData");
 
 			// Process the rectangle data into the painter
-				
+
 			try {
-				painter.processRectangle(new RectHeader(x, y, width, height, encoding), ((VNCProtocol)protocolImplementer).getInputStream());
+				painter.processRectangle(new RectHeader(x, y, width, height,
+						encoding), ((VNCProtocol) protocolImplementer)
+						.getInputStream());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			int numRect = (Integer)currentlyReadFields.getFieldValue("numberOfRectangles");
-				
-				
-			x0 =Math.min(x0, x);
-			y0 =Math.min(y0, y);
-			x1 =Math.max(x1, x+w);
-			y1 =Math.max(y1, y+h);
-			
+			int numRect = (Integer) currentlyReadFields
+					.getFieldValue("numberOfRectangles");
+
+			x0 = Math.min(x0, x);
+			y0 = Math.min(y0, y);
+			x1 = Math.max(x1, x + w);
+			y1 = Math.max(y1, y + h);
+
 			if (current_rect == numRect) {
 				current_rect = 1;
 
 				painter.updateRectangle(x0, y0, x1, y1);
-					
+
 				x0 = y0 = Integer.MAX_VALUE;
 				x1 = y1 = 0;
 
-			}
-			else { 
+			} else {
 				current_rect += 1;
 			}
-			
+
 		}
 
 		return fieldsMap;
@@ -108,7 +111,7 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 	public void writeRawDataToStream(ByteArrayOutputStream dataStream,
 			ProtocolMessage messageToGetInformationFrom,
 			IProtocolImplementer protocolImplementer, boolean isBigEndian)
-			throws ProtocolException {
+			throws ProtocolRawHandlingException {
 
 		// No implementation. This is a client plugin only
 	}

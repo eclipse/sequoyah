@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 
 /**
  * DESCRIPTION: This interface describes the contract to be used by an object
@@ -72,13 +72,13 @@ public interface IRawDataHandler {
 	 * @throws IOException
 	 *             If an IO error occurs while trying to read from the input
 	 *             stream.
-	 * @throws ProtocolException
+	 * @throws ProtocolRawHandlingException
 	 *             If the raw field cannot be parsed.
 	 */
 	Map<String, Object> readRawDataFromStream(InputStream dataStream,
 			IMessageFieldsStore fields,
 			IProtocolImplementer protocolImplementer, boolean isBigEndian)
-			throws IOException, ProtocolException;
+			throws IOException, ProtocolRawHandlingException;
 
 	/**
 	 * Writes raw data fields to stream. <br>
@@ -103,7 +103,7 @@ public interface IRawDataHandler {
 	 *            True if the protocol is big endian; false if it is little
 	 *            endian.
 	 * 
-	 * @throws ProtocolException
+	 * @throws ProtocolRawHandlingException
 	 *             If the method fails due to protocol logic error (eg. If the
 	 *             protocol message do not have necessary data or have
 	 *             incomplete/erroneous data).
@@ -111,5 +111,5 @@ public interface IRawDataHandler {
 	void writeRawDataToStream(ByteArrayOutputStream dataStream,
 			ProtocolMessage messageToGetInformationFrom,
 			IProtocolImplementer protocolImplementer, boolean isBigEndian)
-			throws ProtocolException;
+			throws ProtocolRawHandlingException;
 }

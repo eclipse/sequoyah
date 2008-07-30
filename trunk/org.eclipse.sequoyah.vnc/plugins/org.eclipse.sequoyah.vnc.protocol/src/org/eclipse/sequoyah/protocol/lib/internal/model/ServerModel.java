@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -20,8 +21,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidInputStreamDataException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
+import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
@@ -110,7 +117,7 @@ public class ServerModel implements IModel {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
 	public void startListeningToPort(int portToBind,
@@ -118,18 +125,21 @@ public class ServerModel implements IModel {
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolImplementer protocolImplementer,
-			boolean isBigEndianProtocol) throws ProtocolException, IOException {
+			IProtocolExceptionHandler exceptionHandler,
+			boolean isBigEndianProtocol) throws ProtocolInitException,
+			IOException {
 
 		if ((portToBind <= 0) || (allMessages == null)
 				|| (incomingMessages == null) || (outgoingMessages == null)
 				|| (protocolImplementer == null)) {
-			throw new ProtocolException("Invalid parameters provided to method");
+			throw new ProtocolInitException(
+					"Invalid parameters provided to method");
 		}
 
 		ServerSocket serverSocket = new ServerSocket(portToBind);
 		ServerProtocolEngineFactory factory = new ServerProtocolEngineFactory(
 				allMessages, incomingMessages, outgoingMessages,
-				isBigEndianProtocol);
+				exceptionHandler, isBigEndianProtocol);
 		openedServerSockets.put(protocolImplementer, serverSocket);
 		engineFactories.put(protocolImplementer, factory);
 
@@ -167,11 +177,11 @@ public class ServerModel implements IModel {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
 	public void restartServerProtocol(IProtocolImplementer protocolImplementer)
-			throws IOException, ProtocolException {
+			throws IOException, ProtocolInitException {
 
 		ServerSocket ss = openedServerSockets.get(protocolImplementer);
 		int portToBind = ss.getLocalPort();
@@ -181,7 +191,8 @@ public class ServerModel implements IModel {
 		stopListeningToPort(protocolImplementer);
 		startListeningToPort(portToBind, factory.getAllMessages(), factory
 				.getIncomingMessages(), factory.getOutgoingMessages(),
-				protocolImplementer, factory.isBigEndianProtocol());
+				protocolImplementer, factory.getExceptionHandler(), factory
+						.isBigEndianProtocol());
 	}
 
 	/**
@@ -287,8 +298,34 @@ public class ServerModel implements IModel {
 					}
 				}
 			} catch (Exception e) {
-				// TODO This is a temporary exception handling
-				e.printStackTrace();
+				IProtocolExceptionHandler exceptionHandler = factory
+						.getExceptionHandler();
+
+				if (exceptionHandler != null) {
+					// Delegate the exception to user
+					if (e instanceof IOException) {
+						exceptionHandler.handleIOException((IOException) e);
+					} else if (e instanceof ProtocolInitException) {
+						exceptionHandler
+								.handleProtocolInitException((ProtocolInitException) e);
+					} else if (e instanceof MessageHandleException) {
+						exceptionHandler
+								.handleMessageHandleException((MessageHandleException) e);
+					} else if (e instanceof InvalidMessageException) {
+						exceptionHandler
+								.handleInvalidMessageException((InvalidMessageException) e);
+					} else if (e instanceof InvalidInputStreamDataException) {
+						exceptionHandler
+								.handleInvalidInputStreamDataException((InvalidInputStreamDataException) e);
+					} else if (e instanceof InvalidDefinitionException) {
+						exceptionHandler
+								.handleInvalidDefinitionException((InvalidDefinitionException) e);
+					} else if (e instanceof ProtocolRawHandlingException) {
+						exceptionHandler
+								.handleProtocolRawHandlingException((ProtocolRawHandlingException) e);
+					}
+				}
+
 			} finally {
 				try {
 					// Perform the cleanup before finishing the thread
@@ -311,8 +348,12 @@ public class ServerModel implements IModel {
 					connectedClients.remove(protocolImplementer);
 
 				} catch (IOException e) {
-					// TODO This is a temporary exception handling
-					e.printStackTrace();
+					IProtocolExceptionHandler exceptionHandler = factory
+							.getExceptionHandler();
+
+					if (exceptionHandler != null) {
+						exceptionHandler.handleIOException(e);
+					}
 				}
 			}
 		}

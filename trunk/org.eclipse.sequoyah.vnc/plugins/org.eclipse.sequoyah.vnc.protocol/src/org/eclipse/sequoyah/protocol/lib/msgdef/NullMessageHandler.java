@@ -7,14 +7,14 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.msgdef;
 
 import org.eclipse.tml.protocol.lib.IMessageHandler;
 import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
 
 /**
  * DESCRIPTION: This class is the handler used by messages that does not need to
@@ -38,7 +38,7 @@ public final class NullMessageHandler implements IMessageHandler {
 	 */
 	public ProtocolMessage handleMessage(
 			IProtocolImplementer protocolImplementer, ProtocolMessage message)
-			throws ProtocolException {
+			throws MessageHandleException {
 
 		return null;
 	}

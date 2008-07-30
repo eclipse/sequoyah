@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
+ * Fabio Rigo - Bug [238191] - Enhance exception handling
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -16,7 +17,10 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
+import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.model.ClientModel;
 import org.eclipse.tml.protocol.lib.internal.model.ServerModel;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
@@ -67,7 +71,7 @@ public class ProtocolActionDelegate {
 	 *             DOCUMENT ME!!
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
 	
@@ -76,14 +80,15 @@ public class ProtocolActionDelegate {
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolImplementer protocolImplementer,
+			IProtocolExceptionHandler exceptionHandler,
 			Boolean isBigEndianProtocol,
 			String host, int port,
 			Map<String, Object> parameters)
-			throws UnknownHostException, IOException, ProtocolException {
+			throws UnknownHostException, IOException, ProtocolInitException {
 
 		ClientModel model = ClientModel.getInstance();
 		model.startClientProtocol(allMessages, incomingMessages,
-				outgoingMessages, protocolImplementer, isBigEndianProtocol, host, port, parameters);
+				outgoingMessages, protocolImplementer, exceptionHandler, isBigEndianProtocol, host, port, parameters);
 	}
 
 	/**
@@ -112,7 +117,7 @@ public class ProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
 	public static void startServerProtocol(int portToBind,
@@ -120,11 +125,14 @@ public class ProtocolActionDelegate {
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolImplementer protocolImplementer,
-			boolean isBigEndianProtocol) throws IOException, ProtocolException {
+			IProtocolExceptionHandler exceptionHandler,
+			boolean isBigEndianProtocol) throws IOException,
+			ProtocolInitException {
 
 		ServerModel model = ServerModel.getInstance();
 		model.startListeningToPort(portToBind, allMessages, incomingMessages,
-				outgoingMessages, protocolImplementer, isBigEndianProtocol);
+				outgoingMessages, protocolImplementer, exceptionHandler,
+				isBigEndianProtocol);
 	}
 
 	/**
@@ -153,11 +161,11 @@ public class ProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
 	public static void restartProtocol(IProtocolImplementer protocolImplementer)
-			throws IOException, ProtocolException {
+			throws IOException, ProtocolInitException {
 
 		ClientModel clientModel = ClientModel.getInstance();
 		clientModel.restartClientProtocol(protocolImplementer);
@@ -178,12 +186,17 @@ public class ProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolException
+	 * @throws ProtocolRawHandlingException
+	 *             DOCUMENT ME!!
+	 * @throws InvalidMessageException
+	 *             DOCUMENT ME!!
+	 * @throws InvalidDefinitionException
 	 *             DOCUMENT ME!!
 	 */
 	public static void sendMessageToServer(
 			IProtocolImplementer protocolImplementer, ProtocolMessage message)
-			throws IOException, ProtocolException {
+			throws IOException, ProtocolRawHandlingException,
+			InvalidMessageException, InvalidDefinitionException {
 		ClientModel model = ClientModel.getInstance();
 		model.sendMessage(protocolImplementer, message);
 	}
