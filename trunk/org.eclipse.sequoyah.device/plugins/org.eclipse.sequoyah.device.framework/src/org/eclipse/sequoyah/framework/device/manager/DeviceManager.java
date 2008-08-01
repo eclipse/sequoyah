@@ -5,10 +5,10 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
- * Fabio Fantato (Motorola)
+ * Fabio Fantato (Eldorado Research Institute)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Eldorado Research Institute) - [242109] IDevice.getServices() returns a null reference
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.manager;
@@ -61,8 +61,8 @@ public class DeviceManager {
 			IDevice device = DeviceFactory.createDevice(deviceId);
 			device.setServices(loadServices(deviceId));			
 			DeviceRegistry.getInstance().addDevice(device);
-			devices.put(deviceId,DeviceFactory.createDevice(deviceId));
-			servicesForDevice.put(deviceId, loadServices(deviceId));			
+			devices.put(deviceId,device);
+			servicesForDevice.put(deviceId, device.getServices());	
 		}
 	};
 	
@@ -104,7 +104,7 @@ public class DeviceManager {
 	}
 	
 	public List<IService> getServices(String deviceId){
-		return servicesForDevice.get(getDevice(deviceId));		
+		return servicesForDevice.get(deviceId);		
 	}
 	
 	
