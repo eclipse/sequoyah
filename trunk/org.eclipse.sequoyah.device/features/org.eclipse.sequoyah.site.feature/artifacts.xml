@@ -1,16 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?artifactRepository class='org.eclipse.equinox.internal.p2.artifact.repository.simple.SimpleArtifactRepository' version='1.0.0'?>
-<repository name='file:/C:/tml/workspaces/tml-official/org.eclipse.tml.site/ - artifacts' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1'>
+<repository name='file:/C:/tml/workspaces/tml-official/org.eclipse.tml.site/ - artifacts' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1.0.0'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1217354464391'/>
+    <property name='p2.timestamp' value='1217355443691'/>
   </properties>
   <mappings size='3'>
     <rule filter='(&amp; (classifier=osgi.bundle))' output='${repoUrl}/plugins/${id}_${version}.jar'/>
     <rule filter='(&amp; (classifier=binary))' output='${repoUrl}/binary/${id}_${version}'/>
     <rule filter='(&amp; (classifier=org.eclipse.update.feature))' output='${repoUrl}/features/${id}_${version}.jar'/>
   </mappings>
-  <artifacts size='21'>
+  <artifacts size='30'>
     <artifact classifier='osgi.bundle' id='org.eclipse.tml.framework.device.wizard' version='0.2.0'>
       <properties size='3'>
         <property name='artifact.size' value='59076'/>
@@ -25,30 +25,11 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.eclipse.tml.framework.device' version='0.2.0'>
-      <properties size='3'>
-        <property name='artifact.size' value='127145'/>
-        <property name='download.size' value='127145'/>
-        <property name='download.contentType' value='application/zip'/>
-      </properties>
-    </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.vnc.feature' version='0.4.0.200807291500'>
-      <properties size='2'>
-        <property name='artifact.size' value='23660'/>
-        <property name='download.size' value='23660'/>
-      </properties>
-    </artifact>
     <artifact classifier='osgi.bundle' id='org.eclipse.tml.framework.device.ui' version='0.2.0'>
       <properties size='3'>
         <property name='artifact.size' value='88619'/>
         <property name='download.size' value='88619'/>
         <property name='download.contentType' value='application/zip'/>
-      </properties>
-    </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.device.feature' version='0.2.0.200807291500'>
-      <properties size='2'>
-        <property name='artifact.size' value='23746'/>
-        <property name='download.size' value='23746'/>
       </properties>
     </artifact>
     <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.feature' version='0.1.0.200807291500'>
@@ -57,11 +38,28 @@
         <property name='download.size' value='23748'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.eclipse.tml.vncviewer' version='0.4.0'>
-      <properties size='3'>
-        <property name='artifact.size' value='179822'/>
-        <property name='download.size' value='179822'/>
-        <property name='download.contentType' value='application/zip'/>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.device.feature' version='0.2.0.200807291500'>
+      <properties size='2'>
+        <property name='artifact.size' value='23746'/>
+        <property name='download.size' value='23746'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.vnc.protocol.examples.feature' version='0.1.0.200807291516'>
+      <properties size='2'>
+        <property name='artifact.size' value='23648'/>
+        <property name='download.size' value='23648'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.feature' version='0.1.0.200807291516'>
+      <properties size='2'>
+        <property name='artifact.size' value='23749'/>
+        <property name='download.size' value='23749'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.vnc.protocol.examples.feature' version='0.1.0.200807291500'>
+      <properties size='2'>
+        <property name='artifact.size' value='23647'/>
+        <property name='download.size' value='23647'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.eclipse.tml.service.start' version='0.2.0'>
@@ -71,35 +69,17 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.vnc.protocol.examples.feature' version='0.1.0.200807291500'>
-      <properties size='2'>
-        <property name='artifact.size' value='23647'/>
-        <property name='download.size' value='23647'/>
-      </properties>
-    </artifact>
     <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.protocol.feature' version='0.1.0.200807291500'>
       <properties size='2'>
         <property name='artifact.size' value='23546'/>
         <property name='download.size' value='23546'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.eclipse.tml.common.utilities' version='0.2.0'>
+    <artifact classifier='osgi.bundle' id='org.eclipse.tml.echo' version='0.1.0'>
       <properties size='3'>
-        <property name='artifact.size' value='67872'/>
-        <property name='download.size' value='67872'/>
+        <property name='artifact.size' value='14482'/>
+        <property name='download.size' value='14482'/>
         <property name='download.contentType' value='application/zip'/>
-      </properties>
-    </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.device.examples.feature' version='0.2.0.200807291500'>
-      <properties size='2'>
-        <property name='artifact.size' value='23697'/>
-        <property name='download.size' value='23697'/>
-      </properties>
-    </artifact>
-    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.vnc.viewer.feature' version='0.4.0.200807291500'>
-      <properties size='2'>
-        <property name='artifact.size' value='762'/>
-        <property name='download.size' value='762'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.eclipse.tml.echo' version='0.1.0'>
@@ -107,6 +87,12 @@
         <property name='artifact.size' value='14480'/>
         <property name='download.size' value='14480'/>
         <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.vnc.viewer.feature' version='0.4.0.200807291516'>
+      <properties size='2'>
+        <property name='artifact.size' value='23801'/>
+        <property name='download.size' value='23801'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.eclipse.tml.service.stop' version='0.2.0'>
@@ -120,6 +106,70 @@
       <properties size='2'>
         <property name='artifact.size' value='23564'/>
         <property name='download.size' value='23564'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.device.feature' version='0.2.0.200807291516'>
+      <properties size='2'>
+        <property name='artifact.size' value='23747'/>
+        <property name='download.size' value='23747'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.tml.service.vncviewer' version='0.2.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='26903'/>
+        <property name='download.size' value='26903'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.vnc.feature' version='0.4.0.200807291500'>
+      <properties size='2'>
+        <property name='artifact.size' value='23660'/>
+        <property name='download.size' value='23660'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.tml.framework.device' version='0.2.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='127145'/>
+        <property name='download.size' value='127145'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.vnc.feature' version='0.4.0.200807291516'>
+      <properties size='2'>
+        <property name='artifact.size' value='23658'/>
+        <property name='download.size' value='23658'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.tml.vncviewer' version='0.4.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='179822'/>
+        <property name='download.size' value='179822'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='org.eclipse.tml.common.utilities' version='0.2.0'>
+      <properties size='3'>
+        <property name='artifact.size' value='67872'/>
+        <property name='download.size' value='67872'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.protocol.feature' version='0.1.0.200807291516'>
+      <properties size='2'>
+        <property name='artifact.size' value='23547'/>
+        <property name='download.size' value='23547'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.device.examples.feature' version='0.2.0.200807291500'>
+      <properties size='2'>
+        <property name='artifact.size' value='23697'/>
+        <property name='download.size' value='23697'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.vnc.viewer.feature' version='0.4.0.200807291500'>
+      <properties size='2'>
+        <property name='artifact.size' value='762'/>
+        <property name='download.size' value='762'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.eclipse.tml.device.qemuarm' version='0.2.0'>
@@ -136,11 +186,10 @@
         <property name='download.contentType' value='application/zip'/>
       </properties>
     </artifact>
-    <artifact classifier='osgi.bundle' id='org.eclipse.tml.service.vncviewer' version='0.2.0'>
-      <properties size='3'>
-        <property name='artifact.size' value='26903'/>
-        <property name='download.size' value='26903'/>
-        <property name='download.contentType' value='application/zip'/>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.device.examples.feature' version='0.2.0.200807291516'>
+      <properties size='2'>
+        <property name='artifact.size' value='23698'/>
+        <property name='download.size' value='23698'/>
       </properties>
     </artifact>
     <artifact classifier='osgi.bundle' id='org.eclipse.tml.vncviewer.vncviews' version='0.4.0'>
@@ -148,6 +197,12 @@
         <property name='artifact.size' value='22576'/>
         <property name='download.size' value='22576'/>
         <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='org.eclipse.tml.common.feature' version='0.2.0.200807291516'>
+      <properties size='2'>
+        <property name='artifact.size' value='23565'/>
+        <property name='download.size' value='23565'/>
       </properties>
     </artifact>
   </artifacts>
