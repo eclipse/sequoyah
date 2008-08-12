@@ -4,11 +4,12 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributor:
- * Fabio Rigo
+ * Fabio Rigo 
  *
  * Contributors:
- * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Fabio Fantato (Eldorado Research Institute) - Bug [243918] - Wrong "if" test in ProtocolEngine class
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -511,10 +512,10 @@ public class ProtocolEngine {
 				// documentation.
 				value = message.getFieldValue(fieldName);
 			}
-			if (value instanceof Integer) {
+			if (value instanceof Number) {
 				// If a value is defined, then write the field to the output
 				// stream.
-				writeNumberToStream(streamToWriteTo, (Integer) value,
+				writeNumberToStream(streamToWriteTo, (Number) value,
 						fieldSize, isSigned);
 			} else {
 				// If a value is not defined, than raise a protocol exception
