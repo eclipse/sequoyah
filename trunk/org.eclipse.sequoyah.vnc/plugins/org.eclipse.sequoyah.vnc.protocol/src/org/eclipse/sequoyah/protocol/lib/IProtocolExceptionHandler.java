@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Fabio Rigo - Bug [244067] - The exception handling interface should forward the protocol implementer object
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -36,17 +37,17 @@ import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
  */
 public interface IProtocolExceptionHandler {
 
-	void handleIOException(IOException e);
+	void handleIOException(IOException e, IProtocolImplementer implementer);
 
-	void handleProtocolInitException(ProtocolInitException e);
+	void handleProtocolInitException(ProtocolInitException e, IProtocolImplementer implementer);
 
-	void handleMessageHandleException(MessageHandleException e);
+	void handleMessageHandleException(MessageHandleException e, IProtocolImplementer implementer);
 
-	void handleInvalidMessageException(InvalidMessageException e);
+	void handleInvalidMessageException(InvalidMessageException e, IProtocolImplementer implementer);
 
-	void handleInvalidInputStreamDataException(InvalidInputStreamDataException e);
+	void handleInvalidInputStreamDataException(InvalidInputStreamDataException e, IProtocolImplementer implementer);
 
-	void handleInvalidDefinitionException(InvalidDefinitionException e);
+	void handleInvalidDefinitionException(InvalidDefinitionException e, IProtocolImplementer implementer);
 
-	void handleProtocolRawHandlingException(ProtocolRawHandlingException e);
+	void handleProtocolRawHandlingException(ProtocolRawHandlingException e, IProtocolImplementer implementer);
 }

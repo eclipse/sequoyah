@@ -11,6 +11,7 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Fantato (Eldorado Research Institute) - Bug [243918] - Wrong "if" test in ProtocolEngine class
  * Fabio Rigo (Eldorado Research Institute)- Bug [242757] - Protocol does not support Unicode on variable sized fields
+ * Fabio Rigo - Bug [244067] - The exception handling interface should forward the protocol implementer object
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -1329,7 +1330,7 @@ public class ProtocolEngine {
 					if (isRunning) {
 						isRunning = false;
 						if (exceptionHandler != null) {
-							exceptionHandler.handleIOException(e);
+							exceptionHandler.handleIOException(e, protocolImplementer);
 						}
 					}
 				} catch (Exception e) {
@@ -1337,26 +1338,24 @@ public class ProtocolEngine {
 
 					if (exceptionHandler != null) {
 						// Delegate the exception to user
-						if (e instanceof IOException) {
-							exceptionHandler.handleIOException((IOException) e);
-						} else if (e instanceof ProtocolInitException) {
+						if (e instanceof ProtocolInitException) {
 							exceptionHandler
-									.handleProtocolInitException((ProtocolInitException) e);
+									.handleProtocolInitException((ProtocolInitException) e, protocolImplementer);
 						} else if (e instanceof MessageHandleException) {
 							exceptionHandler
-									.handleMessageHandleException((MessageHandleException) e);
+									.handleMessageHandleException((MessageHandleException) e, protocolImplementer);
 						} else if (e instanceof InvalidMessageException) {
 							exceptionHandler
-									.handleInvalidMessageException((InvalidMessageException) e);
+									.handleInvalidMessageException((InvalidMessageException) e, protocolImplementer);
 						} else if (e instanceof InvalidInputStreamDataException) {
 							exceptionHandler
-									.handleInvalidInputStreamDataException((InvalidInputStreamDataException) e);
+									.handleInvalidInputStreamDataException((InvalidInputStreamDataException) e, protocolImplementer);
 						} else if (e instanceof InvalidDefinitionException) {
 							exceptionHandler
-									.handleInvalidDefinitionException((InvalidDefinitionException) e);
+									.handleInvalidDefinitionException((InvalidDefinitionException) e, protocolImplementer);
 						} else if (e instanceof ProtocolRawHandlingException) {
 							exceptionHandler
-									.handleProtocolRawHandlingException((ProtocolRawHandlingException) e);
+									.handleProtocolRawHandlingException((ProtocolRawHandlingException) e, protocolImplementer);
 						}
 					}
 				}
