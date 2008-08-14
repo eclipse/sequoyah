@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo - Bug [242757] - Protocol does not support Unicode on variable sized fields
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.reader;
 
@@ -63,7 +63,8 @@ public interface IExtensionConstants {
 	String PROTOCOL_MESSAGE_VARIABLE_SIZE_FIELD_SIGNED_ATTR = "isSizeFieldSigned";
 	String PROTOCOL_MESSAGE_VARIABLE_SIZE_FIELD_SIZE_ATTR = "sizeFieldSizeInBytes";
 	String PROTOCOL_MESSAGE_VARIABLE_VALUE_FIELD_NAME_ATTR = "valueFieldName";
-	String PROTOCOL_MESSAGE_VARIABLE_VALUE_FIELD_VALUE_ATTR = "value";
+	String PROTOCOL_MESSAGE_VARIABLE_CHARSET_NAME_ATTR = "charsetName";
+	String PROTOCOL_MESSAGE_VARIABLE_VALUE_FIELD_VALUE_ATTR = "value";	
 
 	// Constants that define constants for Raw Data elements, from
 	// ProtocolMessage extension point

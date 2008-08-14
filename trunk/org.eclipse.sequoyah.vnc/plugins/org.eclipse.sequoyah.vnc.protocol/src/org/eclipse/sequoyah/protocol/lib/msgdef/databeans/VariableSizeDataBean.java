@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo - Bug [242757] - Protocol does not support Unicode on variable sized fields
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.msgdef.databeans;
 
@@ -34,8 +34,9 @@ public class VariableSizeDataBean implements IMsgDataBean {
 	private int sizeFieldSizeInBytes;
 	private String valueFieldName;
 	private String value;
+	private String charsetName;
 
-	/*
+    /*
 	 * Getters section
 	 */
 	public boolean isSizeFieldSigned() {
@@ -50,9 +51,14 @@ public class VariableSizeDataBean implements IMsgDataBean {
 		return valueFieldName;
 	}
 
+    public String getCharsetName() {
+        return charsetName;
+    }
+	
 	public String getValue() {
 		return value;
-	}
+	}	
+
 
 	/*
 	 * Setters section
@@ -69,6 +75,10 @@ public class VariableSizeDataBean implements IMsgDataBean {
 		this.sizeFieldSizeInBytes = sizeFieldSizeInBytes;
 	}
 
+    public void setCharsetName(String charsetName) {
+        this.charsetName = charsetName;
+    }
+	
 	public void setValueFieldName(String valueFieldName) {
 		this.valueFieldName = valueFieldName;
 	}

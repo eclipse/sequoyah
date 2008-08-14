@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="com.example.protocol">
+<schema targetNamespace="com.example.protocol" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="com.example.protocol" id="protocolMessage" name="Protocol Message"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          A protocol message is a set of bytes, structured as defined by the protocol rules, which is sent through a communication channel and has meaning to both sender and receiver parts.&lt;p&gt;
 In TmL, the message structure is defined by the &lt;samp&gt;protocolMessage&lt;/samp&gt; extension point and associated to a protocol implementer by means of the &lt;samp&gt;protocolId&lt;/samp&gt; defined by a protocolImplementer extension (see &lt;samp&gt;protocolImplementer&lt;/samp&gt; extension point). Once the message structure is known by the framework, it is able to serialize and send a set of provided data through the communication channel (if it is an outgoing message), as well as receive and deserialize messages data from the communication channel, providing a handler with meaningful data (if it is an incoming message).&lt;p&gt;
@@ -13,6 +13,11 @@ Finally, it is possible to have pre-defined structures for the message fields, i
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="message"/>
@@ -36,9 +41,9 @@ Finally, it is possible to have pre-defined structures for the message fields, i
                <documentation>
                   An optional name of the extension instance.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -46,9 +51,9 @@ Finally, it is possible to have pre-defined structures for the message fields, i
 
    <element name="message">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="messageName"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
@@ -104,9 +109,9 @@ Finally, it is possible to have pre-defined structures for the message fields, i
                <documentation>
                   The fully qualified name of the class that handles this message.&lt;br&gt;&lt;i&gt;Note: &lt;/i&gt;If you are developing only one part of the protocol and the message belongs to the other part (in which case it is not needed to provide a handler to the message), leave the field blank.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.tml.protocol.lib.IMessageHandler"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -114,9 +119,9 @@ Finally, it is possible to have pre-defined structures for the message fields, i
 
    <element name="fixedSizeData">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="fieldName"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This is the element that defines a field with known size. It is usually used for transmitting number types, such as integers, longs, shorts or bytes.
          </documentation>
@@ -155,9 +160,9 @@ Finally, it is possible to have pre-defined structures for the message fields, i
 
    <element name="variableSizeData">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="valueFieldName"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This is the element that defines a field with unknown size. It is usually used for transmitting alphanumeric strings. Before the string field itself, a numeric field tells the framework what is the size of the string field.
          </documentation>
@@ -191,6 +196,29 @@ Finally, it is possible to have pre-defined structures for the message fields, i
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="charsetName" use="default" value="US-ASCII">
+            <annotation>
+               <documentation>
+                  The charset that must be used to encode/decode the string bytes that compose this field
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="US-ASCII">
+                  </enumeration>
+                  <enumeration value="ISO-8859-1">
+                  </enumeration>
+                  <enumeration value="UTF-8">
+                  </enumeration>
+                  <enumeration value="UTF-16BE">
+                  </enumeration>
+                  <enumeration value="UTF-16LE">
+                  </enumeration>
+                  <enumeration value="UTF-16">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
          <attribute name="value" type="string">
             <annotation>
                <documentation>
@@ -203,9 +231,9 @@ Finally, it is possible to have pre-defined structures for the message fields, i
 
    <element name="rawDataHandler">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="fieldName"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This is the element that defines a handler for a field which format the framework cannot handle. It is often used when the data format cannot be represented either by a fixed size field or by a variable size field.
          </documentation>
@@ -223,9 +251,9 @@ Finally, it is possible to have pre-defined structures for the message fields, i
                <documentation>
                   The fully qualified name of the class that is able to handle the contents of this raw data field.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.tml.protocol.lib.IRawDataHandler"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -233,9 +261,9 @@ Finally, it is possible to have pre-defined structures for the message fields, i
 
    <element name="iteratableBlock">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="iterableBlockId"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This is the element that defines a block of fields that shall be read/written multiple times. The iteration quantity is defined by the value of a fixed size field which value has already been determined and registered at the &lt;samp&gt;IProtocolMessage&lt;/samp&gt; being used.
          </documentation>
@@ -264,18 +292,18 @@ Finally, it is possible to have pre-defined structures for the message fields, i
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          0.4.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of the extension point:
 &lt;p&gt;
@@ -335,9 +363,9 @@ Finally, it is possible to have pre-defined structures for the message fields, i
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Incoming messages needs a handler class to be declared. That class must implement interface &lt;samp&gt;org.eclipse.tml.protocol.framework.IMessageHandler&lt;/samp&gt;.&lt;p&gt;
 The message representation is defined by the interface &lt;samp&gt;org.eclipse.tml.protocol.framework.IProtocolMessage&lt;/samp&gt;. When creating a message to be sent, an instance of the class &lt;samp&gt;org.eclipse.tml.protocol.framework.ProtocolMessage&lt;/samp&gt; can be constructed.&lt;p&gt;
@@ -347,9 +375,9 @@ The same applies to raw data writers, which must implement interface &lt;samp&gt
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          After the protocol implementer is started (by means of the method &lt;code&gt;startProtocol()&lt;/code&gt; of the protocol implementer class), the socket starts to be monitored by a consumer thread. Once a message arrives and is deserialized by the implementor, the message handler is invoked and all field values read as defined in &lt;samp&gt;protocolMessage&lt;/samp&gt; extension is provided to that handler.&lt;p&gt;
 On the other hand, when a message needs to be serialized and sent through the socket, one should:&lt;br&gt;
@@ -359,9 +387,9 @@ On the other hand, when a message needs to be serialized and sent through the so
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies

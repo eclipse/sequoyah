@@ -10,6 +10,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Fantato (Eldorado Research Institute) - Bug [243918] - Wrong "if" test in ProtocolEngine class
+ * Fabio Rigo (Eldorado Research Institute)- Bug [242757] - Protocol does not support Unicode on variable sized fields
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -18,6 +19,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -561,6 +563,7 @@ public class ProtocolEngine {
 		boolean isSizeSigned = messageDataDef.isSizeFieldSigned();
 		int sizeFieldSize = messageDataDef.getSizeFieldSizeInBytes();
 		String valueFieldName = messageDataDef.getValueFieldName();
+		String charsetName = messageDataDef.getCharsetName();
 		Object value = messageDataDef.getValue();
 
 		if (valueFieldName != null) {
@@ -578,12 +581,21 @@ public class ProtocolEngine {
 				// In the variable size data field case, it is needed to write
 				// firstly
 				// the size of the field, and then its contents.
-				byte[] valueBytes = ((String) value).getBytes();
-				int valueBytesSize = valueBytes.length;
-				writeNumberToStream(streamToWriteTo, valueBytesSize,
-						sizeFieldSize, isSizeSigned);
+				try
+                {
+                    byte[] valueBytes = ((String) value).getBytes(charsetName);
+                    int valueBytesSize = valueBytes.length;
+                    writeNumberToStream(streamToWriteTo, valueBytesSize,
+                    		sizeFieldSize, isSizeSigned);
 
-				streamToWriteTo.write(valueBytes, 0, valueBytes.length);
+                    streamToWriteTo.write(valueBytes, 0, valueBytes.length);
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    // If the encoding provided is not supported, that means that the
+                    // message definition is incorrect.
+                    throw new InvalidDefinitionException("Invalid charset name provided at message definition", e);
+                }
 			} else {
 				// If a value is not defined, than raise a protocol exception
 				// to warn the caller that this it provided an invalid message
@@ -928,6 +940,7 @@ public class ProtocolEngine {
 		boolean isSizeSigned = messageDataDef.isSizeFieldSigned();
 		int sizeFieldSize = messageDataDef.getSizeFieldSizeInBytes();
 		String valueFieldName = messageDataDef.getValueFieldName();
+		String charsetName = messageDataDef.getCharsetName();
 
 		if (valueFieldName != null) {
 			// Reads the size from the input stream, considering the
@@ -957,7 +970,7 @@ public class ProtocolEngine {
 
 			// If a value was read, then store the read data into the
 			// message.
-			String value = new String(valueArray);
+			String value = new String(valueArray, charsetName);
 			message
 					.setFieldValue(valueFieldName, iterableBlockId, index,
 							value);
