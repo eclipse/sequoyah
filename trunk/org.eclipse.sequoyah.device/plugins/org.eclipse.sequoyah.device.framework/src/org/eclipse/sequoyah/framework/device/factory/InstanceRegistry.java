@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup
+ * Fabio Rigo (Eldorado Research Institute) - bug 244052 - The dirtyChanged method is being called out of UI thread
  ********************************************************************************/
 package org.eclipse.tml.framework.device.factory;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
@@ -132,8 +134,12 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 * Used to start the registered listeners notifications if the registry is already dirty.
 	 */
 	public void notifyDirty(){
-		for (IInstanceListeners listener:listeners){
-			listener.dirtyChanged();
-		}
+	    Display.getDefault().syncExec(new Runnable() {
+	        public void run(){
+	            for (IInstanceListeners listener:listeners){
+	                listener.dirtyChanged();
+	            }     
+	        }
+	    });
 	}
 }
