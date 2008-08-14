@@ -14,8 +14,8 @@
 package org.eclipse.tml.framework.device.factory;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tml.framework.device.DevicePlugin;
