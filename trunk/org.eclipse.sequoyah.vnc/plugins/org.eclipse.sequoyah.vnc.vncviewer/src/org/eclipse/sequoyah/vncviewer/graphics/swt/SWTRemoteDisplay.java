@@ -10,6 +10,8 @@
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
+ * Fabio Rigo(Eldorado Research Institute) - Bug [244062] - SWTRemoteDisplay do not force the first update request to be full
+ * 
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -225,6 +227,17 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		final Display display = this.getDisplay();
 		final SWTRemoteDisplay swtDisplay = this;
 
+        display.syncExec(new Runnable() {
+            public void run() {
+                try {
+                    // The first request must not be incremental
+                    updateRequest(false);
+                } catch (Exception e) {
+                    // If the first request fails, ignore it.
+                }
+            }
+        });
+		
 		refreshTimer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
 				display.syncExec(new Runnable() {
