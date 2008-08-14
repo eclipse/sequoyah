@@ -11,7 +11,7 @@
             handler="org.eclipse.tml.service.stop.handler.StopServiceHandler"
             icon="icons/full/obj16/stop.gif"
             id="org.eclipse.tml.service.stop.stopService"
-            name="Stop Service"
+            name="Stop Instance"
             provider="Eclipse.org"
             version="0.2.0"
             visible="true">

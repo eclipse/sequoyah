@@ -8,11 +8,15 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads 
  ********************************************************************************/
 
 package org.eclipse.tml.device.qemureact.handler;
 
+import java.util.Map;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.tml.device.qemureact.QEmuReactPlugin;
 import org.eclipse.tml.device.qemureact.QEmuReactResources;
 import org.eclipse.tml.framework.device.model.IInstance;
@@ -21,7 +25,7 @@ import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 
 public class QEmuReactStartHandler extends ServiceHandler {
 
-	@Override
+
 	public void runService(IInstance instance) {
 		QEmuReactPlugin.logInfo(QEmuReactResources.TML_Start_Service+"->"+instance.getName());
 	}
@@ -33,5 +37,18 @@ public class QEmuReactStartHandler extends ServiceHandler {
 	@Override
 	public IServiceHandler newInstance() {		
 		return new QEmuReactStartHandler();
+	}
+
+	@Override
+	public IStatus runService(IInstance instance,
+			Map<Object, Object> arguments, IProgressMonitor monitor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IStatus updatingService(IInstance instance, IProgressMonitor monitor) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Daniel Barboza Franco - Bug [239970] - Invisible Services
+ * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
  ********************************************************************************/
 package org.eclipse.tml.framework.device.factory;
 
@@ -28,7 +29,6 @@ import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
 import org.eclipse.tml.framework.device.internal.model.MobileService;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
-import org.eclipse.tml.framework.status.IStatusHandler;
 import org.eclipse.tml.framework.status.IStatusTransition;
 import org.eclipse.tml.framework.status.MobileStatusTransition;
 
@@ -89,13 +89,8 @@ public class ServiceFactory {
 				String startId = statusElement.getAttribute(ATR_START_ID);
 				String endId	= statusElement.getAttribute(ATR_END_ID);
 				String haltId	= statusElement.getAttribute(ATR_HALT_ID);
-				IStatusHandler handlerStatus = null;
-				try {
-					handlerStatus = (IStatusHandler)statusElement.createExecutableExtension(ATR_HANDLER);
-				} catch (CoreException e) {
-					TmLExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
-				}
-				IStatusTransition transition = new MobileStatusTransition(startId,endId,haltId,handlerStatus);
+				
+				IStatusTransition transition = new MobileStatusTransition(startId,endId,haltId);
 				statusList.add(transition);
 			}		
 		}	

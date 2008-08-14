@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
  ********************************************************************************/
 package org.eclipse.tml.framework.status;
 
@@ -17,13 +17,11 @@ public class MobileStatusTransition implements IStatusTransition {
 	private String endId;
 	private String startId;
 	private String haltId;
-	private IStatusHandler handler;
 	
-	public MobileStatusTransition(String startId,String endId,String haltId,IStatusHandler handler) {
+	public MobileStatusTransition(String startId,String endId,String haltId) {
 		this.startId = startId;
 		this.endId = endId;
 		this.haltId = haltId;
-		this.handler = handler;
 	};
 	
 	public String getEndId() {
@@ -49,15 +47,7 @@ public class MobileStatusTransition implements IStatusTransition {
 	public void setHaltId(String id) {
 		this.haltId = id;
 	}
-	
-	public IStatusHandler getHandler() {
-		return handler;
-	}
-	
-	public void setHandler(IStatusHandler handler) {
-		this.handler = handler;
-	}
-	
+		
 	public String toString(){
 		return "[Transition: start="+(startId!=null?startId:"")+" end="+(endId!=null?endId:"")+" halt="+(haltId!=null?haltId:"")+"]";
 	}	

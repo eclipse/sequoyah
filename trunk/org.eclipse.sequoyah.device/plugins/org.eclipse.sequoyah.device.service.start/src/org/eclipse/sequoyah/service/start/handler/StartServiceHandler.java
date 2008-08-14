@@ -8,11 +8,16 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
  ********************************************************************************/
 
 package org.eclipse.tml.service.start.handler;
 
+import java.util.Map;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
@@ -21,12 +26,14 @@ import org.eclipse.tml.service.start.StartServiceResources;
 
 public class StartServiceHandler extends ServiceHandler {
 
-	public void runService(IInstance instance) {
+	public IStatus runService(IInstance instance, Map<Object, Object> arguments, IProgressMonitor monitor) {
 		StartServicePlugin.logInfo(StartServiceResources.TML_Start_Service+"->"+instance.getName());
+		return Status.OK_STATUS;
 	}
 
-	public void updatingService(IInstance instance) {
+	public IStatus updatingService(IInstance instance, IProgressMonitor monitor) {
 		StartServicePlugin.logInfo(StartServiceResources.TML_Start_Service_Update+"->"+instance.getName());
+		return Status.OK_STATUS;
 	}
 	
 	@Override

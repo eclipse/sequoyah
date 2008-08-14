@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
  ********************************************************************************/
 package org.eclipse.tml.framework.status;
 
@@ -24,8 +24,5 @@ public interface IStatusTransition {
 	public String getHaltId(); 	
 	public void setHaltId(String id); 	
 	
-		IStatusHandler getHandler();
-
-	void setHandler(IStatusHandler handler);
 	public String toString();
 }
