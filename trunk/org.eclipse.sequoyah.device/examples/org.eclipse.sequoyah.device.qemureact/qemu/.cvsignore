@@ -11,3 +11,7 @@ vgabios.bin
 bios.bin
 arm_root.img
 vgabios-cirrus.bin
+fmod.dll
+libusb0.dll
+qemu.exe
+SDL.dll
