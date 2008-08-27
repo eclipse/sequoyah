@@ -7,3 +7,5 @@ integratorcp.zImage
 README-arm-en.txt
 arm_root.img
 qemu-system-arm.exe
+libusb0.dll
+SDL.dll
