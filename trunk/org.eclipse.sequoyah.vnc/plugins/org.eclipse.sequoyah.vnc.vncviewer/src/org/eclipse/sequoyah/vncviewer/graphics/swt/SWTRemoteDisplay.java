@@ -11,7 +11,7 @@
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Fabio Rigo(Eldorado Research Institute) - Bug [244062] - SWTRemoteDisplay do not force the first update request to be full
- * 
+ * Fabio Rigo(Eldorado Research Institute) - Bug [244806] - SWTRemoteDisplay state is not consistent on errors
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -25,8 +25,8 @@ import java.util.TimerTask;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -41,8 +41,6 @@ import org.eclipse.tml.vncviewer.graphics.IRemoteDisplay;
 import org.eclipse.tml.vncviewer.graphics.swt.img.Painter;
 import org.eclipse.tml.vncviewer.network.IVNCPainter;
 import org.eclipse.tml.vncviewer.network.VNCProtocol;
-import org.eclipse.tml.vncviewer.network.IProtoClient;
-import org.eclipse.tml.vncviewer.network.VNCKeyEvent;
 
 /**
  * This class implements the GUI part of a Remote Desktop Viewer. It also uses a
@@ -245,12 +243,14 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 						try {
 							updateRequest(true);
 						} catch (Exception e) {
-							refreshTimer.cancel();
+						    setRunning(false);
+						    refreshTimer.cancel();
 							log(SWTRemoteDisplay.class).error(
 									"Update screen error: " + e.getMessage());
 						}
 						if (!swtDisplay.isActive() || canvas.isDisposed()) {
-							refreshTimer.cancel();
+						    setRunning(false);
+                            refreshTimer.cancel();
 						}
 					}
 				});
