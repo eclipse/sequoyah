@@ -5,11 +5,11 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
- * Fabio Fantato (Motorola)
+ * Fabio Fantato (Eldorado Research Institute)
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
- * Daniel Barboza Franco (Motorola) - Bug [239970] - Invisible Services
+ * Otávio Luiz Ferranti (Eldorado Research Institute) -[221733] - Adding data persistence
+ * Daniel Barboza Franco (Eldorado Research Institute) - [239970] - Invisible Services
  * Fabio Rigo (Eldorado Research Institute) - [244951] Implement listener/event mechanism at device framework
  * Fabio Rigo (Eldorado Research Institute) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
  * Fabio Rigo (Eldorado Research Institute) - [245114] Enhance persistence policies
