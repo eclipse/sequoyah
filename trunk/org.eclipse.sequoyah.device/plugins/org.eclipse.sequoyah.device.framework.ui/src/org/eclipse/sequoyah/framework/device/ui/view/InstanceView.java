@@ -10,11 +10,14 @@
  * Contributors:
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Daniel Barboza Franco (Motorola) - Bug [239970] - Invisible Services
+ * Fabio Rigo (Eldorado Research Institute) - [244951] Implement listener/event mechanism at device framework
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view;
 
 import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,14 +34,16 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tml.framework.device.DevicePlugin;
-import org.eclipse.tml.framework.device.factory.IInstanceListeners;
+import org.eclipse.tml.framework.device.events.IInstanceListener;
+import org.eclipse.tml.framework.device.events.InstanceEvent;
+import org.eclipse.tml.framework.device.events.InstanceEventManager;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.manager.DeviceManager;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
@@ -51,19 +56,18 @@ import org.eclipse.tml.framework.device.ui.view.provider.InstanceContentProvider
 import org.eclipse.tml.framework.device.ui.view.provider.InstanceLabelProvider;
 import org.eclipse.tml.framework.device.ui.view.sorter.InstanceSorter;
 import org.eclipse.tml.framework.device.ui.view.sorter.StatusSorter;
-import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.part.ViewPart;
 
 /**
  * Insert the type's description here.
  * @see ViewPart
  */
-public class InstanceView extends ViewPart implements IInstanceListeners, IPartListener2 {
+public class InstanceView extends ViewPart implements IInstanceListener, IPartListener2 {
 	
 	private static final String MENU_DELETE = "Delete";
 	private static final String MENU_PROPERTIES = "Properties";
@@ -84,7 +88,7 @@ public class InstanceView extends ViewPart implements IInstanceListeners, IPartL
 	 * Constructor - Insert the type's description here
 	 */
 	public InstanceView() {
-		InstanceRegistry.getInstance().addListener(this);
+		InstanceEventManager.getInstance().addInstanceListener(this);
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(this);
 	}
 
@@ -95,7 +99,7 @@ public class InstanceView extends ViewPart implements IInstanceListeners, IPartL
 	public void partClosed(IWorkbenchPartReference ref) {
 		// TODO How do we know if the closed view is this one ?
 		if (ref.getPart(false) == this) {
-			InstanceRegistry.getInstance().removeListener(InstanceView.this);
+		    InstanceEventManager.getInstance().removeInstanceListener(this);
 		}
 	}
 
@@ -279,12 +283,10 @@ public class InstanceView extends ViewPart implements IInstanceListeners, IPartL
 			return;
 		}
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-		InstanceRegistry instanceRegistry = InstanceRegistry.getInstance();
-		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
-			IInstance instance = (IInstance) iterator.next();
-			InstanceRegistry.getInstance().removeInstance(instance);
+		List<IInstance> selectionList = selection.toList();
+		for (IInstance instance : selectionList) {
+			InstanceManager.getInstance().deleteInstance(instance);
 		}
-		instanceRegistry.setDirty(true);
 	}
 	
 	protected void createMenus() {
@@ -378,9 +380,36 @@ public class InstanceView extends ViewPart implements IInstanceListeners, IPartL
 	 */
 	public void setFocus() {}
 
-	public void dirtyChanged() {
-		treeViewer.setInput(getInitalInput());
-		treeViewer.refresh();
-		treeViewer.expandAll();
+	
+	public void instanceCreated(InstanceEvent e)
+    {
+    }
+
+    public void instanceDeleted(InstanceEvent e)
+    {
+    }
+
+    public void instanceLoaded(InstanceEvent e)
+    {
+        refreshViewer();
+    }
+
+    public void instanceUpdated(InstanceEvent e)
+    {
+        refreshViewer();
+    }
+
+    public void instanceUnloaded(InstanceEvent e)
+    {
+        refreshViewer();
+    }
+
+    private void refreshViewer() {
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                treeViewer.setInput(getInitalInput());
+                treeViewer.refresh();
+                treeViewer.expandAll();
+            }});		
 	}
 }

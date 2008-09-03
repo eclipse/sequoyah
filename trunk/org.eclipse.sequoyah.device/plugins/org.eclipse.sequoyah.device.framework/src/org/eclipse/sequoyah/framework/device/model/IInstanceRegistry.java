@@ -23,6 +23,4 @@ public interface IInstanceRegistry {
 	public void removeInstance(IInstance instance);
 	public ImageDescriptor getImage();
 	public void clear();
-	public void setDirty(boolean dirty);
-	public boolean isDirty();
 }

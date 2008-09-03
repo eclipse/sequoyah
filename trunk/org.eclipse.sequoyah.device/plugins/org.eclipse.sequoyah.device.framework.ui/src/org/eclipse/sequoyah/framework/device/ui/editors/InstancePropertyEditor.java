@@ -8,7 +8,7 @@
  * Otávio Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Rigo (Eldorado Research Institute) - [244951] Implement listener/event mechanism at device framework
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.editors;
@@ -41,6 +41,8 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.tml.framework.device.internal.model.MobileInstance;
 import org.eclipse.tml.framework.device.manager.DeviceManager;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
+import org.eclipse.tml.framework.device.events.InstanceEvent;
+import org.eclipse.tml.framework.device.events.InstanceEventManager;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.ui.DeviceUIResources;
 
@@ -212,7 +214,7 @@ public class InstancePropertyEditor extends PropertyPage {
 			instance.getProperties().setProperty(key, value);
 		}
 		instance.setName(textInstanceName.getText().trim());
-		InstanceRegistry.getInstance().setDirty(true);
+		InstanceEventManager.getInstance().fireInstanceUpdated(new InstanceEvent(instance));
 		return true;
 	}
 }

@@ -12,6 +12,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.tml.framework.device,
+ org.eclipse.tml.framework.device.events,
  org.eclipse.tml.framework.device.exception,
  org.eclipse.tml.framework.device.factory,
  org.eclipse.tml.framework.device.internal.model,

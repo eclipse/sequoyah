@@ -17,8 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.tml.framework.device.DevicePlugin;
+import org.eclipse.tml.framework.device.events.InstanceEvent;
+import org.eclipse.tml.framework.device.events.InstanceEventManager;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
 
@@ -29,15 +30,11 @@ import org.eclipse.tml.framework.device.model.IInstanceRegistry;
 public class InstanceRegistry implements IInstanceRegistry {
 	private List<IInstance> instances;
 	private static InstanceRegistry _instance;
-	private boolean dirty;
-	private List<IInstanceListeners> listeners;
 
 	/**
 	* Constructor - Stores the device instances and provides basic query methods.
 	*/
 	private InstanceRegistry(){
-		dirty=false;
-		listeners = new ArrayList<IInstanceListeners>();
 		instances = new ArrayList<IInstance>();
 	}
 
@@ -78,6 +75,7 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 */
 	public void addInstance(IInstance instance){
 		this.instances.add(instance);
+		InstanceEventManager.getInstance().fireInstanceLoaded(new InstanceEvent(instance));
 	}
 
 	/**
@@ -86,6 +84,7 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 */
 	public void removeInstance(IInstance instance){
 		this.instances.remove(instance);
+		InstanceEventManager.getInstance().fireInstanceUnloaded(new InstanceEvent(instance));
 	}
 
 	/**
@@ -93,53 +92,5 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 */
 	public void clear(){
 		this.instances.clear();
-	}
-
-	/**
-	 * Used to start the registered listeners notifications.
-	 * @param dirty - True if some instance data was changed.
-	 */
-	public void setDirty(boolean dirty) {		
-		this.dirty = dirty;
-		if (dirty) {
-			notifyDirty();
-		}
-	}
-
-	/**
-	 * Indicates if the registry was set with "dirty".
-	 * @return True if it is dirty.
-	 */
-	public boolean isDirty() {		
-		return dirty;
-	}
-
-	/**
-	 * Registers listeners which will be notified when the instance registry got dirty.
-	 * @param listener - The listener to be added.
-	 */
-	public void addListener(IInstanceListeners listener){
-		listeners.add(listener);
-	}
-
-	/**
-	 * Removes a listener.
-	 * @param listener - The listener to be removed.
-	 */
-	public void removeListener(IInstanceListeners listener){
-		listeners.remove(listener);
-	}
-
-	/**
-	 * Used to start the registered listeners notifications if the registry is already dirty.
-	 */
-	public void notifyDirty(){
-	    Display.getDefault().syncExec(new Runnable() {
-	        public void run(){
-	            for (IInstanceListeners listener:listeners){
-	                listener.dirtyChanged();
-	            }     
-	        }
-	    });
 	}
 }

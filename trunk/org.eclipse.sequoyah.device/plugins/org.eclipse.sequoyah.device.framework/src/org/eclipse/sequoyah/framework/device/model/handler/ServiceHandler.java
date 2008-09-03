@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tml.common.utilities.exception.TmLException;
+import org.eclipse.tml.framework.device.events.InstanceEvent;
+import org.eclipse.tml.framework.device.events.InstanceEventManager;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
@@ -170,7 +172,7 @@ public abstract class ServiceHandler implements IServiceHandler
         {
             instance.setStatus(transition.getHaltId());
         }
-        InstanceRegistry.getInstance().setDirty(true);
+        InstanceEventManager.getInstance().fireInstanceUpdated(new InstanceEvent(instance));
     }
 
     public boolean verifyStatus(IInstance instance)

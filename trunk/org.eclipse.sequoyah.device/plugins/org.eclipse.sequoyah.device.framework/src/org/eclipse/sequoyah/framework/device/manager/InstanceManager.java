@@ -44,6 +44,8 @@ import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.common.utilities.exception.TmLExceptionHandler;
 import org.eclipse.tml.framework.device.DevicePlugin;
+import org.eclipse.tml.framework.device.events.InstanceEvent;
+import org.eclipse.tml.framework.device.events.InstanceEventManager;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionHandler;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
@@ -512,8 +514,19 @@ public class InstanceManager {
 					.showException(DeviceExceptionHandler
 							.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}
+		InstanceEventManager.getInstance().fireInstanceCreated(new InstanceEvent(instance));
 		return instance;
 	}
+	
+	public void deleteInstance(IInstance instance) {
+        if (currentInstance == instance) {
+            currentInstance = null;
+        }
+        InstanceRegistry registry = InstanceRegistry.getInstance();
+        registry.removeInstance(instance); 
+        saveInstances();
+        InstanceEventManager.getInstance().fireInstanceDeleted(new InstanceEvent(instance));
+    }
 
 	/**
 	 * Creates an instance, sets it as the currently selected and adds it to the
@@ -535,7 +548,6 @@ public class InstanceManager {
 			}
 			InstanceRegistry registry = InstanceRegistry.getInstance();
 			registry.addInstance(inst);
-			registry.setDirty(true);
 		} catch (TmLException te) {
 			TmLExceptionHandler
 					.showException(DeviceExceptionHandler
