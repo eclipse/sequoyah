@@ -11,7 +11,8 @@
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Daniel Barboza Franco (Motorola) - Bug [239970] - Invisible Services
  * Fabio Rigo (Eldorado Research Institute) - [244951] Implement listener/event mechanism at device framework
- * Fabio Rigo (Eldorado) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
+ * Fabio Rigo (Eldorado Research Institute) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
+ * Fabio Rigo (Eldorado Research Institute) - [245114] Enhance persistence policies
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view;
 
@@ -286,6 +287,7 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 			return;
 		}
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+
 		List<IInstance> selectionList = selection.toList();
 		for (IInstance instance : selectionList) {
 			InstanceManager.getInstance().deleteInstance(instance);
