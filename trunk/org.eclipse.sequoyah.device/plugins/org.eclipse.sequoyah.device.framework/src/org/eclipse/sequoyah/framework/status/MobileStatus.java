@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Rigo (Eldorado) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
  ********************************************************************************/
 
 package org.eclipse.tml.framework.status;
@@ -18,10 +18,11 @@ import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.DeviceResources;
 
 public class MobileStatus implements IStatus {
-	private String id;
+    private String id;
 	private String name;
 	private ImageDescriptor image;
 	private Object parent;
+	private boolean canDeleteInstance;
 	
 	public MobileStatus(){
 		this.id = DevicePlugin.TML_STATUS_UNAVAILABLE;
@@ -65,6 +66,16 @@ public class MobileStatus implements IStatus {
 
 	public void setParent(Object instance) {
 		this.parent = instance;
+	}
+	
+	public boolean canDeleteInstance()
+	{
+	    return canDeleteInstance;
+	}
+
+	public void setCanDeleteInstance(boolean canDeleteInstance)
+	{
+	    this.canDeleteInstance = canDeleteInstance;
 	}
 	
 	public Object clone(){

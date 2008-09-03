@@ -11,6 +11,7 @@
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Daniel Barboza Franco (Motorola) - Bug [239970] - Invisible Services
  * Fabio Rigo (Eldorado Research Institute) - [244951] Implement listener/event mechanism at device framework
+ * Fabio Rigo (Eldorado) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view;
 
@@ -56,6 +57,8 @@ import org.eclipse.tml.framework.device.ui.view.provider.InstanceContentProvider
 import org.eclipse.tml.framework.device.ui.view.provider.InstanceLabelProvider;
 import org.eclipse.tml.framework.device.ui.view.sorter.InstanceSorter;
 import org.eclipse.tml.framework.device.ui.view.sorter.StatusSorter;
+import org.eclipse.tml.framework.status.IStatus;
+import org.eclipse.tml.framework.status.StatusRegistry;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -330,6 +333,9 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 	    newItem.setText(InstanceView.MENU_DELETE);
         newItem.addListener(SWT.Selection, new MenuDeleteListener());
         newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
+        String statusId = instance.getStatus();
+        IStatus status = StatusRegistry.getInstance().getStatus(statusId);
+        newItem.setEnabled(status.canDeleteInstance());
         
 		newItem = new MenuItem(menu, SWT.SEPARATOR);
         

@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup.
+ * Fabio Rigo (Eldorado) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
  ********************************************************************************/
 package org.eclipse.tml.framework.status;
 
@@ -26,13 +27,16 @@ public class StatusFactory {
 	private static final String ATR_ID = "id";
 	private static final String ATR_NAME = "name";
 	private static final String ATR_IMAGE = "image";
+	private static final String ATR_CANDELETE = "canDeleteInstance";
 	
 	@SuppressWarnings("deprecation")
 	public static IStatus createStatus(String statusId) {
 		IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.STATUS_ID, statusId);
 		String id = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_ID);
 		String name = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_NAME);
+		boolean canDelete = Boolean.parseBoolean(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_CANDELETE));
 		IStatus status = new MobileStatus(id,name);
+		status.setCanDeleteInstance(canDelete);
 		String imageName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_IMAGE);		
 		ImageDescriptor image = null;
 			try {
