@@ -5,13 +5,14 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributor:
- * Daniel Franco (Motorola)
+ * Daniel Barboza Franco (Motorola)
  *
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Fabio Rigo(Eldorado Research Institute) - Bug [244062] - SWTRemoteDisplay do not force the first update request to be full
  * Fabio Rigo(Eldorado Research Institute) - Bug [244806] - SWTRemoteDisplay state is not consistent on errors
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -53,10 +54,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	private VNCProtocol protoClient;
 	private Image screen = null;
 	// private ImageData imgData;
-	private int retries;
 
 	private Properties configurationProperties;
-	private IPropertiesFileHandler propertiesFileHanlder;
 	private SWTVNCEventTranslator eventTranslator;
 
 	private boolean active = false;
@@ -79,33 +78,12 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 	protected ISWTPainter painter;
 
-	/**
-	 * This variable is used control concurrency between two consecutive restart
-	 * requests. When a restart is successfully done it's value is incremented.
-	 * The connectionSerialNumber has to be volatile so any change in it's value
-	 * will be automatically refreshed in other threads. This is necessary to
-	 * avoid that two consecutive restarts happen for the same reason.
-	 */
-	volatile private int connectionSerialNumber = 0;
 	private IPropertiesFileHandler propertiesFileHandler;
 
-	/*
-	 * /** @param parent the Composite to be used as the GUI components parent.
-	 * @param protocol the IProtoClient object to be used.
-	 */
-	/*
-	 * public SWTRemoteDisplay(Composite parent, IProtoClient protocol){
-	 * 
-	 * super(parent, SWT.BACKGROUND); this.setLayout( parent.getLayout());
-	 * 
-	 * canvas = new Canvas (this, SWT.BACKGROUND);
-	 * 
-	 * protoClient = protocol; painter = (ISWTPainter) protoClient.getPainter(); }
-	 */
-
 	/**
-	 * @param parent
-	 *            the Composite to be used as the GUI components parent.
+	 * @param parent the Composite to be used as the GUI components parent.
+	 * @param configProperties the properties set for configuration purposes.
+	 * @param propertiesFileHandler the handler for Properties Files.
 	 */
 	public SWTRemoteDisplay(Composite parent, Properties configProperties,
 			IPropertiesFileHandler propertiesFileHandler) {
@@ -137,7 +115,6 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 						.getProperty(IVNCProperties.CONNECTION_RETRIES)))
 				.intValue();
 
-		retries = connectionRetries;
 		zoomFactor = Double
 				.valueOf(
 						configurationProperties
@@ -260,57 +237,12 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 	}
 
-	synchronized private void decreaseRetries() {
-		retries--;
+	public void restart() throws Exception {
+		stop();
+		PluginProtocolActionDelegate.restartProtocol(protoClient);
+		start(protoClient);
 	}
 
-	synchronized private int getRetries() {
-		return retries;
-	}
-
-	synchronized private void setRetries(int newValue) {
-		retries = newValue;
-	}
-
-	synchronized public void restart() throws Exception {
-
-		int currentId = this.connectionSerialNumber;
-		restart(currentId);
-	}
-
-	/**
-	 * @param connectionId
-	 *            the Id for the current connection.
-	 */
-	synchronized private void restart(int connectionId) throws Exception {
-
-		if (connectionId == connectionSerialNumber) {
-
-			if (getRetries() > 0) {
-				decreaseRetries();
-
-				try {
-					PluginProtocolActionDelegate.stopProtocol(protoClient);
-				} catch (Exception e) {
-					log(SWTRemoteDisplay.class).error(
-							"Remote Display stop error : " + e.getMessage());
-				}
-
-				stop();
-
-				PluginProtocolActionDelegate.restartProtocol(protoClient);
-				start(protoClient);
-			} else {
-				throw new Exception(
-						"Number of connection retries exceeded the limit of "
-								+ connectionRetries + ".");
-			}
-		}
-
-	}
-
-	// synchronized public void start(String host, int port, IProtoClient
-	// protocol) throws Exception{
 	synchronized public void start(IProtocolImplementer protocol)
 			throws Exception {
 
@@ -329,17 +261,12 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 				addKeyListener();
 				addMouseListener();
 
-				connectionSerialNumber++;
-
 			} catch (Exception e) {
 				log(SWTRemoteDisplay.class).error(
 						"Remote Display start error: " + e.getMessage());
 
-				int currentConnection = connectionSerialNumber;
-				restart(currentConnection);
 			}
 
-			setRetries(connectionRetries);
 			setRunning(true);
 		}
 	}
@@ -386,9 +313,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
 					"Remote Display update screen error : " + e.getMessage());
-
-			int currentConnection = connectionSerialNumber;
-			restart(currentConnection);
+			setRunning(false);
+			
 		}
 
 		if (screen != null) {
@@ -413,8 +339,6 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 					"Remote Display key event error : " + e.getMessage());
 			setRunning(false);
 
-			int currentConnection = connectionSerialNumber;
-			restart(currentConnection);
 		}
 	}
 
@@ -429,8 +353,6 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 					"Remote Display mouse event error : " + e.getMessage());
 			setRunning(false);
 
-			int currentConnection = connectionSerialNumber;
-			restart(currentConnection);
 		}
 	}
 
@@ -543,6 +465,10 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	public void setPropertiesFileHandler(
 			IPropertiesFileHandler propertiesFileHandler) {
 		this.propertiesFileHandler = propertiesFileHandler;
+	}
+	
+	public int getConnectionRetries(){
+		return connectionRetries;
 	}
 
 }

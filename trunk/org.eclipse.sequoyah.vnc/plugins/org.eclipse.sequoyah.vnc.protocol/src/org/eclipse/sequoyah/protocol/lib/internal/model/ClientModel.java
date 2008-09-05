@@ -9,6 +9,7 @@
  * Contributors:
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -24,6 +25,7 @@ import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
@@ -121,8 +123,11 @@ public class ClientModel implements IModel {
 			Map <String, Object> parameters)
 			throws UnknownHostException, IOException, ProtocolInitException {
 
+		Integer retriesObj = (Integer) parameters.get("connectionRetries");
+		int retries  = (retriesObj != null) ? retriesObj : -1;
+		
 		ProtocolEngine eng = new ProtocolEngine(allMessages, incomingMessages,
-				outgoingMessages, exceptionHandler, isBigEndianProtocol);
+				outgoingMessages, exceptionHandler, isBigEndianProtocol, retries);
 		eng.startProtocol(protocolImplementer, host, port, parameters, false);
 		runningEngines.put(protocolImplementer, eng);
 	}
@@ -143,7 +148,7 @@ public class ClientModel implements IModel {
 		if (eng != null) {
 			eng.stopProtocol();
 		}
-		runningEngines.remove(eng);
+		runningEngines.remove(protocolImplementer);
 	}
 
 	/**
@@ -158,12 +163,11 @@ public class ClientModel implements IModel {
 	 *             DOCUMENT ME!!
 	 */
 	public void restartClientProtocol(IProtocolImplementer protocolImplementer)
-			throws IOException, ProtocolInitException {
+			throws IOException, ProtocolInitException, ProtocolException {
 		ProtocolEngine eng = runningEngines.get(protocolImplementer);
 		if (eng != null) {
 			eng.restartProtocol();
 		}
-		runningEngines.remove(eng);
 	}
 
 	/**
@@ -204,7 +208,7 @@ public class ClientModel implements IModel {
 		for (IProtocolImplementer key : keys) {
 			ProtocolEngine aEng = runningEngines.get(key);
 			if (!aEng.isConnected()) {
-				runningEngines.remove(aEng);
+				runningEngines.remove(key);
 			}
 		}
 	}

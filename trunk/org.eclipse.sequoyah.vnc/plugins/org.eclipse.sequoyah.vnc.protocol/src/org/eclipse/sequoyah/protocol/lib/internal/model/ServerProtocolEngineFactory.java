@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -103,7 +104,7 @@ public class ServerProtocolEngineFactory {
 	 */
 	public ProtocolEngine getServerProtocolEngine() {
 		ProtocolEngine eng = new ProtocolEngine(allMessages, incomingMessages,
-				outgoingMessages, exceptionHandler, isBigEndianProtocol);
+				outgoingMessages, exceptionHandler, isBigEndianProtocol,0);
 		return eng;
 	}
 

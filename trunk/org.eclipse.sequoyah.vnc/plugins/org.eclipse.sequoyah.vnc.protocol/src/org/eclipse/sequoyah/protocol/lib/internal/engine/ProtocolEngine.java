@@ -12,6 +12,7 @@
  * Fabio Fantato (Eldorado Research Institute) - Bug [243918] - Wrong "if" test in ProtocolEngine class
  * Fabio Rigo (Eldorado Research Institute)- Bug [242757] - Protocol does not support Unicode on variable sized fields
  * Fabio Rigo - Bug [244067] - The exception handling interface should forward the protocol implementer object
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -38,6 +39,7 @@ import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidInputStreamDataException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
 import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.model.ClientModel;
@@ -66,6 +68,11 @@ import org.eclipse.tml.protocol.lib.msgdef.databeans.VariableSizeDataBean;
 public class ProtocolEngine {
 
 	/**
+	 * Default value for maximum number of reconnection attempts.
+	 */
+	private static final int RECONNECTION_MAX = 5;
+
+	/**
 	 * True if the protocol is big endian, false if little endian. Note: If a
 	 * number has more than one byte, a big endian protocol sends firstly the
 	 * most significant byte to the stream. A little endian protocol, on the
@@ -80,8 +87,27 @@ public class ProtocolEngine {
 	private Map<Long, ProtocolMsgDefinition> messageDefCollection;
 
 	/**
+	 * Number of connection retries left. 
+	 */
+	private int retries;
+	
+	/**
+	 * Maximum number of reconnection attempts. 
+	 */
+	private int retriesMax = RECONNECTION_MAX;
+
+	
+	/**
+	 * This variable is used control concurrency between two consecutive restart
+	 * requests. When a restart is successfully done it's value is incremented.
+	 * This is necessary to avoid that two consecutive re-connections happen for the same reason.
+	 */
+	private int connectionSerialNumber = 0;
+	
+	
+	/**
 	 * A collection of the incoming messages ids, used to validate if a message
-	 * can be retrieved from the input stream.
+	 * can be retrieved from the input stream.>
 	 */
 	private Collection<String> incomingMessages;
 
@@ -155,13 +181,15 @@ public class ProtocolEngine {
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolExceptionHandler exceptionHandler,
-			boolean isBigEndianProtocol) {
+			boolean isBigEndianProtocol, int retries) {
 
 		this.messageDefCollection = messageDefCollection;
 		this.incomingMessages = incomingMessages;
 		this.outgoingMessages = outgoingMessages;
 		this.exceptionHandler = exceptionHandler;
 		this.isBigEndianProtocol = isBigEndianProtocol;
+		this.retriesMax = (retries >= 0) ? retries : RECONNECTION_MAX;
+		this.retries = this.retriesMax;
 	}
 
 	/**
@@ -260,6 +288,9 @@ public class ProtocolEngine {
 		consumer = new Consumer();
 		Thread consumerThread = new Thread(consumer);
 		consumerThread.start();
+		
+		retries = retriesMax;
+		connectionSerialNumber++;
 	}
 
 	/**
@@ -325,6 +356,30 @@ public class ProtocolEngine {
 		socket.close();
 	}
 
+	
+	private void reconnect(int serialNumber) throws UnknownHostException, ProtocolInitException, IOException, ProtocolException{
+	
+		if (this.connectionSerialNumber == serialNumber){
+			
+			if (retries > 0) { 
+				
+				try {
+					synchronized (this) {
+						retries--;
+						restartProtocol();
+					}
+				}
+				catch (Exception e) {
+					reconnect(serialNumber);
+				}
+	
+			} else throw new ProtocolException ("Number of connection retries exceeded the limit of " + retriesMax + ".");
+		}
+		
+		
+	}
+	
+	
 	/**
 	 * Restarts the protocol by closing the current connection (if opened) and
 	 * opening it again.
@@ -338,12 +393,25 @@ public class ProtocolEngine {
 	 *             If the protocol fails to initialize.
 	 */
 	public void restartProtocol() throws UnknownHostException, IOException,
-			ProtocolInitException {
+			ProtocolInitException, ProtocolException {
+		
 		if (this.isConnected()) {
 			stopProtocol();
 		}
 
+		/*
+		try {
+			startProtocol(null, host, port, parameters, isServer);
+		} catch (Exception e) {
+			reconnect(connectionSerialNumber);
+		}
+		*/
+		
 		startProtocol(null, host, port, parameters, isServer);
+
+
+
+		
 	}
 
 	/**
@@ -421,8 +489,17 @@ public class ProtocolEngine {
 					}
 				} catch (IOException e) {
 					// The input stream is probably broken
-					handleIOExceptionOnStream();
-					throw e;
+
+					try {
+						reconnect(connectionSerialNumber);
+					} catch (ProtocolException eReconnection) {
+						
+						handleIOExceptionOnStream();
+						throw e;
+
+						
+					}
+					
 				}
 			}
 		}

@@ -9,6 +9,7 @@
  * Contributors:
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -19,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.model.ClientModel;
@@ -165,7 +167,7 @@ public class ProtocolActionDelegate {
 	 *             DOCUMENT ME!!
 	 */
 	public static void restartProtocol(IProtocolImplementer protocolImplementer)
-			throws IOException, ProtocolInitException {
+			throws IOException, ProtocolInitException, ProtocolException {
 
 		ClientModel clientModel = ClientModel.getInstance();
 		clientModel.restartClientProtocol(protocolImplementer);

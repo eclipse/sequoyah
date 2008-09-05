@@ -10,6 +10,7 @@
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo - Bug [244067] - The exception handling interface should forward the protocol implementer object
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -185,15 +186,18 @@ public class ServerModel implements IModel {
 			throws IOException, ProtocolInitException {
 
 		ServerSocket ss = openedServerSockets.get(protocolImplementer);
-		int portToBind = ss.getLocalPort();
-		ServerProtocolEngineFactory factory = engineFactories
-				.get(protocolImplementer);
-
-		stopListeningToPort(protocolImplementer);
-		startListeningToPort(portToBind, factory.getAllMessages(), factory
-				.getIncomingMessages(), factory.getOutgoingMessages(),
-				protocolImplementer, factory.getExceptionHandler(), factory
-						.isBigEndianProtocol());
+		
+		if (ss != null) {
+			int portToBind = ss.getLocalPort();
+			ServerProtocolEngineFactory factory = engineFactories
+					.get(protocolImplementer);
+	
+			stopListeningToPort(protocolImplementer);
+			startListeningToPort(portToBind, factory.getAllMessages(), factory
+					.getIncomingMessages(), factory.getOutgoingMessages(),
+					protocolImplementer, factory.getExceptionHandler(), factory
+							.isBigEndianProtocol());
+		}
 	}
 
 	/**

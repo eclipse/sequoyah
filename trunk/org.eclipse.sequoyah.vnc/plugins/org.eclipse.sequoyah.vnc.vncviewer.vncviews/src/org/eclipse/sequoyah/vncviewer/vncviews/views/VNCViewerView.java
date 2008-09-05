@@ -13,6 +13,7 @@
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Daniel Barboza Franco - Bug [233062] - Protocol connection port is static.
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -92,6 +93,7 @@ public class VNCViewerView extends ViewPart{
 						.getProtocolId(protoVersion);
 
 				parameters.put("password", password);
+				parameters.put("connectionRetries", swtDisplay.getConnectionRetries());
 				VNCViewerView.protocol = PluginProtocolActionDelegate
 						.startClientProtocol(protocolId, null, host, port,
 								parameters);
