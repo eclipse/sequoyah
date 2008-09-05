@@ -27,6 +27,24 @@
          name="Instance View">
    </view>
 </extension>
+
+<extension
+      id="org.eclipse.tml.framework.device.ui.views"
+      name="Device Framework Views"
+      point="org.eclipse.ui.views">
+   <view
+         category="org.eclipse.tml.framework.device.ui.category"
+         class="org.eclipse.tml.framework.device.ui.view.InstanceMgtView"
+         icon="icons/full/obj16/device.gif"
+         id="org.eclipse.tml.framework.device.ui.InstanceMgtView"
+         name="Instance Management">
+   </view>
+   <category
+         id="org.eclipse.tml.framework.device.ui.category"
+         name="TmL">
+   </category>
+</extension>
+
 <extension
       point="org.eclipse.ui.perspectives">
    <perspective

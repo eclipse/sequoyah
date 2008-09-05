@@ -5,10 +5,10 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
- * Fabio Fantato (Motorola)
+ * Fabio Fantato (Eldorado Research Institute)
  * 
  * Contributors:
- * name (company) - description.
+ * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244805] - Improvements on Instance view
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui;
 
@@ -33,6 +33,8 @@ public class DeviceUIPlugin extends BasePlugin {
 	public static final String ICON_STOP = "ICON_STOP";
 	public static final String ICON_REFRESH = "ICON_REFRESH";
 	public static final String ICON_INACTIVE = "ICON_INACTIVE";
+	public static final String ICON_HORIZONTAL = "ICON_HORIZONTAL";
+	public static final String ICON_VERTICAL = "ICON_VERTICAL";
 	
 	// The shared instance
 	private static DeviceUIPlugin plugin;
@@ -87,6 +89,8 @@ public class DeviceUIPlugin extends BasePlugin {
 		putImageInRegistry(ICON_GAMEBOARD, path+"gameboard.gif");
 		putImageInRegistry(ICON_NEW_BOOK, path+"newbook.gif");
 		putImageInRegistry(ICON_REMOVE, path+"remove.gif");
+		putImageInRegistry(ICON_HORIZONTAL, path+"full/obj16/horizontal.gif");
+		putImageInRegistry(ICON_VERTICAL, path+"full/obj16/vertical.gif");
 	}
 
 
