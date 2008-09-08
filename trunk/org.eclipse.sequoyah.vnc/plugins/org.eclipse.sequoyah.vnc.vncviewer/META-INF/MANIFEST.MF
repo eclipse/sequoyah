@@ -21,4 +21,6 @@ Export-Package: org.eclipse.tml.utilities.logger,
  org.eclipse.tml.vncviewer.graphics.swt,
  org.eclipse.tml.vncviewer.graphics.swt.img,
  org.eclipse.tml.vncviewer.network,
+ org.eclipse.tml.vncviewer.registry,
  org.eclipse.tml.vncviewer.standalone
+Bundle-ActivationPolicy: lazy

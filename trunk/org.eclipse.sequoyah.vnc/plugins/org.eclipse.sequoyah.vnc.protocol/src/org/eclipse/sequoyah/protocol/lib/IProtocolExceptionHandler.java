@@ -9,6 +9,7 @@
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo - Bug [244067] - The exception handling interface should forward the protocol implementer object
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -37,17 +38,17 @@ import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
  */
 public interface IProtocolExceptionHandler {
 
-	void handleIOException(IOException e, IProtocolImplementer implementer);
+	void handleIOException(ProtocolHandle handle, IOException e);
 
-	void handleProtocolInitException(ProtocolInitException e, IProtocolImplementer implementer);
+	void handleProtocolInitException(ProtocolHandle handle, ProtocolInitException e);
 
-	void handleMessageHandleException(MessageHandleException e, IProtocolImplementer implementer);
+	void handleMessageHandleException(ProtocolHandle handle, MessageHandleException e);
 
-	void handleInvalidMessageException(InvalidMessageException e, IProtocolImplementer implementer);
+	void handleInvalidMessageException(ProtocolHandle handle, InvalidMessageException e);
 
-	void handleInvalidInputStreamDataException(InvalidInputStreamDataException e, IProtocolImplementer implementer);
+	void handleInvalidInputStreamDataException(ProtocolHandle handle, InvalidInputStreamDataException e);
 
-	void handleInvalidDefinitionException(InvalidDefinitionException e, IProtocolImplementer implementer);
+	void handleInvalidDefinitionException(ProtocolHandle handle, InvalidDefinitionException e);
 
-	void handleProtocolRawHandlingException(ProtocolRawHandlingException e, IProtocolImplementer implementer);
+	void handleProtocolRawHandlingException(ProtocolHandle handle, ProtocolRawHandlingException e);
 }

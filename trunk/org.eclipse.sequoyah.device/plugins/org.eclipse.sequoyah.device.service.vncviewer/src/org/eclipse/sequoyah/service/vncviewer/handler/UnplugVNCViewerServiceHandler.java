@@ -8,6 +8,7 @@
  * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads 
  * 
  * Contributors:
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  ********************************************************************************/
 
 package org.eclipse.tml.service.vncviewer.handler;
@@ -22,6 +23,7 @@ import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 import org.eclipse.tml.protocol.PluginProtocolActionDelegate;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView;
 
 public class UnplugVNCViewerServiceHandler extends ServiceHandler
@@ -51,7 +53,8 @@ public class UnplugVNCViewerServiceHandler extends ServiceHandler
 
         try
         {
-            PluginProtocolActionDelegate.stopProtocol(VNCViewerView.protocol);
+        	ProtocolHandle handle = null;
+            PluginProtocolActionDelegate.stopProtocol(handle);            
         }
         catch (IOException e)
         {

@@ -11,6 +11,7 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo - Bug [244067] - The exception handling interface should forward the protocol implementer object
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -24,7 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidInputStreamDataException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
@@ -58,19 +60,19 @@ public class ServerModel implements IModel {
 	 * A map containing all sockets that are currently listening to ports
 	 * associated to the running server protocols
 	 */
-	private Map<IProtocolImplementer, ServerSocket> openedServerSockets = new HashMap<IProtocolImplementer, ServerSocket>();
+	private Map<ProtocolHandle, ServerSocket> openedServerSockets = new HashMap<ProtocolHandle, ServerSocket>();
 
 	/**
 	 * A map containing all engine factories associated to each running server
 	 * protocol
 	 */
-	private Map<IProtocolImplementer, ServerProtocolEngineFactory> engineFactories = new HashMap<IProtocolImplementer, ServerProtocolEngineFactory>();
+	private Map<ProtocolHandle, ServerProtocolEngineFactory> engineFactories = new HashMap<ProtocolHandle, ServerProtocolEngineFactory>();
 
 	/**
 	 * A map containing a collection of all engines running associated to each
 	 * running server protocol
 	 */
-	private Map<IProtocolImplementer, Collection<ProtocolEngine>> connectedClients = new HashMap<IProtocolImplementer, Collection<ProtocolEngine>>();
+	private Map<ProtocolHandle, Collection<ProtocolEngine>> connectedClients = new HashMap<ProtocolHandle, Collection<ProtocolEngine>>();
 
 	/**
 	 * Private constructor to fit singleton pattern
@@ -110,10 +112,8 @@ public class ServerModel implements IModel {
 	 *            A collection containing the message ids of all outgoing
 	 *            messages. The message ids much match the id field in a
 	 *            ProtocolMsgDefinition object from the allMessages map
-	 * @param protocolImplementer
-	 *            An instance of the implementer object. This object contains
-	 *            the initialization procedure definition, as well as any needed
-	 *            protocol instance particular data
+	 * @param protocolInitializer
+	 *            The sequence of steps to execute for connection initialization
 	 * @param isBigEndianProtocol
 	 *            True if the protocol is big endian, false if little endian
 	 * 
@@ -122,50 +122,52 @@ public class ServerModel implements IModel {
 	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
-	public void startListeningToPort(int portToBind,
+	public ProtocolHandle startListeningToPort(int portToBind,
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
-			IProtocolImplementer protocolImplementer,
+			IProtocolInit protocolInitializer,
 			IProtocolExceptionHandler exceptionHandler,
 			boolean isBigEndianProtocol) throws ProtocolInitException,
 			IOException {
 
 		if ((portToBind <= 0) || (allMessages == null)
-				|| (incomingMessages == null) || (outgoingMessages == null)
-				|| (protocolImplementer == null)) {
+				|| (incomingMessages == null) || (outgoingMessages == null)) {
 			throw new ProtocolInitException(
 					"Invalid parameters provided to method");
 		}
 
+        ProtocolHandle handle = new ProtocolHandle();
 		ServerSocket serverSocket = new ServerSocket(portToBind);
 		ServerProtocolEngineFactory factory = new ServerProtocolEngineFactory(
-				allMessages, incomingMessages, outgoingMessages,
+				handle, protocolInitializer, allMessages, incomingMessages, outgoingMessages,
 				exceptionHandler, isBigEndianProtocol);
-		openedServerSockets.put(protocolImplementer, serverSocket);
-		engineFactories.put(protocolImplementer, factory);
+		openedServerSockets.put(handle, serverSocket);
+		engineFactories.put(handle, factory);
 
-		Runnable deamon = new ServerDeamon(serverSocket, factory,
-				protocolImplementer);
+		Runnable deamon = new ServerDeamon(handle, serverSocket, factory);
 		Thread deamonThread = new Thread(deamon);
 		deamonThread.start();
+				
+		return handle;
 	}
 
 	/**
 	 * Stops listening to the port. This causes all the running server protocol
 	 * engines to be stopped as well as a model cleanup.
 	 * 
-	 * @param protocolImplementer
-	 *            The protocol instance that is to be stopped
+ 	 * @param handle
+	 *            The object that identifies the server socket that is to
+	 *            stop listening to.
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
 	 */
-	public void stopListeningToPort(IProtocolImplementer protocolImplementer)
+	public void stopListeningToPort(ProtocolHandle handle)
 			throws IOException {
 
 		ServerSocket serverSocket = openedServerSockets
-				.get(protocolImplementer);
+				.get(handle);
 		if (serverSocket != null) {
 			serverSocket.close();
 		}
@@ -174,28 +176,29 @@ public class ServerModel implements IModel {
 	/**
 	 * Restarts the provided protocol instance
 	 * 
-	 * @param protocolImplementer
-	 *            The protocol instance that is to be restarted
+	 * @param handle
+	 *            The object that identifies the server socket that is to
+	 *            be reconnected.
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
 	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
-	public void restartServerProtocol(IProtocolImplementer protocolImplementer)
+	public void restartServerProtocol(ProtocolHandle handle)
 			throws IOException, ProtocolInitException {
 
-		ServerSocket ss = openedServerSockets.get(protocolImplementer);
+		ServerSocket ss = openedServerSockets.get(handle);
 		
 		if (ss != null) {
 			int portToBind = ss.getLocalPort();
 			ServerProtocolEngineFactory factory = engineFactories
-					.get(protocolImplementer);
+					.get(handle);
 	
-			stopListeningToPort(protocolImplementer);
+			stopListeningToPort(handle);
 			startListeningToPort(portToBind, factory.getAllMessages(), factory
 					.getIncomingMessages(), factory.getOutgoingMessages(),
-					protocolImplementer, factory.getExceptionHandler(), factory
+					null, factory.getExceptionHandler(), factory
 							.isBigEndianProtocol());
 		}
 	}
@@ -205,8 +208,8 @@ public class ServerModel implements IModel {
 	 */
 	public void cleanStoppedProtocols() {
 
-		Set<IProtocolImplementer> keys = connectedClients.keySet();
-		for (IProtocolImplementer key : keys) {
+		Set<ProtocolHandle> keys = connectedClients.keySet();
+		for (ProtocolHandle key : keys) {
 			Collection<ProtocolEngine> aImplCollection = connectedClients
 					.get(key);
 			for (ProtocolEngine aImpl : aImplCollection) {
@@ -233,6 +236,11 @@ public class ServerModel implements IModel {
 	private class ServerDeamon implements Runnable {
 
 		/**
+		 * The object used to identify the server at the model
+		 */
+		private ProtocolHandle handle;
+
+		/**
 		 * The server socket that is used for listening to incoming connections
 		 */
 		private ServerSocket serverSocket;
@@ -244,26 +252,20 @@ public class ServerModel implements IModel {
 		private ServerProtocolEngineFactory factory;
 
 		/**
-		 * The protocol that is being run by the server
-		 */
-		private IProtocolImplementer protocolImplementer;
-
-		/**
 		 * Constructor. It sets all necessary parameters for running the deamon
-		 * 
+         *
+         * @param handle
+	     *            The object used to map the server at the model
 		 * @param serverSocket
 		 *            The socket to listen to
 		 * @param factory
 		 *            The factory that builds new protocol engines
-		 * @param protocolImplementer
-		 *            The protocol implementer being run by the server
 		 */
-		public ServerDeamon(ServerSocket serverSocket,
-				ServerProtocolEngineFactory factory,
-				IProtocolImplementer protocolImplementer) {
+		public ServerDeamon(ProtocolHandle handle, ServerSocket serverSocket,
+				ServerProtocolEngineFactory factory) {
+		    this.handle = handle;
 			this.serverSocket = serverSocket;
 			this.factory = factory;
-			this.protocolImplementer = protocolImplementer;
 		}
 
 		/**
@@ -273,8 +275,7 @@ public class ServerModel implements IModel {
 		 */
 		public void run() {
 			try {
-				if ((serverSocket != null) && (factory != null)
-						&& (protocolImplementer != null)) {
+				if ((serverSocket != null) && (factory != null)) {
 					while (true) {
 						final Socket s;
 						try {
@@ -290,13 +291,13 @@ public class ServerModel implements IModel {
 
 						final ProtocolEngine eng = factory
 								.getServerProtocolEngine();
-						eng.startProtocol(protocolImplementer, s, null, true);
+						eng.startProtocol(s, null);
 
 						Collection<ProtocolEngine> allClients = connectedClients
-								.get(protocolImplementer);
+								.get(handle);
 						if (allClients == null) {
 							allClients = new HashSet<ProtocolEngine>();
-							connectedClients.put(protocolImplementer,
+							connectedClients.put(handle,
 									allClients);
 						}
 						allClients.add(eng);
@@ -309,25 +310,25 @@ public class ServerModel implements IModel {
 				if (exceptionHandler != null) {
 					// Delegate the exception to user
 					if (e instanceof IOException) {
-						exceptionHandler.handleIOException((IOException) e, protocolImplementer);
+						exceptionHandler.handleIOException(handle, (IOException) e);
 					} else if (e instanceof ProtocolInitException) {
 						exceptionHandler
-								.handleProtocolInitException((ProtocolInitException) e, protocolImplementer);
+								.handleProtocolInitException(handle, (ProtocolInitException) e);
 					} else if (e instanceof MessageHandleException) {
 						exceptionHandler
-								.handleMessageHandleException((MessageHandleException) e, protocolImplementer);
+								.handleMessageHandleException(handle, (MessageHandleException) e);
 					} else if (e instanceof InvalidMessageException) {
 						exceptionHandler
-								.handleInvalidMessageException((InvalidMessageException) e, protocolImplementer);
+								.handleInvalidMessageException(handle, (InvalidMessageException) e);
 					} else if (e instanceof InvalidInputStreamDataException) {
 						exceptionHandler
-								.handleInvalidInputStreamDataException((InvalidInputStreamDataException) e, protocolImplementer);
+								.handleInvalidInputStreamDataException(handle, (InvalidInputStreamDataException) e);
 					} else if (e instanceof InvalidDefinitionException) {
 						exceptionHandler
-								.handleInvalidDefinitionException((InvalidDefinitionException) e, protocolImplementer);
+								.handleInvalidDefinitionException(handle, (InvalidDefinitionException) e);
 					} else if (e instanceof ProtocolRawHandlingException) {
 						exceptionHandler
-								.handleProtocolRawHandlingException((ProtocolRawHandlingException) e, protocolImplementer);
+								.handleProtocolRawHandlingException(handle, (ProtocolRawHandlingException) e);
 					}
 				}
 
@@ -348,16 +349,16 @@ public class ServerModel implements IModel {
 						allClients.remove(aClient);
 					}
 
-					openedServerSockets.remove(protocolImplementer);
-					engineFactories.remove(protocolImplementer);
-					connectedClients.remove(protocolImplementer);
+					openedServerSockets.remove(handle);
+					engineFactories.remove(handle);
+					connectedClients.remove(handle);
 
 				} catch (IOException e) {
 					IProtocolExceptionHandler exceptionHandler = factory
 							.getExceptionHandler();
 
 					if (exceptionHandler != null) {
-						exceptionHandler.handleIOException(e, protocolImplementer);
+						exceptionHandler.handleIOException(handle, e);
 					}
 				}
 			}

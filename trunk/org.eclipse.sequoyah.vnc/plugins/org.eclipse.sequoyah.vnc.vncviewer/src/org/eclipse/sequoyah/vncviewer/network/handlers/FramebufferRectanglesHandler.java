@@ -1,15 +1,17 @@
 /********************************************************************************
+ * Copyright (c) 2008 Motorola Inc and Others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributor:
- * Fabio Rigo
+ * Fabio Rigo (Eldorado Research Institute) 
  *
  * Contributors:
  * Daniel Barboza Franco (Motorola) - Integration with code from bug 227793 to correctly deal with the redesigned painting process.
  * Fabio Rigo - Bug [238191] - Enhance exception handling
- ********************************************************************************/
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ *******************************************************************************/
 package org.eclipse.tml.vncviewer.network.handlers;
 
 import java.io.ByteArrayOutputStream;
@@ -19,13 +21,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.tml.protocol.lib.IMessageFieldsStore;
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
 import org.eclipse.tml.protocol.lib.IRawDataHandler;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.vncviewer.network.IVNCPainter;
 import org.eclipse.tml.vncviewer.network.RectHeader;
-import org.eclipse.tml.vncviewer.network.VNCProtocol;
+import org.eclipse.tml.vncviewer.network.VNCProtocolData;
+import org.eclipse.tml.vncviewer.registry.VNCProtocolRegistry;
 
 /**
  * DESCRIPTION: This class consists of the reader for the framebuffer
@@ -45,10 +48,10 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 	private int x0, y0 = Integer.MAX_VALUE;
 	private int x1, y1 = 0;
 
-	public Map<String, Object> readRawDataFromStream(InputStream dataStream,
-			IMessageFieldsStore currentlyReadFields,
-			IProtocolImplementer protocolImplementer, boolean isBigEndian)
-			throws IOException, ProtocolRawHandlingException {
+	public Map<String, Object> readRawDataFromStream(ProtocolHandle handle,
+			InputStream dataStream, IMessageFieldsStore currentlyReadFields,
+			boolean isBigEndian) throws IOException,
+			ProtocolRawHandlingException {
 
 		// Determine the number of pixels using the width and height already
 		// read
@@ -57,11 +60,13 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 
 		Map<String, Object> fieldsMap = new HashMap<String, Object>();
 
-		if (protocolImplementer instanceof VNCProtocol) {
+		VNCProtocolData protocolData = VNCProtocolRegistry.getInstance().get(
+				handle);
+
+		if (protocolData != null) {
 			// Collects the painter where the rectangles will be processed
-			// from the protocol implementer instance
-			VNCProtocol vncProtocol = (VNCProtocol) protocolImplementer;
-			IVNCPainter painter = vncProtocol.getVncPainter();
+			// from the protocol data instance
+			IVNCPainter painter = protocolData.getVncPainter();
 
 			int x = (Integer) currentlyReadFields.getFieldValue("x-position");
 			int y = (Integer) currentlyReadFields.getFieldValue("y-position");
@@ -76,8 +81,7 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 
 			try {
 				painter.processRectangle(new RectHeader(x, y, width, height,
-						encoding), ((VNCProtocol) protocolImplementer)
-						.getInputStream());
+						encoding), protocolData.getInputStream());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -108,9 +112,9 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 		return fieldsMap;
 	}
 
-	public void writeRawDataToStream(ByteArrayOutputStream dataStream,
-			ProtocolMessage messageToGetInformationFrom,
-			IProtocolImplementer protocolImplementer, boolean isBigEndian)
+	public void writeRawDataToStream(ProtocolHandle handle,
+			ByteArrayOutputStream dataStream,
+			ProtocolMessage messageToGetInformationFrom, boolean isBigEndian)
 			throws ProtocolRawHandlingException {
 
 		// No implementation. This is a client plugin only

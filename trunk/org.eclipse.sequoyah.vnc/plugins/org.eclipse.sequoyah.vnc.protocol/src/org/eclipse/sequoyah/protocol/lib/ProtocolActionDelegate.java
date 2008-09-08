@@ -10,6 +10,7 @@
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -56,10 +57,8 @@ public class ProtocolActionDelegate {
 	 *            A collection containing the message ids of all outgoing
 	 *            messages. The message ids much match the id field in a
 	 *            ProtocolMsgDefinition object from the allMessages map
-	 * @param protocolImplementer
-	 *            An instance of the implementer object. This object contains
-	 *            the initialization procedure definition, as well as any needed
-	 *            protocol instance particular data
+	 * @param protocolInitializer
+	 *            The sequence of steps to execute for connection initialization
 	 * @param isBigEndianProtocol
 	 *            True if the protocol is big endian, false if little endian
 	 * @param host
@@ -69,6 +68,8 @@ public class ProtocolActionDelegate {
 	 * @param parameters
 	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.           
 	 * 
+	 * @return A handle to identify the connection just made
+	 * 
 	 * @throws UnknownHostException
 	 *             DOCUMENT ME!!
 	 * @throws IOException
@@ -77,11 +78,11 @@ public class ProtocolActionDelegate {
 	 *             DOCUMENT ME!!
 	 */
 	
-	public static void startClientProtocol(
+	public static ProtocolHandle startClientProtocol(
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
-			IProtocolImplementer protocolImplementer,
+			IProtocolInit protocolInitializer,
 			IProtocolExceptionHandler exceptionHandler,
 			Boolean isBigEndianProtocol,
 			String host, int port,
@@ -89,8 +90,8 @@ public class ProtocolActionDelegate {
 			throws UnknownHostException, IOException, ProtocolInitException {
 
 		ClientModel model = ClientModel.getInstance();
-		model.startClientProtocol(allMessages, incomingMessages,
-				outgoingMessages, protocolImplementer, exceptionHandler, isBigEndianProtocol, host, port, parameters);
+		return model.startClientProtocol(allMessages, incomingMessages,
+				outgoingMessages, protocolInitializer, exceptionHandler, isBigEndianProtocol, host, port, parameters);
 	}
 
 	/**
@@ -110,78 +111,81 @@ public class ProtocolActionDelegate {
 	 *            A collection containing the message ids of all outgoing
 	 *            messages. The message ids much match the id field in a
 	 *            ProtocolMsgDefinition object from the allMessages map
-	 * @param protocolImplementer
-	 *            An instance of the implementer object. This object contains
-	 *            the initialization procedure definition, as well as any needed
-	 *            protocol instance particular data
+	 * @param protocolInitializer
+	 *            The sequence of steps to execute for connection initialization
 	 * @param isBigEndianProtocol
 	 *            True if the protocol is big endian, false if little endian
 	 * 
+	 * @return A handle to identify the connection just made
+     *
 	 * @throws IOException
 	 *             DOCUMENT ME!!
 	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
-	public static void startServerProtocol(int portToBind,
+	public static ProtocolHandle startServerProtocol(int portToBind,
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
-			IProtocolImplementer protocolImplementer,
+			IProtocolInit protocolInitializer,
 			IProtocolExceptionHandler exceptionHandler,
 			boolean isBigEndianProtocol) throws IOException,
 			ProtocolInitException {
 
 		ServerModel model = ServerModel.getInstance();
-		model.startListeningToPort(portToBind, allMessages, incomingMessages,
-				outgoingMessages, protocolImplementer, exceptionHandler,
+		return model.startListeningToPort(portToBind, allMessages, incomingMessages,
+				outgoingMessages, protocolInitializer, exceptionHandler,
 				isBigEndianProtocol);
 	}
 
 	/**
 	 * Stops the provided protocol instance
 	 * 
-	 * @param protocolImplementer
-	 *            The protocol instance that is to be stopped
+	 * @param handle
+	 *            An object provided at the connection time, that identifies 
+	 *            the connection that is to be stopped
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
 	 */
-	public static void stopProtocol(IProtocolImplementer protocolImplementer)
+	public static void stopProtocol(ProtocolHandle handle)
 			throws IOException {
 		ClientModel clientModel = ClientModel.getInstance();
-		clientModel.stopClientProtocol(protocolImplementer);
+		clientModel.stopClientProtocol(handle);
 
 		ServerModel serverModel = ServerModel.getInstance();
-		serverModel.stopListeningToPort(protocolImplementer);
+		serverModel.stopListeningToPort(handle);
 	}
 
 	/**
 	 * Restarts the provided protocol instance
 	 * 
-	 * @param protocolImplementer
-	 *            The protocol instance that is to be restarted
+	 * @param handle
+	 *            An object provided at the connection time, that identifies 
+	 *            the connection that is to be restarted
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
 	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
-	public static void restartProtocol(IProtocolImplementer protocolImplementer)
+	public static void restartProtocol(ProtocolHandle handle)
 			throws IOException, ProtocolInitException, ProtocolException {
 
 		ClientModel clientModel = ClientModel.getInstance();
-		clientModel.restartClientProtocol(protocolImplementer);
+		clientModel.restartClientProtocol(handle);
 
 		ServerModel serverModel = ServerModel.getInstance();
-		serverModel.restartServerProtocol(protocolImplementer);
+		serverModel.restartServerProtocol(handle);
 	}
 
 	/**
 	 * Sends a message to the server part
 	 * 
-	 * @param protocolImplementer
-	 *            The client protocol instance that is to send a message to the
-	 *            server it is connected to
+	 * @param handle
+	 *            An object provided at the connection time, that identifies 
+	 *            the client connection through which a message will be sent 
+	 *            to the server to which it is connected
 	 * 
 	 * @param message
 	 *            The message to send to the server
@@ -196,10 +200,10 @@ public class ProtocolActionDelegate {
 	 *             DOCUMENT ME!!
 	 */
 	public static void sendMessageToServer(
-			IProtocolImplementer protocolImplementer, ProtocolMessage message)
+			ProtocolHandle handle, ProtocolMessage message)
 			throws IOException, ProtocolRawHandlingException,
 			InvalidMessageException, InvalidDefinitionException {
 		ClientModel model = ClientModel.getInstance();
-		model.sendMessage(protocolImplementer, message);
+		model.sendMessage(handle, message);
 	}
 }

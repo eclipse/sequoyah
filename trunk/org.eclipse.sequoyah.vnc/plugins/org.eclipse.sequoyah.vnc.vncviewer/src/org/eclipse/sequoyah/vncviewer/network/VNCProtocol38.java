@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2008 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,6 +10,7 @@
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
@@ -56,7 +57,7 @@ public class VNCProtocol38 extends VNCProtocol {
 
 	}
 
-	private void handshakeFail(DataInputStream in) throws Exception {
+	private void handshakeFail38(DataInputStream in) throws Exception {
 
 		int failReasonLength;
 		String failReason = "";
@@ -101,7 +102,7 @@ public class VNCProtocol38 extends VNCProtocol {
 
 			out.write((byte) 1); // NONE
 		} else {
-			handshakeFail(in);
+			handshakeFail38(in);
 		}
 
 		// Security Result
@@ -114,7 +115,6 @@ public class VNCProtocol38 extends VNCProtocol {
 		/* The Sec-types handling is not implemented yet */
 	}
 
-	
 	@Override
 	protected String getVersion() {
 		return RFB_VERSION;

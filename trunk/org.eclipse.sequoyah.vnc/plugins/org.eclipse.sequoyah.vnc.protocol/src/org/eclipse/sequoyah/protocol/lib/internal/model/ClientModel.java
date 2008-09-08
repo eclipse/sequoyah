@@ -10,6 +10,7 @@
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -21,7 +22,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
@@ -55,7 +57,7 @@ public class ClientModel implements IModel {
 	 * A map containing an association of each client protocol with its running
 	 * engine
 	 */
-	private Map<IProtocolImplementer, ProtocolEngine> runningEngines = new HashMap<IProtocolImplementer, ProtocolEngine>();
+	private Map<ProtocolHandle, ProtocolEngine> runningEngines = new HashMap<ProtocolHandle, ProtocolEngine>();
 
 	/**
 	 * Private constructor to fit singleton pattern
@@ -92,10 +94,8 @@ public class ClientModel implements IModel {
 	 *            A collection containing the message ids of all outgoing
 	 *            messages. The message ids much match the id field in a
 	 *            ProtocolMsgDefinition object from the allMessages map
-	 * @param protocolImplementer
-	 *            An instance of the implementer object. This object contains
-	 *            the initialization procedure definition, as well as any needed
-	 *            protocol instance particular data
+	 * @param protocolInitializer
+	 *            The sequence of steps to execute for connection initialization
 	 * @param isBigEndianProtocol
 	 *            True if the protocol is big endian, false if little endian
 	 * @param host
@@ -112,11 +112,11 @@ public class ClientModel implements IModel {
 	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
-	public void startClientProtocol(
+	public ProtocolHandle startClientProtocol(
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
-			IProtocolImplementer protocolImplementer,
+			IProtocolInit protocolInitializer,
 			IProtocolExceptionHandler exceptionHandler,
 			Boolean isBigEndianProtocol,
 			String host, int port,
@@ -126,45 +126,49 @@ public class ClientModel implements IModel {
 		Integer retriesObj = (Integer) parameters.get("connectionRetries");
 		int retries  = (retriesObj != null) ? retriesObj : -1;
 		
-		ProtocolEngine eng = new ProtocolEngine(allMessages, incomingMessages,
-				outgoingMessages, exceptionHandler, isBigEndianProtocol, retries);
-		eng.startProtocol(protocolImplementer, host, port, parameters, false);
-		runningEngines.put(protocolImplementer, eng);
+		ProtocolHandle handle = new ProtocolHandle();
+		ProtocolEngine eng = new ProtocolEngine(handle, protocolInitializer, allMessages, incomingMessages,
+				outgoingMessages, exceptionHandler, isBigEndianProtocol, false, retries);
+		eng.startProtocol(host, port, parameters);
+		runningEngines.put(handle, eng);
+		return handle;
 	}
 
 	/**
 	 * Stops the provided protocol instance
 	 * 
-	 * @param protocolImplementer
-	 *            The protocol instance that is to be stopped
+	 * @param handle
+	 *            The object that identifies the connection that is to
+	 *            be stopped.
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
 	 */
-	public void stopClientProtocol(IProtocolImplementer protocolImplementer)
+	public void stopClientProtocol(ProtocolHandle handle)
 			throws IOException {
 
-		ProtocolEngine eng = runningEngines.get(protocolImplementer);
+		ProtocolEngine eng = runningEngines.get(handle);
 		if (eng != null) {
 			eng.stopProtocol();
 		}
-		runningEngines.remove(protocolImplementer);
+		runningEngines.remove(handle);
 	}
 
 	/**
 	 * Restarts the provided protocol instance
 	 * 
-	 * @param protocolImplementer
-	 *            The protocol instance that is to be restarted
+ 	 * @param handle
+	 *            The object that identifies the connection that is to 
+	 *            be restarted.
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
 	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
-	public void restartClientProtocol(IProtocolImplementer protocolImplementer)
+	public void restartClientProtocol(ProtocolHandle handle)
 			throws IOException, ProtocolInitException, ProtocolException {
-		ProtocolEngine eng = runningEngines.get(protocolImplementer);
+		ProtocolEngine eng = runningEngines.get(handle);
 		if (eng != null) {
 			eng.restartProtocol();
 		}
@@ -173,9 +177,9 @@ public class ClientModel implements IModel {
 	/**
 	 * Sends a message to the server part
 	 * 
-	 * @param protocolImplementer
-	 *            The client protocol instance that is to send a message to the
-	 *            server it is connected to
+	 * @param handle
+	 *            The object that identifies by which connection the 
+	 *            message will be sent.
 	 * 
 	 * @param message
 	 *            The message to send to the server
@@ -189,11 +193,11 @@ public class ClientModel implements IModel {
 	 * @throws InvalidDefinitionException
 	 *             DOCUMENT ME!!
 	 */
-	public void sendMessage(IProtocolImplementer protocolImplementer,
+	public void sendMessage(ProtocolHandle handle,
 			ProtocolMessage message) throws ProtocolRawHandlingException,
 			InvalidMessageException, InvalidDefinitionException, IOException {
 
-		ProtocolEngine eng = runningEngines.get(protocolImplementer);
+		ProtocolEngine eng = runningEngines.get(handle);
 		if (eng != null) {
 			eng.sendMessage(message);
 		}
@@ -204,8 +208,8 @@ public class ClientModel implements IModel {
 	 */
 	public void cleanStoppedProtocols() {
 
-		Set<IProtocolImplementer> keys = runningEngines.keySet();
-		for (IProtocolImplementer key : keys) {
+		Set<ProtocolHandle> keys = runningEngines.keySet();
+		for (ProtocolHandle key : keys) {
 			ProtocolEngine aEng = runningEngines.get(key);
 			if (!aEng.isConnected()) {
 				runningEngines.remove(key);

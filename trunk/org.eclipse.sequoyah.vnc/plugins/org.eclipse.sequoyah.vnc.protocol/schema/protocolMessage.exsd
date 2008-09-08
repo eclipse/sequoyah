@@ -7,7 +7,7 @@
       </appinfo>
       <documentation>
          A protocol message is a set of bytes, structured as defined by the protocol rules, which is sent through a communication channel and has meaning to both sender and receiver parts.&lt;p&gt;
-In TmL, the message structure is defined by the &lt;samp&gt;protocolMessage&lt;/samp&gt; extension point and associated to a protocol implementer by means of the &lt;samp&gt;protocolId&lt;/samp&gt; defined by a protocolImplementer extension (see &lt;samp&gt;protocolImplementer&lt;/samp&gt; extension point). Once the message structure is known by the framework, it is able to serialize and send a set of provided data through the communication channel (if it is an outgoing message), as well as receive and deserialize messages data from the communication channel, providing a handler with meaningful data (if it is an incoming message).&lt;p&gt;
+In TmL, the message structure is defined by the &lt;samp&gt;protocolMessage&lt;/samp&gt; extension point and associated to a protocol by means of the &lt;samp&gt;protocolId&lt;/samp&gt; defined by a protocolDefinition extension (see &lt;samp&gt;protocolDefinition&lt;/samp&gt; extension point). Once the message structure is known by the framework, it is able to serialize and send a set of provided data through the communication channel (if it is an outgoing message), as well as receive and deserialize messages data from the communication channel, providing a handler with meaningful data (if it is an incoming message).&lt;p&gt;
 Finally, it is possible to have pre-defined structures for the message fields, including the &lt;i&gt;fixed size field&lt;/i&gt; (when the field fits within a pre-defined number of bytes), the &lt;i&gt;variable size field&lt;/i&gt; (when a size field right before determines the field size) and the &lt;i&gt;raw field&lt;/i&gt; (when the field has an unusual format that needs to be handled by a provided handler). It is also possible to group a set of the previous fields into an &lt;i&gt;iteratable block&lt;/i&gt;, which allows a set of fields to be read multiple times.
       </documentation>
    </annotation>
@@ -65,7 +65,7 @@ Finally, it is possible to have pre-defined structures for the message fields, i
          <attribute name="protocolId" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of the protocol that owns this message. Its value shall be the same as declared in a &lt;samp&gt;protocolImplementer&lt;/samp&gt; extension.
+                  The id of the protocol that owns this message. Its value shall be the same as declared in a &lt;samp&gt;protocolDefinition&lt;/samp&gt; extension.
                </documentation>
             </annotation>
          </attribute>
@@ -379,10 +379,10 @@ The same applies to raw data writers, which must implement interface &lt;samp&gt
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         After the protocol implementer is started (by means of the method &lt;code&gt;startProtocol()&lt;/code&gt; of the protocol implementer class), the socket starts to be monitored by a consumer thread. Once a message arrives and is deserialized by the implementor, the message handler is invoked and all field values read as defined in &lt;samp&gt;protocolMessage&lt;/samp&gt; extension is provided to that handler.&lt;p&gt;
+         After the protocol is started (by means of the method &lt;code&gt;startProtocol()&lt;/code&gt; of the protocol init class), the socket starts to be monitored by a consumer thread. Once a message arrives and is deserialized by the implementor, the message handler is invoked and all field values read as defined in &lt;samp&gt;protocolMessage&lt;/samp&gt; extension is provided to that handler.&lt;p&gt;
 On the other hand, when a message needs to be serialized and sent through the socket, one should:&lt;br&gt;
 1) Create a &lt;samp&gt;ProtocolMessage&lt;/samp&gt; object containing the field values to be serialized. This message object shall have all data as defined by the &lt;samp&gt;protocolMessage&lt;/samp&gt; extension.&lt;br&gt;
-2) Call the protocol implementer&apos;s &lt;code&gt;sendMessage()&lt;/code&gt;. The framework will serialize the field values and send through the socket.
+2) Call the protocol&apos;s &lt;code&gt;sendMessage()&lt;/code&gt;. The framework will serialize the field values and send through the socket.
       </documentation>
    </annotation>
 

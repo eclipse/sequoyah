@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.model;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 
 import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
 import org.eclipse.tml.protocol.internal.reader.ProtocolExtensionsReader;
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.IProtocolInit;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
 /**
@@ -42,7 +43,7 @@ public class PluginProtocolModel {
 	private static PluginProtocolModel instance;
 
 	/**
-	 * A map containing the beans that hold data from the ProtocolImplementer
+	 * A map containing the beans that hold data from the Protocol Definition
 	 * extensions
 	 */
 	private Map<String, ProtocolBean> protocolDataMap = new HashMap<String, ProtocolBean>();
@@ -110,18 +111,18 @@ public class PluginProtocolModel {
 
 	/**
 	 * Creates and returns a new instance of the class declared as the
-	 * implementer for the protocol identified by protocolId
+	 * initializer for the protocol identified by protocolId
 	 * 
 	 * @param protocolId
-	 *            The identifier of the protocol to which an implementer is
+	 *            The identifier of the protocol to which an initializer is
 	 *            needed
 	 * 
-	 * @return A new instance of the implementer of the provided protocol
+	 * @return A new instance of the initializer of the provided protocol
 	 * 
 	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
-	public IProtocolImplementer getProtocolImplementer(String protocolId)
+	public IProtocolInit getProtocolInit(String protocolId)
 			throws MalformedProtocolExtensionException {
 
 		ProtocolBean bean = protocolDataMap.get(protocolId);
@@ -130,30 +131,7 @@ public class PluginProtocolModel {
 			protocolDataMap.put(protocolId, bean);
 		}
 
-		return bean.getProtocolImplementer();
-	}
-
-	/**
-	 * Retrieves the declared port to which the protocol server is locally bound
-	 * 
-	 * @param protocolId
-	 *            The identifier of the protocol
-	 * 
-	 * @return The number of the port that the protocol server binds to
-	 * 
-	 * @throws MalformedProtocolExtensionException
-	 *             DOCUMENT ME!!
-	 */
-	public int getServerPort(String protocolId)
-			throws MalformedProtocolExtensionException {
-
-		ProtocolBean bean = protocolDataMap.get(protocolId);
-		if (bean == null) {
-			bean = ProtocolExtensionsReader.readProtocolImplDef(protocolId);
-			protocolDataMap.put(protocolId, bean);
-		}
-
-		return bean.getServerPort();
+		return bean.getProtocolInit();
 	}
 
 	/**

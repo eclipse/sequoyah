@@ -1,0 +1,51 @@
+/********************************************************************************
+ * Copyright (c) 2008 Motorola Inc and Others. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Initial Contributor:
+ * Fabio Rigo (Eldorado Research Institute) 
+ * [246212] - Enhance encapsulation of protocol implementer
+ *
+ * Contributors:
+ * (name) - (contribution)
+ *******************************************************************************/
+
+
+package org.eclipse.tml.vncviewer.registry;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
+import org.eclipse.tml.vncviewer.network.VNCProtocolData;
+
+public class VNCProtocolRegistry {
+
+	private static VNCProtocolRegistry instance;
+
+	private Map<ProtocolHandle, VNCProtocolData> protocolMapping = new HashMap<ProtocolHandle, VNCProtocolData>();
+
+	private VNCProtocolRegistry() {
+	}
+
+	public static VNCProtocolRegistry getInstance() {
+		if (instance == null) {
+			instance = new VNCProtocolRegistry();
+		}
+		return instance;
+	}
+
+	public void register(ProtocolHandle handle, VNCProtocolData data) {
+		protocolMapping.put(handle, data);
+	}
+
+	public void unregister(ProtocolHandle handle) {
+		protocolMapping.remove(handle);
+	}
+
+	public VNCProtocolData get(ProtocolHandle handle) {
+		return protocolMapping.get(handle);
+	}
+}

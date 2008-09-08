@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2008 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Daniel Barboza Franco - Bug [233062] - Protocol connection port is static.
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
@@ -24,118 +25,21 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
 import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
+import org.eclipse.tml.vncviewer.registry.VNCProtocolRegistry;
 
 /**
  * Abstract class that defines the main behavior of the VNC Protocol.
  */
-abstract public class VNCProtocol implements IProtocolImplementer {
+abstract public class VNCProtocol implements IProtocolInit,
+		IRFBConstants {
 
-	protected DataInputStream in;
-	protected OutputStream out;
-	
-	private static String password;
-	
-	public static final int SECURITY_TYPE_INVALID = 0;
-	public static final int SECURITY_TYPE_NONE = 1;
-	public static final int SECURITY_TYPE_VNC = 2;
-	public static final int SECURITY_TYPE_RA2 = 5;
-	public static final int SECURITY_TYPE_RA2NE = 6;
-	public static final int SECURITY_TYPE_TIGHT = 16;
-	public static final int SECURITY_TYPE_ULTRA = 17;
-	public static final int SECURITY_TYPE_TLS = 18;
-	public static final int SECURITY_TYPE_VENCRYPT = 19;
-
-	protected int securityType;
-	private IVNCPainter vncPainter;
-	private int fbWidth; 
-	
-	private int fbHeight;
-	
-	//private IVNCPainter painter;
-	
-	private PixelFormat pixelFormat;
-	
-	private String serverName;
-	
 	private static final int PROTOCOL_VERSION_MESSAGE_SIZE = 12;
 
 	private static final int VNC_AUTHENTICATION_CHALLENGE_MESSAGE_SIZE = 16;
-	
-	/**
-	 * Constant used to determine the Framebuffer update request message size in bytes. 
-	 */
-	static final int FB_UPDATE_REQUEST_MESSAGE_SIZE = 10; /* number of bytes sent to the server in the framebuffer update request */
-	
-	/* Client to Server message types */
-	
-	/**
-	 * Constant used to represent the Set Pixel Format RFB Client message.   
-	 */
-	public final static int SET_PIXEL_FORMAT = 0;
-	
-	/**
-	 * Constant used to represent the Set Encondings RFB Client message.   
-	 */
-	public final static int SET_ENCODINGS = 2;
-
-	/**
-	 * Constant used to represent the Framebuffer Update Request RFB Client
-	 * message.
-	 */
-	public final static int FRAMEBUFFER_UPDATE_REQUEST = 3;
-
-	/**
-	 * Constant used to represent the Key Event RFB Client message.
-	 */
-	public final static int KEY_EVENT = 4;
-
-	/**
-	 * Constant used to represent the Pointer Event RFB Client message.
-	 */
-	public final static int POINTER_EVENT = 5;
-
-	/**
-	 * Constant used to represent the Client Cut Text RFB Client message.
-	 */
-	public final static int CLIENT_CUT_TEXT = 6;
-
-	/* Server to Client message types */
-
-	/**
-	 * Constant used to represent the Framebuffer Update RFB Server message.
-	 */
-	public final static int FRAMEBUFFER_UPDATE = 0;
-
-	/**
-	 * Constant used to represent the Set Colour Map Entries RFB Server message.
-	 */
-	public final static int SET_COLOUR_MAP_ENTRIES = 1;
-
-	/**
-	 * Constant used to represent the Bell RFB Server message.
-	 */
-	public final static int BELL = 2;
-
-	private boolean paintEnabled;
-	private Map parameters;
-
-	/**
-	 * Constant used to represent the Server Cut Text RFB Server message.
-	 */
-	public final static int SERVER_CUT_TEXT = 3;
-
-	private static int SHARED_FLAG = 1;
-
-	public final static int RAW_ENCODING = 0;
-	public final static int COPY_RECT_ENCODING = 1;
-	public final static int RRE_ENCODING = 2;
-	public final static int HEXTILE_ENCODING = 5;
-	public final static int ZRLE_ENCODING = 16;
-
-	public final static int ZLIB_ENCODING = 6;
 
 	/**
 	 * Returns the protocol version string
@@ -155,28 +59,39 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 	/**
 	 * Implements the init phase of the RFB Protocol.
 	 */
-	private void initPhase() throws Exception {
+	private void initPhase(ProtocolHandle handle, DataInputStream in,
+			OutputStream out, String password) throws Exception {
+
+		VNCProtocolData data = new VNCProtocolData();
+		data.setPassword(password);
 
 		/* ClientInit */
 		out.write(SHARED_FLAG); // SharedFlag
 
 		/* ServerInit */
-		fbWidth = in.readUnsignedShort();
-		fbHeight = in.readUnsignedShort();
+		data.setFbWidth(in.readUnsignedShort());
+		data.setFbHeight(in.readUnsignedShort());
 
-		pixelFormat = new PixelFormat();
+		PixelFormat pixelFormat = new PixelFormat();
 		pixelFormat.getPixelFormat(in);
+		data.setPixelFormat(pixelFormat);
 
 		int nameLen = in.readInt();
 
 		byte[] serverName = new byte[nameLen];
 		in.read(serverName, 0, nameLen);
 
-		this.serverName = "";
+		String serverNameStr = "";
 		for (int i = 0; i < serverName.length; i++) {
 			char c = (char) serverName[i];
-			this.serverName += c;
+			serverNameStr += c;
 		}
+		data.setServerName(serverNameStr);
+
+		data.setInputStream(in);
+		data.setOutputStream(out);
+
+		VNCProtocolRegistry.getInstance().register(handle, data);
 
 		sendEncodingsPreferences(getSupportedEncodings(), out);
 
@@ -199,19 +114,6 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 			b[7 + 4 * i] = (byte) (encs[i] & 0xff);
 		}
 		out.write(b);
-	}
-
-	public String getServerName() {
-		return serverName;
-
-	}
-
-	public int getHeight() {
-		return fbHeight;
-	}
-
-	public int getWidth() {
-		return fbWidth;
 	}
 
 	/**
@@ -238,19 +140,22 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		}
 	}
 
-	protected void negotiateProtocol() throws Exception {
+	protected void negotiateProtocol(DataInputStream in, OutputStream out)
+			throws Exception {
 		byte[] b = new byte[PROTOCOL_VERSION_MESSAGE_SIZE];
 		in.readFully(b, 0, PROTOCOL_VERSION_MESSAGE_SIZE);
 		compareVersion(b);
 		out.write(getVersion().getBytes());
 	}
 
-	protected void negotiateSecurity() throws Exception {
-		int[] securityTypes = readSecurityTypes();
-		securityType = chooseSecurityType(securityTypes);
+	protected int negotiateSecurity(DataInputStream in, OutputStream out)
+			throws Exception {
+		int[] securityTypes = readSecurityTypes(in);
+		int securityType = chooseSecurityType(securityTypes);
 		if (securityType != SECURITY_TYPE_INVALID) {
-			sendSecurityType(securityType);
+			sendSecurityType(out, securityType);
 		}
+		return securityType;
 	}
 
 	protected int chooseSecurityType(int[] securityTypes) throws Exception {
@@ -262,7 +167,7 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		return SECURITY_TYPE_INVALID;
 	}
 
-	protected int[] readSecurityTypes() throws Exception {
+	protected int[] readSecurityTypes(DataInputStream in) throws Exception {
 		int[] result = null;
 		int secTypesNumber = in.readByte();
 		if (secTypesNumber > 0) {
@@ -271,16 +176,17 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 				result[i] = in.readByte();
 			}
 		} else {
-			handshakeFail();
+			handshakeFail(in);
 		}
 		return result;
 	}
 
-	protected void sendSecurityType(int securityType) throws Exception {
+	protected void sendSecurityType(OutputStream out, int securityType)
+			throws Exception {
 		out.write((byte) securityType);
 	}
 
-	protected void handshakeFail() throws Exception {
+	protected void handshakeFail(DataInputStream in) throws Exception {
 		int failReasonLength;
 		StringBuffer reason = new StringBuffer();
 		failReasonLength = in.readInt();
@@ -300,13 +206,14 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		}
 	}
 
-	protected void authenticate() throws Exception {
+	protected void authenticate(DataInputStream in, OutputStream out,
+			String password, int securityType) throws Exception {
 		switch (securityType) {
 		case SECURITY_TYPE_NONE:
 			// No op. We do not need to do anything else
 			break;
 		case SECURITY_TYPE_VNC:
-			authenticateVNC();
+			authenticateVNC(in, out, password);
 			break;
 		default:
 			throw new Exception("Handshake failed: unsupported security type "
@@ -314,7 +221,8 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		}
 	}
 
-	protected void authenticateVNC() throws Exception {
+	protected void authenticateVNC(DataInputStream in, OutputStream out,
+			String password) throws Exception {
 		byte[] challenge = new byte[VNC_AUTHENTICATION_CHALLENGE_MESSAGE_SIZE];
 		in.readFully(challenge, 0, VNC_AUTHENTICATION_CHALLENGE_MESSAGE_SIZE);
 
@@ -329,32 +237,30 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		out.write(challenge);
 	}
 
-	protected void readAuthenticationResult() throws Exception {
+	protected void readAuthenticationResult(DataInputStream in)
+			throws Exception {
 		int securityResult = in.readInt();
 		if (securityResult != 0) {
-			handshakeFail();
+			handshakeFail(in);
 		}
 	}
 
-	public void clientInit(DataInputStream in, OutputStream out, Map parameters)
-			throws ProtocolInitException {
+	public void clientInit(ProtocolHandle handle, DataInputStream in,
+			OutputStream out, Map parameters) throws ProtocolInitException {
 
-		this.in = in;
-		this.out = out;
-		this.parameters = parameters;
-
-		setPassword((String) parameters.get("password"));
+		String password = (String) parameters.get("password");
 
 		try {
-			negotiateProtocol();
+			negotiateProtocol(in, out);
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
 					"VNC protocol negotiation error: " + e.getMessage());
 			throw new ProtocolInitException("VNC protocol negotiation error.");
 		}
 
+		int securityType;
 		try {
-			negotiateSecurity();
+			securityType = negotiateSecurity(in, out);
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
 					"VNC security negotiation error: " + e.getMessage());
@@ -362,8 +268,8 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		}
 
 		try {
-			authenticate();
-			readAuthenticationResult();
+			authenticate(in, out, password, securityType);
+			readAuthenticationResult(in);
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
 					"VNC authenticate error: " + e.getMessage());
@@ -371,7 +277,7 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 		}
 
 		try {
-			initPhase();
+			initPhase(handle, in, out, password);
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
 					"VNC Init Phase error: " + e.getMessage());
@@ -380,42 +286,8 @@ abstract public class VNCProtocol implements IProtocolImplementer {
 
 	}
 
-	public void serverInit(DataInputStream in, OutputStream out, Map parameters)
-			throws ProtocolInitException {
+	public void serverInit(ProtocolHandle handle, DataInputStream in,
+			OutputStream out, Map parameters) throws ProtocolInitException {
 
-	}
-
-	/**
-	 * Returns the IVNCPainter assigned to this client.
-	 */
-	public IVNCPainter getVncPainter() {
-		return vncPainter;
-	}
-
-	/**
-	 * Sets the vncPainter value.
-	 */
-	public void setVncPainter(IVNCPainter vncPainter) {
-		this.vncPainter = vncPainter;
-	}
-
-	public boolean isPaintEnabled() {
-		return paintEnabled;
-	}
-
-	public void setPaintEnabled(boolean paintEnabled) {
-		this.paintEnabled = paintEnabled;
-	}
-
-	public void setPassword(String password) {
-		VNCProtocol.password = password;
-	}
-
-	public DataInputStream getInputStream() {
-		return in;
-	}
-
-	public PixelFormat getPixelFormat() {
-		return pixelFormat;
 	}
 }

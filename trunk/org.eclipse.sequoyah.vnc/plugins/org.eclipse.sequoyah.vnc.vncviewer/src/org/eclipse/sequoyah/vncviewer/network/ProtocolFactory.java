@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2008 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,12 +8,12 @@
  * Daniel Franco (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
 
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.IProtocolInit;
 
 /**
  * This class implements the "abstract factory method" pattern.
@@ -29,7 +29,7 @@ public class ProtocolFactory {
 	 * 
 	 * @return the Protocol instance or null if prot can't be associated to a known protocol.
 	 */
-	public static IProtocolImplementer getProtocol (String prot) {
+	public static IProtocolInit getProtocol (String prot) {
 		
 		if (prot.equals("VNC 3.3")) {
 			return (VNCProtocol) (new VNCProtocol33());

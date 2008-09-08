@@ -11,6 +11,7 @@
  * Daniel Barboza Franco - Bug [233062] - Protocol connection port is static.
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  ********************************************************************************/
 package org.eclipse.tml.protocol;
 
@@ -21,8 +22,9 @@ import java.util.Map;
 import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
 import org.eclipse.tml.protocol.internal.model.PluginProtocolModel;
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.IProtocolInit;
 import org.eclipse.tml.protocol.lib.ProtocolActionDelegate;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
@@ -57,12 +59,7 @@ public class PluginProtocolActionDelegate {
 	 * @param host
 	 *            The host where the server is located
 	 * 
-	 * @return An IProtocolImplementer instance that represents the client
-	 *         protocol just started. It shall be kept by the callee for
-	 *         instance manipulation (if the protocol declarer is keeping
-	 *         instance information at the IProtocolImplementer object) and for
-	 *         requiring further actions from this class, such as stopping,
-	 *         restarting and sending messages through this instance.
+	 * @return A handle to identify the connection just made
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
@@ -71,7 +68,7 @@ public class PluginProtocolActionDelegate {
 	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
-	public static IProtocolImplementer startClientProtocol(String protocolId,
+	public static ProtocolHandle startClientProtocol(String protocolId,
 			IProtocolExceptionHandler exceptionHandler, String host, int port,
 			Map parameters) throws IOException, ProtocolInitException,
 			MalformedProtocolExtensionException {
@@ -83,15 +80,13 @@ public class PluginProtocolActionDelegate {
 				.getServerMessages(protocolId);
 		Collection<String> outgoingMessages = model
 				.getClientMessages(protocolId);
-		IProtocolImplementer protocolImplementer = model
-				.getProtocolImplementer(protocolId);
+		IProtocolInit protocolInitializer = model
+				.getProtocolInit(protocolId);
 		boolean isBigEndianProtocol = model.isBigEndianProtocol(protocolId);
 
-		ProtocolActionDelegate.startClientProtocol(allMessages,
-				incomingMessages, outgoingMessages, protocolImplementer,
+		return ProtocolActionDelegate.startClientProtocol(allMessages,
+				incomingMessages, outgoingMessages, protocolInitializer,
 				exceptionHandler, isBigEndianProtocol, host, port, parameters);
-
-		return protocolImplementer;
 	}
 
 	/**
@@ -100,13 +95,12 @@ public class PluginProtocolActionDelegate {
 	 * 
 	 * @param protocolId
 	 *            The id of the protocol to run
-	 * 
-	 * @return An IProtocolImplementer instance that represents the server
-	 *         protocol just started. It shall be kept by the callee for
-	 *         instance manipulation (if the protocol declarer is keeping
-	 *         instance information at the IProtocolImplementer object) and for
-	 *         requiring further actions from this class, such as stopping and
-	 *         restarting
+	 * @param serverPort
+	 *            The port where the server will listen to requests
+	 * @param exceptionHandler
+	 *            An optional custom handler for exceptions caused in the framework            
+     *
+     * @return A handle to identify the connection just made
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
@@ -115,7 +109,7 @@ public class PluginProtocolActionDelegate {
 	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
-	public static IProtocolImplementer startServerProtocol(String protocolId,
+	public static ProtocolHandle startServerProtocol(String protocolId, int serverPort, 
 			IProtocolExceptionHandler exceptionHandler) throws IOException,
 			ProtocolInitException, MalformedProtocolExtensionException {
 
@@ -126,56 +120,56 @@ public class PluginProtocolActionDelegate {
 				.getClientMessages(protocolId);
 		Collection<String> outgoingMessages = model
 				.getServerMessages(protocolId);
-		IProtocolImplementer protocolImplementer = model
-				.getProtocolImplementer(protocolId);
+		IProtocolInit protocolInitializer = model
+				.getProtocolInit(protocolId);
 		boolean isBigEndianProtocol = model.isBigEndianProtocol(protocolId);
-		int serverPort = model.getServerPort(protocolId);
 
-		ProtocolActionDelegate.startServerProtocol(serverPort, allMessages,
-				incomingMessages, outgoingMessages, protocolImplementer,
+		return ProtocolActionDelegate.startServerProtocol(serverPort, allMessages,
+				incomingMessages, outgoingMessages, protocolInitializer,
 				exceptionHandler, isBigEndianProtocol);
-
-		return protocolImplementer;
 	}
 
 	/**
 	 * Stops the provided protocol instance
 	 * 
-	 * @param protocolImplementer
-	 *            The protocol instance that is to be stopped
+	 * @param handle
+	 *            An object provided at the connection time, that identifies 
+	 *            the connection that is to be stopped
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
 	 */
-	public static void stopProtocol(IProtocolImplementer protocolImplementer)
+	public static void stopProtocol(ProtocolHandle handle)
 			throws IOException {
 
-		ProtocolActionDelegate.stopProtocol(protocolImplementer);
+		ProtocolActionDelegate.stopProtocol(handle);
 	}
 
 	/**
 	 * Restarts the provided protocol instance
 	 * 
-	 * @param protocolImplementer
-	 *            The protocol instance that is to be restarted
+	 * @param handle
+	 *            An object provided at the connection time, that identifies 
+	 *            the connection that is to be restarted
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
 	 * @throws ProtocolInitException
 	 *             DOCUMENT ME!!
 	 */
-	public static void restartProtocol(IProtocolImplementer protocolImplementer)
+	public static void restartProtocol(ProtocolHandle handle)
 			throws IOException, ProtocolInitException, ProtocolException {
 
-		ProtocolActionDelegate.restartProtocol(protocolImplementer);
+		ProtocolActionDelegate.restartProtocol(handle);
 	}
 
 	/**
 	 * Sends a message to the server part
 	 * 
-	 * @param protocolImplementer
-	 *            The client protocol instance that is to send a message to the
-	 *            server it is connected to
+	 * @param handle
+	 *            An object provided at the connection time, that identifies 
+	 *            the client connection through which a message will be sent 
+	 *            to the server to which it is connected
 	 * 
 	 * @param message
 	 *            The message to send to the server
@@ -190,11 +184,11 @@ public class PluginProtocolActionDelegate {
 	 *             DOCUMENT ME!!
 	 */
 	public static void sendMessageToServer(
-			IProtocolImplementer protocolImplementer, ProtocolMessage message)
+			ProtocolHandle handle, ProtocolMessage message)
 			throws IOException, InvalidMessageException,
 			InvalidDefinitionException, ProtocolRawHandlingException {
 
 		ProtocolActionDelegate
-				.sendMessageToServer(protocolImplementer, message);
+				.sendMessageToServer(handle, message);
 	}
 }

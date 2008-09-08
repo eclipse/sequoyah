@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -32,8 +33,9 @@ public interface IMessageHandler {
 	 * Handles a protocol message after it has been completely received and
 	 * parsed.
 	 * 
-	 * @param protocolImplementer
-	 *            The message owner protocol implementer.
+	 * @param handle
+	 *            The object that identifies by which connection the 
+	 *            message was received.
 	 * @param message
 	 *            The object that contains all the message parsed fields.
 	 * 
@@ -43,6 +45,5 @@ public interface IMessageHandler {
 	 * @throws MessageHandleException
 	 *             If the message cannot be handled.
 	 */
-	ProtocolMessage handleMessage(IProtocolImplementer protocolImplementer,
-			ProtocolMessage message) throws MessageHandleException;
+	ProtocolMessage handleMessage(ProtocolHandle handle, ProtocolMessage message) throws MessageHandleException;
 }

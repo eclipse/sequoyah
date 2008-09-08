@@ -9,6 +9,7 @@
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -16,6 +17,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
+import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
@@ -34,6 +38,16 @@ import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
  * 
  */
 public class ServerProtocolEngineFactory {
+
+	/**
+	 * The object used to map the connections to this server at the model
+	 */
+	private ProtocolHandle handle;
+	
+	/**
+	 * The sequence of steps to execute for connection initialization
+	 */
+	private IProtocolInit protocolInitializer;
 
 	/**
 	 * A map containing all messages that belong to the protocol. The message
@@ -69,7 +83,11 @@ public class ServerProtocolEngineFactory {
 
 	/**
 	 * Constructor. Collects data to use at each protocol engine
-	 * 
+     *
+     * @param handle
+	 *            The object used to map the server at the model
+	 * @param protocolInitializer
+	 *            The sequence of steps to execute for connection initialization
 	 * @param allMessages
 	 *            A map containing all messages that belong to the protocol. The
 	 *            message code as key
@@ -84,12 +102,21 @@ public class ServerProtocolEngineFactory {
 	 * @param isBigEndianProtocol
 	 *            True if the protocol is big endian, false if little endian
 	 */
-	public ServerProtocolEngineFactory(
+	public ServerProtocolEngineFactory(ProtocolHandle handle, 
+			IProtocolInit protocolInitializer,
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolExceptionHandler exceptionHandler,
-			boolean isBigEndianProtocol) {
+			boolean isBigEndianProtocol) throws ProtocolInitException {
+			
+		if (protocolInitializer == null)
+		{
+			throw new ProtocolInitException("An initializer must be provided to run the server protocol");
+		}	
+		
+		this.handle = handle;
+		this.protocolInitializer = protocolInitializer;
 		this.allMessages = allMessages;
 		this.incomingMessages = incomingMessages;
 		this.outgoingMessages = outgoingMessages;
@@ -103,8 +130,8 @@ public class ServerProtocolEngineFactory {
 	 * @return A new protocol engine to be used to connect to a client
 	 */
 	public ProtocolEngine getServerProtocolEngine() {
-		ProtocolEngine eng = new ProtocolEngine(allMessages, incomingMessages,
-				outgoingMessages, exceptionHandler, isBigEndianProtocol,0);
+		ProtocolEngine eng = new ProtocolEngine(handle, protocolInitializer, allMessages, incomingMessages,
+				outgoingMessages, exceptionHandler, isBigEndianProtocol, true, 0);
 		return eng;
 	}
 

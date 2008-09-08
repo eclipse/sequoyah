@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -41,9 +42,8 @@ public interface IRawDataHandler {
 	 * The method provides an input stream from which the reader can retrieve
 	 * data from the communication stream, as well as the message fields that
 	 * were already retrieved until the invocation time. Besides, the
-	 * implementer has access to the protocol being run (so that specific
-	 * protocol data can be accessed if needed) as well as to a flag indicating
-	 * if the protocol is big endian or not.<br>
+	 * user has access to a handle of the connection as well as to a 
+	 * flag indicating if the protocol is big endian or not.<br>
 	 * <br>
 	 * The user is intended to read the needed data from the stream and return
 	 * the field data in a Map implementation. The map entry key is the field
@@ -53,14 +53,15 @@ public interface IRawDataHandler {
 	 * If this protocol implementation needs only to write the raw field, this
 	 * method can be left blank.
 	 * 
+	 * @param handle
+	 *            The object that identifies by from which connection the 
+	 *            data must be read from. This can be used, for example, to 
+	 *            associate the connection to any user model that needs updating
 	 * @param dataStream
 	 *            The communication stream where to read bytes from.
 	 * @param fields
 	 *            All message fields already read from the stream until the
 	 *            current moment.
-	 * @param protocolImplementer
-	 *            The protocol that is being executed. One can use this to
-	 *            retrieve protocol specific information.
 	 * @param isBigEndian
 	 *            True if the protocol is big endian; false if it is little
 	 *            endian.
@@ -75,30 +76,29 @@ public interface IRawDataHandler {
 	 * @throws ProtocolRawHandlingException
 	 *             If the raw field cannot be parsed.
 	 */
-	Map<String, Object> readRawDataFromStream(InputStream dataStream,
-			IMessageFieldsStore fields,
-			IProtocolImplementer protocolImplementer, boolean isBigEndian)
-			throws IOException, ProtocolRawHandlingException;
+	Map<String, Object> readRawDataFromStream(ProtocolHandle handle, 
+			InputStream dataStream, IMessageFieldsStore fields, 
+			boolean isBigEndian) throws IOException, ProtocolRawHandlingException;
 
 	/**
 	 * Writes raw data fields to stream. <br>
 	 * <br>
 	 * The method provides an output stream to which the writer can send data to
 	 * the communication stream, as well as all the protocol message fields.
-	 * Besides, the implementor have access to the protocol being run (so that
-	 * specific protocol data can be accessed if needed) as well as to a flag
-	 * indicating if the protocol is big endian or not.
+	 * Besides, the implementor has access to a handle of the connection as well 
+	 * as to a flag indicating if the protocol is big endian or not.
 	 * 
 	 * If this protocol implementation needs only to read the raw field, this
 	 * method can be left blank.
 	 * 
+	 * @param handle
+	 *            The object that identifies by to which connection the 
+	 *            data must be written to. This can be used, for example, to 
+	 *            associate the connection to any user model that needs updating
 	 * @param dataStream
 	 *            The stream where to write bytes.
 	 * @param messageToGetInformationFrom
 	 *            The message that shall be queried for data to write to stream
-	 * @param protocolImplementer
-	 *            The protocol that is being executed. One can use this to
-	 *            retrieve protocol specific information.
 	 * @param isBigEndian
 	 *            True if the protocol is big endian; false if it is little
 	 *            endian.
@@ -108,8 +108,7 @@ public interface IRawDataHandler {
 	 *             protocol message do not have necessary data or have
 	 *             incomplete/erroneous data).
 	 */
-	void writeRawDataToStream(ByteArrayOutputStream dataStream,
-			ProtocolMessage messageToGetInformationFrom,
-			IProtocolImplementer protocolImplementer, boolean isBigEndian)
+	void writeRawDataToStream(ProtocolHandle handle, ByteArrayOutputStream dataStream, 
+			ProtocolMessage messageToGetInformationFrom, boolean isBigEndian)
 			throws ProtocolRawHandlingException;
 }

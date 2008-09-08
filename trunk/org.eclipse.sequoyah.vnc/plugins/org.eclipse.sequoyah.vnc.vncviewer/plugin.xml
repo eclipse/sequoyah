@@ -2,33 +2,29 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="org.eclipse.tml.protocol.protocolImplementer">
+         point="org.eclipse.tml.protocol.protocolDefinition">
       <protocol
-            class="org.eclipse.tml.vncviewer.network.VNCProtocol"
+            initializer="org.eclipse.tml.vncviewer.network.VNCProtocol"
             isBigEndianProtocol="true"
-            protocolId="vncProtocol"
-            serverPort="5900">
+            protocolId="vncProtocol">
       </protocol>
       <protocol
-            class="org.eclipse.tml.vncviewer.network.VNCProtocol33"
+            initializer="org.eclipse.tml.vncviewer.network.VNCProtocol33"
             isBigEndianProtocol="true"
             parentProtocol="vncProtocol"
-            protocolId="vncProtocol33"
-            serverPort="5900">
+            protocolId="vncProtocol33">
       </protocol>
       <protocol
-            class="org.eclipse.tml.vncviewer.network.VNCProtocol37"
+            initializer="org.eclipse.tml.vncviewer.network.VNCProtocol37"
             isBigEndianProtocol="true"
             parentProtocol="vncProtocol"
-            protocolId="vncProtocol37"
-            serverPort="5900">
+            protocolId="vncProtocol37">
       </protocol>
       <protocol
-            class="org.eclipse.tml.vncviewer.network.VNCProtocol38"
+            initializer="org.eclipse.tml.vncviewer.network.VNCProtocol38"
             isBigEndianProtocol="true"
             parentProtocol="vncProtocol"
-            protocolId="vncProtocol38"
-            serverPort="5900">
+            protocolId="vncProtocol38">
       </protocol>
    </extension>
    <extension

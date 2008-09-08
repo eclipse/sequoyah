@@ -7,17 +7,17 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.model;
 
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.IProtocolInit;
 
 /**
  * DESCRIPTION: This class represents a bean that holds data retrieved from the
- * ProtocolImplementer extensions. <br>
+ * Protocol Definition extensions. <br>
  * 
- * RESPONSIBILITY: Store and provide data regarding a protocol implementer.<br>
+ * RESPONSIBILITY: Store and provide data regarding a protocol definition.<br>
  * 
  * COLABORATORS: None.<br>
  * 
@@ -31,8 +31,7 @@ public class ProtocolBean {
 	private String protocolId;
 	private String parentProtocol;
 	private boolean isBigEndianProtocol;
-	private IProtocolImplementer protocolImplementerSeed;
-	private int serverPort;
+	private IProtocolInit protocolInitSeed;
 
 	/*
 	 * Setters section
@@ -49,13 +48,9 @@ public class ProtocolBean {
 		this.isBigEndianProtocol = isBigEndianProtocol;
 	}
 
-	public void setProtocolImplementerSeed(
-			IProtocolImplementer protocolImplementerSeed) {
-		this.protocolImplementerSeed = protocolImplementerSeed;
-	}
-
-	public void setServerPort(int serverPort) {
-		this.serverPort = serverPort;
+	public void setProtocolInitSeed(
+			IProtocolInit protocolInitSeed) {
+		this.protocolInitSeed = protocolInitSeed;
 	}
 
 	/*
@@ -73,15 +68,15 @@ public class ProtocolBean {
 		return isBigEndianProtocol;
 	}
 
-	public IProtocolImplementer getProtocolImplementer() {
+	public IProtocolInit getProtocolInit() {
 
 		// Use reflection to guarantee that every time the method is invoked
 		// a new instance of the class will be created to return to the user.
 		// The "seed" object (the one created by the extension framework) is
 		// kept intact
-		Class<? extends IProtocolImplementer> classObj = protocolImplementerSeed
+		Class<? extends IProtocolInit> classObj = protocolInitSeed
 				.getClass();
-		IProtocolImplementer newInstance = null;
+		IProtocolInit newInstance = null;
 		try {
 			newInstance = classObj.newInstance();
 		} catch (Exception e) {
@@ -90,9 +85,5 @@ public class ProtocolBean {
 		}
 
 		return newInstance;
-	}
-
-	public int getServerPort() {
-		return serverPort;
 	}
 }

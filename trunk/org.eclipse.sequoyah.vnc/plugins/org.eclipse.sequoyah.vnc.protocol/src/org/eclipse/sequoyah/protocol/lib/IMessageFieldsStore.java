@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -22,7 +22,7 @@ import java.util.Collection;
  * 
  * COLABORATORS: MessageFieldsStore: default implementor of the interface.<br>
  * 
- * USAGE: The implementer class is intended to be instantiated by the protocol
+ * USAGE: The class is intended to be instantiated by the protocol
  * framework. The user can query the IMessageFieldsStore for message field
  * values by using any of the method of this interface.<br>
  * 

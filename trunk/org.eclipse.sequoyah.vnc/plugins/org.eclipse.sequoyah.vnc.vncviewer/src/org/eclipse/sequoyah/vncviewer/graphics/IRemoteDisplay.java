@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2008 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,35 +10,38 @@
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics;
 
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.vncviewer.config.IPropertiesFileHandler;
-import org.eclipse.tml.vncviewer.network.IProtoClient;
-import org.eclipse.tml.vncviewer.network.IVNCPainter;
-
+import org.eclipse.tml.vncviewer.network.VNCProtocolData;
 
 /**
  * This interface defines the default behavior of a Remote Display component.
- * <br><br>
- * Classes implementing this Interface must extend the widget container corresponding to the specific tool kit.
- * Example: SWT - implementors using SWT must extend the Composite class.
+ * <br>
+ * <br>
+ * Classes implementing this Interface must extend the widget container
+ * corresponding to the specific tool kit. Example: SWT - implementors using SWT
+ * must extend the Composite class.
  */
 public interface IRemoteDisplay {
 
+	/**
+	 * Creates the connection to the server using the protocol specified.
+	 * 
+	 * @param handle
+	 *            A handle to identify the connection made through the protocol
+	 *            plugin
+	 */
+	public void start(ProtocolHandle handle) throws Exception;
 
- 	/**
-  	 * Creates the connection to the server using the protocol specified.
- 	 * @param protocol the IProtoClient used within the IRemoteDisplay.
-  	*/
- 	public void start(IProtocolImplementer protocol) throws Exception;
-  
-  	/**
-  	 * Stops the connection with the server.
-  	 */
+	/**
+	 * Stops the connection with the server.
+	 */
 	public void stop();
 
 	/**
@@ -75,12 +78,12 @@ public interface IRemoteDisplay {
 	public boolean isActive();
 
 	/**
-	 * Returns the IProtocolImplementer associated to the Display.
+	 * Returns the VNCProtocolData associated to the Display.
 	 */
-	public IProtocolImplementer getProtocol();
-    
-  	public void setPropertiesFileHandler(IPropertiesFileHandler propertiesFileHandler);
+	public VNCProtocolData getProtocolData();
 
+	public void setPropertiesFileHandler(
+			IPropertiesFileHandler propertiesFileHandler);
 
-	//public IVNCPainter getPainter();
+	// public IVNCPainter getPainter();
 }

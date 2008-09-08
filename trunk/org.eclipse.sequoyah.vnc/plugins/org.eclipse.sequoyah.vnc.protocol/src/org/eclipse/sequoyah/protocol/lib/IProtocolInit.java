@@ -9,6 +9,7 @@
  * Contributors:
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -20,22 +21,17 @@ import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
 
 /**
  * DESCRIPTION: This interface describes the contract to be used by an object
- * which purpose is to define a protocol implementer instance. <br>
+ * which purpose is to define the initialization procedure of a protocol. <br>
  * 
  * RESPONSIBILITY: Define methods that shall be implemented by objects that
- * represents a protocol implementer instance. At least one of the
+ * defines the initialization procedure of a protocol. At least one of the
  * initialization methods must be provided for the protocol to work.<br>
  * 
  * COLABORATORS: None.<br>
  * 
- * USAGE: The protocol implementer is declared by the user but instantiated by
- * the protocol framework at protocol start time. The initialization methods are
- * executed at this moment. It is expected that the user maintain at this class
- * any data referring to a single instance of the part (server or client)
- * running the protocol.<br>
- * 
+ * USAGE: The protocol initializer must be provided as a protocol start parameter.<br>
  */
-public interface IProtocolImplementer {
+public interface IProtocolInit {
 
 	/**
 	 * Performs protocol initialization at server side. If this protocol
@@ -46,6 +42,8 @@ public interface IProtocolImplementer {
 	 * initialization routine (including handshaking), until the normal message
 	 * exchange phase is reached.
 	 * 
+	 * @param handle
+	 *            A handle to identify the connection being made
 	 * @param in
 	 *            The input stream where to read data sent by the server
 	 * @param out
@@ -57,7 +55,7 @@ public interface IProtocolImplementer {
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
-	void serverInit(DataInputStream in, OutputStream out, Map parameters)
+	void serverInit(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
 			throws ProtocolInitException;
 
 	/**
@@ -69,6 +67,8 @@ public interface IProtocolImplementer {
 	 * initialization routine (including handshaking), until the normal message
 	 * exchange phase is reached.
 	 * 
+	 * @param handle
+	 *            A handle to identify the connection being made
 	 * @param in
 	 *            The input stream where to read data sent by the client
 	 * @param out
@@ -78,6 +78,6 @@ public interface IProtocolImplementer {
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
-	void clientInit(DataInputStream in, OutputStream out, Map parameters)
+	void clientInit(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
 			throws ProtocolInitException;
 }

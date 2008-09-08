@@ -9,6 +9,7 @@
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo - Bug [242757] - Protocol does not support Unicode on variable sized fields
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.reader;
 
@@ -28,7 +29,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
 import org.eclipse.tml.protocol.internal.model.ProtocolBean;
 import org.eclipse.tml.protocol.lib.IMessageHandler;
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.IProtocolInit;
 import org.eclipse.tml.protocol.lib.IRawDataHandler;
 import org.eclipse.tml.protocol.lib.msgdef.NullMessageHandler;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
@@ -43,7 +44,7 @@ import org.eclipse.tml.protocol.lib.msgdef.databeans.VariableSizeDataBean;
  * extension points. <br>
  * 
  * RESPONSIBILITY: Collect protocol framework data out of the contributed
- * protocolImplementer, protocolMessage and protocolMessageOrientation
+ * protocolDefinition, protocolMessage and protocolMessageOrientation
  * extensions.<br>
  * 
  * COLABORATORS: None.<br>
@@ -76,19 +77,17 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 		bean.setParentProtocol(getImmediateProtocolParent(protocolId));
 		bean.setBigEndianProtocol(Boolean.parseBoolean(confElem
 				.getAttribute(PROTOCOL_IS_BIG_ENDIAN_ATTR)));
-		bean.setServerPort(Integer.parseInt(confElem
-				.getAttribute(PROTOCOL_SERVER_PORT_ATTR)));
 
-		// Instantiate the "seed" protocol implementer and set to the bean
+		// Instantiate the "seed" protocol initializer and set to the bean
 		try {
-			Object implementerSeedObj = confElem
-					.createExecutableExtension(PROTOCOL_CLASS_ATTR);
-			if (implementerSeedObj instanceof IProtocolImplementer) {
+			Object initSeedObj = confElem
+					.createExecutableExtension(PROTOCOL_INITIALIZER_ATTR);
+			if (initSeedObj instanceof IProtocolInit) {
 				bean
-						.setProtocolImplementerSeed((IProtocolImplementer) implementerSeedObj);
+						.setProtocolInitSeed((IProtocolInit) initSeedObj);
 			} else {
 				throw new MalformedProtocolExtensionException(
-						"The protocol has not declared a valid implementer");
+						"The protocol has not declared a valid initializer");
 			}
 		} catch (CoreException e) {
 			throw new MalformedProtocolExtensionException(e.getMessage(), e);

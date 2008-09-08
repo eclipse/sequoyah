@@ -8,11 +8,13 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ * 
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.msgdef;
 
 import org.eclipse.tml.protocol.lib.IMessageHandler;
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
 
@@ -34,10 +36,10 @@ public final class NullMessageHandler implements IMessageHandler {
 	/**
 	 * Do nothing.
 	 * 
-	 * @see IMessageHandler#handleMessage(IProtocolImplementer, ProtocolMessage)
+	 * @see IMessageHandler#handleMessage(ProtocolHandle, ProtocolMessage)
 	 */
-	public ProtocolMessage handleMessage(
-			IProtocolImplementer protocolImplementer, ProtocolMessage message)
+	public ProtocolMessage handleMessage(ProtocolHandle handle, 
+			ProtocolMessage message)
 			throws MessageHandleException {
 
 		return null;

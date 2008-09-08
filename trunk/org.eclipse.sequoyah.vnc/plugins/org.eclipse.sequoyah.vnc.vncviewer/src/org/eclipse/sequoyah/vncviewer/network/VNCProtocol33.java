@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2008 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,7 +9,8 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
- * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
+ * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc *
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer  
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
@@ -28,11 +29,11 @@ public class VNCProtocol33 extends VNCProtocol {
 	 * Constant that represents the RFB protocol version.
 	 */
 	static final String RFB_VERSION = "RFB 003.003\n"; /*
-	 * used to compare the
-	 * implemented version
-	 * with the server
-	 * version
-	 */
+														 * used to compare the
+														 * implemented version
+														 * with the server
+														 * version
+														 */
 
 	@Override
 	protected String getVersion() {
@@ -40,12 +41,12 @@ public class VNCProtocol33 extends VNCProtocol {
 	}
 
 	@Override
-	protected int[] readSecurityTypes() throws Exception {
+	protected int[] readSecurityTypes(DataInputStream in) throws Exception {
 		int[] result = null;
 		int secType = in.readInt();
 		switch (secType) {
 		case SECURITY_TYPE_INVALID:
-			handshakeFail();
+			handshakeFail(in);
 			break;
 		case SECURITY_TYPE_NONE:
 		case SECURITY_TYPE_VNC:
@@ -53,28 +54,30 @@ public class VNCProtocol33 extends VNCProtocol {
 			result[0] = secType;
 			break;
 		default:
-			throw new Exception("VNC security negotiation error: Unknown security type" );
+			throw new Exception(
+					"VNC security negotiation error: Unknown security type");
 		}
 		return result;
 	}
 
 	@Override
-	protected void sendSecurityType(int securityType) throws Exception {
+	protected void sendSecurityType(OutputStream out, int securityType)
+			throws Exception {
 	}
 
 	@Override
-	protected void readAuthenticationResult() throws Exception {
-		
+	protected void readAuthenticationResult(DataInputStream in) throws Exception {
+
 		/* Version 3.3 doesn't have SecurityResult */
 	}
-	
-		/**
+
+	/**
 	 * Constant that defines the number of bytes read in the handshake phase.
 	 */
 	static final int HANDSHAKE_MESSAGE_SIZE = 12; /*
-	 * number of bytes read in
-	 * the handshake phase
-	 */
+													 * number of bytes read in
+													 * the handshake phase
+													 */
 
 	/**
 	 * This method compares each byte of the RFB Protocol client version using

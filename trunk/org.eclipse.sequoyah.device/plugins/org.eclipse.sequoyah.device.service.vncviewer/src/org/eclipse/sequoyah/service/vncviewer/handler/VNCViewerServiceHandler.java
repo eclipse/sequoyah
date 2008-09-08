@@ -9,7 +9,8 @@
  * 
  * Contributors:
  * Daniel Barboza Franco (Motorola) - Bug [233775] - Does not have a way to enter the session password for the vnc connection
- * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads 
+ * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  ********************************************************************************/
 
 package org.eclipse.tml.service.vncviewer.handler;
@@ -25,8 +26,7 @@ import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 import org.eclipse.tml.protocol.PluginProtocolActionDelegate;
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
-import org.eclipse.tml.protocol.lib.ProtocolActionDelegate;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.service.vncviewer.VNCViewerServicePlugin;
 import org.eclipse.tml.service.vncviewer.VNCViewerServiceResources;
@@ -58,7 +58,8 @@ public class VNCViewerServiceHandler extends ServiceHandler
                 VNCViewerView.stop();
                 try
                 {
-                    PluginProtocolActionDelegate.stopProtocol(VNCViewerView.protocol);
+                	ProtocolHandle handle = null;
+                    PluginProtocolActionDelegate.stopProtocol(handle);
                 }
                 catch (IOException e)
                 {
@@ -77,23 +78,23 @@ public class VNCViewerServiceHandler extends ServiceHandler
             e.printStackTrace();
         }
 
-        if (VNCViewerView.protocol != null)
-        {
-            VNCViewerView.stop();
-            try
-            {
-                PluginProtocolActionDelegate.stopProtocol(VNCViewerView.protocol);
-            }
-            catch (IOException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
+//        if (VNCViewerView..protocol != null)
+//        {
+//            VNCViewerView.stop();
+//            try
+//            {
+//                PluginProtocolActionDelegate.stopProtocol(VNCViewerView.protocol);
+//            }
+//            catch (IOException e)
+//            {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
 
         VNCViewerView.start(host, port, protoVersion, password);
 
-        IProtocolImplementer protocol = VNCViewerView.protocol;
+//        IProtocolImplementer protocol = VNCViewerView.protocol;
         /*
          * 
          * 
@@ -111,20 +112,20 @@ public class VNCViewerServiceHandler extends ServiceHandler
                 qemumsg.setFieldValue("downFlag", 1);
                 qemumsg.setFieldValue("padding", 0);
 
-                qemumsg.setFieldValue("key", 0xFFE3);
-                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
-                qemumsg.setFieldValue("key", 0xFFE9);
-                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
-                qemumsg.setFieldValue("key", 0x033);
-                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
-
-                qemumsg.setFieldValue("downFlag", 0);
-                qemumsg.setFieldValue("key", 0xFFE3);
-                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
-                qemumsg.setFieldValue("key", 0xFFE9);
-                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
-                qemumsg.setFieldValue("key", 0x033);
-                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
+//                qemumsg.setFieldValue("key", 0xFFE3);
+//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
+//                qemumsg.setFieldValue("key", 0xFFE9);
+//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
+//                qemumsg.setFieldValue("key", 0x033);
+//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
+//
+//                qemumsg.setFieldValue("downFlag", 0);
+//                qemumsg.setFieldValue("key", 0xFFE3);
+//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
+//                qemumsg.setFieldValue("key", 0xFFE9);
+//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
+//                qemumsg.setFieldValue("key", 0x033);
+//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
 
             }
             catch (Exception e)

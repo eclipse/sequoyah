@@ -13,6 +13,7 @@
  * Fabio Rigo (Eldorado Research Institute)- Bug [242757] - Protocol does not support Unicode on variable sized fields
  * Fabio Rigo - Bug [244067] - The exception handling interface should forward the protocol implementer object
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -31,9 +32,10 @@ import java.util.Map;
 
 import org.eclipse.tml.protocol.lib.IMessageHandler;
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
-import org.eclipse.tml.protocol.lib.IProtocolImplementer;
+import org.eclipse.tml.protocol.lib.IProtocolInit;
 import org.eclipse.tml.protocol.lib.IRawDataHandler;
 import org.eclipse.tml.protocol.lib.MessageFieldsStore;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidInputStreamDataException;
@@ -81,6 +83,11 @@ public class ProtocolEngine {
 	private boolean isBigEndianProtocol;
 
 	/**
+	 * The object used to map this connection at the model 
+	 */
+	private ProtocolHandle handle;
+
+	/**
 	 * The message definition map used by this protocol. It contains the
 	 * description of all messages supported by the protocol.
 	 */
@@ -118,10 +125,9 @@ public class ProtocolEngine {
 	private Collection<String> outgoingMessages;
 
 	/**
-	 * The protocol implementer instance that is using this engine to
-	 * communicate
+	 * The sequence of steps to execute for connection initialization
 	 */
-	private IProtocolImplementer protocolImplementer;
+	private IProtocolInit initProcedure;
 
 	/**
 	 * The handler that was registered with the protocol at the moment it
@@ -154,7 +160,7 @@ public class ProtocolEngine {
 	 * True if this protocol is running as server. False if running as client.
 	 * This information shall be kept as argument to allow restarting.
 	 */
-	private boolean isServer;
+	private boolean isServer; 
 
 	/**
 	 * The stream from where the incoming bytes flow
@@ -173,21 +179,31 @@ public class ProtocolEngine {
 	private Consumer consumer;
 
 	/**
-	 * Constructor. Sets the attributes that allows the engine to
-	 * serialize/deserialize messages correctly.
+	 * Constructor. Sets the attributes that turns the generic engine into a 
+	 * specific engine, which are: 
+	 * - Protocol handle for identification
+	 * - An init/handshaking procedure
+	 * - Messages used in interaction phase (definitions and directions)
+	 * - Specific exception handling procedures 
+	 * - Role of the engine (server, client)
 	 */
 	public ProtocolEngine(
+	        ProtocolHandle handle, IProtocolInit initProcedure,
 			Map<Long, ProtocolMsgDefinition> messageDefCollection,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolExceptionHandler exceptionHandler,
-			boolean isBigEndianProtocol, int retries) {
+			boolean isBigEndianProtocol, boolean isServer, 
+			int retries) {
 
+		this.handle = handle;
+		this.initProcedure = initProcedure;
 		this.messageDefCollection = messageDefCollection;
 		this.incomingMessages = incomingMessages;
 		this.outgoingMessages = outgoingMessages;
 		this.exceptionHandler = exceptionHandler;
 		this.isBigEndianProtocol = isBigEndianProtocol;
+		this.isServer = isServer;
 		this.retriesMax = (retries >= 0) ? retries : RECONNECTION_MAX;
 		this.retries = this.retriesMax;
 	}
@@ -195,8 +211,6 @@ public class ProtocolEngine {
 	/**
 	 * Starts the communication.
 	 * 
-	 * @param protocolImplementer
-	 *            The protocol instance that will use this engine to communicate
 	 * @param host
 	 *            The host to connect to.
 	 * @param port
@@ -204,9 +218,6 @@ public class ProtocolEngine {
 	 * @param parameters
 	 *            A Map with parameters other than host and port, for
 	 *            customization purposes. Accepts null if apply.
-	 * @param isServer
-	 *            True if the engine will run as server; false if it will run as
-	 *            client
 	 * 
 	 * @throws UnknownHostException
 	 *             If the provided host cannot be resolved.
@@ -215,18 +226,15 @@ public class ProtocolEngine {
 	 * @throws ProtocolInitException
 	 *             If the protocol fails to initialize.
 	 */
-	public synchronized void startProtocol(
-			IProtocolImplementer protocolImplementer, String host, int port,
-			Map parameters, boolean isServer) throws UnknownHostException,
+     public synchronized void startProtocol(String host, int port,
+			Map parameters) throws UnknownHostException,
 			IOException, ProtocolInitException {
-		startProtocol(protocolImplementer, host, port, parameters, -1, isServer);
+		startProtocol(host, port, parameters, -1);
 	}
 
 	/**
 	 * Starts the communication.
 	 * 
-	 * @param protocolImplementer
-	 *            The protocol instance that will use this engine to communicate
 	 * @param host
 	 *            The host to connect to.
 	 * @param port
@@ -237,9 +245,6 @@ public class ProtocolEngine {
 	 * @param timeout
 	 *            The maximum time to wait for the connection to remote site to
 	 *            open.
-	 * @param isServer
-	 *            True if the engine will run as server; false if it will run as
-	 *            client
 	 * 
 	 * @throws UnknownHostException
 	 *             If the provided host cannot be resolved.
@@ -248,19 +253,14 @@ public class ProtocolEngine {
 	 * @throws ProtocolInitException
 	 *             If the protocol fails to initialize.
 	 */
-	public synchronized void startProtocol(
-			IProtocolImplementer protocolImplementer, String host, int port,
-			Map parameters, int timeout, boolean isServer)
+	public synchronized void startProtocol(String host, int port,
+			Map parameters, int timeout)
 			throws UnknownHostException, IOException, ProtocolInitException {
 		// Stores the host and port, that will be used if a restart is necessary
 		this.host = host;
 		this.port = port;
 
 		this.parameters = parameters;
-		this.isServer = isServer;
-		if (protocolImplementer != null) {
-			this.protocolImplementer = protocolImplementer;
-		}
 
 		// Opens the socket. There are two versions: with timeout and without it
 		if (timeout < 0) {
@@ -276,18 +276,7 @@ public class ProtocolEngine {
 		in = new DataInputStream(socket.getInputStream());
 		out = socket.getOutputStream();
 
-		// Delegate the initialization to the concrete protocol class
-		if (isServer) {
-			this.protocolImplementer.serverInit(in, out, parameters);
-		} else {
-			this.protocolImplementer.clientInit(in, out, parameters);
-		}
-
-		// After all initialization is done, start the consumer thread, which
-		// will listen to the input stream to collect any byte that arrive
-		consumer = new Consumer();
-		Thread consumerThread = new Thread(consumer);
-		consumerThread.start();
+		doStartProtocol();
 		
 		retries = retriesMax;
 		connectionSerialNumber++;
@@ -311,36 +300,45 @@ public class ProtocolEngine {
 	 * @throws IOException
 	 * @throws ProtocolInitException
 	 */
-	public synchronized void startProtocol(
-			IProtocolImplementer protocolImplementer, Socket connectedSocket,
-			Map parameters, boolean isServer) throws IOException,
+	public synchronized void startProtocol(Socket connectedSocket,
+			Map parameters) throws IOException,
 			ProtocolInitException {
 		this.socket = connectedSocket;
 		this.host = socket.getInetAddress().getHostAddress();
 		this.port = socket.getPort();
 		this.parameters = parameters;
-		this.isServer = isServer;
-		if (protocolImplementer != null) {
-			this.protocolImplementer = protocolImplementer;
-		}
 
 		// When the socket is opened, keep the input and output streams in
 		// the appropriate attributes
 		in = new DataInputStream(socket.getInputStream());
 		out = socket.getOutputStream();
 
-		// Delegate the initialization to the concrete protocol class
-		if (isServer) {
-			this.protocolImplementer.serverInit(in, out, parameters);
-		} else {
-			this.protocolImplementer.clientInit(in, out, parameters);
-		}
+		doStartProtocol();
+	}
+	
+	/**
+	 * Starts the protocol message exchange, by running the handshaking procedure
+	 * and starting the consumer thread.  
+	 * 
+	 * @throws ProtocolInitException
+	 */
+	private void doStartProtocol() throws ProtocolInitException
+	{		
+		if (initProcedure != null)
+		{
+			// Delegate the initialization to the concrete protocol class
+			if (isServer) {
+				initProcedure.serverInit(handle, in, out, parameters);
+			} else {
+				initProcedure.clientInit(handle, in, out, parameters);
+			}
 
-		// After all initialization is done, start the consumer thread, which
-		// will listen to the input stream to collect any byte that arrive
-		consumer = new Consumer();
-		Thread consumerThread = new Thread(consumer);
-		consumerThread.start();
+			// After all initialization is done, start the consumer thread, which
+			// will listen to the input stream to collect any byte that arrive
+			consumer = new Consumer();
+			Thread consumerThread = new Thread(consumer);
+			consumerThread.start();
+		}
 	}
 
 	/**
@@ -407,7 +405,7 @@ public class ProtocolEngine {
 		}
 		*/
 		
-		startProtocol(null, host, port, parameters, isServer);
+		startProtocol(host, port, parameters);
 
 
 
@@ -712,8 +710,7 @@ public class ProtocolEngine {
 		ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
 		IRawDataHandler handler = messageDataDef.getHandler();
 
-		handler.writeRawDataToStream(tempStream, message, protocolImplementer,
-				isBigEndianProtocol);
+		handler.writeRawDataToStream(handle, tempStream, message, isBigEndianProtocol);
 
 		try {
 			tempStream.writeTo(streamToWriteTo);
@@ -875,8 +872,7 @@ public class ProtocolEngine {
 			// description and how to use then can be found at
 			// the ProtocolMessage extension point documentation.
 
-			ProtocolMessage returnedMessage = handler.handleMessage(
-					protocolImplementer, message);
+			ProtocolMessage returnedMessage = handler.handleMessage(handle, message);
 			if (returnedMessage != null) {
 				sendMessage(returnedMessage);
 			}
@@ -1101,9 +1097,8 @@ public class ProtocolEngine {
 		// Delegates the read operation to the raw data handler
 		Map<String, Object> returnedFields = null;
 		try {
-			returnedFields = handler.readRawDataFromStream(delegatableStream,
-					currentlyReadFields, protocolImplementer,
-					isBigEndianProtocol);
+			returnedFields = handler.readRawDataFromStream(handle, delegatableStream,
+					currentlyReadFields, isBigEndianProtocol);
 
 			// Merge the data read by the handler to the current message being
 			// read.
@@ -1407,7 +1402,7 @@ public class ProtocolEngine {
 					if (isRunning) {
 						isRunning = false;
 						if (exceptionHandler != null) {
-							exceptionHandler.handleIOException(e, protocolImplementer);
+							exceptionHandler.handleIOException(handle, e);
 						}
 					}
 				} catch (Exception e) {
@@ -1417,22 +1412,22 @@ public class ProtocolEngine {
 						// Delegate the exception to user
 						if (e instanceof ProtocolInitException) {
 							exceptionHandler
-									.handleProtocolInitException((ProtocolInitException) e, protocolImplementer);
+									.handleProtocolInitException(handle, (ProtocolInitException) e);
 						} else if (e instanceof MessageHandleException) {
 							exceptionHandler
-									.handleMessageHandleException((MessageHandleException) e, protocolImplementer);
+									.handleMessageHandleException(handle, (MessageHandleException) e);
 						} else if (e instanceof InvalidMessageException) {
 							exceptionHandler
-									.handleInvalidMessageException((InvalidMessageException) e, protocolImplementer);
+									.handleInvalidMessageException(handle, (InvalidMessageException) e);
 						} else if (e instanceof InvalidInputStreamDataException) {
 							exceptionHandler
-									.handleInvalidInputStreamDataException((InvalidInputStreamDataException) e, protocolImplementer);
+									.handleInvalidInputStreamDataException(handle, (InvalidInputStreamDataException) e);
 						} else if (e instanceof InvalidDefinitionException) {
 							exceptionHandler
-									.handleInvalidDefinitionException((InvalidDefinitionException) e, protocolImplementer);
+									.handleInvalidDefinitionException(handle, (InvalidDefinitionException) e);
 						} else if (e instanceof ProtocolRawHandlingException) {
 							exceptionHandler
-									.handleProtocolRawHandlingException((ProtocolRawHandlingException) e, protocolImplementer);
+									.handleProtocolRawHandlingException(handle, (ProtocolRawHandlingException) e);
 						}
 					}
 				}

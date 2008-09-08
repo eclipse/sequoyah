@@ -8,12 +8,13 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [242757] - Protocol does not support Unicode on variable sized fields
+ * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.reader;
 
 /**
  * DESCRIPTION: This interface describes all identifiers from the
- * <b>ProtocolImplementer</b>, <b>ProtocolMessage</b> and
+ * <b>ProtocolDefinition</b>, <b>ProtocolMessage</b> and
  * <b>ProtocolMessageOrientation</b> extension points.<br>
  * 
  * RESPONSIBILITY: Define all constants needed to access extension data in one
@@ -27,18 +28,17 @@ package org.eclipse.tml.protocol.internal.reader;
 public interface IExtensionConstants {
 
 	// Constants that defines the extension points ids
-	String PROTOCOL_EXTENSION_POINT = "org.eclipse.tml.protocol.protocolImplementer";
+	String PROTOCOL_EXTENSION_POINT = "org.eclipse.tml.protocol.protocolDefinition";
 	String PROTOCOL_MESSAGE_EXTENSION_POINT = "org.eclipse.tml.protocol.protocolMessage";
 	String PROTOCOL_MESSAGE_ORIENTATION_EXTENSION_POINT = "org.eclipse.tml.protocol.protocolMessageOrientation";
 
-	// Constants that define base constants of ProtocolImplementer extension
+	// Constants that define base constants of ProtocolDefinition extension
 	// point
 	String PROTOCOL_ELEM = "protocol";
 	String PROTOCOL_ID_ATTR = "protocolId";
 	String PROTOCOL_PARENT_PROTOCOL_ATTR = "parentProtocol";
 	String PROTOCOL_IS_BIG_ENDIAN_ATTR = "isBigEndianProtocol";
-	String PROTOCOL_CLASS_ATTR = "class";
-	String PROTOCOL_SERVER_PORT_ATTR = "serverPort";
+	String PROTOCOL_INITIALIZER_ATTR = "initializer";
 
 	// Constants that define base constants of ProtocolMessage extension point
 	String PROTOCOL_MESSAGE_ELEM = "message";
