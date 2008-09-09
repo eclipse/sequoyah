@@ -14,6 +14,7 @@
  * Fabio Rigo - Bug [244067] - The exception handling interface should forward the protocol implementer object
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [242924] - There is no way to keep the size of a Variable Size Data read
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -1011,6 +1012,8 @@ public class ProtocolEngine {
 		// Retrieve data from the message definition object.
 		// The fields description and how to use then can be found at
 		// the ProtocolMessage extension point documentation.
+		
+		String sizeFieldName = messageDataDef.getSizeFieldName();
 		boolean isSizeSigned = messageDataDef.isSizeFieldSigned();
 		int sizeFieldSize = messageDataDef.getSizeFieldSizeInBytes();
 		String valueFieldName = messageDataDef.getValueFieldName();
@@ -1022,7 +1025,7 @@ public class ProtocolEngine {
 			Number size = getNumberDataFromInputStream(sizeFieldSize,
 					isSizeSigned);
 
-			// Based on the size read before, colect all bytes that comprise
+			// Based on the size read before, collect all bytes that comprise
 			// the string (variable data field)
 			byte[] valueArray = new byte[size.intValue()];
 			int readBytes = 0;
@@ -1048,6 +1051,12 @@ public class ProtocolEngine {
 			message
 					.setFieldValue(valueFieldName, iterableBlockId, index,
 							value);
+			
+			if(sizeFieldName != null && !sizeFieldName.equals(""))
+				message.setFieldValue(sizeFieldName, iterableBlockId, index,
+							new Integer(sizeFieldSize).toString());
+			
+			
 		} else {
 			// The definition of this fixed data does not contain all
 			// information it should have.

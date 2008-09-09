@@ -10,6 +10,7 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo - Bug [242757] - Protocol does not support Unicode on variable sized fields
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [242924] - There is no way to keep the size of a Variable Size Data read
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.reader;
 
@@ -438,6 +439,10 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			VariableSizeDataBean varBean = new VariableSizeDataBean();
 
 			// Read data from the configuration element
+			
+			String sizeFieldName = msgDataConf
+			.getAttribute(PROTOCOL_MESSAGE_VARIABLE_SIZE_FIELD_NAME_ATTR);
+			
 			boolean isSizeFieldSigned = Boolean
 					.parseBoolean(msgDataConf
 							.getAttribute(PROTOCOL_MESSAGE_VARIABLE_SIZE_FIELD_SIGNED_ATTR));
@@ -452,6 +457,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 					.getAttribute(PROTOCOL_MESSAGE_VARIABLE_VALUE_FIELD_VALUE_ATTR);
 
 			// Sets the bean with values collected
+			varBean.setSizeFieldName(sizeFieldName);
 			varBean.setSizeFieldSigned(isSizeFieldSigned);
 			varBean.setSizeFieldSizeInBytes(sizeFieldSizeInBytes);
 			varBean.setValueFieldName(valueFieldName);

@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [242757] - Protocol does not support Unicode on variable sized fields
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [242924] - There is no way to keep the size of a Variable Size Data read
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.msgdef.databeans;
 
@@ -30,6 +31,7 @@ package org.eclipse.tml.protocol.lib.msgdef.databeans;
  */
 public class VariableSizeDataBean implements IMsgDataBean {
 	// Element fields, as defined in the ProtocolMessage extension point
+	private String sizeFieldName;
 	private boolean isSizeFieldSigned;
 	private int sizeFieldSizeInBytes;
 	private String valueFieldName;
@@ -57,8 +59,12 @@ public class VariableSizeDataBean implements IMsgDataBean {
 	
 	public String getValue() {
 		return value;
-	}	
-
+	}
+	
+	public String getSizeFieldName() {
+		return sizeFieldName;
+	}
+	
 
 	/*
 	 * Setters section
@@ -81,5 +87,9 @@ public class VariableSizeDataBean implements IMsgDataBean {
 	
 	public void setValueFieldName(String valueFieldName) {
 		this.valueFieldName = valueFieldName;
+	}
+
+	public void setSizeFieldName(String sizeFieldName) {
+		this.sizeFieldName = sizeFieldName;
 	}
 }

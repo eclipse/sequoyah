@@ -9,6 +9,7 @@
  * Contributors:
  * Fabio Rigo - Bug [242757] - Protocol does not support Unicode on variable sized fields
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [242924] - There is no way to keep the size of a Variable Size Data read
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.reader;
 
@@ -60,6 +61,7 @@ public interface IExtensionConstants {
 	// Constants that define constants for Variable Data elements, from
 	// ProtocolMessage extension point
 	String PROTOCOL_MESSAGE_VARIABLE_DATA_ELEM = "variableSizeData";
+	String PROTOCOL_MESSAGE_VARIABLE_SIZE_FIELD_NAME_ATTR = "sizeFieldName";
 	String PROTOCOL_MESSAGE_VARIABLE_SIZE_FIELD_SIGNED_ATTR = "isSizeFieldSigned";
 	String PROTOCOL_MESSAGE_VARIABLE_SIZE_FIELD_SIZE_ATTR = "sizeFieldSizeInBytes";
 	String PROTOCOL_MESSAGE_VARIABLE_VALUE_FIELD_NAME_ATTR = "valueFieldName";
