@@ -28,7 +28,11 @@
          		 title="QemuARM Device Instance Wizard">
           </settings>     
           <customizer class ="org.eclipse.tml.device.qemuarm.wizard.DefaultWizardCustomizer" >          
-          </customizer>    
+          </customizer>
+          <usage
+                class="org.eclipse.tml.device.qemuarm.wizard.DefaultNewEmulatorInstanceWizard"
+                device="org.eclipse.tml.device.qemuarm.qemuarmDevice">
+          </usage>    
     </extension>
     <extension
          id="qemuarmWizard"

@@ -21,8 +21,8 @@ import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardConstants;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardPlugin;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardResources;
-import org.eclipse.tml.framework.device.wizard.ui.WizardNewPropertyPage;
 import org.eclipse.tml.framework.device.wizard.ui.WizardNewProjectPage;
+import org.eclipse.tml.framework.device.wizard.ui.WizardNewPropertyPage;
 
 /**
  * Provide all information about Wizard Extension Point
@@ -30,230 +30,316 @@ import org.eclipse.tml.framework.device.wizard.ui.WizardNewProjectPage;
  * @author Fabio Fantato
  *
  */
-public class DeviceWizardBean {	
-	public  String  extensionId;
-	private boolean needsProgressMonitor;
-	private boolean forcePreviousAndNextButtons;
-	private boolean canFinishEarly;
-	private String image;
-	private String title;
-	private String customizerName;
-	private IWizardCustomizer customizer;
-	
-	private String projectDescription;
-	private String projectTitle;
-	
-	private String propertyDescription;
-	private String propertyTitle;
-	private String propertyXML;
-	
-	private String otherDescription;
-	private String otherTitle;
-	
-	
-	/**
-	 * Based on plugin id of emulator the wizard properties will be loaded.
-	 * @param id
-	 */
-	public DeviceWizardBean(String id){
-		extensionId = id;
-		needsProgressMonitor = Boolean.parseBoolean(PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.SETTINGS, DeviceWizardConstants.ATB_MONITOR));
-		forcePreviousAndNextButtons = Boolean.parseBoolean(PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.SETTINGS, DeviceWizardConstants.ATB_FORCE));
-		canFinishEarly = Boolean.parseBoolean(PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.SETTINGS, DeviceWizardConstants.ATB_FINISH));
-		image = PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.SETTINGS, DeviceWizardConstants.ATB_IMAGE);
-		title = PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.SETTINGS, DeviceWizardConstants.ATB_TITLE);
-		customizer = null;
-		customizerName = PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.ELEMENT_CUSTOMIZER, DeviceWizardConstants.ATB_CLASS);
-		
-		if (customizerName!=null) {
-			try {
-				customizer = (IWizardCustomizer)PluginUtils.getExecutable(extensionId, DeviceWizardConstants.ELEMENT_CUSTOMIZER);
-			} catch (CoreException e) {
-				DeviceWizardPlugin.logError(e.getMessage(),e);
-			}
-	
-		}
-		
-		projectDescription = PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.ELEMENT_PROJECT, DeviceWizardConstants.ATB_TITLE);
-		projectTitle = PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.ELEMENT_PROJECT, DeviceWizardConstants.ATB_DESCRIPTION);
-		
-		propertyDescription = PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.ELEMENT_PROPERTY, DeviceWizardConstants.ATB_TITLE);
-		propertyTitle = PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.ELEMENT_PROPERTY, DeviceWizardConstants.ATB_DESCRIPTION);
-		propertyXML = PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.ELEMENT_PROPERTY, DeviceWizardConstants.ATB_XML);
-		
-		otherDescription = PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.ELEMENT_OTHER, DeviceWizardConstants.ATB_TITLE);
-		otherTitle = PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,extensionId, DeviceWizardConstants.ELEMENT_OTHER, DeviceWizardConstants.ATB_DESCRIPTION);
-		
-	}
-	
-	/**
-	 * Gets if wizard needs of progress monitor
-	 * @return
-	 */
-	public boolean needsProgressMonitor() {
-		return needsProgressMonitor;		
-	}
-	
-	/**
-	 * Gets if the wizard should force previous and next buttons
-	 * @return
-	 */
-	public boolean forcePreviousAndNextButtons() {
-		return forcePreviousAndNextButtons;
-	}
-	/**
-	 * gets if wizrd can finish early
-	 * @return
-	 */
-	public boolean canFinishEarly() {
-		return canFinishEarly;
-	}
-	/**
-	 * Gets image
-	 * @return
-	 */
-	public String getImage() {
-		return image;
-	}
-	/**
-	 * Get Title
-	 * @return
-	 */
-	public String getTitle() {
-		return title;
-	}
+public class DeviceWizardBean
+{
+    public String extensionId;
 
-	/**
-	 * Verify if has property Page
-	 * @return
-	 */
-	public boolean hasProjectPage() {
-		return ((customizer!=null)&&(customizer.hasCustomizedProjectPage()));
-	}
-	
-	
-	/**
-	 * Get Project Page class information
-	 * @return
-	 */
-	public WizardPage getProjectPage(){
-		WizardPage page = null; 
-		if (hasProjectPage()) {
-			page = customizer.getCustomizedProjectPage();
-		} else {
-			page = new WizardNewProjectPage(DeviceWizardConstants.PAGE_PROJECT);
-		}
-		return page;
-	}
-	
-	/**
-	 * Get Project Page title information
-	 * @return
-	 */
-	public String getProjectTitle(){
-		if (projectTitle==null) {
-			projectTitle = DeviceWizardResources.TML_Emulator_Wizard_Project_Title;
-		}
-		return projectTitle;
-	}
-	
-	/**
-	 * Get Project Page description information
-	 * @return
-	 */
-	public String getProjectDescription(){
-		if (projectDescription==null) {
-			projectDescription = DeviceWizardResources.TML_Emulator_Wizard_Project_Description;
-		}		
-		return projectDescription;
-	}
-		
-	/**
-	 * Verify if has property Page
-	 * @return
-	 */
-	public boolean hasPropertyPage() {
-		return ((customizer!=null)&&(customizer.hasCustomizedPropertyPage()));
-	}
-	
-	/**
-	 * Get Property Page class information
-	 * @return
-	 */
-	public WizardPage getPropertyPage(){
-		//WizardPage page = customizer.getCustomizedPropertyPage();
-		//if (page==null) {
-		//	page = null;
-		//}
-		//return page;
-		
-		WizardPage page = null; 
-		if (hasPropertyPage()) {
-			page = customizer.getCustomizedPropertyPage();
-		} else {
-			page = new WizardNewPropertyPage(DeviceWizardConstants.PAGE_PROPERTY);
-		}
-		return page;
-		
-	}
-	
-	/**
-	 * Get Property Page title information
-	 * @return
-	 */
-	public String getPropertyTitle(){
-		return propertyTitle;
-	}
-	
-	/**
-	 * Get Property Page description information
-	 * @return
-	 */
-	public String getPropertyDescription(){
-		return propertyDescription;
-	}
-	
-	/**
-	 * Get Property Page xml information
-	 * @return
-	 */
-	public String getPropertyXML(){
-		return propertyXML;
-	}
-	
-	/**
-	 * Verify if has other page
-	 * @return
-	 */
-	public boolean hasOtherPage() {
-		return ((customizer!=null)&&(customizer.hasCustomizedOtherPage()));
-	}
-	
-	/**
-	 * Get Other Page class information
-	 * @return
-	 */
-	public WizardPage getOtherPage(){
-		WizardPage page = customizer.getCustomizedOtherPage();
-		if (page==null) {
-			page = null;
-		}
-		return page;
-	}
-	
-	/**
-	 * Get Other Page title information
-	 * @return
-	 */
-	public String getOtherTitle(){
-		return otherTitle;
-	}
-	
-	/**
-	 * Get Other Page description information
-	 * @return
-	 */
-	public String getOtherDescription(){
-		return otherDescription;
-	}
+    private boolean needsProgressMonitor;
+
+    private boolean forcePreviousAndNextButtons;
+
+    private boolean canFinishEarly;
+
+    private String image;
+
+    private String title;
+
+    private String customizerName;
+
+    private IWizardCustomizer customizer;
+
+    private String projectDescription;
+
+    private String projectTitle;
+
+    private String propertyDescription;
+
+    private String propertyTitle;
+
+    private String propertyXML;
+
+    private String otherDescription;
+
+    private String otherTitle;
+
+    /**
+     * Based on plugin id of emulator the wizard properties will be loaded.
+     * @param id
+     */
+    protected DeviceWizardBean(String id)
+    {
+        extensionId = id;
+        needsProgressMonitor =
+                Boolean.parseBoolean(PluginUtils.getPluginAttribute(
+                        DeviceWizardConstants.EXTENSION_INSTANCE_ID, extensionId,
+                        DeviceWizardConstants.SETTINGS, DeviceWizardConstants.ATB_MONITOR));
+        forcePreviousAndNextButtons =
+                Boolean.parseBoolean(PluginUtils.getPluginAttribute(
+                        DeviceWizardConstants.EXTENSION_INSTANCE_ID, extensionId,
+                        DeviceWizardConstants.SETTINGS, DeviceWizardConstants.ATB_FORCE));
+        canFinishEarly =
+                Boolean.parseBoolean(PluginUtils.getPluginAttribute(
+                        DeviceWizardConstants.EXTENSION_INSTANCE_ID, extensionId,
+                        DeviceWizardConstants.SETTINGS, DeviceWizardConstants.ATB_FINISH));
+        image =
+                PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,
+                        extensionId, DeviceWizardConstants.SETTINGS,
+                        DeviceWizardConstants.ATB_IMAGE);
+        title =
+                PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,
+                        extensionId, DeviceWizardConstants.SETTINGS,
+                        DeviceWizardConstants.ATB_TITLE);
+        customizer = null;
+        customizerName =
+                PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,
+                        extensionId, DeviceWizardConstants.ELEMENT_CUSTOMIZER,
+                        DeviceWizardConstants.ATB_CLASS);
+
+        if (customizerName != null)
+        {
+            try
+            {
+                customizer =
+                        (IWizardCustomizer) PluginUtils.getExecutable(extensionId,
+                                DeviceWizardConstants.ELEMENT_CUSTOMIZER);
+            }
+            catch (CoreException e)
+            {
+                DeviceWizardPlugin.logError(e.getMessage(), e);
+            }
+
+        }
+
+        projectDescription =
+                PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,
+                        extensionId, DeviceWizardConstants.ELEMENT_PROJECT,
+                        DeviceWizardConstants.ATB_TITLE);
+        projectTitle =
+                PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,
+                        extensionId, DeviceWizardConstants.ELEMENT_PROJECT,
+                        DeviceWizardConstants.ATB_DESCRIPTION);
+
+        propertyDescription =
+                PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,
+                        extensionId, DeviceWizardConstants.ELEMENT_PROPERTY,
+                        DeviceWizardConstants.ATB_TITLE);
+        propertyTitle =
+                PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,
+                        extensionId, DeviceWizardConstants.ELEMENT_PROPERTY,
+                        DeviceWizardConstants.ATB_DESCRIPTION);
+        propertyXML =
+                PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,
+                        extensionId, DeviceWizardConstants.ELEMENT_PROPERTY,
+                        DeviceWizardConstants.ATB_XML);
+
+        otherDescription =
+                PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,
+                        extensionId, DeviceWizardConstants.ELEMENT_OTHER,
+                        DeviceWizardConstants.ATB_TITLE);
+        otherTitle =
+                PluginUtils.getPluginAttribute(DeviceWizardConstants.EXTENSION_INSTANCE_ID,
+                        extensionId, DeviceWizardConstants.ELEMENT_OTHER,
+                        DeviceWizardConstants.ATB_DESCRIPTION);
+
+    }
+
+    /**
+     * Gets if wizard needs of progress monitor
+     * @return
+     */
+    public boolean needsProgressMonitor()
+    {
+        return needsProgressMonitor;
+    }
+
+    /**
+     * Gets if the wizard should force previous and next buttons
+     * @return
+     */
+    public boolean forcePreviousAndNextButtons()
+    {
+        return forcePreviousAndNextButtons;
+    }
+
+    /**
+     * gets if wizrd can finish early
+     * @return
+     */
+    public boolean canFinishEarly()
+    {
+        return canFinishEarly;
+    }
+
+    /**
+     * Gets image
+     * @return
+     */
+    public String getImage()
+    {
+        return image;
+    }
+
+    /**
+     * Get Title
+     * @return
+     */
+    public String getTitle()
+    {
+        return title;
+    }
+
+    /**
+     * Verify if has property Page
+     * @return
+     */
+    public boolean hasProjectPage()
+    {
+        return ((customizer != null) && (customizer.hasCustomizedProjectPage()));
+    }
+
+    /**
+     * Get Project Page class information
+     * @return
+     */
+    public WizardPage getProjectPage()
+    {
+        WizardPage page = null;
+        if (hasProjectPage())
+        {
+            page = customizer.getCustomizedProjectPage();
+        }
+        else
+        {
+            page = new WizardNewProjectPage(DeviceWizardConstants.PAGE_PROJECT);
+        }
+        return page;
+    }
+
+    /**
+     * Get Project Page title information
+     * @return
+     */
+    public String getProjectTitle()
+    {
+        if (projectTitle == null)
+        {
+            projectTitle = DeviceWizardResources.TML_Emulator_Wizard_Project_Title;
+        }
+        return projectTitle;
+    }
+
+    /**
+     * Get Project Page description information
+     * @return
+     */
+    public String getProjectDescription()
+    {
+        if (projectDescription == null)
+        {
+            projectDescription = DeviceWizardResources.TML_Emulator_Wizard_Project_Description;
+        }
+        return projectDescription;
+    }
+
+    /**
+     * Verify if has property Page
+     * @return
+     */
+    public boolean hasPropertyPage()
+    {
+        return ((customizer != null) && (customizer.hasCustomizedPropertyPage()));
+    }
+
+    /**
+     * Get Property Page class information
+     * @return
+     */
+    public WizardPage getPropertyPage()
+    {
+        //WizardPage page = customizer.getCustomizedPropertyPage();
+        //if (page==null) {
+        //	page = null;
+        //}
+        //return page;
+
+        WizardPage page = null;
+        if (hasPropertyPage())
+        {
+            page = customizer.getCustomizedPropertyPage();
+        }
+        else
+        {
+            page = new WizardNewPropertyPage(DeviceWizardConstants.PAGE_PROPERTY);
+        }
+        return page;
+
+    }
+
+    /**
+     * Get Property Page title information
+     * @return
+     */
+    public String getPropertyTitle()
+    {
+        return propertyTitle;
+    }
+
+    /**
+     * Get Property Page description information
+     * @return
+     */
+    public String getPropertyDescription()
+    {
+        return propertyDescription;
+    }
+
+    /**
+     * Get Property Page xml information
+     * @return
+     */
+    public String getPropertyXML()
+    {
+        return propertyXML;
+    }
+
+    /**
+     * Verify if has other page
+     * @return
+     */
+    public boolean hasOtherPage()
+    {
+        return ((customizer != null) && (customizer.hasCustomizedOtherPage()));
+    }
+
+    /**
+     * Get Other Page class information
+     * @return
+     */
+    public WizardPage getOtherPage()
+    {
+        WizardPage page = customizer.getCustomizedOtherPage();
+        if (page == null)
+        {
+            page = null;
+        }
+        return page;
+    }
+
+    /**
+     * Get Other Page title information
+     * @return
+     */
+    public String getOtherTitle()
+    {
+        return otherTitle;
+    }
+
+    /**
+     * Get Other Page description information
+     * @return
+     */
+    public String getOtherDescription()
+    {
+        return otherDescription;
+    }
 }

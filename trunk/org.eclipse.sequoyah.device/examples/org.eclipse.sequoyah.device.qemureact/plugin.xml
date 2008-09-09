@@ -75,7 +75,11 @@
          		 title="QemuReact Device Instance Wizard">
           </settings>     
           <customizer class ="org.eclipse.tml.device.qemureact.wizard.DefaultWizardCustomizer" >          
-          </customizer>    
+          </customizer>
+          <usage
+                class="org.eclipse.tml.device.qemureact.wizard.DefaultNewEmulatorInstanceWizard"
+                device="org.eclipse.tml.device.qemureact.qemureactDevice">
+          </usage>    
     </extension>
     <extension
          id="qemureactWizard"

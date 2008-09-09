@@ -9,6 +9,7 @@
  * [244805] - Improvements on Instance view  
  *
  * Contributors:
+ * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244856] - Instance View usability should be improved
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -16,17 +17,31 @@ package org.eclipse.tml.framework.device.ui.view;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -36,6 +51,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -49,24 +65,30 @@ import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.events.InstanceAdapter;
 import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
+import org.eclipse.tml.framework.device.factory.DeviceRegistry;
 import org.eclipse.tml.framework.device.manager.DeviceManager;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IDevice;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandlerAction;
+import org.eclipse.tml.framework.device.ui.DeviceUIPlugin;
 import org.eclipse.tml.framework.device.ui.view.model.InstanceMgtViewComparator;
 import org.eclipse.tml.framework.device.ui.view.model.ViewerAbstractNode;
 import org.eclipse.tml.framework.device.ui.view.model.ViewerDeviceNode;
 import org.eclipse.tml.framework.device.ui.view.model.ViewerInstanceNode;
 import org.eclipse.tml.framework.device.ui.view.provider.InstanceMgtViewContentProvider;
 import org.eclipse.tml.framework.device.ui.view.provider.InstanceMgtViewLabelProvider;
+import org.eclipse.tml.framework.device.wizard.model.DeviceWizardExtensionManager;
 import org.eclipse.tml.framework.status.IStatus;
 import org.eclipse.tml.framework.status.StatusRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class InstanceStatusComposite extends Composite
 {
@@ -98,8 +120,11 @@ public class InstanceStatusComposite extends Composite
 	private static final String PROPERTY_EDITOR_ID = "org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditorDefault";
 	private static final String MENU_DELETE = "Delete";
 	private static final String MENU_PROPERTIES = "Properties";
-	// TODO for future use
-//	private static final String MENU_NEW = "New..."; 
+	private static final String MENU_NEW = "New..."; 
+	private static final String TOOLBAR_NEW_TOOLTIP = "New Instance";
+	private static final String TOOLBAR_DIALOG_MESSAGE = "Select a Device to open the Instance Creation Wizard :";
+	private static final String ERROR_DIALOG_TITLE = "Error";
+	private static final String ERROR_NO_WIZARD_MESSAGE = "No wizard found for Device ";
 
 	private final Set<InstanceSelectionChangeListener> listeners = new LinkedHashSet<InstanceSelectionChangeListener>();
 
@@ -110,6 +135,11 @@ public class InstanceStatusComposite extends Composite
 	private TreeViewer viewer;
 
 	private IViewSite viewSite;
+
+    /**
+     * The wizard actions
+     */
+    protected Map<String, Action> wizardActions = new TreeMap<String, Action>();
 
 	public InstanceStatusComposite(Composite parent, IViewSite viewSite)
 	{
@@ -196,11 +226,157 @@ public class InstanceStatusComposite extends Composite
 			}	
 		});
 
-		fillContextMenu();
+        createActions();   
+		fillMenuContext();
+		fillViewMenu();
+		fillViewToolbar();
 		refreshViewer(null);
 		viewer.expandAll();
 	}
 
+    private void createActions()
+    {
+        for (final IDevice device : DeviceRegistry.getInstance().getDevices())
+        {
+            wizardActions.put(device.getName(), new Action(device.getName(), device.getImage())
+            {
+                @Override
+                public void run()
+                {
+                    IWizard wizard = DeviceWizardExtensionManager.getInstance().getDeviceWizard(device.getId());
+                    if (wizard != null)
+                    {
+                        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+                        
+                        // Instantiates the wizard container with the wizard and opens it
+                        WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+                        dialog.create();
+                        dialog.open();
+                    }
+                    else
+                    {
+                        Display.getDefault().asyncExec(new Runnable()
+                        {
+                            public void run()
+                            {
+                                IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+                                MessageDialog.openError(ww.getShell(), ERROR_DIALOG_TITLE, ERROR_NO_WIZARD_MESSAGE + device.getName());
+                            }
+                        });
+                    }
+                }
+                
+                @Override
+                public String toString()
+                {
+                    return getText();
+                }
+            });
+        }
+    }
+    private void fillMenuContext()
+    {
+        final Menu menu = new Menu(viewer.getTree()); 
+        viewer.getTree().setMenu(menu); 
+        menu.addMenuListener(new MenuAdapter() { 
+            public void menuShown(MenuEvent e) { 
+                // Get rid of existing menu items 
+                MenuItem[] items = menu.getItems(); 
+                for (int i = 0; i < items.length; i++) { 
+                    ((MenuItem) items[i]).dispose(); 
+                }
+                fillMenuContext(menu);              
+
+            }
+        }); 
+    }
+
+    private void fillMenuContext(Menu menu)
+    {
+        MenuItem newItem = null;
+
+        ISelection selection = viewer.getSelection();
+        if (selection instanceof IStructuredSelection)
+        {
+            IStructuredSelection strSelection = (IStructuredSelection) selection;
+            Object firstSelection = strSelection.getFirstElement(); // TODO support multiple selection
+
+            if (firstSelection instanceof ViewerInstanceNode)
+            {
+                ViewerInstanceNode node = (ViewerInstanceNode) firstSelection;
+                if (node.containsInstance())
+                {
+                    IInstance instance = getSelectedInstance();
+                    String statusId = instance.getStatus();
+                    IStatus status = StatusRegistry.getInstance().getStatus(statusId);
+                    IDevice device = DeviceManager.getInstance().getDevice(instance);
+                    String deviceName = device.getName();
+                    
+                    // menu item "New..."
+                    newItem = new MenuItem(menu, SWT.PUSH);
+                    newItem.setText(MENU_NEW);
+                    newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
+                    
+                    newItem = new MenuItem(menu, SWT.SEPARATOR);
+
+                    // menu item "Delete"
+                    newItem = new MenuItem(menu, SWT.PUSH);
+                    newItem.setText(MENU_DELETE);
+                    newItem.addListener(SWT.Selection, new MenuDeleteListener());
+                    newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
+                    newItem.setEnabled(status.canDeleteInstance());
+
+                    newItem = new MenuItem(menu, SWT.SEPARATOR);
+
+                    // menu item "Properties"
+                    newItem = new MenuItem(menu, SWT.PUSH);
+                    newItem.setText(MENU_PROPERTIES);
+                    newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DevicePlugin.ICON_PROPERTY));
+                    newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
+                   
+                    newItem = new MenuItem(menu, SWT.SEPARATOR);
+                    
+                    for (IService service:device.getServices()){
+                        if (service.isVisible()) {
+                            newItem = new MenuItem(menu, SWT.PUSH);     
+                            newItem.setImage(service.getImage().createImage());
+                            newItem.setEnabled((service.getStatusTransitions(instance.getStatus())!=null));
+                            newItem.setText(service.getName());
+                            newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
+                        }
+                    }
+                }
+            }
+            else if (firstSelection instanceof ViewerDeviceNode)
+            {
+                // menu item "New..."
+                newItem = new MenuItem(menu, SWT.PUSH);
+                newItem.setText(MENU_NEW);
+                String deviceName = ((ViewerDeviceNode) firstSelection).getDeviceName();
+                newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
+            }
+        }  
+    }
+    
+	private void fillViewMenu()
+	{
+	    IMenuManager rootMenuManager = viewSite.getActionBars().getMenuManager();
+	    IMenuManager wizardSubmenu = new MenuManager(MENU_NEW);
+        rootMenuManager.add(wizardSubmenu);
+        for (Action action : wizardActions.values())
+        {
+            wizardSubmenu.add(action);
+        }
+	}
+	
+	private void fillViewToolbar()
+	{
+	    IToolBarManager toolbarManager = viewSite.getActionBars().getToolBarManager();
+	    WizardDropDownAction newWizardAction = new WizardDropDownAction();
+	    newWizardAction.setToolTipText(TOOLBAR_NEW_TOOLTIP);
+        toolbarManager.add(newWizardAction);
+	}
+	
 	private void createColumn(String columnLabel, int columnWeight)
 	{
 		Tree tree = viewer.getTree();
@@ -285,8 +461,6 @@ public class InstanceStatusComposite extends Composite
         }
 	}
 	
-	
-	
 	private Object getLastSelection()
 	{
 	    Object lastSelection = null;
@@ -360,93 +534,8 @@ public class InstanceStatusComposite extends Composite
 		}
 	}
 
-	private void fillContextMenu()
-	{
-		final Menu menu = new Menu(viewer.getTree()); 
-		viewer.getTree().setMenu(menu); 
-		menu.addMenuListener(new MenuAdapter() { 
-			public void menuShown(MenuEvent e) { 
-				// Get rid of existing menu items 
-				MenuItem[] items = menu.getItems(); 
-				for (int i = 0; i < items.length; i++) { 
-					((MenuItem) items[i]).dispose(); 
-				}
-				fillMenuContext(menu);              
-
-			}
-		}); 
-	}
-
-	private void fillMenuContext(Menu menu)
-	{
-		MenuItem newItem = null;
-
-		ISelection selection = viewer.getSelection();
-		if (selection instanceof IStructuredSelection)
-		{
-			IStructuredSelection strSelection = (IStructuredSelection) selection;
-			Object firstSelection = strSelection.getFirstElement(); // TODO support multiple selection
-
-			if (firstSelection instanceof ViewerInstanceNode)
-			{
-			    ViewerInstanceNode node = (ViewerInstanceNode) firstSelection;
-			    if (node.containsInstance())
-			    {
-			        // menu item "New..."
-//			        newItem = new MenuItem(menu, SWT.PUSH);
-//			        newItem.setText(MENU_NEW);
-			        // TODO create action for new wizards for the device of the selected instance
-
-//			        newItem = new MenuItem(menu, SWT.SEPARATOR);
-
-                    IInstance instance = getSelectedInstance();
-                    String statusId = instance.getStatus();
-                    IStatus status = StatusRegistry.getInstance().getStatus(statusId);
-                    
-			        // menu item "Delete"
-			        newItem = new MenuItem(menu, SWT.PUSH);
-			        newItem.setText(MENU_DELETE);
-			        newItem.addListener(SWT.Selection, new MenuDeleteListener());
-			        newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
-			        newItem.setEnabled(status.canDeleteInstance());
-
-			        newItem = new MenuItem(menu, SWT.SEPARATOR);
-
-			        // menu item "Properties"
-			        newItem = new MenuItem(menu, SWT.PUSH);
-			        newItem.setText(MENU_PROPERTIES);
-			        newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DevicePlugin.ICON_PROPERTY));
-			        newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
-			       
-			        newItem = new MenuItem(menu, SWT.SEPARATOR);
-			        
-			        IDevice device = DeviceManager.getInstance().getDevice(instance);
-			        for (IService service:device.getServices()){
-			            if (service.isVisible()) {
-			                newItem = new MenuItem(menu, SWT.PUSH);     
-			                newItem.setImage(service.getImage().createImage());
-			                newItem.setEnabled((service.getStatusTransitions(instance.getStatus())!=null));
-			                newItem.setText(service.getName());
-			                newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
-			            }
-			        }
-			    }
-			}
-			else if (firstSelection instanceof ViewerDeviceNode)
-			{
-//				// menu item "New..."
-//				newItem = new MenuItem(menu, SWT.PUSH);
-//				newItem.setText(MENU_NEW);
-				// TODO create action for new wizards for the selected device type
-
-			}
-		}  
-	}
-
-	/** Remove the selected domain object(s).
-	 * If multiple objects are selected remove all of them.
-	 * 
-	 * If nothing is selected do nothing.
+	/** 
+	 * Remove the selected instance.
 	 */
 	protected void removeSelected() {
 		if (viewer.getSelection().isEmpty()) {
@@ -458,40 +547,6 @@ public class InstanceStatusComposite extends Composite
 		if (instance != null)
 		{
 		    InstanceManager.getInstance().deleteInstance(instance);
-		}
-	}
-
-	/*
-	 * Menu handler
-	 */
-	private class MenuDeleteListener implements Listener {
-		public void handleEvent(Event event) {
-			removeSelected();
-		}
-	}
-
-	/*
-	 * Menu handler
-	 */
-	private class MenuPropertiesListener implements Listener {
-	    private IInstance instance;
-	    
-	    public MenuPropertiesListener(IInstance instance)
-	    {
-	        super();
-	        this.instance = instance;
-	    }
-	    
-		public void handleEvent(Event event) {
-
-			Shell shell = new Shell();
-			PreferenceDialog dialog = PreferencesUtil.createPropertyDialogOn(
-					shell,
-					instance,
-					PROPERTY_EDITOR_ID,
-					new String[] {},
-					null);
-			dialog.open();
 		}
 	}
 	
@@ -537,5 +592,144 @@ public class InstanceStatusComposite extends Composite
                     notifyInstanceSelectionChangeListeners(selectedInstance);
                 }
             }});
+	}
+
+    /*
+     * Menu handler
+     */
+    private class MenuDeleteListener implements Listener {
+        public void handleEvent(Event event) {
+            removeSelected();
+        }
+    }
+
+    /*
+     * Menu handler
+     */
+    private class MenuPropertiesListener implements Listener {
+        private IInstance instance;
+        
+        public MenuPropertiesListener(IInstance instance)
+        {
+            super();
+            this.instance = instance;
+        }
+        
+        public void handleEvent(Event event) {
+
+            Shell shell = new Shell();
+            PreferenceDialog dialog = PreferencesUtil.createPropertyDialogOn(
+                    shell,
+                    instance,
+                    PROPERTY_EDITOR_ID,
+                    new String[] {},
+                    null);
+            dialog.open();
+        }
+    }
+    
+    /*
+     * Toolbar handler.
+     * 
+     * Represents a toolbar item with a drop down menu with the devices listed
+     * for opening their respective wizard. The toolbar item itself when clicked
+     * opens a list selection dialog presenting the devices for opening the
+     * wizard.
+     */
+	private class WizardDropDownAction extends Action implements IMenuCreator
+    {
+        private Menu fMenu;
+
+        public WizardDropDownAction()
+        {
+            ImageDescriptor descriptor= AbstractUIPlugin.imageDescriptorFromPlugin(DeviceUIPlugin.PLUGIN_ID, "icons/full/obj16/device.gif");
+            setHoverImageDescriptor(descriptor);
+            setImageDescriptor(descriptor); 
+            
+            setMenuCreator(this);
+        }
+        
+        public void dispose()
+        {
+            if (fMenu != null) {
+                fMenu.dispose();
+                fMenu = null;
+            }
+        }
+
+        public Menu getMenu(Control parent)
+        {
+            if (fMenu != null) {
+                fMenu.dispose();
+            }
+            fMenu= new Menu(parent);
+            
+            for (Action action : wizardActions.values())
+            {
+                ActionContributionItem item = new ActionContributionItem(action);
+                item.fill(fMenu, -1);
+            }
+            
+            return fMenu;
+        }
+
+        public Menu getMenu(Menu parent)
+        {
+            return null;
+        }
+        
+        @Override
+        public void run()
+        {
+            // this is run when user clicks the toolbar item itself and
+            // not the drop down menu on the toolbar item
+           ListDialog dialog = new ListDialog(viewSite.getShell());
+           dialog.setContentProvider(new ArrayContentProvider());
+           dialog.setLabelProvider(new LabelProvider());
+           dialog.setTitle(TOOLBAR_NEW_TOOLTIP);
+           dialog.setMessage(TOOLBAR_DIALOG_MESSAGE);
+           Action[] input = new Action[wizardActions.size()]; 
+           input = wizardActions.values().toArray(input);
+           dialog.setInput(input);
+           
+           if (dialog.open() == ListDialog.OK)
+           {
+               ((Action)dialog.getResult()[0]).run();
+           }
+        }
+        
+    }
+	
+	/*
+	 * Menu Context handler
+	 */
+	private class WizardSelectionListener implements Listener
+	{
+	    private String deviceName;
+	    
+	    public WizardSelectionListener(String deviceName)
+	    {
+	        this.deviceName = deviceName;	        
+	    }
+	    
+	    public void handleEvent(Event event)
+	    {
+            Action wizardAction = wizardActions.get(deviceName);
+            if (wizardAction != null)
+            {
+                wizardAction.run();
+            }
+            else
+            {
+                Display.getDefault().asyncExec(new Runnable()
+                {
+                    public void run()
+                    {
+                        IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+                        MessageDialog.openError(ww.getShell(), ERROR_DIALOG_TITLE, ERROR_NO_WIZARD_MESSAGE + deviceName);
+                    }
+                });
+            }
+	    }
 	}
 }

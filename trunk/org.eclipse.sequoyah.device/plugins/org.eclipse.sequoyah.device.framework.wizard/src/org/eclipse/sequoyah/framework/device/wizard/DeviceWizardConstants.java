@@ -135,10 +135,20 @@ public interface DeviceWizardConstants {
 	 * ID for read description attribute from plugin extensions
 	 */
 	public static final String ATB_DESCRIPTION = "description";
-	
-	/**
-	 * A null string
-	 */
+
+    /**
+     * ID for read USAGE elements from plugin extensions
+     */
+    public static final String ELEMENT_USAGE = "usage";
+
+    /**
+     * ID for read device attribute from plugin extensions
+     */
+    public static final String ATB_DEVICE = "device";
+
+    /**
+     * A null string
+     */
 	public static final String STRING_NULL = "";
 	/**
 	 * 
