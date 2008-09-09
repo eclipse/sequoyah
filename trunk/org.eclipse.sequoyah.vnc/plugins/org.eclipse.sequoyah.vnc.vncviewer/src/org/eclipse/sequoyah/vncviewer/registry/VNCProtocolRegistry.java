@@ -38,6 +38,9 @@ public class VNCProtocolRegistry {
 	}
 
 	public void register(ProtocolHandle handle, VNCProtocolData data) {
+		
+		// There is only 1 pair handle/data
+		protocolMapping.remove(handle);
 		protocolMapping.put(handle, data);
 	}
 

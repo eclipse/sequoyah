@@ -29,7 +29,7 @@ import org.eclipse.tml.vncviewer.registry.VNCProtocolRegistry;
 public class VNCProtocolExceptionHandler implements IProtocolExceptionHandler {
 
 	public void handleIOException(ProtocolHandle handle, IOException e) {
-		VNCProtocolRegistry.getInstance().unregister(handle);
+		//VNCProtocolRegistry.getInstance().unregister(handle);
 	}
 
 	public void handleInvalidDefinitionException(ProtocolHandle handle,

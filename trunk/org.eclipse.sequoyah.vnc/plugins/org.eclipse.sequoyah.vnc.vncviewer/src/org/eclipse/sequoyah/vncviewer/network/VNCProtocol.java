@@ -62,7 +62,13 @@ abstract public class VNCProtocol implements IProtocolInit,
 	private void initPhase(ProtocolHandle handle, DataInputStream in,
 			OutputStream out, String password) throws Exception {
 
+		VNCProtocolData previousData = VNCProtocolRegistry.getInstance().get(handle);
 		VNCProtocolData data = new VNCProtocolData();
+
+		if (previousData != null) {
+			data.setVncPainter(previousData.getVncPainter());
+		}
+		
 		data.setPassword(password);
 
 		/* ClientInit */
