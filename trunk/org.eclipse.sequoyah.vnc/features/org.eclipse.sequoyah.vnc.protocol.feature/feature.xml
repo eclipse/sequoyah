@@ -23,6 +23,17 @@
       <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.1"/>
    </url>
 
+   <includes
+         id="org.eclipse.tml.vnc.protocol.examples.feature"
+         version="0.0.0"
+         optional="true"
+         search-location="both"/>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+   </requires>
+
    <plugin
          id="org.eclipse.tml.protocol"
          download-size="0"
