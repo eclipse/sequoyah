@@ -14,6 +14,7 @@
  * Fabio Rigo(Eldorado Research Institute) - Bug [244806] - SWTRemoteDisplay state is not consistent on errors
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -51,6 +52,9 @@ import org.eclipse.tml.vncviewer.registry.VNCProtocolRegistry;
  */
 public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
+	private static final String REMOTE_DISPLAY_STOP_ERROR = "Remote Display Stop error: ";
+	private static final String REMOTE_DISPLAY_MOUSE_EVENT_ERROR = "Remote Display mouse event error : ";
+	private static final String REMOTE_DISPLAY_KEY_EVENT_ERROR = "Remote Display key event error : ";
 	// private IProtocolImplementer protoClient;
 	protected Canvas canvas;
 	private ProtocolHandle handle;
@@ -101,8 +105,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 		this.setLayout(parent.getLayout());
 
-		// canvas = new Canvas(this, getCanvasStyle());
-		canvas = new Canvas(this, SWT.BACKGROUND);
+		canvas = new Canvas(this, SWT.NO_BACKGROUND);
 		eventTranslator = new SWTVNCEventTranslator(configProperties,
 				propertiesFileHandler);
 
@@ -302,7 +305,14 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 	}
 
-	protected void updateRequest(boolean incremental) throws Exception {
+	/**
+	 * Request a frame-buffer update to the RFB Server.
+	 * 
+	 * @param incremental True if the request should be based on a previous frame-buffer.
+	 * See the RFB Protocol Specification for more information. 
+	 * 
+	 */
+	public void updateRequest(boolean incremental) throws Exception {
 
 		try {
 			// Creates a update request message, setting the request
@@ -342,7 +352,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
-					"Remote Display key event error : " + e.getMessage());
+					REMOTE_DISPLAY_KEY_EVENT_ERROR + e.getMessage());
 			setRunning(false);
 
 		}
@@ -357,7 +367,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
-					"Remote Display mouse event error : " + e.getMessage());
+					REMOTE_DISPLAY_MOUSE_EVENT_ERROR + e.getMessage());
 			setRunning(false);
 
 		}
@@ -421,7 +431,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			// paint the images for now on.
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
-					"Remote Display Stop error: " + e.getMessage());
+					REMOTE_DISPLAY_STOP_ERROR + e.getMessage());
 		}
 
 		if (screen != null) {

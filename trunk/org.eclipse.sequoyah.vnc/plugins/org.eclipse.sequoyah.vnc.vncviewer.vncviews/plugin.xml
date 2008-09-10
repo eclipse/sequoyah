@@ -11,7 +11,7 @@ http://www.eclipse.org/legal/epl-v10.html
  Daniel Franco (Motorola)
  
  Contributors:
- name (company) - description.
+ Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
 -->
 
 <plugin>
@@ -26,7 +26,7 @@ http://www.eclipse.org/legal/epl-v10.html
             allowMultiple="false"
             category="org.eclipse.tml.vncviewer.vncviews"
             class="org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView"
-            icon="icons/sample.gif"
+            icon="icons/vncMonitor.gif"
             id="org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView"
             name="%view.name">
       </view>
@@ -38,12 +38,33 @@ http://www.eclipse.org/legal/epl-v10.html
             targetID="org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView">
          <action
                class="org.eclipse.tml.vncviewer.vncviews.views.ViewActionOpenConnection"
-               icon="icons/sample.gif"
+               icon="icons/connect.gif"
                id="org.eclipse.tml.vncviewer.vncviews.openConnectionAction"
                label="%action.open.name"
                state="false"
+               style="push"
                toolbarPath="additions">
                toolbarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.tml.vncviewer.vncviews.views.ViewActionZoomOut"
+               icon="icons/zoomOUT.GIF"
+               id="org.eclipse.tml.vncviewer.vncviews.zoomOutAction"
+               label="%action.zoomout.name"
+               state="false"
+               style="push"
+               toolbarPath="additions">
+            toolbarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.tml.vncviewer.vncviews.views.ViewActionZoomIn"
+               icon="icons/zoomIN.GIF"
+               id="org.eclipse.tml.vncviewer.vncviews.zoomInAction"
+               label="%action.zoomin.name"
+               state="false"
+               style="push"
+               toolbarPath="additions">
+            toolbarPath="additions">
          </action>
       </viewContribution>
    </extension>

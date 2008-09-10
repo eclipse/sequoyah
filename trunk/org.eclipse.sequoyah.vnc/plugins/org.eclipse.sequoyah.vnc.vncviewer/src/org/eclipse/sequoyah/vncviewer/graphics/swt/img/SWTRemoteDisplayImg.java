@@ -8,7 +8,7 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics.swt.img;
 
@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -80,7 +81,14 @@ public class SWTRemoteDisplayImg extends SWTRemoteDisplay {
 
 	protected void paintControl(PaintEvent event) {
 		
-		Image image = painter != null? ((Painter)painter).image:null;
+		ImageData id = painter != null? ((Painter)painter).getImageData():null;
+		Image image = null;
+		
+		if (id != null) {
+			id = id.scaledTo((int)(id.width * getZoomFactor()), (int)(id.height * getZoomFactor()));
+			image = new Image(event.gc.getDevice(),id);	
+		}
+		
 		
 		event.gc.setBackground(canvas.getBackground());
 		event.gc.setForeground(canvas.getForeground());
@@ -91,7 +99,10 @@ public class SWTRemoteDisplayImg extends SWTRemoteDisplay {
 			Rectangle r = image.getBounds();
 			int w = Math.min(event.width, r.width);
 			int h = Math.min(event.height, r.height);
+			
 			event.gc.drawImage(image, event.x, event.y, w, h, event.x, event.y, w, h);
+			
+			/* TODO : Bug 244249 - Canvas background repaint
 			if (w < event.width) {
 				event.gc.fillRectangle(event.x + w, event.y, event.width - w,
 						event.height);
@@ -100,6 +111,10 @@ public class SWTRemoteDisplayImg extends SWTRemoteDisplay {
 				event.gc.fillRectangle(event.x, event.y + h, event.width,
 						event.height - h);
 			}
+			*/
+			
+			
+			image.dispose();
 		}
 	}
 	

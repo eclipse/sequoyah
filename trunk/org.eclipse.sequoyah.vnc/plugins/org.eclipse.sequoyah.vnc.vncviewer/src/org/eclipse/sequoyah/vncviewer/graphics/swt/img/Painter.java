@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
+ * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt.img;
@@ -23,7 +24,6 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.tml.vncviewer.graphics.IPainterContext;
 import org.eclipse.tml.vncviewer.graphics.swt.ISWTPainter;
 import org.eclipse.tml.vncviewer.network.AbstractVNCPainter;
-import org.eclipse.tml.vncviewer.network.IVNCPainter;
 import org.eclipse.tml.vncviewer.network.PixelFormat;
 import org.eclipse.tml.vncviewer.network.RectHeader;
 
@@ -35,6 +35,8 @@ public class Painter extends AbstractVNCPainter implements ISWTPainter {
 
 	protected Image image; 
 
+	protected ImageData imgData;
+	
 	protected GC imageGC;
 
 	protected PaletteData paletteData;
@@ -56,12 +58,24 @@ public class Painter extends AbstractVNCPainter implements ISWTPainter {
 		dispose();
 		image = new Image(parent.getDisplay(), width, height);
 		imageGC = new GC(image);
+		imgData = new ImageData(width, height, pixelFormat.getDepth(), paletteData);
 	}
 	
 	protected void fillRect(int pixel, int x, int y, int width, int height) {
 		Color color = new Color(image.getDevice(), paletteData.getRGB(pixel));
 		imageGC.setBackground(color);
-		imageGC.fillRectangle(x, y, width, height);
+		
+		int [] pixels;
+		pixels = new int[width];
+		
+		for (int i=0; i<width; i++ ) {
+			pixels[i] = pixel; 
+		}
+
+		for (int j=0; j<height; j++) {
+			imgData.setPixels(x, y+j, width, pixels, 0);	
+		}
+
 		color.dispose();
 	}
 
@@ -71,15 +85,32 @@ public class Painter extends AbstractVNCPainter implements ISWTPainter {
 
 	protected void setPixels(int x, int y, int width, int height,
 			int[] pixels, int start) {
-		ImageData id = new ImageData(width, height, pixelFormat.getDepth(), paletteData);
-		id.setPixels(0, 0, width*height, pixels, 0);
-		Image tImage = new Image(image.getDevice(), id);
-		imageGC.drawImage(tImage, x, y);
-		tImage.dispose();
+		
+		
+		for (int i=0; i<height; i++) {
+			imgData.setPixels(x, y+i, width, pixels, width*i);	
+		}
+		
 	}
 	
 	public void updateRectangle(int x1, int y1, int x2, int y2) {
-		parent.redrawScreen(x1, y1, x2-x1, y2-y1);
+		
+		double zoom = parent.getZoomFactor();
+		
+		int a, b, r, s;
+		a = (int) (x1 * zoom);
+		b = (int) (y1 * zoom);
+		r = (int) ((x2-x1) * zoom);
+		s = (int) ((y2-y1) * zoom);
+		
+		// Cover rounded values
+		a--;
+		b--;
+		r++;
+		s++;
+		
+		parent.redrawScreen(a, b, r, s);
+		
 	}
 
 	@Override
@@ -133,6 +164,8 @@ public class Painter extends AbstractVNCPainter implements ISWTPainter {
 	}
 
 	public ImageData getImageData() {
-		return image.getImageData();
+		return imgData;
 	}
+	
+	
 }

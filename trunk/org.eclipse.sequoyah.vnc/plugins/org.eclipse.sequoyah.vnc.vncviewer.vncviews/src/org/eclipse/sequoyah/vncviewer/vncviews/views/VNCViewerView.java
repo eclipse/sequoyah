@@ -15,6 +15,7 @@
  * Fabio Rigo (Eldorado Research Institute) -  [238191] - Enhance exception handling
  * Daniel Barboza Franco (Eldorado Research Institute) -  [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) -  [246212] - Enhance encapsulation of protocol implementer
+ * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  *******************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -38,16 +39,22 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class VNCViewerView extends ViewPart {
 
+	private static final String VIEWER_COULD_NOT_BE_STARTED = "Viewer could not be started: ";
+
+	private static final String SWTDISPLAY = "SWTDisplay";
+
 	private static SWTRemoteDisplay swtDisplay;
 
 	private static boolean running = false;
 
 	private static ProtocolHandle handle;
+	
+	private static int zoomFactor = 1;
 
 	public void createPartControl(Composite parent) {
 
 		swtDisplay = (SWTRemoteDisplay) RemoteDisplayFactory.getDisplay(
-				"SWTDisplay", parent);
+				SWTDISPLAY, parent);
 		running = true;
 
 		if (VNCViewerView.handle != null) {
@@ -106,7 +113,7 @@ public class VNCViewerView extends ViewPart {
 			} catch (Exception e) {
 
 				log(VNCViewerView.class).error(
-						"Viewer could not be started: " + e.getMessage());
+						VIEWER_COULD_NOT_BE_STARTED + e.getMessage());
 
 				GC gc = new GC(swtDisplay.getCanvas());
 				gc.fillRectangle(0, 0, swtDisplay.getScreenWidth(), swtDisplay
@@ -131,5 +138,59 @@ public class VNCViewerView extends ViewPart {
 		}
 
 	}
+	
+	public static void zoomIn(){
+		//double zoom = swtDisplay.getZoomFactor();
+		
+		double newzoom = 1;
+		
+		if (zoomFactor == -2) {
+			zoomFactor = 1;
+		} else {
+			zoomFactor++;
+		}
+			
+		if (zoomFactor >= 1) {
+			newzoom = zoomFactor;
+		}
+		else {
+			newzoom = ((double)1) / -zoomFactor;
+		}
+		
+		swtDisplay.setZoomFactor(newzoom);
+		try {
+			swtDisplay.updateRequest(false); //full request
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void zoomOut(){
+
+		double newzoom = 1;
+		
+		if (zoomFactor == 1) {
+			zoomFactor = -2;
+		} else {
+			zoomFactor--;
+		}
+			
+		if (zoomFactor >= 1) {
+			newzoom = zoomFactor;
+		}
+		else {
+			newzoom = ((double)1) / -zoomFactor;
+		}
+		
+		swtDisplay.setZoomFactor(newzoom);
+		try {
+			swtDisplay.updateRequest(false); //full request
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 
 }
