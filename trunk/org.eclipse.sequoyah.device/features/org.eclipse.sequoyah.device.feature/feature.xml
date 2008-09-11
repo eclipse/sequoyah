@@ -23,31 +23,17 @@
       <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.1"/>
    </url>
 
-   <includes
-         id="org.eclipse.tml.device.additional.feature"
-         version="0.0.0"
-         optional="true"
-         search-location="both"/>
-
-   <includes
-         id="org.eclipse.tml.device.examples.feature"
-         version="0.0.0"
-         optional="true"
-         search-location="both"/>
-
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.tml.common.utilities"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.tml.framework.device.wizard" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.ui.externaltools"/>
       <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.eclipse.tml.vncviewer"/>
-      <import plugin="org.eclipse.tml.vncviewer.vncviews"/>
-      <import plugin="org.eclipse.tml.protocol"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.ide.application"/>
       <import plugin="org.eclipse.ui.console"/>
@@ -78,13 +64,6 @@
 
    <plugin
          id="org.eclipse.tml.service.stop"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tml.service.vncviewer"
          download-size="0"
          install-size="0"
          version="0.0.0"

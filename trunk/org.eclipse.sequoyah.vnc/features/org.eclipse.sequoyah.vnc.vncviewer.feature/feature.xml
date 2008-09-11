@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.tml.vnc.viewer.feature"
-       label="%featureName"
+      label="%featureName"
       version="0.4.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.tml.vncviewer">
@@ -22,8 +22,15 @@
       <update label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.1"/>
       <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.1"/>
    </url>
-   
-   
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.tml.protocol"/>
+   </requires>
+
    <plugin
          id="org.eclipse.tml.vncviewer"
          download-size="0"
