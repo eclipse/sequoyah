@@ -5,10 +5,10 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributor:
- * Fabio Fantato (Motorola)
+ * Fabio Fantato (Eldorado Research Institute)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Fantato (Eldorado Research Institute) - 
  ********************************************************************************/
 
 package org.eclipse.tml.common.utilities;
@@ -504,10 +504,10 @@ public class PluginUtils
     {
         String platformPath          = Platform.getInstallLocation().getURL().getPath();
         String pluginPath            = pluginBundle.getLocation();
-        int removeIndex              = pluginPath.indexOf("@");
-        pluginPath                   = pluginPath.substring(removeIndex + 1);
+        int removeIndex              = pluginPath.indexOf("file:");
+        pluginPath                   = pluginPath.substring(removeIndex + 6);
 
-        File relativeInstalationPath = new File(platformPath, pluginPath);
+        File relativeInstalationPath = new File(pluginPath);
 
         return FileUtil.getCanonicalFile(relativeInstalationPath);
     }
