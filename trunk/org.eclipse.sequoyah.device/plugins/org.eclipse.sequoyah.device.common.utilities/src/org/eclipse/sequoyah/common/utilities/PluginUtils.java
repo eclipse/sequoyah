@@ -8,7 +8,7 @@
  * Fabio Fantato (Eldorado Research Institute)
  *
  * Contributors:
- * Fabio Fantato (Eldorado Research Institute) - 
+ * Fabio Fantato (Eldorado Research Institute) - [243493] - PluginUtils has some compatibility issues with Ganymede release
  ********************************************************************************/
 
 package org.eclipse.tml.common.utilities;
