@@ -15,6 +15,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [242924] - There is no way to keep the size of a Variable Size Data read
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -25,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Collection;
@@ -263,12 +265,25 @@ public class ProtocolEngine {
 
 		this.parameters = parameters;
 
-		// Opens the socket. There are two versions: with timeout and without it
+		Boolean bypassProxy = (Boolean)parameters.get("bypassProxy");
+		bypassProxy = (bypassProxy != null)? bypassProxy : new Boolean(false);
+		
+		Proxy proxy = (Proxy)parameters.get("proxy");
+			
+		if (bypassProxy) { // The connection will not use proxy settings
+			socket = new Socket(Proxy.NO_PROXY);
+		}
+		else if (proxy != null){ // The connection will use this proxy
+			socket = new Socket(proxy); 
+		} else { // The connection will use default proxy settings, if any
+			socket = new Socket(); 
+		}
+			
+		InetSocketAddress socketAdress = new InetSocketAddress(host, port);
+		
 		if (timeout < 0) {
-			socket = new Socket(host, port);
+			socket.connect(socketAdress);
 		} else {
-			InetSocketAddress socketAdress = new InetSocketAddress(host, port);
-			socket = new Socket();
 			socket.connect(socketAdress, timeout);
 		}
 
@@ -278,9 +293,7 @@ public class ProtocolEngine {
 		out = socket.getOutputStream();
 
 		doStartProtocol();
-		
-		retries = retriesMax;
-		connectionSerialNumber++;
+
 	}
 
 	/**
@@ -339,6 +352,9 @@ public class ProtocolEngine {
 			consumer = new Consumer();
 			Thread consumerThread = new Thread(consumer);
 			consumerThread.start();
+			
+			retries = retriesMax;
+			connectionSerialNumber++;
 		}
 	}
 

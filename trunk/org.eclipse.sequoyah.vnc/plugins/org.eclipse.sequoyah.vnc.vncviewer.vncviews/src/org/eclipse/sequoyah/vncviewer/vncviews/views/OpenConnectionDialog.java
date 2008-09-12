@@ -10,6 +10,7 @@
  * Contributors:
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol 
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -20,6 +21,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -38,6 +40,7 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 	private Text portText;
 	private Combo protocolVersion;
 	private Text passwordText;
+	private Button bypassProxyButton;
 	
 	public OpenConnectionDialog(Shell parent) {
 		super(parent);
@@ -49,7 +52,7 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 
 	protected Point getInitialSize() {
 
-		return new Point(260, 310);
+		return new Point(250, 330);
 		//return super.getInitialSize();
 	}
 	
@@ -59,14 +62,14 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 	
 	
-		Composite external = createDefaultComposite(parent, 1, 15);
+		Composite external = createDefaultComposite(parent, 1, 17);
 		Composite fields = createDefaultComposite(external, 2, 0);
 		
 		
 		int width, height, cols;
 
 		setTitle("New VNC connection");
-		setMessage("Enter values for the connection parameters");
+		setMessage("Enter values for your VNC connection");
 		
 		cols = 20;
 
@@ -101,6 +104,23 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 
 		createCombo(external);
 		
+		
+		
+		
+        Composite bypassComposite = new Composite(external, SWT.NULL);
+        GridData gdata = new GridData(SWT.FILL, SWT.FILL, true, false);
+        bypassComposite.setLayoutData(gdata);
+        GridLayout glayout = new GridLayout();
+
+        bypassComposite.setLayout(glayout);
+		
+		bypassProxyButton = new Button(bypassComposite, SWT.CHECK);
+		Point p = bypassProxyButton.getLocation();
+		bypassProxyButton.setLocation(p.x, p.y+100);
+		
+		bypassProxyButton.setText("Bypass proxy settings");
+		
+		
 		return external;
 	
 	}
@@ -116,7 +136,7 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		version = protocolVersion.getItem(protocolVersion.getSelectionIndex());
 		String password = passwordText.getText();
 
-		VNCViewerView.start(host, port, version, password);
+		VNCViewerView.start(host, port, version, password, bypassProxyButton.getSelection());
 		
 		super.okPressed();
 		
@@ -184,9 +204,9 @@ public class OpenConnectionDialog extends TitleAreaDialog {
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
 
         comboComposite.setLayoutData(data);
-        GridLayout configAndDescriptionCompositeLayout = new GridLayout();
+        GridLayout gridLayout = new GridLayout();
 
-        comboComposite.setLayout(configAndDescriptionCompositeLayout);
+        comboComposite.setLayout(gridLayout);
 
         //comboComposite.setBackground(BACKGROUND_COLOR);
 

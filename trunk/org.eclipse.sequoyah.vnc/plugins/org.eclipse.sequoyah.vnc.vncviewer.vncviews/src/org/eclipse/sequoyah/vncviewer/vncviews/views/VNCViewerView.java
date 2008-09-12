@@ -16,12 +16,16 @@
  * Daniel Barboza Franco (Eldorado Research Institute) -  [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) -  [246212] - Enhance encapsulation of protocol implementer
  * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol 
  *******************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
 
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.GC;
@@ -86,7 +90,7 @@ public class VNCViewerView extends ViewPart {
 	 * Performs the start action into the VNC Component.
 	 */
 	synchronized public static void start(String host, int port,
-			String protoVersion, String password) {
+			String protoVersion, String password, boolean bypassProxy) {
 
 		if ((running) && (swtDisplay != null)) {
 
@@ -103,6 +107,9 @@ public class VNCViewerView extends ViewPart {
 				parameters.put("password", password);
 				parameters.put("connectionRetries", swtDisplay
 						.getConnectionRetries());
+				
+				parameters.put("bypassProxy", new Boolean(bypassProxy));
+				
 				VNCViewerView.handle = PluginProtocolActionDelegate
 						.startClientProtocol(protocolId,
 								new VNCProtocolExceptionHandler(), host, port,
