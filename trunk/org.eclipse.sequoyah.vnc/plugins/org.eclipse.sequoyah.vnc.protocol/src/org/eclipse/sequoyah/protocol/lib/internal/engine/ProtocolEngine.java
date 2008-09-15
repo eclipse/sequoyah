@@ -16,6 +16,7 @@
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [242924] - There is no way to keep the size of a Variable Size Data read
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246916] - Add the correct Number objects to ProtocolMessage objects on reading from input stream
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -930,9 +931,16 @@ public class ProtocolEngine {
 		if (messageDataDef instanceof FixedSizeDataBean) {
 			readFixedSizeData((FixedSizeDataBean) messageDataDef, message,
 					iterableBlockId, index);
+			FixedSizeDataBean fixedMsgDataDef = (FixedSizeDataBean)messageDataDef;
+			message.setFieldSize(fixedMsgDataDef.getFieldName(), iterableBlockId, index, fixedMsgDataDef.getFieldSizeInBytes());	
+			
 		} else if (messageDataDef instanceof VariableSizeDataBean) {
 			readVariableSizeData((VariableSizeDataBean) messageDataDef,
 					message, iterableBlockId, index);
+			VariableSizeDataBean variableMsgDataDef = (VariableSizeDataBean) messageDataDef;
+			
+			message.setFieldSize(variableMsgDataDef.getSizeFieldName(), iterableBlockId, index, variableMsgDataDef.getSizeFieldSizeInBytes());
+			
 		} else if (messageDataDef instanceof RawDataBean) {
 			readRawData((RawDataBean) messageDataDef, message, iterableBlockId,
 					index);

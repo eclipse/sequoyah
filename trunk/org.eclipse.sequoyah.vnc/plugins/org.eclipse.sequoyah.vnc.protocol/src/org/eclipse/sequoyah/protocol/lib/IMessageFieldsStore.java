@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246916] - Add the correct Number objects to ProtocolMessage objects on reading from input stream
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -72,4 +73,43 @@ public interface IMessageFieldsStore {
 	 *         <i>iterableBlockId</i> and <i>index</i>.
 	 */
 	Object getFieldValue(String fieldName, String iterableBlockId, int index);
+	
+	/**
+	 * Retrieves the size of a field, given its name. <br>
+	 * <br>
+	 * The field is looked up in the store with the name as provided. This
+	 * method is able to retrieve fields registered by iteratable blocks as long
+	 * as their internal names are provided. In case their internal names are
+	 * not known, one can use the other <code>getFieldValue</code> version in
+	 * this interface to retrieve their values.
+	 * 
+	 * @param fieldName
+	 *            The name of the field to retrieve size from.
+	 * 
+	 * @return The size of the field identified by <i>fieldName</i>.
+	 */
+	Object getFieldSize(String fieldName);
+
+	/**
+	 * Retrieves the size of a field that was registered by an iteratable
+	 * block. <br>
+	 * <br>
+	 * Iteratable blocks are so-called the subsets of a message that can be sent
+	 * or received multiple times at the stream. The quantity of iterations are
+	 * defined by another field in the message, which is read prior to the block
+	 * from the stream.
+	 * 
+	 * @param fieldName
+	 *            The name of the field to retrieve size from.
+	 * @param iterableBlockId
+	 *            The id of the iteratable block, as defined in the message
+	 *            definition
+	 * @param index
+	 *            The iteration index. Range: 0 ~~ (iteratableBlockLength - 1)
+	 * 
+	 * @return The size of the field identified by <i>fieldName</i>,
+	 *         <i>iterableBlockId</i> and <i>index</i>.
+	 */
+	Object getFieldSize(String fieldName, String iterableBlockId, int index);
+	
 }

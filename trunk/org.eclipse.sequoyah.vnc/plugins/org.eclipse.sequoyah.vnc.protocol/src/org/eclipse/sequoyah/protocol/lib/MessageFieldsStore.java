@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246916] - Add the correct Number objects to ProtocolMessage objects on reading from input stream
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -40,6 +40,12 @@ public class MessageFieldsStore implements IMessageFieldsStore {
 	 */
 	protected Map<String, Object> messageFieldsValues = new HashMap<String, Object>();
 
+	/**
+	 * A map containing all the message fields names and sizes.
+	 */
+	protected Map<String, Integer> messageFieldsSizes = new HashMap<String, Integer>();
+
+	
 	/**
 	 * The identifier of the iteratable block set as default, or
 	 * <code>null</code> if chosen not to use a default iteratable block.
@@ -187,5 +193,52 @@ public class MessageFieldsStore implements IMessageFieldsStore {
 	 */
 	protected int getIndex() {
 		return index;
+	}
+
+
+	/**
+	 * @see IMessageFieldsStore#getFieldSize(String)
+	 */
+	public Integer getFieldSize(String fieldName) {
+		Integer size= null;
+		
+		// If there is a default iteratable block set, use the generateKey
+		// method to calculate what is the composite key that may be identifying
+		// the field at this iteration
+		if ((iteratableBlockId != null) && (index >= 0)) {
+			size = messageFieldsSizes.get(generateKey(fieldName,
+					iteratableBlockId, index));
+		}
+
+		// If no value is found by using the composite key or if there is not a
+		// default iteratable block set, then use the regular query
+		if ((size == null) || (iteratableBlockId == null) || (index < 0)) {
+			size = messageFieldsSizes.get(fieldName);
+		}
+
+		return size;
+	}
+
+	
+	/**
+	 * @see IMessageFieldsStore#getFieldSize(String, String, int)
+	 */
+	public Integer getFieldSize(String fieldName, String iterableBlockId,
+			int index) {
+		Integer size = null;
+
+		if ((iterableBlockId != null) && (index >= 0)) {
+			// If the provided parameters are valid, use the generateKey method
+			// to calculate what is the composite key that may be identifying
+			// the field for the given iteration.
+			size = messageFieldsSizes.get(generateKey(fieldName,
+					iterableBlockId, index));
+		} else {
+			// If the provided parameters are invalid, ignore them and use the
+			// regular query
+			size = messageFieldsSizes.get(fieldName);
+		}
+
+		return size;
 	}
 }

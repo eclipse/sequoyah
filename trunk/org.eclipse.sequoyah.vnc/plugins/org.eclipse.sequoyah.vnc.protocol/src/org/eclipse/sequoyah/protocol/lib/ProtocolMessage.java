@@ -7,7 +7,7 @@
  * Fabio Rigo
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246916] - Add the correct Number objects to ProtocolMessage objects on reading from input stream
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -137,4 +137,53 @@ public class ProtocolMessage extends MessageFieldsStore {
 			messageFieldsValues.put(fieldName, fieldValue);
 		}
 	}
+	
+	
+
+	/**
+	 * Sets the size of a field at the message object. The protocol framework sets
+	 * the field size when it reads the messages from the input stream for
+	 * later use in the message handlers. 
+	 * 
+	 * @param fieldName
+	 *            The name of the field, as defined in the message definition
+	 * @param fieldSize
+	 *            The size to be set under <i>fieldName</i> key.
+	 */
+	public void setFieldSize(String fieldName, int fieldSize) {
+		doSetFieldSize(fieldName, getIteratableBlockId(), getIndex(),
+				fieldSize);
+	}
+	
+	/**
+	 * Sets the size of a field at the message object. The protocol framework sets
+	 * the field sizes when it reads the messages from the input stream for
+	 * later use in the message handlers.
+	 * 
+	 * @param fieldName
+	 *            The name of the field, as defined in the message definition
+	 * @param iterableBlockId
+	 *            The id of the iteratable block, as defined in the message
+	 *            definition
+	 * @param index
+	 *            The iteration index. Range: 0 ~~ (iteratableBlockLength - 1)
+	 * @param fieldSize
+	 *            The size to be set under <i>fieldName</i> key.
+	 * 
+	 */
+	public void setFieldSize(String fieldName, String iterableBlockId,
+			int index, int fieldSize) {
+		doSetFieldSize(fieldName, iterableBlockId, index, fieldSize);
+	}
+	
+	private void doSetFieldSize(String fieldName, String iterableBlockId,
+			int index, int fieldSize) {
+		if ((iterableBlockId != null) && (index >= 0)) {
+			messageFieldsSizes.put(generateKey(fieldName, iterableBlockId,
+					index), fieldSize);
+		} else {
+			messageFieldsSizes.put(fieldName, fieldSize);
+		}
+	}
+	
 }
