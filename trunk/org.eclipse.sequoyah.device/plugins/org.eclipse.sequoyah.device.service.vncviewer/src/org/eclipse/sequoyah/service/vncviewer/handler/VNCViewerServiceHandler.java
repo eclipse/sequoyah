@@ -11,6 +11,7 @@
  * Daniel Barboza Franco (Motorola) - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol
  ********************************************************************************/
 
 package org.eclipse.tml.service.vncviewer.handler;
