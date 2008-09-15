@@ -9,7 +9,7 @@
             copyright="Motorola Inc. 2007"
             description="Service to Start a mobile device"
             handler="org.eclipse.tml.service.start.handler.StartServiceHandler"
-            icon="icons/full/obj16/start.gif"
+            icon="icons/full/obj16/start.png"
             id="org.eclipse.tml.service.start.startService"
             name="Start Instance"
             provider="Eclipse.org"

@@ -9,7 +9,7 @@
             copyright="Motorola Inc. 2007"
             description="Service to Stop a mobile device"
             handler="org.eclipse.tml.service.stop.handler.StopServiceHandler"
-            icon="icons/full/obj16/stop.gif"
+            icon="icons/full/obj16/stop.png"
             id="org.eclipse.tml.service.stop.stopService"
             name="Stop Instance"
             provider="Eclipse.org"

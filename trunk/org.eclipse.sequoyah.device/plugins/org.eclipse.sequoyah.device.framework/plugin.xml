@@ -25,7 +25,7 @@
           point="org.eclipse.tml.status">
       <status
             id="OFF"
-            image="icons/full/obj16/stop.gif"
+            image="icons/full/obj16/stop.png"
             name="OFF">
       </status>
    </extension>
@@ -34,7 +34,7 @@
           point="org.eclipse.tml.status">
       <status
             id="IDLE"
-            image="icons/full/obj16/start.gif"
+            image="icons/full/obj16/start.png"
             name="IDLE">
       </status>
    </extension>

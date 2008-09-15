@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247333] - New Icons for Start and Stop
  ********************************************************************************/
 
 package org.eclipse.tml.service.start;
@@ -67,7 +67,7 @@ public class StartServicePlugin extends BasePlugin {
 	@Override
 	protected void initializeImageRegistry() {
 		String path = getIconPath();
-		putImageInRegistry(ICON_SERVICE_START, path+"full/obj16/start.gif"); //$NON-NLS-1$	
+		putImageInRegistry(ICON_SERVICE_START, path+"full/obj16/start.png"); //$NON-NLS-1$	
 	}
 
 }

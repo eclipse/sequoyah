@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244805] - Improvements on Instance view
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247333] - New icons for Start and Stop
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui;
 
@@ -80,8 +81,8 @@ public class DeviceUIPlugin extends BasePlugin {
 		String path = getIconPath();
 		putImageInRegistry(ICON_DEVICE, path+"full/obj16/device.gif"); //$NON-NLS-1$	
 		putImageInRegistry(ICON_SERVICE, path+"full/obj16/service.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_START, path+"full/obj16/start.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_STOP, path+"full/obj16/stop.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_START, path+"full/obj16/start.png"); //$NON-NLS-1$
+		putImageInRegistry(ICON_STOP, path+"full/obj16/stop.png"); //$NON-NLS-1$
 		putImageInRegistry(ICON_REFRESH, path+"full/obj16/refresh.gif"); //$NON-NLS-1$
 		putImageInRegistry(ICON_INACTIVE, path+"full/obj16/inactive.gif"); //$NON-NLS-1$
 		putImageInRegistry(ICON_MOVING, path+"movingBox.gif");
