@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244856] - Instance View usability should be improved
+ * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247085] - Instance manage view buttons are resizing after applying services filter
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -49,6 +50,8 @@ import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -125,6 +128,7 @@ public class InstanceStatusComposite extends Composite
 	private static final String TOOLBAR_DIALOG_MESSAGE = "Select a Device to open the Instance Creation Wizard :";
 	private static final String ERROR_DIALOG_TITLE = "Error";
 	private static final String ERROR_NO_WIZARD_MESSAGE = "No wizard found for Device ";
+	private static final int DEFAULT_MENU_IMAGE_SIZE = 16;
 
 	private final Set<InstanceSelectionChangeListener> listeners = new LinkedHashSet<InstanceSelectionChangeListener>();
 
@@ -338,8 +342,10 @@ public class InstanceStatusComposite extends Composite
                     
                     for (IService service:device.getServices()){
                         if (service.isVisible()) {
-                            newItem = new MenuItem(menu, SWT.PUSH);     
-                            newItem.setImage(service.getImage().createImage());
+                            newItem = new MenuItem(menu, SWT.PUSH);  
+                            ImageData serviceImageData = service.getImage().getImageData().scaledTo(DEFAULT_MENU_IMAGE_SIZE, DEFAULT_MENU_IMAGE_SIZE);
+                            Image serviceImage = new Image(getDisplay(), serviceImageData);
+                            newItem.setImage(serviceImage);
                             newItem.setEnabled((service.getStatusTransitions(instance.getStatus())!=null));
                             newItem.setText(service.getName());
                             newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));

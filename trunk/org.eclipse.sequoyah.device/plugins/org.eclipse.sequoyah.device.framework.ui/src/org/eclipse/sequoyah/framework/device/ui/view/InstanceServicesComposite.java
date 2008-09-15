@@ -9,6 +9,7 @@
  * [244805] - Improvements on Instance view  
  *
  * Contributors:
+ * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247085] - Instance manage view buttons are resizing after applying services filter  
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -18,10 +19,13 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
@@ -40,12 +44,16 @@ import org.eclipse.tml.framework.device.ui.DeviceUIPlugin;
 public class InstanceServicesComposite extends Composite {
 
 	private static boolean showAllServices = true;
-	private static int buttonsOrienation = SWT.VERTICAL;
+	private static int buttonsOrienation = SWT.HORIZONTAL;
 	private IInstance instance = null;
 	
 	private static final String SERVICES_LABEL = "Services";
 	private static final String SERVICES_FILTERED_LABEL = "Services (filtered)";
 	private static final String NO_LABEL = "";
+	private static final int DEFAULT_BUTTONS_WIDTH = 120;
+	private static final int DEFAULT_BUTTONS_HEIGHT = 30;
+	private static final int MAX_BUTTON_STRING_SIZE = DEFAULT_BUTTONS_WIDTH / 10;
+	private static final int DEFAULT_BUTTON_IMAGE_SIZE = 16;
 	
 	private CLabel label;
 	private ToolBar toolBar;
@@ -162,12 +170,11 @@ public class InstanceServicesComposite extends Composite {
 		rowLayout.spacing = 5;
 		
 		servicesComposite.setLayout(rowLayout);
-		int largestButtonWidth = 0;
+
 		if (instance != null)
 		{
 			IDevice device = DeviceManager.getInstance().getDevice(instance);
 			List<IService> services = device.getServices();
-			
 			for (IService service:services){
 				if (service.isVisible()) {
 					boolean isServiceEnabled = (service.getStatusTransitions(instance.getStatus()) != null);
@@ -175,21 +182,29 @@ public class InstanceServicesComposite extends Composite {
 					if ((showAllServices) || (isServiceEnabled))
 					{
 						Button serviceButton = new Button(servicesComposite, SWT.PUSH);
-						serviceButton.setImage(service.getImage().createImage());
-						serviceButton.setText(service.getName());
 						serviceButton.setEnabled(isServiceEnabled);
-
 						serviceButton.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
 
 						RowData data = new RowData();
+						data.width = DEFAULT_BUTTONS_WIDTH;
+						data.height = DEFAULT_BUTTONS_HEIGHT;
 						serviceButton.setLayoutData(data);
 						
-						serviceButton.pack();
-						Point buttonSize = serviceButton.getSize();
-						if (buttonSize.x > largestButtonWidth)
+						// set button text and tooltip
+						String serviceName = service.getName();
+						serviceButton.setToolTipText(serviceName);
+						if (serviceName.length() > MAX_BUTTON_STRING_SIZE)
 						{
-						    largestButtonWidth = buttonSize.x;
+							// if text will not fit, shorten it
+							serviceName = serviceName.substring(0, MAX_BUTTON_STRING_SIZE).concat(Dialog.ELLIPSIS);
 						}
+						serviceButton.setText(serviceName);
+						
+						// set the button image to 16x16 image
+						ImageData serviceImageData = service.getImage().getImageData().scaledTo(DEFAULT_BUTTON_IMAGE_SIZE, DEFAULT_BUTTON_IMAGE_SIZE);
+						Image serviceImage = new Image(serviceButton.getDisplay(), serviceImageData);
+						serviceButton.setImage(serviceImage);
+
 					}
 				}
 			}
@@ -198,9 +213,8 @@ public class InstanceServicesComposite extends Composite {
 		scrollComposite.setContent(servicesComposite);
 		scrollComposite.setExpandVertical(true);
 	    scrollComposite.setExpandHorizontal(true);
-	    servicesComposite.pack();
-		Point compositeSize = servicesComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		scrollComposite.setMinSize(largestButtonWidth, compositeSize.y);
+	    Point compositeSize = servicesComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	    scrollComposite.setMinSize(DEFAULT_BUTTONS_WIDTH + 10, compositeSize.y);
 		viewForm.setContent(scrollComposite);
 		
 		if (instance == null)
