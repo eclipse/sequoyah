@@ -11,6 +11,7 @@
  * Contributors:
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244856] - Instance View usability should be improved
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247085] - Instance manage view buttons are resizing after applying services filter
+ * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247288] - Exceptions after Instance Mgt View is closed
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -65,6 +66,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.tml.framework.device.DevicePlugin;
+import org.eclipse.tml.framework.device.events.IInstanceListener;
 import org.eclipse.tml.framework.device.events.InstanceAdapter;
 import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
@@ -144,6 +146,24 @@ public class InstanceStatusComposite extends Composite
      * The wizard actions
      */
     protected Map<String, Action> wizardActions = new TreeMap<String, Action>();
+    
+    private IInstanceListener listener = new InstanceAdapter()
+	{
+	    public void instanceLoaded(InstanceEvent e)
+	    {
+	        InstanceStatusComposite.this.instanceLoaded(e.getInstance());
+	    }
+
+	    public void instanceUnloaded(InstanceEvent e)
+	    {
+	        InstanceStatusComposite.this.instanceUnloaded(e.getInstance());
+	    }
+
+	    public void instanceUpdated(InstanceEvent e)
+	    {
+	        InstanceStatusComposite.this.instanceUpdated(e.getInstance());
+	    }
+	};
 
 	public InstanceStatusComposite(Composite parent, IViewSite viewSite)
 	{
@@ -152,23 +172,14 @@ public class InstanceStatusComposite extends Composite
 		createContents();
 
 		InstanceEventManager eventMgr = InstanceEventManager.getInstance();
-		eventMgr.addInstanceListener(new InstanceAdapter()
-		{
-		    public void instanceLoaded(InstanceEvent e)
-		    {
-		        InstanceStatusComposite.this.instanceLoaded(e.getInstance());
-		    }
-
-		    public void instanceUnloaded(InstanceEvent e)
-		    {
-		        InstanceStatusComposite.this.instanceUnloaded(e.getInstance());
-		    }
-
-		    public void instanceUpdated(InstanceEvent e)
-		    {
-		        InstanceStatusComposite.this.instanceUpdated(e.getInstance());
-		    }
-		});
+		eventMgr.addInstanceListener(listener);
+	}
+	
+	@Override
+	public void dispose() {
+		InstanceEventManager eventMgr = InstanceEventManager.getInstance();
+		eventMgr.removeInstanceListener(listener);
+		super.dispose();
 	}
 	
 	protected void addInstanceSelectionChangeListener(InstanceSelectionChangeListener listener)
