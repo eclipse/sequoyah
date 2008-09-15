@@ -92,7 +92,7 @@ public class VNCViewerServiceHandler extends ServiceHandler
 //            }
 //        }
 
-        VNCViewerView.start(host, port, protoVersion, password);
+        VNCViewerView.start(host, port, protoVersion, password, false);
 
 //        IProtocolImplementer protocol = VNCViewerView.protocol;
         /*
