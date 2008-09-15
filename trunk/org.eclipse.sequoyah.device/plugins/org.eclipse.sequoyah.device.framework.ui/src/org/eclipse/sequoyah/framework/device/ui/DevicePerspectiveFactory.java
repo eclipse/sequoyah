@@ -37,6 +37,7 @@ public class DevicePerspectiveFactory implements IPerspectiveFactory {
 	 */
 	public static final String SHORTCUT_FILE = "org.eclipse.ui.wizards.new.file";
 
+	public static final String VIEW_INSTANCE_MGT = "org.eclipse.tml.framework.device.ui.InstanceMgtView";
 	public static final String VIEW_DEVICE_INSTANCE = "org.eclipse.tml.framework.device.tree.ui.InstanceView";
 	public static final String VIEW_DEVICE_PLUGIN = "org.eclipse.tml.framework.device.tree.ui.DeviceView";
 	/**
@@ -75,14 +76,13 @@ public class DevicePerspectiveFactory implements IPerspectiveFactory {
         IFolderLayout navigator  = layout.createFolder(NAVIGATOR, IPageLayout.LEFT, (float) 0.26, editorArea);
         IFolderLayout center     = layout.createFolder(CENTER, IPageLayout.RIGHT, (float) 0.60, editorArea);
         IFolderLayout bottom     = layout.createFolder(CONTROL, IPageLayout.BOTTOM, (float) 0.60, CENTER);
-        IFolderLayout vnc        = layout.createFolder(VNC, IPageLayout.RIGHT, (float) 0.40, CENTER);
-        
-     
-        
+        IFolderLayout vnc        = layout.createFolder(VNC, IPageLayout.RIGHT, (float) 0.60, CENTER);
+      
         navigator.addView(VIEW_DEVICE_INSTANCE);
         navigator.addView(IPageLayout.ID_RES_NAV);
         bottom.addView(VIEW_DEVICE_PLUGIN);
-        center.addView(ID_CONSOLE_VIEW);
+        bottom.addView(ID_CONSOLE_VIEW);
+        center.addView(VIEW_INSTANCE_MGT);        
         vnc.addPlaceholder(VNC_VIEWER_VIEW);        
         vnc.addView(VNC_VIEWER_VIEW);
 }
