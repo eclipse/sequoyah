@@ -75,7 +75,7 @@
          name="stopService"
          point="org.eclipse.tml.serviceDefinition">
       <service
-            handler="org.eclipse.tml.device.qemuarm.handler.StartServiceHandler"
+            handler="org.eclipse.tml.device.qemuarm.handler.StopServiceHandler"
             id="org.eclipse.tml.service.stop.stopService">
          <status
                endId="OFF"
