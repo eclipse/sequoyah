@@ -17,12 +17,14 @@
  * Fabio Rigo (Eldorado Research Institute) -  [246212] - Enhance encapsulation of protocol implementer
  * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol 
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  *******************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
 
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -51,7 +53,7 @@ public class VNCViewerView extends ViewPart {
 
 	private static boolean running = false;
 
-	private static ProtocolHandle handle;
+	public static ProtocolHandle protocolHandle;
 	
 	private static int zoomFactor = 1;
 
@@ -61,9 +63,9 @@ public class VNCViewerView extends ViewPart {
 				SWTDISPLAY, parent);
 		running = true;
 
-		if (VNCViewerView.handle != null) {
+		if (VNCViewerView.protocolHandle != null) {
 			try {
-				swtDisplay.start(handle);
+				swtDisplay.start(protocolHandle);
 			} catch (Exception e) {
 				// TODO handle properly
 				e.printStackTrace();
@@ -110,12 +112,12 @@ public class VNCViewerView extends ViewPart {
 				
 				parameters.put("bypassProxy", new Boolean(bypassProxy));
 				
-				VNCViewerView.handle = PluginProtocolActionDelegate
+				VNCViewerView.protocolHandle = PluginProtocolActionDelegate
 						.startClientProtocol(protocolId,
 								new VNCProtocolExceptionHandler(), host, port,
 								parameters);
 
-				swtDisplay.start(handle);
+				swtDisplay.start(protocolHandle);
 
 			} catch (Exception e) {
 
@@ -139,7 +141,13 @@ public class VNCViewerView extends ViewPart {
 		if ((running) && (swtDisplay != null)) {
 
 			if (swtDisplay.isActive()) {
-				swtDisplay.stop();
+				swtDisplay.getDisplay().syncExec(new Runnable(){
+					public void run() {
+						swtDisplay.stop();						
+					}
+	
+				});
+				
 			}
 
 		}
@@ -196,6 +204,13 @@ public class VNCViewerView extends ViewPart {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	public static void stopProtocol() throws IOException {
+
+		if (protocolHandle != null){
+			PluginProtocolActionDelegate.stopProtocol(protocolHandle);
 		}
 	}
 

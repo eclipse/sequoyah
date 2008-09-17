@@ -12,6 +12,7 @@
  * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  ********************************************************************************/
 
 package org.eclipse.tml.service.vncviewer.handler;
@@ -59,7 +60,7 @@ public class VNCViewerServiceHandler extends ServiceHandler
                 VNCViewerView.stop();
                 try
                 {
-                	ProtocolHandle handle = null;
+                	ProtocolHandle handle = VNCViewerView.protocolHandle;
                     PluginProtocolActionDelegate.stopProtocol(handle);
                 }
                 catch (IOException e)
@@ -70,63 +71,71 @@ public class VNCViewerServiceHandler extends ServiceHandler
             }
             ;
 
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(
-                    "org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView");
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable(){
+
+				public void run() {
+					try {
+						PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().showView("org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView");
+					} catch (PartInitException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+            	
+            });
+            
         }
-        catch (PartInitException e)
+        catch (Exception e)
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-//        if (VNCViewerView..protocol != null)
-//        {
-//            VNCViewerView.stop();
-//            try
-//            {
-//                PluginProtocolActionDelegate.stopProtocol(VNCViewerView.protocol);
-//            }
-//            catch (IOException e)
-//            {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
-//        }
+        if (VNCViewerView.protocolHandle!= null)
+        {
+            VNCViewerView.stop();
+            try
+            {
+                PluginProtocolActionDelegate.stopProtocol(VNCViewerView.protocolHandle);
+            }
+            catch (IOException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
         VNCViewerView.start(host, port, protoVersion, password, false);
 
-//        IProtocolImplementer protocol = VNCViewerView.protocol;
         /*
-         * 
-         * 
-         *  The code below is a fix for QEMU-ARM 
-         *  Just for demo purposes
-         * 
-         * ****/
+         *  The code below is a fix for QEMU-ARM which expect 
+         *  the sequence ctrl+alt+3 to show it's display. 
+         *****/
         if (instance.getDevice().equals("org.eclipse.tml.device.qemuarm.qemuarmDevice"))
         {
 
             try
             {
 
+            	ProtocolHandle handle = VNCViewerView.protocolHandle;
                 ProtocolMessage qemumsg = new ProtocolMessage(0x04);
                 qemumsg.setFieldValue("downFlag", 1);
                 qemumsg.setFieldValue("padding", 0);
 
-//                qemumsg.setFieldValue("key", 0xFFE3);
-//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
-//                qemumsg.setFieldValue("key", 0xFFE9);
-//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
-//                qemumsg.setFieldValue("key", 0x033);
-//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
-//
-//                qemumsg.setFieldValue("downFlag", 0);
-//                qemumsg.setFieldValue("key", 0xFFE3);
-//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
-//                qemumsg.setFieldValue("key", 0xFFE9);
-//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
-//                qemumsg.setFieldValue("key", 0x033);
-//                ProtocolActionDelegate.sendMessageToServer(VNCViewerView.protocol, qemumsg);
+                qemumsg.setFieldValue("key", 0xFFE3);
+                PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
+                qemumsg.setFieldValue("key", 0xFFE9);
+                PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
+                qemumsg.setFieldValue("key", 0x033);
+                PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
+
+                qemumsg.setFieldValue("downFlag", 0);
+                qemumsg.setFieldValue("key", 0xFFE3);
+                PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
+                qemumsg.setFieldValue("key", 0xFFE9);
+                PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
+                qemumsg.setFieldValue("key", 0x033);
+                PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
 
             }
             catch (Exception e)

@@ -11,9 +11,12 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol 
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
+
+import java.io.IOException;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -136,7 +139,14 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		version = protocolVersion.getItem(protocolVersion.getSelectionIndex());
 		String password = passwordText.getText();
 
+		try {
+			VNCViewerView.stopProtocol();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		VNCViewerView.start(host, port, version, password, bypassProxyButton.getSelection());
+		
 		
 		super.okPressed();
 		

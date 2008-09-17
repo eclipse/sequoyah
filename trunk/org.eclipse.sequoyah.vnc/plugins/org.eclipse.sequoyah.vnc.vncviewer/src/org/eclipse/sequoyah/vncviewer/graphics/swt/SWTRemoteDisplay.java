@@ -15,6 +15,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -228,14 +229,12 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 						try {
 							updateRequest(true);
 						} catch (Exception e) {
-							setRunning(false);
-							refreshTimer.cancel();
+							stop();
 							log(SWTRemoteDisplay.class).error(
 									"Update screen error: " + e.getMessage());
 						}
 						if (!swtDisplay.isActive() || canvas.isDisposed()) {
-							setRunning(false);
-							refreshTimer.cancel();
+							stop();
 						}
 					}
 				});
@@ -287,11 +286,16 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 		refreshTimer.cancel();
 
-		canvas.removeListener(SWT.KeyUp, keyListener);
-		canvas.removeListener(SWT.KeyDown, keyListener);
-		canvas.removeListener(SWT.MouseMove, mouseListener);
-		canvas.removeListener(SWT.MouseUp, mouseListener);
-		canvas.removeListener(SWT.MouseDown, mouseListener);
+		canvas.getDisplay().syncExec(new Runnable(){
+			public void run() {
+				canvas.removeListener(SWT.KeyUp, keyListener);
+				canvas.removeListener(SWT.KeyDown, keyListener);
+				canvas.removeListener(SWT.MouseMove, mouseListener);
+				canvas.removeListener(SWT.MouseUp, mouseListener);
+				canvas.removeListener(SWT.MouseDown, mouseListener);
+			}
+			
+		});
 
 		keyListener = null;
 
@@ -329,7 +333,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
 					"Remote Display update screen error : " + e.getMessage());
-			setRunning(false);
+			stop();
 
 		}
 
@@ -353,7 +357,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
 					REMOTE_DISPLAY_KEY_EVENT_ERROR + e.getMessage());
-			setRunning(false);
+			stop();
 
 		}
 	}
@@ -368,7 +372,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
 					REMOTE_DISPLAY_MOUSE_EVENT_ERROR + e.getMessage());
-			setRunning(false);
+			stop();
 
 		}
 	}

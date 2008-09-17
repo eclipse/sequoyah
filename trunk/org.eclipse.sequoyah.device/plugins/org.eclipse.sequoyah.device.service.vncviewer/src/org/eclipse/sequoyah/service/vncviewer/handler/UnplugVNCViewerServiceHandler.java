@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  ********************************************************************************/
 
 package org.eclipse.tml.service.vncviewer.handler;
@@ -26,38 +27,29 @@ import org.eclipse.tml.protocol.PluginProtocolActionDelegate;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView;
 
-public class UnplugVNCViewerServiceHandler extends ServiceHandler
-{
+public class UnplugVNCViewerServiceHandler extends ServiceHandler {
 
-    public UnplugVNCViewerServiceHandler()
-    {
+    public UnplugVNCViewerServiceHandler() {
 
         //VNCViewerView.stop();
         //VNCViewerView.
 
     }
 
-    @Override
-    public IServiceHandler newInstance()
-    {
+    public IServiceHandler newInstance() {
         return new UnplugVNCViewerServiceHandler();
     }
 
-    @Override
     public IStatus runService(IInstance instance, Map<Object, Object> arguments,
-            IProgressMonitor monitor)
-    {
-        // TODO Auto-generated method stub
+            IProgressMonitor monitor) {
 
-        VNCViewerView.stop();
+    	VNCViewerView.stop();
 
-        try
-        {
-        	ProtocolHandle handle = null;
+        try {
+        	ProtocolHandle handle = VNCViewerView.protocolHandle;
             PluginProtocolActionDelegate.stopProtocol(handle);            
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -65,10 +57,7 @@ public class UnplugVNCViewerServiceHandler extends ServiceHandler
         return Status.OK_STATUS;
     }
 
-    @Override
-    public IStatus updatingService(IInstance instance, IProgressMonitor monitor)
-    {
-        // TODO Auto-generated method stub
+    public IStatus updatingService(IInstance instance, IProgressMonitor monitor) {
         return Status.OK_STATUS;
     }
 
