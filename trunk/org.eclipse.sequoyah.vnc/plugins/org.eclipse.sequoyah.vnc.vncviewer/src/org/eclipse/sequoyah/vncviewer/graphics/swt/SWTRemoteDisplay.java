@@ -16,6 +16,8 @@
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
+ * Leo Andrade (Eldorado Research Institute) - Bug [247973] - Listener to key events is not working at SWTRemoteDisplay
+ * 
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -155,6 +157,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 					try {
 						keyEvent(ev);
 						updateRequest(true);
+						notifyListeners(ev.type, ev);
 					} catch (Exception e) {
 						log(SWTRemoteDisplay.class).error(
 								"Remote Display error on key event.");
