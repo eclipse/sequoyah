@@ -12,6 +12,7 @@
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248037] - Action for stop connection on VNC Viewer
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -156,8 +157,6 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void cancelPressed() {
-	
-		VNCViewerView.stop();
 		super.cancelPressed();
 	}
 	

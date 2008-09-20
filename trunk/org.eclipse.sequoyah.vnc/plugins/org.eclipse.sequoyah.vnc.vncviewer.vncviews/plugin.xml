@@ -12,6 +12,7 @@ http://www.eclipse.org/legal/epl-v10.html
  
  Contributors:
  Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
+ Daniel Barboza Franco (Eldorado Research Institute) -  [248037] - Action for stop connection on VNC Viewer
 -->
 
 <plugin>
@@ -45,6 +46,16 @@ http://www.eclipse.org/legal/epl-v10.html
                style="push"
                toolbarPath="additions">
                toolbarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.tml.vncviewer.vncviews.views.ViewActionStopConnection"
+               icon="icons/stop.png"
+               id="org.eclipse.tml.vncviewer.vncviews.stopConnectionAction"
+               label="%action.stop.name"
+               state="false"
+               style="push"
+               toolbarPath="additions">
+            toolbarPath="additions">
          </action>
          <action
                class="org.eclipse.tml.vncviewer.vncviews.views.ViewActionZoomOut"
