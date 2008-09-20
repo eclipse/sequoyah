@@ -10,6 +10,7 @@
  * Contributors:
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244805] - Improvements on Instance view
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247333] - New icons for Start and Stop
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui;
 
@@ -36,6 +37,7 @@ public class DeviceUIPlugin extends BasePlugin {
 	public static final String ICON_INACTIVE = "ICON_INACTIVE";
 	public static final String ICON_HORIZONTAL = "ICON_HORIZONTAL";
 	public static final String ICON_VERTICAL = "ICON_VERTICAL";
+	public static final String ICON_FILTER = "ICON_FILTER";
 	
 	// The shared instance
 	private static DeviceUIPlugin plugin;
@@ -92,6 +94,7 @@ public class DeviceUIPlugin extends BasePlugin {
 		putImageInRegistry(ICON_REMOVE, path+"remove.gif");
 		putImageInRegistry(ICON_HORIZONTAL, path+"full/obj16/horizontal.gif");
 		putImageInRegistry(ICON_VERTICAL, path+"full/obj16/vertical.gif");
+		putImageInRegistry(ICON_FILTER, path+"full/obj16/filter.gif");
 	}
 
 

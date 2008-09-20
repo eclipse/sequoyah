@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247085] - Instance manage view buttons are resizing after applying services filter  
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -67,7 +68,7 @@ public class InstanceServicesComposite extends Composite {
 			super("filter");
 			setToolTipText("Filter services by availability");
 			setChecked(!showAllServices);
-			setImageDescriptor(DeviceUIPlugin.getDefault().getImageDescriptor(DeviceUIPlugin.ICON_SERVICE));
+			setImageDescriptor(DeviceUIPlugin.getDefault().getImageDescriptor(DeviceUIPlugin.ICON_FILTER));
 		}
 		
 		public void run() {

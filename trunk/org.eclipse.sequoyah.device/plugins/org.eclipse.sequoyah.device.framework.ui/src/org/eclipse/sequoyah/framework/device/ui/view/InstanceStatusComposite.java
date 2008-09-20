@@ -12,6 +12,7 @@
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244856] - Instance View usability should be improved
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247085] - Instance manage view buttons are resizing after applying services filter
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247288] - Exceptions after Instance Mgt View is closed
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -659,7 +660,7 @@ public class InstanceStatusComposite extends Composite
 
         public WizardDropDownAction()
         {
-            ImageDescriptor descriptor= AbstractUIPlugin.imageDescriptorFromPlugin(DeviceUIPlugin.PLUGIN_ID, "icons/full/obj16/device.gif");
+            ImageDescriptor descriptor= AbstractUIPlugin.imageDescriptorFromPlugin(DeviceUIPlugin.PLUGIN_ID, "icons/full/obj16/new_instance.gif");
             setHoverImageDescriptor(descriptor);
             setImageDescriptor(descriptor); 
             
