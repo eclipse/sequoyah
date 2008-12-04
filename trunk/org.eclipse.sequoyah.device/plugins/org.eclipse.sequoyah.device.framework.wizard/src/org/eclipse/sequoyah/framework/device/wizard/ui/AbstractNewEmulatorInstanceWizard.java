@@ -11,6 +11,7 @@
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
  * Otávio Ferranti (Motorola) - bug#221733 - Enhancing the device instance wizard
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244856] - Instance View usability should be improved
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.wizard.ui;
@@ -24,9 +25,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.tml.framework.device.manager.DeviceManager;
+import org.eclipse.tml.framework.device.DeviceUtils;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
-import org.eclipse.tml.framework.device.model.IDevice;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstanceBuilder;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardConstants;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardPlugin;
@@ -54,7 +55,7 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
 
     private DeviceWizardBean bean;
 
-    private IDevice device;
+    private IDeviceType device;
 
     private String wizardId;
 
@@ -64,8 +65,8 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
     {
         this.wizardId = wizardId;
         this.pluginId = pluginId;
-        device = DeviceManager.getInstance().getDevice(deviceId);
-        DeviceWizardPlugin.logInfo("Device for Wizard:" + device.getName());
+        device = DeviceUtils.getDeviceTypeById(deviceId);
+        DeviceWizardPlugin.logInfo("Device for Wizard:" + device.getBundleName());
 
         // load necessary information on object creation
         initializeBean();
@@ -293,7 +294,7 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
         return new DefaultInstanceBuilder(getDefaultProjectPage(), getProperties());
     }
 
-    public IDevice getDevice()
+    public IDeviceType getDevice()
     {
         return device;
     }

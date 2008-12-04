@@ -11,6 +11,7 @@
  * Contributors:
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247085] - Instance manage view buttons are resizing after applying services filter  
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -35,8 +36,8 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.tml.framework.device.manager.DeviceManager;
-import org.eclipse.tml.framework.device.model.IDevice;
+import org.eclipse.tml.framework.device.DeviceUtils;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandlerAction;
@@ -173,8 +174,8 @@ public class InstanceServicesComposite extends Composite {
 		servicesComposite.setLayout(rowLayout);
 
 		if (instance != null)
-		{
-			IDevice device = DeviceManager.getInstance().getDevice(instance);
+		{			
+			IDeviceType device = DeviceUtils.getDeviceType(instance);
 			List<IService> services = device.getServices();
 			for (IService service:services){
 				if (service.isVisible()) {

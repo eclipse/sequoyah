@@ -9,15 +9,15 @@
  * [244810] Migrating Device View and Instance View to a separate plugin
  * 
  * Contributors:
- * name (company) - description.
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.provider;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.tml.framework.device.model.IDevice;
-import org.eclipse.tml.framework.device.model.IDeviceRegistry;
+import org.eclipse.tml.framework.device.model.IDeviceType;
+import org.eclipse.tml.framework.device.model.IDeviceTypeRegistry;
 import org.eclipse.tml.framework.device.model.IService;
 
 public class DeviceContentProvider implements ITreeContentProvider {
@@ -51,33 +51,25 @@ public class DeviceContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TreeViewer)viewer;
 		if(oldInput != null) {
-			removeListenerFrom((IDeviceRegistry)oldInput);
+			removeListenerFrom((IDeviceTypeRegistry)oldInput);
 		}
 		if(newInput != null) {
-			addListenerTo((IDeviceRegistry)newInput);
+			addListenerTo((IDeviceTypeRegistry)newInput);
 		}
 	}
 	
 	/** Because the domain model does not have a richer
 	 * listener model, recursively remove this listener
 	 * from each child box of the given box. */
-	protected void removeListenerFrom(IDeviceRegistry box) {
-	//	box.removeListener(this);
-		//for (Iterator iterator = box.getBoxes().iterator(); iterator.hasNext();) {
-			//MovingBox aBox = (MovingBox) iterator.next();
-			//removeListenerFrom(aBox);
-		//}
+	protected void removeListenerFrom(IDeviceTypeRegistry box) {
+	
 	}
 	
 	/** Because the domain model does not have a richer
 	 * listener model, recursively add this listener
 	 * to each child box of the given box. */
-	protected void addListenerTo(IDeviceRegistry box) {
-		//box.addListener(this);
-		//for (Iterator iterator = box.getBoxes().iterator(); iterator.hasNext();) {
-		//	MovingBox aBox = (MovingBox) iterator.next();
-		//	addListenerTo(aBox);
-		//}
+	protected void addListenerTo(IDeviceTypeRegistry box) {
+	
 	}
 	
 	
@@ -85,11 +77,11 @@ public class DeviceContentProvider implements ITreeContentProvider {
 	 * @see ITreeContentProvider#getChildren(Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
-		if(parentElement instanceof IDeviceRegistry) {
-			IDeviceRegistry registry = (IDeviceRegistry)parentElement;
-			return registry.getDevices().toArray();
-		} else if(parentElement instanceof IDevice) {
-			IDevice device = (IDevice)parentElement;
+		if(parentElement instanceof IDeviceTypeRegistry) {
+			IDeviceTypeRegistry registry = (IDeviceTypeRegistry)parentElement;
+			return registry.getDeviceTypes().toArray();
+		} else if(parentElement instanceof IDeviceType) {
+			IDeviceType device = (IDeviceType)parentElement;
 			return device.getServices().toArray();
 		} else if(parentElement instanceof IService) {
 			IService service = (IService)parentElement;

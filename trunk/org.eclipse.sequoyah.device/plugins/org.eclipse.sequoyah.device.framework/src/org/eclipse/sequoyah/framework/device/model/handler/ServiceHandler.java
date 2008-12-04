@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.model.handler;
 
@@ -24,7 +25,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
-import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.status.IStatusTransition;

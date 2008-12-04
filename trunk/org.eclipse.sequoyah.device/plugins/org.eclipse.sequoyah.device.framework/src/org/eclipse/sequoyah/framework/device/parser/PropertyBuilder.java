@@ -8,23 +8,14 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.parser;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.framework.device.DevicePlugin;
-//import org.jdom.Document;
-//import org.jdom.Element;
-//import org.jdom.JDOMException;
-//import org.jdom.input.SAXBuilder;
-//import org.jdom.output.XMLOutputter;
 
 public class PropertyBuilder {
 

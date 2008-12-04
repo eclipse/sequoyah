@@ -9,7 +9,7 @@
  * [244810] Migrating Device View and Instance View to a separate plugin
  * 
  * Contributors:
- * name (company) - description.
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view;
 
@@ -25,9 +25,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tml.framework.device.factory.DeviceRegistry;
-import org.eclipse.tml.framework.device.manager.DeviceManager;
-import org.eclipse.tml.framework.device.model.IDeviceRegistry;
+import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
+import org.eclipse.tml.framework.device.model.IDeviceTypeRegistry;
 import org.eclipse.tml.framework.device.ui.view.provider.DeviceContentProvider;
 import org.eclipse.tml.framework.device.ui.view.provider.DeviceLabelProvider;
 import org.eclipse.ui.part.ViewPart;
@@ -48,7 +47,7 @@ public class DeviceView extends ViewPart {
 	protected ViewerFilter onlyBoardGamesFilter, atLeastThreeFilter;
 	protected ViewerSorter booksBoxesGamesSorter, noArticleSorter;
 	
-	protected IDeviceRegistry root;
+	protected IDeviceTypeRegistry root;
 	
 	/**
 	 * The constructor.
@@ -107,83 +106,15 @@ public class DeviceView extends ViewPart {
 	}
 	
 	protected void createFiltersAndSorters() {
-		//atLeastThreeFilter = new ThreeItemFilter();
-		//onlyBoardGamesFilter = new BoardgameFilter();
-		//booksBoxesGamesSorter = new BookBoxBoardSorter();
-		//noArticleSorter = new NoArticleSorter();
+		//
 	}
 
 	protected void hookListeners() {
-//		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-//			public void selectionChanged(SelectionChangedEvent event) {
-//				// if the selection is empty clear the label
-//				if(event.getSelection().isEmpty()) {
-//					text.setText("");
-//					return;
-//				}
-//				if(event.getSelection() instanceof IStructuredSelection) {
-//					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-//					StringBuffer toShow = new StringBuffer();
-//					for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
-//						Object domain = (Model) iterator.next();
-//						String value = labelProvider.getText(domain);
-//						toShow.append(value);
-//						toShow.append(", ");
-//					}
-//					// remove the trailing comma space pair
-//					if(toShow.length() > 0) {
-//						toShow.setLength(toShow.length() - 2);
-//					}
-//					text.setText(toShow.toString());
-//				}
-//			}
-//		});
+		//
 	}
 	
 	protected void createActions() {
-//		onlyBoardGamesAction = new Action("Only Board Games") {
-//			public void run() {
-//				updateFilter(onlyBoardGamesAction);
-//			}
-//		};
-//		onlyBoardGamesAction.setChecked(false);
-//		
-//		atLeatThreeItems = new Action("Boxes With At Least Three Items") {
-//			public void run() {
-//				updateFilter(atLeatThreeItems);
-//			}
-//		};
-//		atLeatThreeItems.setChecked(false);
-//		
-//		booksBoxesGamesAction = new Action("Books, Boxes, Games") {
-//			public void run() {
-//				updateSorter(booksBoxesGamesAction);
-//			}
-//		};
-//		booksBoxesGamesAction.setChecked(false);
-//		
-//		noArticleAction = new Action("Ignoring Articles") {
-//			public void run() {
-//				updateSorter(noArticleAction);
-//			}
-//		};
-//		noArticleAction.setChecked(false);
-//		
-//		addBookAction = new Action("Add Book") {
-//			public void run() {
-//				addNewBook();
-//			}			
-//		};
-//		addBookAction.setToolTipText("Add a New Book");
-//		addBookAction.setImageDescriptor(DevicePlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_NEW_BOOK));
-//
-//		removeAction = new Action("Delete") {
-//			public void run() {
-//				removeSelected();
-//			}			
-//		};
-//		removeAction.setToolTipText("Delete");
-//		removeAction.setImageDescriptor(DevicePlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_REMOVE));		
+		//
 	}
 	
 	/** Add a new book to the selected moving box.
@@ -192,19 +123,7 @@ public class DeviceView extends ViewPart {
 	 * 
 	 * If nothing is selected add to the root. */
 	protected void addNewBook() {
-//		MovingBox receivingBox;
-//		if (treeViewer.getSelection().isEmpty()) {
-//			receivingBox = root;
-//		} else {
-//			IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-//			Model selectedDomainObject = (Model) selection.getFirstElement();
-//			if (!(selectedDomainObject instanceof MovingBox)) {
-//				receivingBox = selectedDomainObject.getParent();
-//			} else {
-//				receivingBox = (MovingBox) selectedDomainObject;
-//			}
-//		}
-//		receivingBox.add(Book.newBook());
+		//
 	}
 
 	/** Remove the selected domain object(s).
@@ -212,19 +131,7 @@ public class DeviceView extends ViewPart {
 	 * 
 	 * If nothing is selected do nothing. */
 	protected void removeSelected() {
-//		if (treeViewer.getSelection().isEmpty()) {
-//			return;
-//		}
-//		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-//		/* Tell the tree to not redraw until we finish
-//		 * removing all the selected children. */
-//		treeViewer.getTree().setRedraw(false);
-//		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
-//			Model model = (Model) iterator.next();
-//			MovingBox parent = model.getParent();
-//			parent.remove(model);
-//		}
-//		treeViewer.getTree().setRedraw(true);
+			//
 	}
 	
 	protected void createMenus() {
@@ -254,51 +161,21 @@ public class DeviceView extends ViewPart {
 	
 	
 	protected void updateSorter(Action action) {
-//		if(action == booksBoxesGamesAction) {
-//			noArticleAction.setChecked(!booksBoxesGamesAction.isChecked());
-//			if(action.isChecked()) {
-//				treeViewer.setSorter(booksBoxesGamesSorter);
-//			} else {
-//				treeViewer.setSorter(null);
-//			}
-//		} else if(action == noArticleAction) {
-//			booksBoxesGamesAction.setChecked(!noArticleAction.isChecked());
-//			if(action.isChecked()) {
-//				treeViewer.setSorter(noArticleSorter);
-//			} else {
-//				treeViewer.setSorter(null);
-//			}
-//		}
-			
+		//			
 	}
 	
 	/* Multiple filters can be enabled at a time. */
 	protected void updateFilter(Action action) {
-//		if(action == atLeatThreeItems) {
-//			if(action.isChecked()) {
-//				treeViewer.addFilter(atLeastThreeFilter);
-//			} else {
-//				treeViewer.removeFilter(atLeastThreeFilter);
-//			}
-//		} else if(action == onlyBoardGamesAction) {
-//			if(action.isChecked()) {
-//				treeViewer.addFilter(onlyBoardGamesFilter);
-//			} else {
-//				treeViewer.removeFilter(onlyBoardGamesFilter);
-//			}
-//		}
+		//
 	}
 	
 	protected void createToolbar() {
-//		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
-//		toolbarManager.add(addBookAction);
-//		toolbarManager.add(removeAction);
+		//
 	}
 	
 	
-	public IDeviceRegistry getInitalInput() {
-		DeviceManager.getInstance().loadDevices();
-		return DeviceRegistry.getInstance();
+	public IDeviceTypeRegistry getInitalInput() {
+		return DeviceTypeRegistry.getInstance();
 	}
 
 	/*

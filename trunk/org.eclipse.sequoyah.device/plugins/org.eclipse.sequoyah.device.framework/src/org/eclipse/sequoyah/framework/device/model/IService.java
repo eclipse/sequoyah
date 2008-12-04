@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Daniel Barboza Franco - Bug [239970] - Invisible Services
+ * Yu-Fen Kuo (MontaVista) - Bug [236476 ]- provide a generic device type 
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.model;
@@ -54,9 +55,9 @@ public interface IService {
 
 	void setHandler(IServiceHandler handler);
 	
-	IDevice getParent();
+	IDeviceType getParent();
 	
-	void setParent(IDevice device);
+	void setParent(IDeviceType device);
 	
 	Object clone();
 	

@@ -12,6 +12,7 @@
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Yu-Fen Kuo (MontaVista) - try to replace jdom dependencies with eclipse default xml parsers.
  * Fabio Rigo (Eldorado) - [245114] Enhance persistence policies
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.manager;
 
@@ -37,7 +38,7 @@ import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.manager.persistence.DeviceXmlReader;
 import org.eclipse.tml.framework.device.manager.persistence.DeviceXmlWriter;
 import org.eclipse.tml.framework.device.manager.persistence.TmLDevice;
-import org.eclipse.tml.framework.device.model.IDevice;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceBuilder;
 import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
@@ -52,7 +53,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public class InstanceManager {
 
-	private static final String ELEMENT_DEVICE = "device";
+	private static final String ELEMENT_DEVICE = "deviceType";
 	private static final String ATTR_HANDLER = "handler";
 
 	private static InstanceManager _instance;
@@ -147,13 +148,13 @@ public class InstanceManager {
 		IInstance instance = null;
 		try {
 			IExtension fromPlugin = PluginUtils.getExtension(
-					DevicePlugin.DEVICE_ID, deviceId);
+					DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, deviceId);
 			deviceHandler = (IDeviceHandler) PluginUtils
 					.getExecutableAttribute(fromPlugin, ELEMENT_DEVICE,
 							ATTR_HANDLER);
 			// getExecutable(DevicePlugin.DEVICE_ID, deviceId);
 			instance = deviceHandler.createDeviceInstance(name + deviceId);
-			instance.setDevice(deviceId);
+			instance.setDeviceTypeId(deviceId);
 			instance.setName(name);
 			instance.setStatus(status);
 			instance.setProperties((Properties) properties.clone());
@@ -185,7 +186,7 @@ public class InstanceManager {
 	 * @param projectBuilder
 	 * @param monitor
 	 */
-	public void createProject(IDevice device, IInstanceBuilder projectBuilder,
+	public void createProject(IDeviceType device, IInstanceBuilder projectBuilder,
 			IProgressMonitor monitor) {
 		try {
 			IInstance inst = createInstance(projectBuilder.getProjectName(),

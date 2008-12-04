@@ -8,14 +8,13 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.model.handler;
 
 import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
-import org.eclipse.tml.framework.status.IStatusTransition;
 
 public interface IServiceHandler extends Cloneable {
 	public void setParent(IServiceHandler handler);

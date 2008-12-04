@@ -11,15 +11,16 @@ package org.eclipse.tml.framework.device;
  * 
  * Contributors:
  * Fabio Fantato (Eldorado) - [244069] -  Need some APIs that could be common use of the framework
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.tml.framework.device.factory.DeviceRegistry;
+import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
-import org.eclipse.tml.framework.device.model.IDevice;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
 
@@ -38,14 +39,14 @@ public abstract class DeviceUtils
      */
     public static String[] getAllDeviceNames()
     {
-        DeviceRegistry deviceRegistry = DeviceRegistry.getInstance();
-        Collection<IDevice> deviceList = deviceRegistry.getDevices();
-        String[] deviceNames = new String[deviceList.size()];
+        DeviceTypeRegistry deviceTypeRegistry = DeviceTypeRegistry.getInstance();
+        Collection<IDeviceType> deviceTypeList = deviceTypeRegistry.getDeviceTypes();
+        String[] deviceNames = new String[deviceTypeList.size()];
 
         int i = 0;
-        for (IDevice device : deviceList)
+        for (IDeviceType device : deviceTypeList)
         {
-            deviceNames[i++] = device.getName();
+            deviceNames[i++] = device.getBundleName();
         }
         return deviceNames;
     }
@@ -90,12 +91,12 @@ public abstract class DeviceUtils
      * 
      * @return
      */
-    public static IService getServiceById(IDevice device, String serviceId)
+    public static IService getServiceById(IDeviceType deviceType, String serviceId)
     {
         IService serviceToReturn = null;
-        if ((device != null) && (serviceId != null))
+        if ((deviceType != null) && (serviceId != null))
         {
-            for (IService aService : device.getServices())
+            for (IService aService : deviceType.getServices())
             {
                 if (serviceId.equals(aService.getId()))
                 {
@@ -107,4 +108,13 @@ public abstract class DeviceUtils
 
         return serviceToReturn;
     }
+
+	public static IDeviceType getDeviceType(IInstance instance) {
+		return getDeviceTypeById(instance.getDeviceTypeId());
+	}
+	
+	public static IDeviceType getDeviceTypeById(String deviceTypeId) {
+		return DeviceTypeRegistry.getInstance().getDeviceTypeById(deviceTypeId);
+	}
+	
 }

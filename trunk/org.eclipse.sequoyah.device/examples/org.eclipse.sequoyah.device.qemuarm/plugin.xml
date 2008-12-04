@@ -4,17 +4,12 @@
    <extension
          id="qemuarmDevice"
          name="qemuarmDevice"
-         point="org.eclipse.tml.device">
-      <device
-            copyright="Motorola Inc. 2007"
-            description="Mobile Emulator for QEMUARM"
-            handler="org.eclipse.tml.device.qemuarm.handler.QEmuARMDeviceHandler"
-            icon="icons/full/obj16/qemuarm.gif"
-            id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
-            name="QEmuARM Mobile Device"
-            provider="Eclipse.org"
-            version="0.2.0">
-      </device>
+         point="org.eclipse.tml.deviceTypes">
+       <deviceType
+         handler="org.eclipse.tml.device.qemuarm.handler.QEmuARMDeviceHandler"
+         id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
+         name="QEmuARM Mobile Device"
+         label="QEmuARM Mobile Device"/>
    </extension>
    <extension
           point="org.eclipse.tml.device.wizard"
@@ -34,6 +29,7 @@
                 device="org.eclipse.tml.device.qemuarm.qemuarmDevice">
           </usage>    
     </extension>
+       
     <extension
          id="qemuarmWizard"
          name="QemuArm Device Instance Wizard"
@@ -65,7 +61,6 @@
          <status
                endId="IDLE"
                haltId="OFF"
-               handler="org.eclipse.tml.device.qemuarm.handler.StartStatusHandler"
                startId="OFF">
          </status>
       </service>
@@ -80,47 +75,31 @@
          <status
                endId="OFF"
                haltId="IDLE"
-               handler="org.eclipse.tml.device.qemuarm.handler.StopStatusHandler"
                startId="IDLE">
          </status>
          <status
                endId="OFF"
                haltId="IDLE-VNC"
-               handler="org.eclipse.tml.device.qemuarm.handler.StopStatusHandler"
                startId="IDLE-VNC">
          </status>
       </service>
    </extension>
    <extension
-
           id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
-
           name="vncViewerService"
-
           point="org.eclipse.tml.serviceDefinition">
-
        <service
-
              id="org.eclipse.tml.service.vncviewer.vncViewerService">
-
           <status
-
                 endId="IDLE-VNC"
-
                 haltId="IDLE"
-
-                handler="org.eclipse.tml.device.qemuarm.handler.VNCStatusHandler"
-
                 startId="IDLE">
-
           </status>
           <status
                 endId="IDLE-VNC"
                 haltId="IDLE-VNC"
-                handler="org.eclipse.tml.device.qemuarm.handler.VNCStatusHandler"
                 startId="IDLE-VNC">
           </status></service>
-
     </extension>
    <extension
          id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
@@ -131,8 +110,7 @@
          <status
                endId="IDLE"
                haltId="IDLE-VNC"
-               handler="org.eclipse.tml.device.qemuarm.handler.UnplugVNCStatusHandler"
-               startId="IDLE-VNC">
+              startId="IDLE-VNC">
          </status>
       </service>
    </extension>

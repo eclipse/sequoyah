@@ -5,17 +5,12 @@
    <extension
          id="qemureactDevice"
          name="qemureactDevice"
-         point="org.eclipse.tml.device">
-      <device
-            copyright="Motorola Inc. 2007"
-            description="Mobile Emulator for QEMUARM"
+         point="org.eclipse.tml.deviceTypes">
+      <deviceType
             handler="org.eclipse.tml.device.qemureact.handler.QEmuReactDeviceHandler"
-            icon="icons/full/obj16/qemureact.gif"
             id="org.eclipse.tml.device.qemureact.qemureactDevice"
             name="QEmuReact Mobile Device"
-            provider="Eclipse.org"
-            version="0.2.0">
-      </device>
+            label="QEmuReact Mobile Device"/>
    </extension>
    <extension
          id="org.eclipse.tml.device.qemureact.qemureactDevice"
@@ -27,7 +22,6 @@
          <status
                endId="IDLE"
                haltId="OFF"
-               handler="org.eclipse.tml.device.qemureact.handler.StartStatusHandler"
                startId="OFF">
          </status>
       </service>
@@ -42,13 +36,11 @@
          <status
                endId="OFF"
                haltId="IDLE"
-               handler="org.eclipse.tml.device.qemureact.handler.StopStatusHandler"
                startId="IDLE">
          </status>
          <status
                endId="OFF"
                haltId="IDLE-VNC"
-               handler="org.eclipse.tml.device.qemureact.handler.StopStatusHandler"
                startId="IDLE-VNC">
          </status>
       </service>
@@ -118,16 +110,12 @@
                 endId="IDLE-VNC"
 
                 haltId="IDLE"
-
-                handler="org.eclipse.tml.device.qemureact.handler.VNCStatusHandler"
-
-                startId="IDLE">
+    startId="IDLE">
 
           </status>
           <status
                 endId="IDLE-VNC"
                 haltId="IDLE-VNC"
-                handler="org.eclipse.tml.device.qemureact.handler.VNCStatusHandler"
                 startId="IDLE-VNC">
           </status></service>
 
@@ -149,8 +137,6 @@
                 endId="IDLE"
 
                 haltId="IDLE-VNC"
-
-                handler="org.eclipse.tml.device.qemureact.handler.UnplugVNCStatusHandler"
 
                 startId="IDLE-VNC">
 

@@ -9,11 +9,12 @@
  * [244805] - Improvements on Instance view  
  *
  * Contributors:
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view.model;
 
-import org.eclipse.tml.framework.device.model.IDevice;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 
 
 public class ViewerDeviceNode extends ViewerAbstractNode
@@ -21,9 +22,9 @@ public class ViewerDeviceNode extends ViewerAbstractNode
     /*
      * The Device
      */
-    private IDevice device;
+    private IDeviceType device;
 
-    public ViewerDeviceNode(IDevice device)
+    public ViewerDeviceNode(IDeviceType device)
     {
         super(null);
         this.device = device;
@@ -36,10 +37,10 @@ public class ViewerDeviceNode extends ViewerAbstractNode
     
     public String getDeviceName()
     {
-        return device.getName();
+        return device.getBundleName();
     }
     
-    public IDevice getDevice()
+    public IDeviceType getDevice()
     {
         return device;
     }

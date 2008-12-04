@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
+ * Yu-Fen Kuo (MontaVista) - bug#236476 - provide a generic device type
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.model;
@@ -27,8 +28,8 @@ public interface IInstance extends IAdaptable {
 	public void setId(String id);
 	public String getName();
 	public void setName(String name);
-	public String getDevice();
-	public void setDevice(String deviceId);
+	public String getDeviceTypeId();
+	public void setDeviceTypeId(String deviceTypeId);
 	public String getStatus();
 	public void setStatus(String status);
 	public Properties getProperties();

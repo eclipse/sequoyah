@@ -9,6 +9,7 @@
  * [244805] - Improvements on Instance view  
  *
  * Contributors:
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view.provider;
@@ -150,7 +151,8 @@ public class InstanceMgtViewLabelProvider extends ColumnLabelProvider
             if (isProvidingForFirstColumn())
             {
                 ViewerDeviceNode node = (ViewerDeviceNode) element;
-                descriptor = node.getDevice().getImage();
+                image = node.getDevice().getImage();
+                return image;
             }
         }
         

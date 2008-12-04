@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Yu-Fen Kuo (MontaVista) - bug#236476 - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.status;
 
@@ -25,8 +25,9 @@ public class StatusRegistry {
 		}
 		
 		public static StatusRegistry getInstance(){
-			if (_instance==null) {
+			if (_instance==null) {				
 				_instance = new StatusRegistry();
+				StatusManager.getInstance().loadStatus();
 			}
 			return _instance;
 		}

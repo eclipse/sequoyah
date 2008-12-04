@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244805] - Improvements on Instance view
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247333] - New icons for Start and Stop
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui;
 
@@ -24,7 +25,7 @@ public class DeviceUIPlugin extends BasePlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.tml.framework.device.ui";
-	public static final String ICON_DEVICE= "ICON_DEVICE";
+	public static final String ICON_DEVICE = "ICON_DEVICE";
 	public static final String ICON_SERVICE = "ICON_SERVICE";
 	public static final String ICON_MOVING = "ICON_MOVING";
 	public static final String ICON_BOOK = "ICON_BOOK";
@@ -38,6 +39,7 @@ public class DeviceUIPlugin extends BasePlugin {
 	public static final String ICON_HORIZONTAL = "ICON_HORIZONTAL";
 	public static final String ICON_VERTICAL = "ICON_VERTICAL";
 	public static final String ICON_FILTER = "ICON_FILTER";
+	public static final String IMAGEKEY_NEW_DEVICE_WIZARD = "IMAGEKEY_NEW_DEVICE_WIZARD";
 	
 	// The shared instance
 	private static DeviceUIPlugin plugin;
@@ -50,6 +52,7 @@ public class DeviceUIPlugin extends BasePlugin {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
@@ -59,6 +62,7 @@ public class DeviceUIPlugin extends BasePlugin {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
@@ -95,6 +99,8 @@ public class DeviceUIPlugin extends BasePlugin {
 		putImageInRegistry(ICON_HORIZONTAL, path+"full/obj16/horizontal.gif");
 		putImageInRegistry(ICON_VERTICAL, path+"full/obj16/vertical.gif");
 		putImageInRegistry(ICON_FILTER, path+"full/obj16/filter.gif");
+		putImageInRegistry(IMAGEKEY_NEW_DEVICE_WIZARD, path+"full/obj16/device.gif"); //$NON-NLS-1$
+		
 	}
 
 

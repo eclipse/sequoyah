@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
+ * Yu-Fen Kuo (MontaVista) - bug#236476 - Provide a generic device type
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.internal.model;
@@ -23,7 +24,7 @@ import org.eclipse.tml.framework.device.model.IInstance;
 public class MobileInstance implements IInstance {
 	private String id;
 	private String name;
-	private String deviceId;
+	private String deviceTypeId;
 	private String status;
 	private Properties properties;
 	private int pid;
@@ -85,19 +86,19 @@ public class MobileInstance implements IInstance {
 	}
 	
 	/**
-	 * Retieves the device id.
-	 * @return The device id.
+	 * Retrieves the device type id.
+	 * @return The device type id.
 	 */
-	public String getDevice() {
-		return deviceId;
+	public String getDeviceTypeId() {
+		return deviceTypeId;
 	}
 
 	/**
-	 * Sets the device id.
-	 * @param deviceId - The device id.
+	 * Sets the device type id.
+	 * @param deviceTypeId - The device type id.
 	 */
-	public void setDevice(String deviceId) {
-		this.deviceId = deviceId;
+	public void setDeviceTypeId(String deviceTypeId) {
+		this.deviceTypeId = deviceTypeId;
 	}
 	
 	/**
@@ -135,7 +136,7 @@ public class MobileInstance implements IInstance {
 		return "[Device Instance: " +
 				"id=" + (id==null?"":id) +
 				",name=" + (name==null?"":name) +
-				",device=" + (deviceId==null?"":deviceId) +
+				",deviceTypeId=" + (deviceTypeId==null?"":deviceTypeId) +
 				",status=" + (status==null?"":status) +
 				"]";
 	}

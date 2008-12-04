@@ -14,6 +14,7 @@
  * Fabio Rigo (Eldorado Research Institute) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
  * Fabio Rigo (Eldorado Research Institute) - [245114] Enhance persistence policies
  * Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view;
 
@@ -44,13 +45,13 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.tml.framework.device.DeviceUtils;
 import org.eclipse.tml.framework.device.events.IInstanceListener;
 import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
-import org.eclipse.tml.framework.device.manager.DeviceManager;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
-import org.eclipse.tml.framework.device.model.IDevice;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
 import org.eclipse.tml.framework.device.model.IService;
@@ -329,7 +330,8 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 	}
 
 	protected void fillMenuContext(Menu menu, IInstance instance) {
-        IDevice device = DeviceManager.getInstance().getDevice(instance);
+        IDeviceType device = DeviceUtils.getDeviceType(instance); 
+        	
 		MenuItem newItem = null;
 		
 		newItem = new MenuItem(menu, SWT.PUSH);

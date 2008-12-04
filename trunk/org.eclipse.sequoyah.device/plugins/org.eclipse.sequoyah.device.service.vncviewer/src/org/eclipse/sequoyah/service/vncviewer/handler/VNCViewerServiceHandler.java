@@ -13,6 +13,7 @@
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 
 package org.eclipse.tml.service.vncviewer.handler;
@@ -111,7 +112,7 @@ public class VNCViewerServiceHandler extends ServiceHandler
          *  The code below is a fix for QEMU-ARM which expect 
          *  the sequence ctrl+alt+3 to show it's display. 
          *****/
-        if (instance.getDevice().equals("org.eclipse.tml.device.qemuarm.qemuarmDevice"))
+        if (instance.getDeviceTypeId().equals("org.eclipse.tml.device.qemuarm.qemuarmDevice"))
         {
 
             try

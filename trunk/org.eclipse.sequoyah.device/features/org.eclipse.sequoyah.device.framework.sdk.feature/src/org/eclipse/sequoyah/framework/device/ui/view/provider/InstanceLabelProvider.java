@@ -9,7 +9,8 @@
  * 
  * Contributors:
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence* Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
- * Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin 
+ * Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
+ *  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.provider;
 
@@ -22,7 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.tml.framework.device.DevicePlugin;
-import org.eclipse.tml.framework.device.model.IDevice;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
 import org.eclipse.tml.framework.status.IStatus;
@@ -56,8 +57,8 @@ public class InstanceLabelProvider extends LabelProvider {
 		} else if (element instanceof LabelStatus) {
 			IStatus status = StatusRegistry.getInstance().getStatus(((LabelStatus)element).getStatus());
 			descriptor = status.getImage();
-		} else if (element instanceof IDevice) {
-			descriptor = ((IDevice)element).getImage();
+		} else if (element instanceof IDeviceType) {
+			return ((IDeviceType)element).getImage();
 		}else if (element instanceof String || element instanceof Properties) {
 			descriptor = DevicePlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_PROPERTY);;
 		} else {
@@ -97,11 +98,11 @@ public class InstanceLabelProvider extends LabelProvider {
 			} else {
 				return name;
 			}
-		} else if (element instanceof IDevice) {
+		} else if (element instanceof IDeviceType) {
 			if((element == null)) {
 				return InstanceLabelProvider.NO_DEVICE;
 			} else {
-				return ((IDevice)element).getName();
+				return ((IDeviceType)element).getLabel();
 			}
 		} else if (element instanceof String) {
 			return (String)element;

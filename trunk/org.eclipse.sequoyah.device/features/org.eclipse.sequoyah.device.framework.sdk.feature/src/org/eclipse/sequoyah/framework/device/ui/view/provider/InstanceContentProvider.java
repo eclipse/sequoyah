@@ -11,6 +11,7 @@
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
  * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.provider;
 
@@ -19,11 +20,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.tml.framework.device.manager.DeviceManager;
-import org.eclipse.tml.framework.device.model.IDevice;
+import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
 import org.eclipse.tml.framework.status.LabelStatus;
@@ -95,7 +97,7 @@ public class InstanceContentProvider implements ITreeContentProvider {
 		} else if(parentElement instanceof IInstance) {
 			IInstance instance = (IInstance)parentElement;
 			List child = new LinkedList();
-			IDevice device = DeviceManager.getInstance().getDevice(instance);
+			IDeviceType device = DeviceTypeRegistry.getInstance().getDeviceTypeById(instance.getDeviceTypeId());
 			if (device==null) {
 				//child.add(new InactiveMobileStatus());	
 			} else {

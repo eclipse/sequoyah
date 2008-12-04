@@ -9,6 +9,8 @@
  * 
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * 
  ********************************************************************************/
 package org.eclipse.tml.framework.device.factory;
 
@@ -20,13 +22,15 @@ import org.eclipse.tml.common.utilities.exception.TmLExceptionHandler;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionHandler;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
-import org.eclipse.tml.framework.device.internal.model.MobileDevice;
-import org.eclipse.tml.framework.device.model.IDevice;
+import org.eclipse.tml.framework.device.internal.model.MobileDeviceType;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
 
+@Deprecated
 public class DeviceFactory {
 	private static final String ELEMENT_DEVICE = "device";
 	private static final String ATR_ID = "id";
+	private static final String ATR_LABEL = "label";
 	private static final String ATR_NAME = "name";
 	private static final String ATR_ICON = "icon";
 	private static final String ATR_DESCRIPTION = "description";
@@ -36,13 +40,15 @@ public class DeviceFactory {
 	private static final String ATR_HANDLER = "handler";
 	
 	
-	@SuppressWarnings("deprecation")
-	public static IDevice createDevice(String deviceId) {
+	public static IDeviceType createDevice(String deviceId) {
 
-		IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.DEVICE_ID, deviceId);
-	
-		IDevice device = new MobileDevice(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_ID));
-		device.setName(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_NAME));
+		IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, deviceId);
+
+		String id = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_ID);
+		String label = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_LABEL);
+		
+		IDeviceType device = new MobileDeviceType(id,label);
+		device.setBundleName(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_NAME));
 		String iconName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_ICON);		
 		ImageDescriptor image = null;
 			try {
@@ -50,12 +56,7 @@ public class DeviceFactory {
 		} catch (Throwable t) {
 			TmLExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}
-		device.setImage(image);
-		device.setDescription(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_DESCRIPTION));
-		device.setProvider(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_PROVIDER));
-		device.setCopyright(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE,ATR_COPYRIGHT));
-		device.setVersion(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_VERSION));
-		device.setDefaultProperties(DevicePlugin.DEFAULT_PROPERTIES);
+		device.setProperties(DevicePlugin.DEFAULT_PROPERTIES);
 		try {
 			device.setHandler((IDeviceHandler)PluginUtils.getExecutableAttribute(fromPlugin, ELEMENT_DEVICE, ATR_HANDLER));
 		} catch (CoreException e) {

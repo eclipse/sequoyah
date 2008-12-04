@@ -7,6 +7,7 @@
  * Initial Contributors:
  * Fabio Rigo (Eldorado Research Institute) 
  * [245114] Enhance persistence policies
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.manager.persistence;
@@ -162,7 +163,7 @@ public class DeviceXmlWriter implements IDeviceXmlTags
                     .createElement(TML_XML_INSTANCE);
             element.setAttribute(TML_XML_INSTANCE_NAME, iIInst
                     .getName());
-            String xml_device_id = iIInst.getDevice();
+            String xml_device_id = iIInst.getDeviceTypeId();
 
             element.setAttribute(TML_XML_INSTANCE_DEVICE_ID,
                     xml_device_id);
@@ -198,7 +199,7 @@ public class DeviceXmlWriter implements IDeviceXmlTags
         Iterator<IInstance> iterator = registry.getInstances().iterator();
         while (iterator.hasNext()) {
             IInstance iIInst = iterator.next();
-            String deviceId = iIInst.getDevice();
+            String deviceId = iIInst.getDeviceTypeId();
             if (!devices.containsKey(deviceId)) {
                 TmLDevice device = new TmLDevice(deviceId, deviceId);
                 devices.put(deviceId, device);

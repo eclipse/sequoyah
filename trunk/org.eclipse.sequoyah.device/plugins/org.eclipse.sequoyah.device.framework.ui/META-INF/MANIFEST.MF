@@ -13,3 +13,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.eclipse.tml.framework.device.wizard;bundle-version="0.2.0"
 Eclipse-LazyStart: true
+Export-Package: org.eclipse.tml.framework.device.ui,
+ org.eclipse.tml.framework.device.ui.editors,
+ org.eclipse.tml.framework.device.ui.exception,
+ org.eclipse.tml.framework.device.ui.internal.model,
+ org.eclipse.tml.framework.device.ui.model,
+ org.eclipse.tml.framework.device.ui.view,
+ org.eclipse.tml.framework.device.ui.view.model,
+ org.eclipse.tml.framework.device.ui.view.provider,
+ org.eclipse.tml.framework.device.ui.wizard

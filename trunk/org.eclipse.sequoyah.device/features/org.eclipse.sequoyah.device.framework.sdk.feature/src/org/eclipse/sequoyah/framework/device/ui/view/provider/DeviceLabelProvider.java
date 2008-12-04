@@ -9,7 +9,7 @@
  * [244810] Migrating Device View and Instance View to a separate plugin
  * 
  * Contributors:
- * name (company) - description.
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view.provider;
 
@@ -21,33 +21,35 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.tml.framework.device.DevicePlugin;
-import org.eclipse.tml.framework.device.model.IDevice;
-import org.eclipse.tml.framework.device.model.IDeviceRegistry;
+import org.eclipse.tml.framework.device.model.IDeviceType;
+import org.eclipse.tml.framework.device.model.IDeviceTypeRegistry;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.status.IStatusTransition;
 
-public class DeviceLabelProvider extends LabelProvider {	
-	private Map imageCache = new HashMap(11);
-	
+public class DeviceLabelProvider extends LabelProvider {
+	private Map<ImageDescriptor, Image> imageCache = new HashMap<ImageDescriptor, Image>(
+			11);
+
 	/*
 	 * @see ILabelProvider#getImage(Object)
 	 */
 	public Image getImage(Object element) {
 		ImageDescriptor descriptor = null;
-		if (element instanceof IDeviceRegistry) {
-			descriptor = ((IDeviceRegistry)element).getImage();
-		} else if (element instanceof IDevice) {
-			descriptor = ((IDevice)element).getImage();
+		if (element instanceof IDeviceTypeRegistry) {
+			descriptor = ((IDeviceTypeRegistry) element).getImage();
+		} else if (element instanceof IDeviceType) {
+			return ((IDeviceType) element).getImage();
 		} else if (element instanceof IService) {
-			descriptor = ((IService)element).getImage();
+			descriptor = ((IService) element).getImage();
 		} else if (element instanceof IStatusTransition) {
-			descriptor = DevicePlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_BOOK);
-		}else {
+			descriptor = DevicePlugin.getDefault().getImageDescriptor(
+					DevicePlugin.ICON_BOOK);
+		} else {
 			throw unknownElement(element);
 		}
 
-		//obtain the cached image corresponding to the descriptor
-		Image image = (Image)imageCache.get(descriptor);
+		// obtain the cached image corresponding to the descriptor
+		Image image = (Image) imageCache.get(descriptor);
 		if (image == null) {
 			image = descriptor.createImage();
 			imageCache.put(descriptor, image);
@@ -59,32 +61,34 @@ public class DeviceLabelProvider extends LabelProvider {
 	 * @see ILabelProvider#getText(Object)
 	 */
 	public String getText(Object element) {
-		if (element instanceof IDeviceRegistry) {
+		if (element instanceof IDeviceTypeRegistry) {
 			return "Device Registry";
-		} else if (element instanceof IDevice) {
-			if(((IDevice)element).getName() == null) {
+		} else if (element instanceof IDeviceType) {
+			if (((IDeviceType) element).getLabel() == null) {
 				return "Device";
 			} else {
-				return ((IDevice)element).getName()+"("+((IDevice)element).getId()+")";
+				return ((IDeviceType) element).getLabel() + "("
+						+ ((IDeviceType) element).getId() + ")";
 			}
 		} else if (element instanceof IService) {
-			return ((IService)element).getName();
-		}else if (element instanceof IStatusTransition) {
-			return ((IStatusTransition)element).toString();
+			return ((IService) element).getName();
+		} else if (element instanceof IStatusTransition) {
+			return ((IStatusTransition) element).toString();
 		} else {
 			throw unknownElement(element);
 		}
 	}
 
 	public void dispose() {
-		for (Iterator i = imageCache.values().iterator(); i.hasNext();) {
+		for (Iterator<Image> i = imageCache.values().iterator(); i.hasNext();) {
 			((Image) i.next()).dispose();
 		}
 		imageCache.clear();
 	}
 
 	protected RuntimeException unknownElement(Object element) {
-		return new RuntimeException("Unknown type of element in tree of type " + element.getClass().getName());
+		return new RuntimeException("Unknown type of element in tree of type "
+				+ element.getClass().getName());
 	}
 
 }

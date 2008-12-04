@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Fabio Rigo (Eldorado Research Institute) - [244951] Implement listener/event mechanism at device framework
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.editors;
@@ -18,33 +19,27 @@ import java.util.Properties;
 
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.ui.dialogs.PropertyPage;
-
-import org.eclipse.tml.framework.device.internal.model.MobileInstance;
-import org.eclipse.tml.framework.device.manager.DeviceManager;
-import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
-import org.eclipse.tml.framework.device.factory.InstanceRegistry;
+import org.eclipse.tml.framework.device.internal.model.MobileInstance;
+import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.ui.DeviceUIResources;
+import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
  * Basic device instance property editor
@@ -147,12 +142,12 @@ public class InstancePropertyEditor extends PropertyPage {
 		label = new Label(composite, SWT.NULL );
         label.setText(InstancePropertyEditor.LABEL_DEVICE_NAME);
         label = new Label(composite, SWT.NULL );
-        label.setText(DeviceManager.getInstance().getDevice(instance).getName());
+        label.setText(instance.getName());
         
 		label = new Label(composite, SWT.NULL );
         label.setText(InstancePropertyEditor.LABEL_DEVICE_CLASS);
 		label = new Label(composite, SWT.NULL );
-        label.setText(instance.getDevice());
+        label.setText(instance.getDeviceTypeId());
 
         label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL );
 		gridData = new GridData(GridData.FILL_HORIZONTAL);

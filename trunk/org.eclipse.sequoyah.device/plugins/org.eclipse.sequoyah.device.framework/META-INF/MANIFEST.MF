@@ -10,15 +10,17 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.tml.common.utilities,
  org.eclipse.core.resources
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tml.framework.device,
  org.eclipse.tml.framework.device.events,
  org.eclipse.tml.framework.device.exception,
  org.eclipse.tml.framework.device.factory,
  org.eclipse.tml.framework.device.internal.model,
  org.eclipse.tml.framework.device.manager,
+ org.eclipse.tml.framework.device.manager.persistence,
  org.eclipse.tml.framework.device.model,
  org.eclipse.tml.framework.device.model.handler,
  org.eclipse.tml.framework.device.parser,
  org.eclipse.tml.framework.status
 Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

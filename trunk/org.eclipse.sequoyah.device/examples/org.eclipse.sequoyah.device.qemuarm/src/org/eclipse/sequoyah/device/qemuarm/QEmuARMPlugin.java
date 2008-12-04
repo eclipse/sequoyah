@@ -9,9 +9,14 @@
  * 
  * Contributors:
  * Fabio Fantato (Eldorado Research Institute) - [221733] Persistence and New wizard for manage Device Instances
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type 
  ********************************************************************************/
 
 package org.eclipse.tml.device.qemuarm;
+
+import java.text.MessageFormat;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.eclipse.tml.common.utilities.BasePlugin;
 import org.osgi.framework.BundleContext;
@@ -36,6 +41,7 @@ public class QEmuARMPlugin extends BasePlugin {
 
 	// The shared instance
 	private static QEmuARMPlugin plugin;
+	private ResourceBundle resourceBundle;
 	
 	/**
 	 * The constructor
@@ -68,6 +74,48 @@ public class QEmuARMPlugin extends BasePlugin {
 	 */
 	public static QEmuARMPlugin getDefault() {
 		return plugin;
+	}
+	
+	/** Returns the string from the plugin's resource bundle, or 'key' if not
+	 * found.
+	 */
+	public static String getResourceString(String key) {
+		ResourceBundle bundle = QEmuARMPlugin.getDefault().getResourceBundle();
+		try {
+			return (bundle != null) ? bundle.getString(key) : key;
+		} catch (MissingResourceException e) {
+			return key;
+		}
+	}
+
+	
+	/** Returns a string formatted from the specified resource string and the
+	 * associated arguments.
+	 * 
+	 * @param key
+	 *            the key associated with the format string in the resource
+	 *            bundle
+	 * @param args
+	 *            items to be expanded into the format string
+	 * @return formatted string
+	 */
+	public static String getResourceString(String key, Object[] args) {
+		return MessageFormat.format(getResourceString(key), args);
+	}
+
+	/**
+	 * Returns the plugin's resource bundle,
+	 */
+	public ResourceBundle getResourceBundle() {
+		try {
+			if (resourceBundle == null)
+				resourceBundle = ResourceBundle.getBundle(PLUGIN_ID
+						+ ".QemuResources"); //$NON-NLS-1$
+		} catch (MissingResourceException e) {
+			//logErrorMessage(e.getMessage());
+			resourceBundle = null;
+		}
+		return resourceBundle;
 	}
 	
 	/* (non-Javadoc)

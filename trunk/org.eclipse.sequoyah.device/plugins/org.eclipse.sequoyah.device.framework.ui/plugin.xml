@@ -2,6 +2,7 @@
 <?eclipse version="3.2"?>
 <plugin>
   
+     <extension-point id="org.eclipse.tml.device.ui.newDeviceWizardPages" name="newDeviceWizardPages definition" schema="schema/org.eclipse.tml.device.ui.newDeviceWizardPages.exsd"/>  
 <extension
       id="org.eclipse.tml.framework.device.ui.views"
       name="Device Framework Views"
@@ -40,4 +41,22 @@
       </enabledWhen>
    </page>
 </extension>
+    <!--extension
+         point="org.eclipse.ui.newWizards">
+     <category
+	   id = "org.eclipse.ui.emulators"
+	   name="Devices and Emulators">
+	 </category>
+      <wizard
+            canFinishEarly="true"
+            category="org.eclipse.ui.emulators"
+            class="org.eclipse.tml.framework.device.ui.wizard.NewDeviceWizard"
+            hasPages="true"
+            icon="icons/full/obj16/new_instance.gif"
+            id="org.eclipse.tml.device.qemu.instance.wizard"
+            name="Instance"
+            project="false">
+            <description>Create a new device instance</description>
+      </wizard>
+   </extension-->
 </plugin>

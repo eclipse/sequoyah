@@ -9,6 +9,7 @@
  * [244805] - Improvements on Instance view  
  *
  * Contributors:
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view.provider;
@@ -18,11 +19,10 @@ import java.util.Map;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.tml.framework.device.factory.DeviceRegistry;
+import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
-import org.eclipse.tml.framework.device.manager.DeviceManager;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
-import org.eclipse.tml.framework.device.model.IDevice;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.ui.view.model.ViewerAbstractNode;
 import org.eclipse.tml.framework.device.ui.view.model.ViewerDeviceNode;
@@ -78,19 +78,19 @@ public class InstanceMgtViewContentProvider implements ITreeContentProvider
             
             Map<String, ViewerDeviceNode> deviceNodeMap = new HashMap<String, ViewerDeviceNode>();
             
-            DeviceManager.getInstance();
-            DeviceRegistry deviceRegistry = DeviceRegistry.getInstance();
-            for (IDevice device : deviceRegistry.getDevices())
+            for (IDeviceType device : DeviceTypeRegistry.getInstance().getDeviceTypes())
             {
-                ViewerDeviceNode deviceNode = new ViewerDeviceNode(device);
-                deviceNodeMap.put(device.getId(), deviceNode);
+            	if (!device.isAbstract()) {
+            		ViewerDeviceNode deviceNode = new ViewerDeviceNode(device);
+            		deviceNodeMap.put(device.getId(), deviceNode);
+            	}
             }
             
             InstanceManager.getInstance(); // TODO ??
             InstanceRegistry instanceRegistry = InstanceRegistry.getInstance();
             for (IInstance instance : instanceRegistry.getInstances())
             {
-                String deviceId = instance.getDevice();
+                String deviceId = instance.getDeviceTypeId();
                 ViewerDeviceNode deviceNode = deviceNodeMap.get(deviceId);
                 
                 if (deviceNode == null)

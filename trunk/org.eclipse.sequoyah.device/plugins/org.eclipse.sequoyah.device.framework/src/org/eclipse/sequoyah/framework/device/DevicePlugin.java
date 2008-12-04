@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,15 +9,21 @@
  * 
  * Contributors:
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247333] - New Icons for Start and Stop
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
 package org.eclipse.tml.framework.device;
 
+import java.net.URL;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.IPropertyConstants;
 import org.eclipse.tml.framework.status.StatusManager;
 import org.eclipse.ui.IStartup;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -27,7 +33,11 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.tml.framework.device";
-	public static final String DEVICE_ID = "org.eclipse.tml.device";
+	public static final String DEVICE_TYPES_EXTENSION_POINT_ID = "org.eclipse.tml.deviceTypes"; //$NON-NLS-1$	
+	
+	@Deprecated
+	public static final String DEVICE_ID = "org.eclipse.tml.device"; //$NON-NLS-1$ 
+	
 	public static final String SERVICE_ID = "org.eclipse.tml.service";
 	public static final String STATUS_ID = "org.eclipse.tml.status";
 	public static final String SERVICE_DEF_ID = "org.eclipse.tml.serviceDefinition";
@@ -111,6 +121,30 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.PORT, IPropertyConstants.DEFAULT_PORT);
 		StatusManager.getInstance().listStatus();
 	}
+	/*
+	 * get image with specified iconPath relative to the bundleName.
+	 * 
+	 * @param bundleName - plugin name @param iconPath - icon path relative to
+	 * the plugin bundle name specified @return image
+	 */
+	public Image getImageFromRegistry(String bundleName, String iconPath) {
+		String key = bundleName + ":" + iconPath; //$NON-NLS-1$
+		Image image = getImageRegistry().get(key);
+		if (image == null) {
+			ImageDescriptor descriptor = null;
+			Bundle bundle = Platform.getBundle(bundleName);
+			URL url = bundle.getResource(iconPath);
+			if (url != null) {
+				descriptor = ImageDescriptor.createFromURL(url);
+			}
 
+			if (descriptor == null) {
+				descriptor = ImageDescriptor.getMissingImageDescriptor();
+			}
+			getImageRegistry().put(key, descriptor);
+			image = getImageRegistry().get(key);
+		}
+		return image;
+	}
 
 }

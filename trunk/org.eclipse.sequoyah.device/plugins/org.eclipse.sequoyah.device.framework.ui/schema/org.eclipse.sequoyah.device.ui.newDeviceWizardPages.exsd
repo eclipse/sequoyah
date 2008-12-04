@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.tml.framework.device">
+<schema targetNamespace="org.eclipse.tml.framework.device.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.tml.framework.device" id="org.eclipse.tml.device" name="Device definition"/>
+         <meta.schema plugin="org.eclipse.tml.framework.device.ui" id="org.eclipse.tml.device.ui.newDeviceWizardPages" name="Custom wizard pages for new device"/>
       </appInfo>
       <documentation>
-         This extension point allow mobile devices be defined for other plugins and connects with the TmL framework
+         [Enter description of this extension point.]
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="device"/>
+            <element ref="wizardPage" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -42,68 +42,48 @@
       </complexType>
    </element>
 
-   <element name="device">
+   <element name="wizardPage">
       <complexType>
+         <sequence>
+            <element ref="deviceType" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A unique identifier for the page which will be used to reference the page.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
+         <attribute name="operationClass" type="string">
             <annotation>
                <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="version" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="provider" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="copyright" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="handler" type="string">
-            <annotation>
-               <documentation>
-                  
+                  Specifies the Java class which implements the operations associated with this page.  The class must implement either the java.lang.Runnable interface, or the org.eclipse.jface.operation.IRunnableWithProgress interface if progress reporting is desired.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.tml.framework.device.model.handler.IDeviceHandler"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.jface.operation.IRunnableWithProgress"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="icon" type="string">
+         <attribute name="pageClass" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Specifies the Java class which implements the added page.  This class must extend org.eclipse.jface.wizard.WizardPage and implement the org.eclipse.tml.framework.device.ui.wizard.IInstanceProperties interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="resource"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.WizardPage:org.eclipse.tml.framework.device.ui.wizard.IInstanceProperties"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="deviceType">
+      <complexType>
+         <attribute name="deviceTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier which references the deviceType id that will be used to determine when to show the wizard page.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -114,7 +94,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         0.2 (Incubation)
+         [Enter the first release in which this extension point appears.]
       </documentation>
    </annotation>
 
@@ -123,7 +103,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         
+         [Enter extension point usage example here.]
       </documentation>
    </annotation>
 
@@ -150,7 +130,7 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Motorola Inc 2007
+         
       </documentation>
    </annotation>
 
