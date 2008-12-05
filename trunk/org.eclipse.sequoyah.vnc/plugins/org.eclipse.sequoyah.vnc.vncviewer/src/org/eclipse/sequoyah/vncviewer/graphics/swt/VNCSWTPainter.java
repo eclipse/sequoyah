@@ -81,7 +81,7 @@ public class VNCSWTPainter implements IVNCPainter, ISWTPainter {
 		case ZRLE_ENCODING:
 
 		default:
-			log(VNCSWTPainter.class).error("This encoding is not supported.");
+			log(VNCSWTPainter.class).error("This encoding is not supported."); //$NON-NLS-1$
 
 		}
 

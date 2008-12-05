@@ -21,21 +21,21 @@ import org.osgi.framework.BundleContext;
 public class QEmuReactPlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.device.qemureact";
-	public static final String WIZARD_ID = "org.eclipse.tml.device.qemureact.qemureactWizard";
-	public static final String DEVICE_ID = "org.eclipse.tml.device.qemureact.qemureactDevice";
+	public static final String PLUGIN_ID = "org.eclipse.tml.device.qemureact"; //$NON-NLS-1$
+	public static final String WIZARD_ID = "org.eclipse.tml.device.qemureact.qemureactWizard"; //$NON-NLS-1$
+	public static final String DEVICE_ID = "org.eclipse.tml.device.qemureact.qemureactDevice"; //$NON-NLS-1$
 	
-	public static final String ICON_DEVICE_QEMUREACT = "ICON_DEVICE_QEMUREACT";
+	public static final String ICON_DEVICE_QEMUREACT = "ICON_DEVICE_QEMUREACT"; //$NON-NLS-1$
 	public static final String NATURE_ID = PLUGIN_ID;
 
-	public static final String PROPERTIES_FILENAME = "instance.properties";
-	public static final String PROPERTIES_FILENAME_FULL = "/org/eclipse/tml/emulator/qemureact/resources/instance.properties";
+	public static final String PROPERTIES_FILENAME = "instance.properties"; //$NON-NLS-1$
+	public static final String PROPERTIES_FILENAME_FULL = "/org/eclipse/tml/emulator/qemureact/resources/instance.properties"; //$NON-NLS-1$
 
-	public static final String EMULATOR_NAME = "qemu";
-	public static final String EMULATOR_PARAMS = "-L . -m 128 -hda ReactOS.vmdk -pidfile react.id -vnc ";
-	public static final String EMULATOR_BIN = "qemu-react-vnc.bat";
-	public static final String EMULATOR_KILL = "qemu.exe";
-	public static final String EMULATOR_FILE_ID = "react.id";
+	public static final String EMULATOR_NAME = "qemu"; //$NON-NLS-1$
+	public static final String EMULATOR_PARAMS = "-L . -m 128 -hda ReactOS.vmdk -pidfile react.id -vnc "; //$NON-NLS-1$
+	public static final String EMULATOR_BIN = "qemu-react-vnc.bat"; //$NON-NLS-1$
+	public static final String EMULATOR_KILL = "qemu.exe"; //$NON-NLS-1$
+	public static final String EMULATOR_FILE_ID = "react.id"; //$NON-NLS-1$
 
 	// The shared instance
 	private static QEmuReactPlugin plugin;

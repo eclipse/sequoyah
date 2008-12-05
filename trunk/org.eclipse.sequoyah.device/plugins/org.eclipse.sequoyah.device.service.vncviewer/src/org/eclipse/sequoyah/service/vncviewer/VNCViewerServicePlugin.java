@@ -22,8 +22,8 @@ import org.osgi.framework.BundleContext;
 public class VNCViewerServicePlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.service.vncviewer";
-	public static final String ICON_SERVICE_START = "ICON_SERVICE_START";
+	public static final String PLUGIN_ID = "org.eclipse.tml.service.vncviewer"; //$NON-NLS-1$
+	public static final String ICON_SERVICE_START = "ICON_SERVICE_START"; //$NON-NLS-1$
 
 	// The shared instance
 	private static VNCViewerServicePlugin plugin;

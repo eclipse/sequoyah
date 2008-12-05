@@ -112,7 +112,7 @@ public class ServerProtocolEngineFactory {
 			
 		if (protocolInitializer == null)
 		{
-			throw new ProtocolInitException("An initializer must be provided to run the server protocol");
+			throw new ProtocolInitException("An initializer must be provided to run the server protocol"); //$NON-NLS-1$
 		}	
 		
 		this.handle = handle;

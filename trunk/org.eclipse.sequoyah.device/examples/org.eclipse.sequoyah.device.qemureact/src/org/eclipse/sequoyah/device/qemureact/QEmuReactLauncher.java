@@ -21,7 +21,7 @@ import org.eclipse.tml.service.start.launcher.IConnection;
 import org.eclipse.tml.service.start.launcher.IDeviceLauncher;
 
 public class QEmuReactLauncher implements IDeviceLauncher {
-	public static final String SLASH = "\\";
+	public static final String SLASH = "\\"; //$NON-NLS-1$
 	public IConnection connection;
 	public int pid;
 	

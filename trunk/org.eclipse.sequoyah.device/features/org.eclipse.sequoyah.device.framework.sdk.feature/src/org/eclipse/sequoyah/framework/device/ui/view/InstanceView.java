@@ -75,12 +75,12 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class InstanceView extends ViewPart implements IInstanceListener, IPartListener2 {
 	
-	private static final String MENU_DELETE = "Delete";
-	private static final String MENU_PROPERTIES = "Properties";
-	private static final String MENU_SORT_BY = "Sort by";
-	private static final String ACTION_DEVICES = "Devices";
-	private static final String ACTION_STATUS = "Status";
-	private static final String PROPERTY_EDITOR_ID = "org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditorDefault";
+	private static final String MENU_DELETE = "Delete"; //$NON-NLS-1$
+	private static final String MENU_PROPERTIES = "Properties"; //$NON-NLS-1$
+	private static final String MENU_SORT_BY = "Sort by"; //$NON-NLS-1$
+	private static final String ACTION_DEVICES = "Devices"; //$NON-NLS-1$
+	private static final String ACTION_STATUS = "Status"; //$NON-NLS-1$
+	private static final String PROPERTY_EDITOR_ID = "org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditorDefault"; //$NON-NLS-1$
 	
 	protected TreeViewer treeViewer;
 	protected Text text;
@@ -236,7 +236,7 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 
 				// if the selection is empty clear the label
 				if(event.getSelection().isEmpty()) {
-					text.setText("");
+					text.setText(""); //$NON-NLS-1$
 					return;
 				}
 				if(event.getSelection() instanceof IStructuredSelection) {
@@ -248,7 +248,7 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 						if (domain instanceof IInstance) {							
 							String value = labelProvider.getText(domain);
 							toShow.append(value);
-							toShow.append(", ");
+							toShow.append(", "); //$NON-NLS-1$
 							InstanceManager.getInstance().setInstance((IInstance)domain);
 							enablePropertiesMenu = true;
 						}

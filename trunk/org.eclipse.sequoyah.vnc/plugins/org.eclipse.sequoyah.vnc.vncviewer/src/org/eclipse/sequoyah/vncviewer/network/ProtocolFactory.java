@@ -31,13 +31,13 @@ public class ProtocolFactory {
 	 */
 	public static IProtocolInit getProtocol (String prot) {
 		
-		if (prot.equals("VNC 3.3")) {
+		if (prot.equals("VNC 3.3")) { //$NON-NLS-1$
 			return (VNCProtocol) (new VNCProtocol33());
 		}
-		else if (prot.equals("VNC 3.7")){
+		else if (prot.equals("VNC 3.7")){ //$NON-NLS-1$
 			return (VNCProtocol) (new VNCProtocol37());
 		}
-		else if (prot.equals("VNC 3.8")){
+		else if (prot.equals("VNC 3.8")){ //$NON-NLS-1$
 			return (VNCProtocol) (new VNCProtocol38());
 		}
 

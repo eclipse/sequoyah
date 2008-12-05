@@ -47,7 +47,7 @@ public class MobileStatus implements IStatus {
 	}
 	
 	public String toString(){
-		return "[Status=" + (status.name()==null?"":status.name())+"]";
+		return "[Status=" + (status.name()==null?"":status.name())+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	public IInstance getParent() {
 		return parent;

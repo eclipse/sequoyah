@@ -33,7 +33,7 @@ public class MessageFieldsStore implements IMessageFieldsStore {
 	/**
 	 * Char sequence used in the key generation to isolate the key components.
 	 */
-	private static final String INTERNAL_SEPARATOR = "$$";
+	private static final String INTERNAL_SEPARATOR = "$$"; //$NON-NLS-1$
 
 	/**
 	 * A map containing all the message fields names and values.

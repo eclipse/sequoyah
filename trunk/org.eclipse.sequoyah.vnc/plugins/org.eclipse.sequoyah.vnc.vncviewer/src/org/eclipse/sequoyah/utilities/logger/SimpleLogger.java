@@ -41,7 +41,7 @@ public final class SimpleLogger implements ILogger
     
     private SimpleLogger()    
     {
-    	MessageConsole console = new MessageConsole("System Output", null);
+    	MessageConsole console = new MessageConsole("System Output", null); //$NON-NLS-1$
     	ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { console });
     	ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
     	MessageConsoleStream stream = console.newMessageStream();
@@ -108,7 +108,7 @@ public final class SimpleLogger implements ILogger
      */
     public void error(Object message, Object throwable)
     {
-    	System.out.println(LoggerConstants.TXT_ERROR+message+"-"+((Throwable)throwable).getMessage());
+    	System.out.println(LoggerConstants.TXT_ERROR+message+"-"+((Throwable)throwable).getMessage()); //$NON-NLS-1$
     }
 
     /**
@@ -166,7 +166,7 @@ public final class SimpleLogger implements ILogger
      */
     public void log(Object priority, Object message, Object throwable)
     {
-    	System.out.println(levelsMap.get(priority)+message+"-"+((Throwable)throwable).getMessage());
+    	System.out.println(levelsMap.get(priority)+message+"-"+((Throwable)throwable).getMessage()); //$NON-NLS-1$
     }
 
     /**
@@ -200,7 +200,7 @@ public final class SimpleLogger implements ILogger
     /**
      * Sets a Appender File
      */
-    @SuppressWarnings("unused")
+
 	private void setAppenderFile()
     {
     }
@@ -208,7 +208,6 @@ public final class SimpleLogger implements ILogger
     /**
      * Sets a Appender HTML File
      */
-    @SuppressWarnings("unused")
 	private void setAppenderHTML()
     {
     }

@@ -12,10 +12,10 @@
  ********************************************************************************/
 package org.eclipse.tml.device.qemu.handler;
 
+import org.eclipse.tml.common.utilities.BasePlugin;
+import org.eclipse.tml.common.utilities.exception.ExceptionStatus;
 import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.device.qemu.QEmuPlugin;
 import org.eclipse.tml.device.qemu.exception.QEmuDeviceExceptionHandler;
-import org.eclipse.tml.device.qemu.exception.QEmuDeviceExceptionStatus;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.status.IStatusTransition;
 import org.eclipse.tml.framework.status.StatusHandler;
@@ -33,8 +33,8 @@ public class StopStatusHandler extends StatusHandler {
 			Runtime.getRuntime().exec(kill);
 		} catch (Throwable t) {
 			throw QEmuDeviceExceptionHandler
-					.exception(QEmuDeviceExceptionStatus.CODE_ERROR_DEFAULT);
+					.exception(ExceptionStatus.CODE_ERROR_DEFAULT);
 		}
-		QEmuPlugin.logInfo(transition.toString());
+		BasePlugin.logInfo(transition.toString());
 	}
 }

@@ -147,12 +147,12 @@ public class DeviceView extends ViewPart {
 
 
 	protected void fillMenu(IMenuManager rootMenuManager) {
-		IMenuManager filterSubmenu = new MenuManager("Filters");
+		IMenuManager filterSubmenu = new MenuManager("Filters"); //$NON-NLS-1$
 		rootMenuManager.add(filterSubmenu);
 		filterSubmenu.add(onlyBoardGamesAction);
 		filterSubmenu.add(atLeatThreeItems);
 		
-		IMenuManager sortSubmenu = new MenuManager("Sort By");
+		IMenuManager sortSubmenu = new MenuManager("Sort By"); //$NON-NLS-1$
 		rootMenuManager.add(sortSubmenu);
 		sortSubmenu.add(booksBoxesGamesAction);
 		sortSubmenu.add(noArticleAction);

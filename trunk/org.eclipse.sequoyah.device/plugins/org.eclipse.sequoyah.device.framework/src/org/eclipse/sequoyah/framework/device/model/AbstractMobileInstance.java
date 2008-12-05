@@ -84,7 +84,7 @@ public abstract class AbstractMobileInstance implements IInstance {
 	 * Retieves the device id.
 	 * @return The device id.
 	 */
-	public String getDevice() {
+	public String getDeviceTypeId() {
 		return deviceId;
 	}
 
@@ -92,9 +92,11 @@ public abstract class AbstractMobileInstance implements IInstance {
 	 * Sets the device id.
 	 * @param deviceId - The device id.
 	 */
-	public void setDevice(String deviceId) {
-		this.deviceId = deviceId;
+	public void setDeviceTypeId(String deviceTypeId) {
+		this.deviceId = deviceTypeId;
+		
 	}
+	
 
 	/**
 	 * Retrieves the instance status.
@@ -132,12 +134,12 @@ public abstract class AbstractMobileInstance implements IInstance {
 
 	public String toString() {
 		String status = stateMachineHandler.getState();
-		return "[Device Instance: " +
-				"id=" + (id==null?"":id) +
-				",name=" + (name==null?"":name) +
-				",device=" + (deviceId==null?"":deviceId) +
-				",status=" + (status==null?"":status) +
-				"]";
+		return "[Device Instance: " + //$NON-NLS-1$
+				"id=" + (id==null?"":id) + //$NON-NLS-1$ //$NON-NLS-2$
+				",name=" + (name==null?"":name) + //$NON-NLS-1$ //$NON-NLS-2$
+				",device=" + (deviceId==null?"":deviceId) + //$NON-NLS-1$ //$NON-NLS-2$
+				",status=" + (status==null?"":status) + //$NON-NLS-1$ //$NON-NLS-2$
+				"]"; //$NON-NLS-1$
 	}
 
 	/** Returns a equivalent object of a different class

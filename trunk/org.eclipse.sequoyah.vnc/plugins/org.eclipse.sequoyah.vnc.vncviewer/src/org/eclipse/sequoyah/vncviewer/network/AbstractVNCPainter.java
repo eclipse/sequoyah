@@ -74,15 +74,15 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 
 	
 	public int[] getSupportedEncodings() {
-		return new int[] { VNCProtocol.HEXTILE_ENCODING,
-				VNCProtocol.ZRLE_ENCODING, VNCProtocol.ZLIB_ENCODING,
-				VNCProtocol.RRE_ENCODING, VNCProtocol.RAW_ENCODING, };
+		return new int[] { IRFBConstants.HEXTILE_ENCODING,
+				IRFBConstants.ZRLE_ENCODING, IRFBConstants.ZLIB_ENCODING,
+				IRFBConstants.RRE_ENCODING, IRFBConstants.RAW_ENCODING, };
 	}
 
 	public static int[] getSupportedEncodingsStatic() {
-		return new int[] { VNCProtocol.HEXTILE_ENCODING,
-				VNCProtocol.ZRLE_ENCODING, VNCProtocol.ZLIB_ENCODING,
-				VNCProtocol.RRE_ENCODING, VNCProtocol.RAW_ENCODING, };
+		return new int[] { IRFBConstants.HEXTILE_ENCODING,
+				IRFBConstants.ZRLE_ENCODING, IRFBConstants.ZLIB_ENCODING,
+				IRFBConstants.RRE_ENCODING, IRFBConstants.RAW_ENCODING, };
 	}
 
 	public void processRectangle(RectHeader rectHeader, DataInputStream in) throws Exception {
@@ -91,7 +91,7 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 		if (ps != null) {
 			ps.processRectangle(rectHeader, in);
 		} else {
-			log(AbstractVNCPainter.class).error("This encoding is not supported.");
+			log(AbstractVNCPainter.class).error("This encoding is not supported."); //$NON-NLS-1$
 		}
 		
 	}
@@ -138,8 +138,8 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 				numRead = in.read(pixelsb, bytesRead, bytesNum - bytesRead);
 			}
 			catch (IOException ioe){
-				log(VNCProtocol.class).error("Rectangle message error: " + ioe.getMessage());
-				throw new ProtoClientException("Rectangle message error.");
+				log(VNCProtocol.class).error("Rectangle message error: " + ioe.getMessage()); //$NON-NLS-1$
+				throw new ProtoClientException("Rectangle message error."); //$NON-NLS-1$
 			}
 			
 			if (numRead >= 0) {
@@ -255,15 +255,15 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 	 */
 	protected IPaintStrategy getPaintStrategy(int encoding) {
 		switch (encoding) {
-		case VNCProtocol.RAW_ENCODING:
+		case IRFBConstants.RAW_ENCODING:
 			return rawPaintStrategy;
-		case VNCProtocol.RRE_ENCODING:
+		case IRFBConstants.RRE_ENCODING:
 			return rrePaintStrategy;
-		case VNCProtocol.HEXTILE_ENCODING:
+		case IRFBConstants.HEXTILE_ENCODING:
 			return hexTilePaintStrategy;
-		case VNCProtocol.ZLIB_ENCODING:
+		case IRFBConstants.ZLIB_ENCODING:
 			return zlibPaintStrategy;
-		case VNCProtocol.ZRLE_ENCODING:
+		case IRFBConstants.ZRLE_ENCODING:
 			return zrlePaintStrategy;
 		default:
 			return null;

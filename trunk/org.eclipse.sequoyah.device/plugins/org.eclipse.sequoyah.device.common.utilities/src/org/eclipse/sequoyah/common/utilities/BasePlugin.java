@@ -181,7 +181,7 @@ public abstract class BasePlugin extends AbstractUIPlugin
 	
 	public static void logDebugMessage(String prefix, String message) 
 	{		
-		getLogger().debug(prefix+"-"+message);
+		getLogger().debug(prefix+"-"+message); //$NON-NLS-1$
 	}
 
 	/**

@@ -17,8 +17,9 @@ package org.eclipse.tml.framework.device.factory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.PluginUtils;
-import org.eclipse.tml.common.utilities.exception.TmLExceptionHandler;
+import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionHandler;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
@@ -28,16 +29,16 @@ import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
 
 @Deprecated
 public class DeviceFactory {
-	private static final String ELEMENT_DEVICE = "device";
-	private static final String ATR_ID = "id";
-	private static final String ATR_LABEL = "label";
-	private static final String ATR_NAME = "name";
-	private static final String ATR_ICON = "icon";
-	private static final String ATR_DESCRIPTION = "description";
-	private static final String ATR_PROVIDER = "provider";
-	private static final String ATR_COPYRIGHT = "copyright";
-	private static final String ATR_VERSION = "version";
-	private static final String ATR_HANDLER = "handler";
+	private static final String ELEMENT_DEVICE = "device"; //$NON-NLS-1$
+	private static final String ATR_ID = "id"; //$NON-NLS-1$
+	private static final String ATR_LABEL = "label"; //$NON-NLS-1$
+	private static final String ATR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATR_ICON = "icon"; //$NON-NLS-1$
+	private static final String ATR_DESCRIPTION = "description"; //$NON-NLS-1$
+	private static final String ATR_PROVIDER = "provider"; //$NON-NLS-1$
+	private static final String ATR_COPYRIGHT = "copyright"; //$NON-NLS-1$
+	private static final String ATR_VERSION = "version"; //$NON-NLS-1$
+	private static final String ATR_HANDLER = "handler"; //$NON-NLS-1$
 	
 	
 	public static IDeviceType createDevice(String deviceId) {
@@ -52,15 +53,15 @@ public class DeviceFactory {
 		String iconName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_ICON);		
 		ImageDescriptor image = null;
 			try {
-			image = DevicePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), iconName);
+			image = BasePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), iconName);
 		} catch (Throwable t) {
-			TmLExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
+			ExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}
 		device.setProperties(DevicePlugin.DEFAULT_PROPERTIES);
 		try {
 			device.setHandler((IDeviceHandler)PluginUtils.getExecutableAttribute(fromPlugin, ELEMENT_DEVICE, ATR_HANDLER));
 		} catch (CoreException e) {
-			TmLExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
+			ExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}
 		return device;
 	}

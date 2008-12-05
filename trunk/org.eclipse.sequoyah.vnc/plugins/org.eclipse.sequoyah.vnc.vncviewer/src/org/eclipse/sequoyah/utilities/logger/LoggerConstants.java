@@ -29,37 +29,37 @@ public class LoggerConstants
     /**
      * Status type severity indicating this status represents an debug.
      */
-    public static final String DEBUG = "DEBUG";
+    public static final String DEBUG = "DEBUG"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating this status is informational only.
      */
-    public static final String INFO = "INFO";
+    public static final String INFO = "INFO"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating this status represents a warning.
      */
-    public static final String WARNING = "WARN";
+    public static final String WARNING = "WARN"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating this status represents an error.
      */
-    public static final String ERROR = "ERROR";
+    public static final String ERROR = "ERROR"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating this status represents an fatal error.
      */
-    public static final String FATAL = "FATAL";
+    public static final String FATAL = "FATAL"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating turn on all logging.
      */
-    public static final String LOG_ON = "ALL";
+    public static final String LOG_ON = "ALL"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating to turn off logging.
      */
-    public static final String LOG_OFF = "OFF";
+    public static final String LOG_OFF = "OFF"; //$NON-NLS-1$
 
     /**
      * References for logger simple
@@ -90,31 +90,31 @@ public class LoggerConstants
     /**
      * Status type severity indicating this status represents an debug.
      */
-    public static final String TXT_DEBUG = "[DEBUG]";
+    public static final String TXT_DEBUG = "[DEBUG]"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating this status is informational only.
      */
-    public static final String TXT_INFO = "[INFO]";
+    public static final String TXT_INFO = "[INFO]"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating this status represents a warning.
      */
-    public static final String TXT_WARNING = "[WARN]";
+    public static final String TXT_WARNING = "[WARN]"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating this status represents an error.
      */
-    public static final String TXT_ERROR = "[ERROR]";
+    public static final String TXT_ERROR = "[ERROR]"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating this status represents an fatal error.
      */
-    public static final String TXT_FATAL = "[FATAL]";
+    public static final String TXT_FATAL = "[FATAL]"; //$NON-NLS-1$
 
     /**
      * Status type severity indicating turn on all logging.
      */
-    public static final String TXT_ALL = "[LOG]";
+    public static final String TXT_ALL = "[LOG]"; //$NON-NLS-1$
     
 }

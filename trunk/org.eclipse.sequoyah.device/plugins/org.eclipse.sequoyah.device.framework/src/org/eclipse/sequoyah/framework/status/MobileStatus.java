@@ -86,7 +86,7 @@ public class MobileStatus implements IStatus {
 	}
 
 	public String toString(){
-		return "[Status: id="+(id!=null?id:"")+";name="+(name!=null?name:"")+"]";
+		return "[Status: id="+(id!=null?id:"")+";name="+(name!=null?name:"")+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}	
 
 }

@@ -28,7 +28,7 @@ public class VNCProtocol33 extends VNCProtocol {
 	/**
 	 * Constant that represents the RFB protocol version.
 	 */
-	static final String RFB_VERSION = "RFB 003.003\n"; /*
+	static final String RFB_VERSION = "RFB 003.003\n"; /* //$NON-NLS-1$
 														 * used to compare the
 														 * implemented version
 														 * with the server
@@ -55,7 +55,7 @@ public class VNCProtocol33 extends VNCProtocol {
 			break;
 		default:
 			throw new Exception(
-					"VNC security negotiation error: Unknown security type");
+					"VNC security negotiation error: Unknown security type"); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -87,7 +87,7 @@ public class VNCProtocol33 extends VNCProtocol {
 
 		if (!(new String(b)).equals(RFB_VERSION)) {
 
-			throw new ProtocolException("Wrong protocol version.");
+			throw new ProtocolException("Wrong protocol version."); //$NON-NLS-1$
 
 		}
 
@@ -99,7 +99,6 @@ public class VNCProtocol33 extends VNCProtocol {
 	protected void handShake(DataInputStream in, OutputStream out)
 			throws Exception {
 
-		@SuppressWarnings("unused")
 		int rfbSecType;
 		byte[] b = new byte[HANDSHAKE_MESSAGE_SIZE];
 

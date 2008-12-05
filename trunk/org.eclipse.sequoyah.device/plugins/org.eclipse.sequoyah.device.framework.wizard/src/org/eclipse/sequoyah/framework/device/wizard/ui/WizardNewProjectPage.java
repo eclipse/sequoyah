@@ -35,10 +35,10 @@ import org.eclipse.swt.widgets.Text;
 public class WizardNewProjectPage extends WizardPage implements IWizardProjectPage {
 
     // constants
-    private static final String INSTANCE_NAME = "instance name";
+    private static final String INSTANCE_NAME = "instance name"; //$NON-NLS-1$
 	private static final int SIZING_HOST_FIELD_WIDTH = 250;
     	
-	private String initialProjectName = "";
+	private String initialProjectName = ""; //$NON-NLS-1$
 	private String projectName;
     
     private Text projectNameField;
@@ -107,7 +107,7 @@ public class WizardNewProjectPage extends WizardPage implements IWizardProjectPa
     	
     	if (name != null) {
     		name = name.trim();
-    		if (!name.equals("")) {
+    		if (!name.equals("")) { //$NON-NLS-1$
 	        	if (manager.getInstancesByname(name).size() == 0) {
 	        		retVal = true;
 	        	} else {

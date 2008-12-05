@@ -72,8 +72,8 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		
 		int width, height, cols;
 
-		setTitle("New VNC connection");
-		setMessage("Enter values for your VNC connection");
+		setTitle("New VNC connection"); //$NON-NLS-1$
+		setMessage("Enter values for your VNC connection"); //$NON-NLS-1$
 		
 		cols = 20;
 
@@ -94,15 +94,15 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		gridData.heightHint = height;
 		gridData.widthHint = width;
 
-		hostLabel.setText("Host:");
+		hostLabel.setText("Host:"); //$NON-NLS-1$
 		hostText.setLayoutData(gridData);
 		hostText.setSize(hostText.computeSize(width, height));
 		
-		portLabel.setText("Port:");
+		portLabel.setText("Port:"); //$NON-NLS-1$
 		portText.setSize(portText.computeSize(width, height));
 		portText.setLayoutData(gridData);
 		
-		passwordLabel.setText("Password:");
+		passwordLabel.setText("Password:"); //$NON-NLS-1$
 		passwordText.setSize(passwordText.computeSize(width, height));
 		passwordText.setLayoutData(gridData);
 
@@ -122,7 +122,7 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		Point p = bypassProxyButton.getLocation();
 		bypassProxyButton.setLocation(p.x, p.y+100);
 		
-		bypassProxyButton.setText("Bypass proxy settings");
+		bypassProxyButton.setText("Bypass proxy settings"); //$NON-NLS-1$
 		
 		
 		return external;
@@ -223,7 +223,7 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 
         Label configListLabel = new Label(comboComposite, SWT.NONE);
 
-        configListLabel.setText("VNC Protocol used as base:");
+        configListLabel.setText("VNC Protocol used as base:"); //$NON-NLS-1$
 
         //configListLabel.setBackground(BACKGROUND_COLOR);
 
@@ -233,9 +233,9 @@ public class OpenConnectionDialog extends TitleAreaDialog {
         data  = new GridData(SWT.FILL, SWT.CENTER, true, false);
         protocolCombo.setLayoutData(data);
  
-        protocolCombo.add("VNC 3.3");
-        protocolCombo.add("VNC 3.7");
-        protocolCombo.add("VNC 3.8");
+        protocolCombo.add("VNC 3.3"); //$NON-NLS-1$
+        protocolCombo.add("VNC 3.7"); //$NON-NLS-1$
+        protocolCombo.add("VNC 3.8"); //$NON-NLS-1$
         protocolCombo.select(2);
         
         this.protocolVersion = protocolCombo;

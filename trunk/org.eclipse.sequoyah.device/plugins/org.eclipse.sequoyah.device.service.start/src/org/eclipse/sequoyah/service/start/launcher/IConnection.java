@@ -20,12 +20,12 @@ public interface IConnection {
 	/**
 	 * Default value for display property
 	 */
-	public static final String DEFAULT_DISPLAY = ":0.0";
+	public static final String DEFAULT_DISPLAY = ":0.0"; //$NON-NLS-1$
 
 	/**
 	 * Default value for host property
 	 */
-	public static final String DEFAULT_HOST = "127.0.0.1";
+	public static final String DEFAULT_HOST = "127.0.0.1"; //$NON-NLS-1$
 
 	/**
 	 * Default value for port property

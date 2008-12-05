@@ -19,5 +19,5 @@ package org.eclipse.tml.vncviewer.i18n;
  * you need support in your package and provide the package path for it.
  */
 public class I18NMessagePath {
-	public static String I18N_TML_VNC_VIEWER = "org.eclipse.tml.vncviewer.i18n.common";
+	public static String I18N_TML_VNC_VIEWER = "org.eclipse.tml.vncviewer.i18n.common"; //$NON-NLS-1$
 }

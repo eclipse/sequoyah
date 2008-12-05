@@ -15,19 +15,20 @@ package org.eclipse.tml.framework.status;
 
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.PluginUtils;
-import org.eclipse.tml.common.utilities.exception.TmLExceptionHandler;
+import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionHandler;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
 
 
 public class StatusFactory {
-	private static final String ELEMENT_STATUS = "status";
-	private static final String ATR_ID = "id";
-	private static final String ATR_NAME = "name";
-	private static final String ATR_IMAGE = "image";
-	private static final String ATR_CANDELETE = "canDeleteInstance";
+	private static final String ELEMENT_STATUS = "status"; //$NON-NLS-1$
+	private static final String ATR_ID = "id"; //$NON-NLS-1$
+	private static final String ATR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATR_IMAGE = "image"; //$NON-NLS-1$
+	private static final String ATR_CANDELETE = "canDeleteInstance"; //$NON-NLS-1$
 	
 	@SuppressWarnings("deprecation")
 	public static IStatus createStatus(String statusId) {
@@ -40,9 +41,9 @@ public class StatusFactory {
 		String imageName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_IMAGE);		
 		ImageDescriptor image = null;
 			try {
-			image = DevicePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), imageName);
+			image = BasePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), imageName);
 		} catch (Throwable t) {
-			TmLExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
+			ExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}
 		status.setImage(image);
 		return status;

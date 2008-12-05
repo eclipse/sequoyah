@@ -114,7 +114,7 @@ public class InstanceContentProvider implements ITreeContentProvider {
 					e.hasMoreElements() ;) {
 		    	String key = (String) e.nextElement();
 		        String value = properties.getProperty(key);
-		        child.add(key + " = " + value);
+		        child.add(key + " = " + value); //$NON-NLS-1$
 		    }
 			return child.toArray();
 		} 

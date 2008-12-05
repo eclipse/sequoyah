@@ -22,8 +22,8 @@ import org.osgi.framework.BundleContext;
 public class StartServicePlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.service.start";
-	public static final String ICON_SERVICE_START = "ICON_SERVICE_START";
+	public static final String PLUGIN_ID = "org.eclipse.tml.service.start"; //$NON-NLS-1$
+	public static final String ICON_SERVICE_START = "ICON_SERVICE_START"; //$NON-NLS-1$
 
 	// The shared instance
 	private static StartServicePlugin plugin;

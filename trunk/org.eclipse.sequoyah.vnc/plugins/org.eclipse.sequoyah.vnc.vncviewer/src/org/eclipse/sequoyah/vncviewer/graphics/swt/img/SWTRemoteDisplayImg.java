@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics.swt.img;
 
@@ -22,25 +23,56 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.vncviewer.config.IPropertiesFileHandler;
+import org.eclipse.tml.vncviewer.graphics.swt.ISWTPainter;
 import org.eclipse.tml.vncviewer.graphics.swt.SWTRemoteDisplay;
 import org.eclipse.tml.vncviewer.network.IVNCPainter;
 
 public class SWTRemoteDisplayImg extends SWTRemoteDisplay {
 
 
-	public SWTRemoteDisplayImg(Composite parent, Properties configProperties, IPropertiesFileHandler propertiesFileHandler){
+	public SWTRemoteDisplayImg(Composite parent, Properties configProperties, IPropertiesFileHandler propertiesFileHandler) {
+		this(parent, configProperties, propertiesFileHandler, null);
+	}
+	
+	public SWTRemoteDisplayImg(Composite parent, Properties configProperties, IPropertiesFileHandler propertiesFileHandler, ISWTPainter painter_){
 		super(parent, configProperties, propertiesFileHandler);
-		painter = new Painter(this);
-        canvas.addPaintListener(new PaintListener()
-        {
+		
+		painter = painter_;
+		
+		if (painter == null) {
+			painter = new Painter(this);
+		}
+		
+		paintListener = new PaintListener() {
             public void paintControl(PaintEvent e)
             {
             	SWTRemoteDisplayImg.this.paintControl(e);
             }
-        });
+        };
+        
 
 	}
+
+	public synchronized void start(ProtocolHandle handle) throws Exception {
+		super.start(handle);
+
+		canvas.getDisplay().asyncExec(new Runnable(){
+			public void run() {
+				canvas.addPaintListener(paintListener);
+			}
+
+		});
+		((Painter)painter).addSWTRemoteDisplayImg(this);
+	}
+	
+	
+	public synchronized void stop() {
+		super.stop();
+		((Painter)painter).removeSWTRemoteDisplayImg((SWTRemoteDisplayImg)this);
+	}
+	
 	protected int getCanvasStyle() {
 		return SWT.NO_BACKGROUND;  
 	}
@@ -76,6 +108,10 @@ public class SWTRemoteDisplayImg extends SWTRemoteDisplay {
 		super.dispose();
 		if (painter != null) {
 			((Painter)painter).dispose();
+			
+			
+			//TODO: REMOVESWTRD
+			
 		}
 	}
 

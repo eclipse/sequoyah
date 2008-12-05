@@ -18,6 +18,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
  *******************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -25,9 +26,6 @@ package org.eclipse.tml.vncviewer.vncviews.views;
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.GC;
@@ -45,9 +43,9 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class VNCViewerView extends ViewPart {
 
-	private static final String VIEWER_COULD_NOT_BE_STARTED = "Viewer could not be started: ";
+	private static final String VIEWER_COULD_NOT_BE_STARTED = "Viewer could not be started: "; //$NON-NLS-1$
 
-	private static final String SWTDISPLAY = "SWTDisplay";
+	private static final String SWTDISPLAY = "SWTDisplay"; //$NON-NLS-1$
 
 	private static SWTRemoteDisplay swtDisplay;
 
@@ -106,11 +104,11 @@ public class VNCViewerView extends ViewPart {
 				String protocolId = ProtocolIdTranslator
 						.getProtocolId(protoVersion);
 
-				parameters.put("password", password);
-				parameters.put("connectionRetries", swtDisplay
+				parameters.put("password", password); //$NON-NLS-1$
+				parameters.put("connectionRetries", swtDisplay //$NON-NLS-1$
 						.getConnectionRetries());
 				
-				parameters.put("bypassProxy", new Boolean(bypassProxy));
+				parameters.put("bypassProxy", new Boolean(bypassProxy)); //$NON-NLS-1$
 				
 				VNCViewerView.protocolHandle = PluginProtocolActionDelegate
 						.startClientProtocol(protocolId,
@@ -212,6 +210,10 @@ public class VNCViewerView extends ViewPart {
 		if (protocolHandle != null){
 			PluginProtocolActionDelegate.stopProtocol(protocolHandle);
 		}
+	}
+
+	public static SWTRemoteDisplay getSWTRemoteDisplay() {
+		return swtDisplay;
 	}
 
 

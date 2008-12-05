@@ -11,11 +11,17 @@
  * Contributors:
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247085] - Instance manage view buttons are resizing after applying services filter  
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
+<<<<<<< InstanceServicesComposite.java
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+=======
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
+>>>>>>> 1.3.6.4
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -37,11 +43,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.tml.framework.device.DeviceUtils;
+import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandlerAction;
 import org.eclipse.tml.framework.device.ui.DeviceUIPlugin;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Event;
 
 public class InstanceServicesComposite extends Composite {
 
@@ -49,9 +58,9 @@ public class InstanceServicesComposite extends Composite {
 	private static int buttonsOrienation = SWT.HORIZONTAL;
 	private IInstance instance = null;
 	
-	private static final String SERVICES_LABEL = "Services";
-	private static final String SERVICES_FILTERED_LABEL = "Services (filtered)";
-	private static final String NO_LABEL = "";
+	private static final String SERVICES_LABEL = "Services"; //$NON-NLS-1$
+	private static final String SERVICES_FILTERED_LABEL = "Services (filtered)"; //$NON-NLS-1$
+	private static final String NO_LABEL = ""; //$NON-NLS-1$
 	private static final int DEFAULT_BUTTONS_WIDTH = 120;
 	private static final int DEFAULT_BUTTONS_HEIGHT = 30;
 	private static final int MAX_BUTTON_STRING_SIZE = DEFAULT_BUTTONS_WIDTH / 10;
@@ -66,8 +75,8 @@ public class InstanceServicesComposite extends Composite {
 	{
 		public ServicesFilterAction()
 		{
-			super("filter");
-			setToolTipText("Filter services by availability");
+			super("filter"); //$NON-NLS-1$
+			setToolTipText("Filter services by availability"); //$NON-NLS-1$
 			setChecked(!showAllServices);
 			setImageDescriptor(DeviceUIPlugin.getDefault().getImageDescriptor(DeviceUIPlugin.ICON_FILTER));
 		}
@@ -83,8 +92,8 @@ public class InstanceServicesComposite extends Composite {
 	{
 	    public ServicesOrientationAction()
 	    {
-	        super("orientation");
-	        setToolTipText("Toggle vertical/horizontal orientation");
+	        super("orientation"); //$NON-NLS-1$
+	        setToolTipText("Toggle vertical/horizontal orientation"); //$NON-NLS-1$
 	        if (buttonsOrienation ==  SWT.HORIZONTAL)
             {
                 setImageDescriptor(DeviceUIPlugin.getDefault().getImageDescriptor(DeviceUIPlugin.ICON_HORIZONTAL));
@@ -141,7 +150,7 @@ public class InstanceServicesComposite extends Composite {
 	private void createToolbarArea()
 	{
 		label= new CLabel(viewForm, SWT.NONE);
-		label.setText("Services");
+		label.setText("Services"); //$NON-NLS-1$
 		viewForm.setTopLeft(label);
 		toolBar= new ToolBar(viewForm, SWT.FLAT | SWT.WRAP);
 		viewForm.setTopCenter(toolBar);
@@ -176,17 +185,31 @@ public class InstanceServicesComposite extends Composite {
 		if (instance != null)
 		{			
 			IDeviceType device = DeviceUtils.getDeviceType(instance);
+			final ArrayList<Button> buttons = new ArrayList<Button>();
 			List<IService> services = device.getServices();
 			for (IService service:services){
 				if (service.isVisible()) {
+
+					boolean inTransition = ((AbstractMobileInstance)instance).getStateMachineHandler().isTransitioning();
 					boolean isServiceEnabled = (service.getStatusTransitions(instance.getStatus()) != null);
+					isServiceEnabled = isServiceEnabled && !inTransition;
 					
 					if ((showAllServices) || (isServiceEnabled))
 					{
 						Button serviceButton = new Button(servicesComposite, SWT.PUSH);
+						buttons.add(serviceButton);
 						serviceButton.setEnabled(isServiceEnabled);
 						serviceButton.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
-
+						
+						// Set button enabled to false when performing an operation
+						serviceButton.addListener(SWT.Selection,  new Listener(){
+							
+							public void handleEvent(Event event) {
+								createServicesArea();
+							}
+							
+						} );
+						
 						RowData data = new RowData();
 						data.width = DEFAULT_BUTTONS_WIDTH;
 						data.height = DEFAULT_BUTTONS_HEIGHT;

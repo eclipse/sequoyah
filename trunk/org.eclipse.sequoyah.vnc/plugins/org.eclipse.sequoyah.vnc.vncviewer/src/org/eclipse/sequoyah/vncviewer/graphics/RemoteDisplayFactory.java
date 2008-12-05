@@ -25,7 +25,7 @@ import org.eclipse.tml.vncviewer.graphics.swt.img.SWTRemoteDisplayImg;
 public class RemoteDisplayFactory {
 
 	
-	private static String DEFAULT_PROPERTIES_FILE = "resources/vnc_viewer.conf";
+	private static String DEFAULT_PROPERTIES_FILE = "resources/vnc_viewer.conf"; //$NON-NLS-1$
 	
 	/**
 	 * This factory returns an IRemoteDisplay instance.
@@ -42,7 +42,7 @@ public class RemoteDisplayFactory {
 		
 		Properties config = configurator.getConfigurationProperties();
 	
-		if (display.equals("SWTDisplay")){
+		if (display.equals("SWTDisplay")){ //$NON-NLS-1$
 //			return new SWTRemoteDisplayImgData(parent, config, propertiesFileHandler);
 			return new SWTRemoteDisplayImg(parent, config, propertiesFileHandler);
 		}

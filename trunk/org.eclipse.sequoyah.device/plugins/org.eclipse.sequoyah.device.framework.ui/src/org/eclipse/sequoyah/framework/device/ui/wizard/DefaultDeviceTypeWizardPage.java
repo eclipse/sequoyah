@@ -141,9 +141,9 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 
 	protected DefaultDeviceTypeWizardPage(String pageName) {
 		super(pageName);
-		setTitle(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_title); //$NON-NLS-1$
+		setTitle(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_title); 
 
-		setMessage(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_message); //$NON-NLS-1$
+		setMessage(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_message); 
 	}
 
 	public void createControl(Composite parent) {
@@ -154,7 +154,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 
 		// new name label
 		Label label = new Label(container, SWT.NONE);
-		label.setText(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_name); //$NON-NLS-1$
+		label.setText(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_name); 
 		label.setFont(container.getFont());
 
 		nameText = new Text(container, SWT.BORDER);
@@ -204,7 +204,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 	private void createDeviceTypesArea(Composite parent) {
 
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_deviceTypes); //$NON-NLS-1$
+		label.setText(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_deviceTypes); 
 		label.setFont(parent.getFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;

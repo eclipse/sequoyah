@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.framework.device.DevicePlugin;
@@ -53,7 +54,7 @@ public class ServiceManager {
 	
 	public void listServices(){
 		for(IService service:services){
-			DevicePlugin.logInfo(service.toString());
+			BasePlugin.logInfo(service.toString());
 		}
 	};
 	

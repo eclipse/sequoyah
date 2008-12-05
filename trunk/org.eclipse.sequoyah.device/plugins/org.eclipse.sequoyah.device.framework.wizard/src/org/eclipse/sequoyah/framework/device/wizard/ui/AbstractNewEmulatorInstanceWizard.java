@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.framework.device.DeviceUtils;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IDeviceType;
@@ -39,6 +40,7 @@ import org.eclipse.tml.framework.device.wizard.model.IWizardPropertyPage;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Define an abstract class to provide new wizard emulator instance features.
@@ -66,7 +68,7 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
         this.wizardId = wizardId;
         this.pluginId = pluginId;
         device = DeviceUtils.getDeviceTypeById(deviceId);
-        DeviceWizardPlugin.logInfo("Device for Wizard:" + device.getBundleName());
+        BasePlugin.logInfo("Device for Wizard:" + device.getBundleName()); //$NON-NLS-1$
 
         // load necessary information on object creation
         initializeBean();
@@ -82,7 +84,7 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
      */
     public void init(IWorkbench workbench, IStructuredSelection selection)
     {
-        DeviceWizardPlugin.logInfo("New Device Instance Wizard started");
+        BasePlugin.logInfo("New Device Instance Wizard started"); //$NON-NLS-1$
         this.workbench = workbench;
         this.selection = selection;
     }
@@ -93,12 +95,12 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
      */
     private void initializeWizardSettings()
     {
-        DeviceWizardPlugin.logInfo(getExtensionId());
+        BasePlugin.logInfo(getExtensionId());
         if (bean != null)
         {
             setNeedsProgressMonitor(bean.needsProgressMonitor());
             setForcePreviousAndNextButtons(bean.forcePreviousAndNextButtons());
-            setDefaultPageImageDescriptor(DeviceWizardPlugin.imageDescriptorFromPlugin(pluginId,
+            setDefaultPageImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(pluginId,
                     bean.getImage()));
             setWindowTitle(bean.getTitle());
         }
@@ -245,7 +247,7 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
                 @Override
                 protected void execute(IProgressMonitor monitor)
                 {
-                    DeviceWizardPlugin.logInfo("Instance creation for Wizard:" + getExtensionId());
+                    BasePlugin.logInfo("Instance creation for Wizard:" + getExtensionId()); //$NON-NLS-1$
                     InstanceManager.getInstance().createProject(getDevice(), projectBuilder,
                             monitor);
                 }
@@ -255,11 +257,11 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
         }
         catch (InvocationTargetException x)
         {
-            DeviceWizardPlugin.logError(x.getMessage(), x);
+            BasePlugin.logError(x.getMessage(), x);
         }
         catch (InterruptedException x)
         {
-            DeviceWizardPlugin.logError(x.getMessage(), x);
+            BasePlugin.logError(x.getMessage(), x);
         }
         return ok;
     }

@@ -23,8 +23,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
 import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.common.utilities.exception.TmLExceptionHandler;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionHandler;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
@@ -163,7 +163,7 @@ public class DeviceXmlReader implements IDeviceXmlTags
                                         prop);
                                 registry.addInstance(inst);
                             } catch (TmLException te) {
-                                TmLExceptionHandler
+                                ExceptionHandler
                                         .showException(DeviceExceptionHandler
                                                 .exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
                             }

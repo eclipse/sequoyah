@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.tml.framework.device.sdk;singleton:=true
 Bundle-Version: 0.2.0
 Bundle-Activator: org.eclipse.tml.framework.device.additional.DeviceAddPlugin
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.tml.common.utilities,

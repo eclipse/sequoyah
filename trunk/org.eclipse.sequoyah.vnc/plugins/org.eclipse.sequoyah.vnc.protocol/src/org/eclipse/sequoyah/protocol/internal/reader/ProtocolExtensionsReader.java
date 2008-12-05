@@ -88,7 +88,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 						.setProtocolInitSeed((IProtocolInit) initSeedObj);
 			} else {
 				throw new MalformedProtocolExtensionException(
-						"The protocol has not declared a valid initializer");
+						"The protocol has not declared a valid initializer"); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
 			throw new MalformedProtocolExtensionException(e.getMessage(), e);
@@ -347,7 +347,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 						.createExecutableExtension(PROTOCOL_MESSAGE_HANDLER_ATTR);
 				if (!(aObject instanceof IMessageHandler)) {
 					throw new MalformedProtocolExtensionException(
-							"Error at message declaration. The message handler must be an instance of IMessageHandler");
+							"Error at message declaration. The message handler must be an instance of IMessageHandler"); //$NON-NLS-1$
 				} else {
 					handler = (IMessageHandler) aObject;
 				}
@@ -478,7 +478,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 					.createExecutableExtension(PROTOCOL_MESSAGE_RAW_DATA_EXECUTABLE_ATTR);
 			if (!(aObject instanceof IRawDataHandler)) {
 				throw new MalformedProtocolExtensionException(
-						"Error at message declaration. The raw data handler must be an instance of IRawDataHandler");
+						"Error at message declaration. The raw data handler must be an instance of IRawDataHandler"); //$NON-NLS-1$
 			} else {
 				// Sets the bean with value collected
 				rawBean.setHandler((IRawDataHandler) aObject);
@@ -521,7 +521,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 		} else {
 			// If it is an unknown field (different from fixed, variable, raw
 			// data reader/writer, iteratable block)
-			throw new MalformedProtocolExtensionException("Unkown data element");
+			throw new MalformedProtocolExtensionException("Unkown data element"); //$NON-NLS-1$
 		}
 
 		return bean;

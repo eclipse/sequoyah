@@ -26,7 +26,7 @@ import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 public class StopServiceHandler extends ServiceHandler {
 
 	public IStatus runService(IInstance instance, Map<Object , Object> arguments , IProgressMonitor monitor) {
-		String kill = "taskkill /f /PID "+String.valueOf(instance.getPID());		
+		String kill = "taskkill /f /PID "+String.valueOf(instance.getPID());		 //$NON-NLS-1$
 		try {
 			Process p = Runtime.getRuntime().exec(kill);
 		} catch (Throwable t) {

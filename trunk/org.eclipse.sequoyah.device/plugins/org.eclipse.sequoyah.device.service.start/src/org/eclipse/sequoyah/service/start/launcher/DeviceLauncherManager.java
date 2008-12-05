@@ -26,10 +26,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.tml.common.utilities.BasePlugin;
+import org.eclipse.tml.common.utilities.exception.AbstractExceptionStatus;
 import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.service.start.StartServicePlugin;
 import org.eclipse.tml.service.start.exception.StartServiceExceptionHandler;
-import org.eclipse.tml.service.start.exception.StartServiceExceptionStatus;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
@@ -43,9 +43,9 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 public class DeviceLauncherManager {
 
-    public static final String LAUNCHER_ID = "org.eclipse.tml.service.start.launcher";
-    public static final String ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE = "org.eclipse.ui.externaltools.ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE";
-    public static final String ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE_VALUE = "${none}";
+    public static final String LAUNCHER_ID = "org.eclipse.tml.service.start.launcher"; //$NON-NLS-1$
+    public static final String ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE = "org.eclipse.ui.externaltools.ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE"; //$NON-NLS-1$
+    public static final String ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE_VALUE = "${none}"; //$NON-NLS-1$
     
 	static {
 	}
@@ -64,7 +64,7 @@ public class DeviceLauncherManager {
 	public static ILaunch launch(IDeviceLauncher launcher,String name) {
 		ILaunch launch = null;
 		try {
-			StartServicePlugin.logInfo("launching "+name);
+			BasePlugin.logInfo("launching "+name); //$NON-NLS-1$
 			ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfigurationType type = mgr.getLaunchConfigurationType(LAUNCHER_ID);
 			ILaunchConfigurationWorkingCopy copy;
@@ -80,7 +80,7 @@ public class DeviceLauncherManager {
 			launch = config.launch(ILaunchManager.DEBUG_MODE, null);
 			launcher.setPID(readPID(launcher.getFileId()));
 		} catch (Throwable e) {
-			StartServicePlugin.logError("emulator could not be launched", e);
+			BasePlugin.logError("emulator could not be launched", e); //$NON-NLS-1$
 		}
 		return launch;
 	}
@@ -105,7 +105,7 @@ public class DeviceLauncherManager {
 			count++;			
 	    }
 	    if (count>=50) {
-	    	throw StartServiceExceptionHandler.exception(StartServiceExceptionStatus.CODE_ERROR_USER);
+	    	throw StartServiceExceptionHandler.exception(AbstractExceptionStatus.CODE_ERROR_USER);
 	    }
 	    try {
 	      fis = new FileInputStream(file);

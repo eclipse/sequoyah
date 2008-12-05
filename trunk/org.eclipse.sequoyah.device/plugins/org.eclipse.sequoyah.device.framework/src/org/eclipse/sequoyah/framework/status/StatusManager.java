@@ -15,6 +15,7 @@ package org.eclipse.tml.framework.status;
 
 import java.util.Collection;
 
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.framework.device.DevicePlugin;
 
@@ -43,7 +44,7 @@ public class StatusManager {
 	
 	public void listStatus(){
 		for (IStatus status:StatusRegistry.getInstance().getStatus()) {
-			DevicePlugin.logInfo(status.toString());
+			BasePlugin.logInfo(status.toString());
 		}
 	}
 	

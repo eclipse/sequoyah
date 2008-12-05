@@ -133,7 +133,7 @@ public class PluginUtils
             {
                 if (elementName.equals(element.getName()))
                 {
-                    executable = element.createExecutableExtension("class");
+                    executable = element.createExecutableExtension("class"); //$NON-NLS-1$
                 }
             }
         }
@@ -504,7 +504,7 @@ public class PluginUtils
     {
         String platformPath          = Platform.getInstallLocation().getURL().getPath();
         String pluginPath            = pluginBundle.getLocation();
-        int removeIndex              = pluginPath.indexOf("file:");
+        int removeIndex              = pluginPath.indexOf("file:"); //$NON-NLS-1$
         pluginPath                   = pluginPath.substring(removeIndex + 6);
 
         File relativeInstalationPath = new File(pluginPath);

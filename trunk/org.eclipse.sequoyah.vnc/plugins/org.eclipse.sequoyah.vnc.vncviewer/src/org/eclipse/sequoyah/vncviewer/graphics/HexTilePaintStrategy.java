@@ -14,8 +14,8 @@ package org.eclipse.tml.vncviewer.graphics;
 
 import java.io.DataInputStream;
 
+import org.eclipse.tml.vncviewer.network.IRFBConstants;
 import org.eclipse.tml.vncviewer.network.RectHeader;
-import org.eclipse.tml.vncviewer.network.VNCProtocol;
 
 public class HexTilePaintStrategy extends AbstractPaintStrategy {
 	
@@ -51,7 +51,7 @@ public class HexTilePaintStrategy extends AbstractPaintStrategy {
 			throws Exception {
 		int subencoding = in.readUnsignedByte();
 		if ((subencoding & RAW) != 0) {
-			getContext().processRectangle(new RectHeader(x, y, width, height, VNCProtocol.RAW_ENCODING),in);
+			getContext().processRectangle(new RectHeader(x, y, width, height, IRFBConstants.RAW_ENCODING),in);
 			return;
 		}
 		if ((subencoding & BACKGROUND_SPECIFIED) != 0) {

@@ -266,10 +266,10 @@ public class ProtocolEngine {
 
 		this.parameters = parameters;
 
-		Boolean bypassProxy = (Boolean)parameters.get("bypassProxy");
+		Boolean bypassProxy = (Boolean)parameters.get("bypassProxy"); //$NON-NLS-1$
 		bypassProxy = (bypassProxy != null)? bypassProxy : new Boolean(false);
 		
-		Proxy proxy = (Proxy)parameters.get("proxy");
+		Proxy proxy = (Proxy)parameters.get("proxy"); //$NON-NLS-1$
 			
 		if (bypassProxy) { // The connection will not use proxy settings
 			socket = new Socket(Proxy.NO_PROXY);
@@ -389,7 +389,7 @@ public class ProtocolEngine {
 					reconnect(serialNumber);
 				}
 	
-			} else throw new ProtocolException ("Number of connection retries exceeded the limit of " + retriesMax + ".");
+			} else throw new ProtocolException ("Number of connection retries exceeded the limit of " + retriesMax + "."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		
@@ -618,13 +618,13 @@ public class ProtocolEngine {
 				// to warn the caller that this it provided an invalid message
 				// object to this method.
 				throw new InvalidMessageException(
-						"Field does not contain a number");
+						"Field does not contain a number"); //$NON-NLS-1$
 			}
 		} else {
 			// The definition of this fixed data does not contain all
 			// information it should have.
 			throw new InvalidDefinitionException(
-					"Incomplete fixed data element");
+					"Incomplete fixed data element"); //$NON-NLS-1$
 		}
 	}
 
@@ -688,20 +688,20 @@ public class ProtocolEngine {
                 {
                     // If the encoding provided is not supported, that means that the
                     // message definition is incorrect.
-                    throw new InvalidDefinitionException("Invalid charset name provided at message definition", e);
+                    throw new InvalidDefinitionException("Invalid charset name provided at message definition", e); //$NON-NLS-1$
                 }
 			} else {
 				// If a value is not defined, than raise a protocol exception
 				// to warn the caller that this it provided an invalid message
 				// object to this method.
 				throw new InvalidMessageException(
-						"Value field does not contain a string");
+						"Value field does not contain a string"); //$NON-NLS-1$
 			}
 		} else {
 			// The definition of this fixed data does not contain all
 			// information it should have.
 			throw new InvalidDefinitionException(
-					"Incomplete fixed data element");
+					"Incomplete fixed data element"); //$NON-NLS-1$
 		}
 	}
 
@@ -793,7 +793,7 @@ public class ProtocolEngine {
 			// exception to warn the caller that this it provided an invalid
 			// message object to this method.
 			throw new InvalidMessageException(
-					"Iterate on field value is not numeric");
+					"Iterate on field value is not numeric"); //$NON-NLS-1$
 		}
 	}
 
@@ -1000,7 +1000,7 @@ public class ProtocolEngine {
 			// The definition of this fixed data does not contain all
 			// information it should have.
 			throw new InvalidDefinitionException(
-					"Incomplete fixed data element");
+					"Incomplete fixed data element"); //$NON-NLS-1$
 		}
 	}
 
@@ -1076,7 +1076,7 @@ public class ProtocolEngine {
 					.setFieldValue(valueFieldName, iterableBlockId, index,
 							value);
 			
-			if(sizeFieldName != null && !sizeFieldName.equals(""))
+			if(sizeFieldName != null && !sizeFieldName.equals("")) //$NON-NLS-1$
 				message.setFieldValue(sizeFieldName, iterableBlockId, index,
 							new Integer(sizeFieldSize).toString());
 			
@@ -1085,7 +1085,7 @@ public class ProtocolEngine {
 			// The definition of this fixed data does not contain all
 			// information it should have.
 			throw new InvalidDefinitionException(
-					"Incomplete fixed data element");
+					"Incomplete fixed data element"); //$NON-NLS-1$
 		}
 	}
 
@@ -1204,7 +1204,7 @@ public class ProtocolEngine {
 			// exception to warn the caller that this it provided an invalid
 			// message object to this method.
 			throw new InvalidInputStreamDataException(
-					"Iterate on field value is not numeric");
+					"Iterate on field value is not numeric"); //$NON-NLS-1$
 		}
 	}
 
@@ -1264,7 +1264,7 @@ public class ProtocolEngine {
 				// an exception to warn the caller that it provided an invalid
 				// parameter.
 				throw new InvalidInputStreamDataException(
-						"Unrecognized field size");
+						"Unrecognized field size"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			// The input stream is probably broken
@@ -1407,7 +1407,7 @@ public class ProtocolEngine {
 						// stopped, because a non synchronized stream is
 						// impossible to recover
 						System.out
-								.println("Message not found. Stopping protocol...");
+								.println("Message not found. Stopping protocol..."); //$NON-NLS-1$
 						stopProtocol();
 					} else {
 						// Reads a byte from the input stream and append it to

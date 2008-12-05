@@ -55,8 +55,8 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 
 		// Determine the number of pixels using the width and height already
 		// read
-		int w = (Integer) currentlyReadFields.getFieldValue("width");
-		int h = (Integer) currentlyReadFields.getFieldValue("height");
+		int w = (Integer) currentlyReadFields.getFieldValue("width"); //$NON-NLS-1$
+		int h = (Integer) currentlyReadFields.getFieldValue("height"); //$NON-NLS-1$
 
 		Map<String, Object> fieldsMap = new HashMap<String, Object>();
 
@@ -68,12 +68,12 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 			// from the protocol data instance
 			IVNCPainter painter = protocolData.getVncPainter();
 
-			int x = (Integer) currentlyReadFields.getFieldValue("x-position");
-			int y = (Integer) currentlyReadFields.getFieldValue("y-position");
-			int width = (Integer) currentlyReadFields.getFieldValue("width");
-			int height = (Integer) currentlyReadFields.getFieldValue("height");
+			int x = (Integer) currentlyReadFields.getFieldValue("x-position"); //$NON-NLS-1$
+			int y = (Integer) currentlyReadFields.getFieldValue("y-position"); //$NON-NLS-1$
+			int width = (Integer) currentlyReadFields.getFieldValue("width"); //$NON-NLS-1$
+			int height = (Integer) currentlyReadFields.getFieldValue("height"); //$NON-NLS-1$
 			int encoding = (Integer) currentlyReadFields
-					.getFieldValue("encodingType");
+					.getFieldValue("encodingType"); //$NON-NLS-1$
 			// byte[] data = (byte[])
 			// currentlyReadFields.getFieldValue("pixelsData");
 
@@ -88,7 +88,7 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 			}
 
 			int numRect = (Integer) currentlyReadFields
-					.getFieldValue("numberOfRectangles");
+					.getFieldValue("numberOfRectangles"); //$NON-NLS-1$
 
 			x0 = Math.min(x0, x);
 			y0 = Math.min(y0, y);

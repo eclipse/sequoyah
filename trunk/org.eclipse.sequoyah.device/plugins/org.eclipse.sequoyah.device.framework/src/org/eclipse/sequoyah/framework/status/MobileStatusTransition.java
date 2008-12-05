@@ -49,7 +49,7 @@ public class MobileStatusTransition implements IStatusTransition {
 	}
 		
 	public String toString(){
-		return "[Transition: start="+(startId!=null?startId:"")+" end="+(endId!=null?endId:"")+" halt="+(haltId!=null?haltId:"")+"]";
+		return "[Transition: start="+(startId!=null?startId:"")+" end="+(endId!=null?endId:"")+" halt="+(haltId!=null?haltId:"")+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	}	
 	
 }

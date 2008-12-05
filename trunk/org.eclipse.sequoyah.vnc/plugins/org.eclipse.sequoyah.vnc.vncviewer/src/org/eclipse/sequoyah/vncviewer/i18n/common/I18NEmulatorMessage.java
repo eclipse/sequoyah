@@ -18,7 +18,7 @@ package org.eclipse.tml.vncviewer.i18n.common;
  * Plugin
  */
 public interface I18NEmulatorMessage {
-	public static final String MSG_TITLE = "msg.title";
-	public static final String MSG_TITLE_1 = "msg.title.1";
+	public static final String MSG_TITLE = "msg.title"; //$NON-NLS-1$
+	public static final String MSG_TITLE_1 = "msg.title.1"; //$NON-NLS-1$
 	
 }

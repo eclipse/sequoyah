@@ -9,6 +9,7 @@
  * [244805] - Improvements on Instance view  
  *
  * Contributors:
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -27,6 +28,12 @@ public class InstanceMgtView extends ViewPart
     {
     }
 
+    private static InstanceServicesComposite instanceServicesComposite = null;
+    
+    public static InstanceServicesComposite getInstanceServicesComposite(){
+    	return instanceServicesComposite;
+    }
+    
     public void createPartControl(Composite parent)
     {
         SashForm form = new SashForm(parent,SWT.VERTICAL);
@@ -35,7 +42,8 @@ public class InstanceMgtView extends ViewPart
         InstanceStatusComposite topComposite = new InstanceStatusComposite(form, getViewSite());
         
         final InstanceServicesComposite bottomComposite = new InstanceServicesComposite(form);
-               
+        instanceServicesComposite = bottomComposite;
+        
         form.setWeights(new int[] {60,40});
         
         topComposite.addInstanceSelectionChangeListener(new InstanceSelectionChangeListener()

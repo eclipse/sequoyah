@@ -46,9 +46,9 @@ public class StatusSorter extends ViewerSorter {
 				name1 = e1.toString();
 			    name2 = e2.toString();
 		}
-		if(name1 == null) name1 = "";
-		if(name2 == null) name2 = "";
-		return collator.compare(name1, name2);
+		if(name1 == null) name1 = ""; //$NON-NLS-1$
+		if(name2 == null) name2 = ""; //$NON-NLS-1$
+		return getComparator().compare(name1, name2);
 	}
 	
 	

@@ -123,7 +123,7 @@ public class ClientModel implements IModel {
 			Map <String, Object> parameters)
 			throws UnknownHostException, IOException, ProtocolInitException {
 
-		Integer retriesObj = (Integer) parameters.get("connectionRetries");
+		Integer retriesObj = (Integer) parameters.get("connectionRetries"); //$NON-NLS-1$
 		int retries  = (retriesObj != null) ? retriesObj : -1;
 		
 		ProtocolHandle handle = new ProtocolHandle();

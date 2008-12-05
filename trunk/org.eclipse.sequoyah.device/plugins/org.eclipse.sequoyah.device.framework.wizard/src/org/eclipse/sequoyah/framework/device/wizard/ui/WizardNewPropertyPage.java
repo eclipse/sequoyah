@@ -87,7 +87,7 @@ public class WizardNewPropertyPage extends WizardPage implements IWizardProperty
 
         // new project label
         Label hostLabel = new Label(propertyGroup, SWT.NONE);
-        hostLabel.setText("Host");
+        hostLabel.setText("Host"); //$NON-NLS-1$
         hostLabel.setFont(parent.getFont());
 
         hostField = new Text(propertyGroup, SWT.BORDER);
@@ -97,7 +97,7 @@ public class WizardNewPropertyPage extends WizardPage implements IWizardProperty
         hostField.setFont(parent.getFont());
         
         Label displayLabel = new Label(propertyGroup, SWT.NONE);
-        displayLabel.setText("Display");
+        displayLabel.setText("Display"); //$NON-NLS-1$
         displayLabel.setFont(parent.getFont());
         
         displayField = new Text(propertyGroup, SWT.BORDER);
@@ -107,7 +107,7 @@ public class WizardNewPropertyPage extends WizardPage implements IWizardProperty
         displayField.setFont(parent.getFont());
     
         Label portLabel = new Label(propertyGroup, SWT.NONE);
-        portLabel.setText("Port");
+        portLabel.setText("Port"); //$NON-NLS-1$
         portLabel.setFont(parent.getFont());
         
         portField = new Text(propertyGroup, SWT.BORDER);

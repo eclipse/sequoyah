@@ -6,6 +6,10 @@
       id="org.eclipse.tml.framework.device.tree"
       name="Device Viewer"
       point="org.eclipse.ui.views">
+      <category
+	   id = "other"
+	   name="Other">
+	 </category>
    <view
          category="other"
          class="org.eclipse.tml.framework.device.ui.view.DeviceView"

@@ -23,8 +23,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.vncviewer.config.IPropertiesFileHandler;
 import org.eclipse.tml.vncviewer.config.IVNCProperties;
-import org.eclipse.tml.vncviewer.network.VNCKeyEvent;
-import org.eclipse.tml.vncviewer.network.VNCMouseEvent;
 
 
 /**
@@ -91,9 +89,9 @@ public class SWTVNCEventTranslator {
 		// Creates the mouse event message, providing the
 		// necessary coordinates
 		ProtocolMessage message = new ProtocolMessage(5);
-		message.setFieldValue("buttonMask", buttonPressed ? 1 : 0);
-		message.setFieldValue("x-position", swtEvent.x);
-		message.setFieldValue("y-position", swtEvent.y);
+		message.setFieldValue("buttonMask", buttonPressed ? 1 : 0); //$NON-NLS-1$
+		message.setFieldValue("x-position", swtEvent.x); //$NON-NLS-1$
+		message.setFieldValue("y-position", swtEvent.y); //$NON-NLS-1$
 
 		return message;
 	}
@@ -121,11 +119,11 @@ public class SWTVNCEventTranslator {
 		 * is pressed.
 		 */
 		ProtocolMessage message = new ProtocolMessage(4);
-		message.setFieldValue("downFlag", pressed ? 1 : 0);
+		message.setFieldValue("downFlag", pressed ? 1 : 0); //$NON-NLS-1$
 		if (!shiftPressed) {
-			message.setFieldValue("key", keysym);
+			message.setFieldValue("key", keysym); //$NON-NLS-1$
 		} else {
-			message.setFieldValue("key", (int) swtEvent.character);
+			message.setFieldValue("key", (int) swtEvent.character); //$NON-NLS-1$
 		}
 		return message;
 

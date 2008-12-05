@@ -19,8 +19,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.eclipse.core.resources,
  org.eclipse.ui.externaltools
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tml.service.start,
  org.eclipse.tml.service.start.exception,
  org.eclipse.tml.service.start.handler,
  org.eclipse.tml.service.start.launcher
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+

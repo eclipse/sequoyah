@@ -14,10 +14,9 @@ package org.eclipse.tml.framework.device.model.handler;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.model.IInstance;
-import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 
 
 public class ServiceHandlerAction implements Listener {
@@ -41,7 +40,7 @@ public class ServiceHandlerAction implements Listener {
     		 try {
     			 serviceHandler.run(instance);
     		 } catch (TmLException te){
-    			 DevicePlugin.logError(text+"-"+te.getMessage());
+    			 BasePlugin.logError(text+"-"+te.getMessage()); //$NON-NLS-1$
     		 }
     	 }
      }

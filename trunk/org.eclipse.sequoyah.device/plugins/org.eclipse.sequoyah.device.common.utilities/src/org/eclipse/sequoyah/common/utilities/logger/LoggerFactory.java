@@ -22,7 +22,7 @@ package org.eclipse.tml.common.utilities.logger;
  */
 public abstract class LoggerFactory
 {   
-    private static final String DEFAULT_LOG_FILE_NAME = "default.log";
+    private static final String DEFAULT_LOG_FILE_NAME = "default.log"; //$NON-NLS-1$
 
 	/**
      * Get logger chosen for application

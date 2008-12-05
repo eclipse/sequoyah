@@ -17,9 +17,9 @@ package org.eclipse.tml.framework.device.wizard.model;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardConstants;
-import org.eclipse.tml.framework.device.wizard.DeviceWizardPlugin;
 import org.eclipse.tml.framework.device.wizard.DeviceWizardResources;
 import org.eclipse.tml.framework.device.wizard.ui.WizardNewProjectPage;
 import org.eclipse.tml.framework.device.wizard.ui.WizardNewPropertyPage;
@@ -105,7 +105,7 @@ public class DeviceWizardBean
             }
             catch (CoreException e)
             {
-                DeviceWizardPlugin.logError(e.getMessage(), e);
+                BasePlugin.logError(e.getMessage(), e);
             }
 
         }

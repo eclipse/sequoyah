@@ -18,21 +18,21 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
-import org.eclipse.tml.service.stop.StopServicePlugin;
 import org.eclipse.tml.service.stop.StopServiceResources;
 
 public class StopServiceHandler extends ServiceHandler {
 
 	public IStatus runService(IInstance instance, Map<Object , Object> arguments , IProgressMonitor monitor) {
-		StopServicePlugin.logInfo(StopServiceResources.TML_Stop_Service+"->"+instance.getName());
+		BasePlugin.logInfo(StopServiceResources.TML_Stop_Service+"->"+instance.getName()); //$NON-NLS-1$
 		return Status.OK_STATUS;		
 	}
 
 	public IStatus updatingService(IInstance instance, IProgressMonitor monitor) {
-		StopServicePlugin.logInfo(StopServiceResources.TML_Stop_Service_Update+"->"+instance.getName());
+		BasePlugin.logInfo(StopServiceResources.TML_Stop_Service_Update+"->"+instance.getName()); //$NON-NLS-1$
 		return Status.OK_STATUS;
 	}
 	

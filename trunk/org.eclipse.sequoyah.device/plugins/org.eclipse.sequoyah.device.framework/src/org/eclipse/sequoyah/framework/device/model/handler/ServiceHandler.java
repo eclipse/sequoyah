@@ -10,6 +10,8 @@
  * Contributors:
  * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
  ********************************************************************************/
 package org.eclipse.tml.framework.device.model.handler;
 
@@ -17,14 +19,10 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.framework.device.events.InstanceEvent;
-import org.eclipse.tml.framework.device.events.InstanceEventManager;
+import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.status.IStatusTransition;
@@ -43,12 +41,16 @@ public abstract class ServiceHandler implements IServiceHandler
 
     public void run(IInstance instance) throws TmLException
     {
-        if (!verifyStatus(instance))
+     
+    	/*
+    	if (!verifyStatus(instance))
         {
             throw new TmLException();
         }
 
-        createJob(instance, null);
+        createJob(instance, null);*/
+    	
+    	run(instance, null);
     }
 
     public void run(IInstance instance, Map<Object, Object> arguments) throws TmLException
@@ -69,19 +71,26 @@ public abstract class ServiceHandler implements IServiceHandler
             throw new TmLException();
         }
 
-        String jobName = (service != null ? service.getName() : "");
+        String jobName = (service != null ? service.getName() : ""); //$NON-NLS-1$
         return doRun(instance, arguments, jobName, monitor);
     }
 
     private void createJob(final IInstance instance, final Map<Object, Object> arguments)
     {
-        final String jobName = (service != null ? service.getName() : "");
+        final String jobName = (service != null ? service.getName() : ""); //$NON-NLS-1$
         final Job serviceJob = new Job(jobName)
         {
             @Override
             public IStatus run(IProgressMonitor monitor)
-            {
-                return doRun(instance, arguments, jobName, monitor);
+            {	
+            	IStatus status = null;
+            	try {
+            		status = doRun(instance, arguments, jobName, monitor);
+				} catch (TmLException e) {
+					e.printStackTrace();
+				}
+				
+				return status;
             }
         };
 
@@ -96,46 +105,11 @@ public abstract class ServiceHandler implements IServiceHandler
     }
 
     private IStatus doRun(final IInstance instance, final Map<Object, Object> arguments,
-            String jobName, IProgressMonitor monitor)
+            String jobName, IProgressMonitor monitor) throws TmLException
     {
-        IStatus status = Status.OK_STATUS;
-
-        if (monitor == null)
-        {
-            monitor = new NullProgressMonitor();
-        }
-
-        monitor.beginTask(jobName, 3);
-        status = runService(instance, arguments, new SubProgressMonitor(monitor, 1));
-        if (status.isOK())
-        {
-            if (parent != null)
-            {
-                if (parent instanceof ServiceHandler)
-                {
-                    status =
-                            ((ServiceHandler) parent).updatingService(instance,
-                                    new SubProgressMonitor(monitor, 1));
-                }
-                else
-                {
-                    parent.updatingService(instance);
-                    monitor.worked(1);
-                }
-            }
-            else
-            {
-                status =
-                        ServiceHandler.this.updatingService(instance, new SubProgressMonitor(
-                                monitor, 1));
-            }
-        }
-
-        updateStatus(instance, status);
-
-        monitor.done();
-
-        return status;
+    	
+    	return ((AbstractMobileInstance)instance).getStateMachineHandler().runService(this, instance, arguments, jobName, monitor);
+    	
     }
 
     public void setService(IService service)
@@ -158,21 +132,6 @@ public abstract class ServiceHandler implements IServiceHandler
     public void updatingService(IInstance instance)
     {
         // empty default implementation
-    }
-
-    public void updateStatus(IInstance instance, IStatus status)
-    {
-        IStatusTransition transition = getService().getStatusTransitions(instance.getStatus());
-
-        if (status.isOK())
-        {
-            instance.setStatus(transition.getEndId());
-        }
-        else
-        {
-            instance.setStatus(transition.getHaltId());
-        }
-        InstanceEventManager.getInstance().fireInstanceUpdated(new InstanceEvent(instance));
     }
 
     public boolean verifyStatus(IInstance instance)

@@ -18,8 +18,8 @@ import java.io.File;
 @SuppressWarnings("serial")
 public class ResourceNotAvailable extends Exception
 {  
-   private static final String NOT_AVAILABLE_DUE_TO_I_O_ISSUES = " not available due to I/O issues.";
-   private static final String RESOURCE = "Resource";
+   private static final String NOT_AVAILABLE_DUE_TO_I_O_ISSUES = " not available due to I/O issues."; //$NON-NLS-1$
+   private static final String RESOURCE = "Resource"; //$NON-NLS-1$
 
    /**
     *  

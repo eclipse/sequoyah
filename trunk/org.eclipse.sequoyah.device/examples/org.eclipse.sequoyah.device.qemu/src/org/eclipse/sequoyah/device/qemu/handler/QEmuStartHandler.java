@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.tml.device.qemu.QEmuPlugin;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
@@ -26,7 +26,7 @@ import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 public class QEmuStartHandler extends ServiceHandler {
 
 	public void runService(IInstance instance) {
-		QEmuPlugin.logInfo("start service->"+instance.getName()); //$NON-NLS-1$
+		BasePlugin.logInfo("start service->"+instance.getName()); //$NON-NLS-1$
 	}
 
 	public void updatingService(IInstance instance) {

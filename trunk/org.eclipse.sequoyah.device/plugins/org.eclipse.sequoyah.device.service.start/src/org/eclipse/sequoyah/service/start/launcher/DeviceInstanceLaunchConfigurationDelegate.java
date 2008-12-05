@@ -23,7 +23,7 @@ import org.eclipse.ui.externaltools.internal.program.launchConfigurations.Progra
  * @author Fabio Fantato
  * 
  */
-@SuppressWarnings("restriction")
+
 public class DeviceInstanceLaunchConfigurationDelegate extends
 		ProgramLaunchDelegate {
 	// no implementation additional

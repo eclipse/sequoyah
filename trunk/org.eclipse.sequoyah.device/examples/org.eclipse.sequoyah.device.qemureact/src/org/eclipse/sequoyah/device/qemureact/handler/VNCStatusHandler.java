@@ -13,8 +13,6 @@
 package org.eclipse.tml.device.qemureact.handler;
 
 import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.device.qemureact.exception.QEmuReactDeviceExceptionHandler;
-import org.eclipse.tml.device.qemureact.exception.QEmuReactDeviceExceptionStatus;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.status.IStatusTransition;
 import org.eclipse.tml.framework.status.StatusHandler;

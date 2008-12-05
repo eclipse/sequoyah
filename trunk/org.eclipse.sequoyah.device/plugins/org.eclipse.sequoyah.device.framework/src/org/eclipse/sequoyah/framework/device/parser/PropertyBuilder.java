@@ -62,13 +62,13 @@ public class PropertyBuilder {
 	
 	public static void read(){
 		String path = PluginUtils.getPluginInstallationPath(DevicePlugin.getDefault()).getAbsolutePath();
-		File file = new File(path,"/resource/config.xml");
+		File file = new File(path,"/resource/config.xml"); //$NON-NLS-1$
 		read(file);
 	}
 	
 	public static void write(){
 		String path = PluginUtils.getPluginInstallationPath(DevicePlugin.getDefault()).getAbsolutePath();
-		File file = new File(path,"/resource/config_out.xml");
+		File file = new File(path,"/resource/config_out.xml"); //$NON-NLS-1$
 		write(file);
 	}
 	

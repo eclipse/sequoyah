@@ -21,6 +21,7 @@ Export-Package: org.eclipse.tml.framework.device,
  org.eclipse.tml.framework.device.model,
  org.eclipse.tml.framework.device.model.handler,
  org.eclipse.tml.framework.device.parser,
+ org.eclipse.tml.framework.device.statemachine,
  org.eclipse.tml.framework.status
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

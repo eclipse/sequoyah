@@ -61,23 +61,23 @@ public class FileUtil {
 //							+ ".");
 		} else {
 			// error detected
-			String errorMessage = "";
+			String errorMessage = ""; //$NON-NLS-1$
 			if (fromDir == null) {
-				errorMessage = "Null pointer for source directory.";
+				errorMessage = "Null pointer for source directory."; //$NON-NLS-1$
 			} else if (!fromDir.isDirectory()) {
-				errorMessage = fromDir.getName() + " is not a directory.";
+				errorMessage = fromDir.getName() + " is not a directory."; //$NON-NLS-1$
 			} else if (!fromDir.canRead()) {
-				errorMessage = "Cannot read from " + fromDir.getName() + ".";
+				errorMessage = "Cannot read from " + fromDir.getName() + "."; //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (toDir == null) {
-				errorMessage = "Null pointer for destination directory.";
+				errorMessage = "Null pointer for destination directory."; //$NON-NLS-1$
 			} else if (!toDir.isDirectory()) {
-				errorMessage = toDir.getName() + " is not a directory.";
+				errorMessage = toDir.getName() + " is not a directory."; //$NON-NLS-1$
 			} else if (!toDir.canWrite()) {
-				errorMessage = "Cannot write to" + toDir.getName() + ".";
+				errorMessage = "Cannot write to" + toDir.getName() + "."; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 //			log(FileUtil.class).error(errorMessage);
-			throw new IOException("Error copying directory: " + errorMessage);
+			throw new IOException("Error copying directory: " + errorMessage); //$NON-NLS-1$
 		}
 	}
 
@@ -152,7 +152,7 @@ public class FileUtil {
 	 *             When the parameter isn't a directory
 	 */
 	public boolean deleteDirRecursively(File directory) throws IOException {
-		String dirName = "";
+		String dirName = ""; //$NON-NLS-1$
 
 		boolean success = true;
 
@@ -172,18 +172,18 @@ public class FileUtil {
 				success = success && directory.delete();
 			} else {
 				String errorMessage = directory.getName()
-						+ " is not a diretory.";
+						+ " is not a diretory."; //$NON-NLS-1$
 //				log(FileUtil.class).error(errorMessage);
 				throw new IOException(errorMessage);
 			}
 		} else {
-			String errorMessage = "The directory does not exist.";
+			String errorMessage = "The directory does not exist."; //$NON-NLS-1$
 //			log(FileUtil.class).error(errorMessage);
 			success = false;
 			throw new IOException(errorMessage);
 		}
 
-		if ((success) && (!dirName.equals(""))) {
+		if ((success) && (!dirName.equals(""))) { //$NON-NLS-1$
 //			log(FileUtil.class).info(
 //					"The directory " + dirName + "was successfully deleted.");
 		}
@@ -208,20 +208,20 @@ public class FileUtil {
 //					"The file " + fileToDelete.getName()
 //							+ "was successfully deleted.");
 		} else {
-			String errorMessage = "";
+			String errorMessage = ""; //$NON-NLS-1$
 			if (fileToDelete == null) {
-				errorMessage = "Null pointer for file to delete.";
+				errorMessage = "Null pointer for file to delete."; //$NON-NLS-1$
 			} else {
 				if (!fileToDelete.exists()) {
-					errorMessage = "The file " + fileToDelete.getName()
-							+ " does not exist.";
+					errorMessage = "The file " + fileToDelete.getName() //$NON-NLS-1$
+							+ " does not exist."; //$NON-NLS-1$
 				} else {
 					if (!fileToDelete.isFile()) {
 						errorMessage = fileToDelete.getName()
-								+ " is not a file.";
+								+ " is not a file."; //$NON-NLS-1$
 					} else {
 						if (!fileToDelete.canWrite())
-							errorMessage = "Cannot write to "
+							errorMessage = "Cannot write to " //$NON-NLS-1$
 									+ fileToDelete.getName();
 					}
 				}
@@ -229,7 +229,7 @@ public class FileUtil {
 			}
 
 //			log(FileUtil.class).error(errorMessage);
-			throw new IOException("Cannot delete file: " + errorMessage);
+			throw new IOException("Cannot delete file: " + errorMessage); //$NON-NLS-1$
 		}
 	}
 
@@ -259,8 +259,8 @@ public class FileUtil {
 	 */
 	public static String getExtension(String fileName) {
 		if (fileName != null) {
-			int i = fileName.lastIndexOf(".") + 1;
-			return (i == 0) ? "" : fileName.substring(i);
+			int i = fileName.lastIndexOf(".") + 1; //$NON-NLS-1$
+			return (i == 0) ? "" : fileName.substring(i); //$NON-NLS-1$
 		} else {
 //			log(FileUtil.class).error("The file does not exist.");
 			return null;
@@ -335,7 +335,7 @@ public class FileUtil {
 
 		// return from all remaining directories of the homeFile
 		for (int i = commonIndex + 1; i < homeDirList.size(); i++) {
-			relativePath.append("..");
+			relativePath.append(".."); //$NON-NLS-1$
 			relativePath.append(File.separatorChar);
 		}
 
@@ -398,23 +398,23 @@ public class FileUtil {
 				}
 			}
 		} else {
-			String errorMessage = "";
+			String errorMessage = ""; //$NON-NLS-1$
 			if (!baseDirToList.exists()) {
-				errorMessage = "The base dir does not exist.";
+				errorMessage = "The base dir does not exist."; //$NON-NLS-1$
 			} else {
 				if (!baseDirToList.isDirectory()) {
 					errorMessage = baseDirToList.getName()
-							+ "is not a directory.";
+							+ "is not a directory."; //$NON-NLS-1$
 				} else {
 					if (!baseDirToList.canRead()) {
-						errorMessage = "Cannot fread from "
-								+ baseDirToList.getName() + ".";
+						errorMessage = "Cannot fread from " //$NON-NLS-1$
+								+ baseDirToList.getName() + "."; //$NON-NLS-1$
 					}
 				}
 			}
 
 			//log(FileUtil.class).error(errorMessage);
-			throw new IOException("Error listing files: " + errorMessage);
+			throw new IOException("Error listing files: " + errorMessage); //$NON-NLS-1$
 		}
 
 		return listOfFiles;
@@ -476,21 +476,21 @@ public class FileUtil {
 			while (st.hasMoreTokens()) {
 				String token = (String) st.nextElement();
 
-				if (token.equals("..")) {
+				if (token.equals("..")) { //$NON-NLS-1$
 					int lastDirIndex = sb.lastIndexOf(File.separator);
 
 					// do not go back currently on the root directory
 					if (lastDirIndex > 2) {
 						sb.delete(lastDirIndex, sb.length());
 					}
-				} else if (!token.equals(".")) {
+				} else if (!token.equals(".")) { //$NON-NLS-1$
 					if (sb.length() > 0) {
 						sb.append(File.separator);
 					}
 
 					sb.append(token);
 
-					if (token.endsWith(":")) {
+					if (token.endsWith(":")) { //$NON-NLS-1$
 						sb.append(File.separator);
 					}
 				}

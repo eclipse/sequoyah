@@ -14,7 +14,7 @@
 package org.eclipse.tml.common.utilities.exception;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.tml.common.utilities.UtilitiesPlugin;
+import org.eclipse.tml.common.utilities.BasePlugin;
 
 public class ExceptionHandler {
 	
@@ -25,28 +25,27 @@ public class ExceptionHandler {
 		String plugin = status.getPlugin();
 		String msg = status.getMessage();
 		Throwable t = status.getException();
-		String logMessage= msg+"(PLUGIN="+plugin+";ERROR="+String.valueOf(code)+")";
+		String logMessage= msg+"(PLUGIN="+plugin+";ERROR="+String.valueOf(code)+")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		switch(exception.getStatus().getSeverity()){
 			case IStatus.INFO:
-				UtilitiesPlugin.logInfo(logMessage);
+				BasePlugin.logInfo(logMessage);
 				break;
 			case IStatus.WARNING:
-				UtilitiesPlugin.logWarning(logMessage);
+				BasePlugin.logWarning(logMessage);
 				break;
 			default:
 				if (t!=null) {
-					UtilitiesPlugin.logError(logMessage, t);
+					BasePlugin.logError(logMessage, t);
 				} else {
-					UtilitiesPlugin.logError(logMessage);
+					BasePlugin.logError(logMessage);
 				}				
 		}
 		return logMessage;
 	}
 	
 	public static void showException(TmLException exception) {
-		@SuppressWarnings("unused")
+
 		String logMessage = logException(exception);
-		@SuppressWarnings("unused")
 		Throwable t = exception.getStatus().getException();
 		// UI print message
 	}

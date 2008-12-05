@@ -34,7 +34,7 @@ public final class SimpleLogger implements ILogger
 	 * @uml.associationEnd  qualifier="key:java.lang.Object java.lang.String"
 	 */
     private static final Map<String, String> levelsMap;
-    private static final String STR_SEPARATOR = "-";
+    private static final String STR_SEPARATOR = "-"; //$NON-NLS-1$
 
     
     
@@ -51,7 +51,7 @@ public final class SimpleLogger implements ILogger
     
     private SimpleLogger()    
     {
-    	MessageConsole console = new MessageConsole("console", null);
+    	MessageConsole console = new MessageConsole("console", null); //$NON-NLS-1$
     	ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { console });
     	MessageConsoleStream stream = console.newMessageStream();
 
@@ -209,7 +209,6 @@ public final class SimpleLogger implements ILogger
     /**
      * Sets a Appender File
      */
-    @SuppressWarnings("unused")
 	private void setAppenderFile()
     {
     }
@@ -217,7 +216,7 @@ public final class SimpleLogger implements ILogger
     /**
      * Sets a Appender HTML File
      */
-    @SuppressWarnings("unused")
+   
 	private void setAppenderHTML()
     {
     }

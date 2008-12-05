@@ -40,7 +40,7 @@ public class StandaloneVNCViewer {
 	private static Canvas canvas;
 	private static int WINDOW_WIDTH = 700;
 	private static int WINDOW_HEIGHT = 500;
-	private static String host = "127.0.0.1";
+	private static String host = "127.0.0.1"; //$NON-NLS-1$
 	private static int port = 5900;
 	
 	
@@ -57,7 +57,7 @@ public class StandaloneVNCViewer {
 			//vncswt.start(host, port, null);
 			vncswt.start(null);
 		} catch (Exception e){
-			log(StandaloneVNCViewer.class).error("The viewer can not be started.");
+			log(StandaloneVNCViewer.class).error("The viewer can not be started."); //$NON-NLS-1$
 		}
 	
 		canvas = vncswt.getCanvas();
@@ -76,7 +76,7 @@ public class StandaloneVNCViewer {
 								vncswt.keyEvent(e);
 								vncswt.updateScreen();
 							} catch (Exception e1) {
-								log(StandaloneVNCViewer.class).error("VNC View error on key event.");
+								log(StandaloneVNCViewer.class).error("VNC View error on key event."); //$NON-NLS-1$
 							}
 							
 							canvas.redraw();
@@ -103,7 +103,7 @@ public class StandaloneVNCViewer {
 			//vncswt.start(host, port, null);
 			vncswt.start(null);
 		} catch (Exception e){
-			log(StandaloneVNCViewer.class).error("The viewer can not be started.");
+			log(StandaloneVNCViewer.class).error("The viewer can not be started."); //$NON-NLS-1$
 		}
 		
 		while (!parent.isDisposed()) {
@@ -113,7 +113,7 @@ public class StandaloneVNCViewer {
 				vncswt.wait(500);
 			}
 			catch (Exception e){
-				log(StandaloneVNCViewer.class).error("Error on Loop test.");
+				log(StandaloneVNCViewer.class).error("Error on Loop test."); //$NON-NLS-1$
 			}
 
 		}
@@ -130,7 +130,7 @@ public class StandaloneVNCViewer {
 			port = (Integer.valueOf(args[1])).intValue();
 		}
 		else{
-			log(StandaloneVNCViewer.class).error("[host] [port] expected.");
+			log(StandaloneVNCViewer.class).error("[host] [port] expected."); //$NON-NLS-1$
 			return;
 		}
 		

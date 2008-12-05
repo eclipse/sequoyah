@@ -87,7 +87,7 @@ abstract public class VNCProtocol implements IProtocolInit,
 		byte[] serverName = new byte[nameLen];
 		in.read(serverName, 0, nameLen);
 
-		String serverNameStr = "";
+		String serverNameStr = ""; //$NON-NLS-1$
 		for (int i = 0; i < serverName.length; i++) {
 			char c = (char) serverName[i];
 			serverNameStr += c;
@@ -142,7 +142,7 @@ abstract public class VNCProtocol implements IProtocolInit,
 			}
 		}
 		if (!versionOk) {
-			throw new ProtoClientException("Wrong protocol version.");
+			throw new ProtoClientException("Wrong protocol version."); //$NON-NLS-1$
 		}
 	}
 
@@ -199,7 +199,7 @@ abstract public class VNCProtocol implements IProtocolInit,
 		for (int j = 0; j < failReasonLength; j++) {
 			reason.append((char) (in.readByte()));
 		}
-		throw new Exception("Handshake failed: " + reason.toString());
+		throw new Exception("Handshake failed: " + reason.toString()); //$NON-NLS-1$
 	}
 
 	protected boolean securityTypeSupported(int type) {
@@ -222,7 +222,7 @@ abstract public class VNCProtocol implements IProtocolInit,
 			authenticateVNC(in, out, password);
 			break;
 		default:
-			throw new Exception("Handshake failed: unsupported security type "
+			throw new Exception("Handshake failed: unsupported security type " //$NON-NLS-1$
 					+ securityType);
 		}
 	}
@@ -254,14 +254,14 @@ abstract public class VNCProtocol implements IProtocolInit,
 	public void clientInit(ProtocolHandle handle, DataInputStream in,
 			OutputStream out, Map parameters) throws ProtocolInitException {
 
-		String password = (String) parameters.get("password");
+		String password = (String) parameters.get("password"); //$NON-NLS-1$
 
 		try {
 			negotiateProtocol(in, out);
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
-					"VNC protocol negotiation error: " + e.getMessage());
-			throw new ProtocolInitException("VNC protocol negotiation error.");
+					"VNC protocol negotiation error: " + e.getMessage()); //$NON-NLS-1$
+			throw new ProtocolInitException("VNC protocol negotiation error."); //$NON-NLS-1$
 		}
 
 		int securityType;
@@ -269,8 +269,8 @@ abstract public class VNCProtocol implements IProtocolInit,
 			securityType = negotiateSecurity(in, out);
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
-					"VNC security negotiation error: " + e.getMessage());
-			throw new ProtocolInitException("VNC security negotiation error.");
+					"VNC security negotiation error: " + e.getMessage()); //$NON-NLS-1$
+			throw new ProtocolInitException("VNC security negotiation error."); //$NON-NLS-1$
 		}
 
 		try {
@@ -278,16 +278,16 @@ abstract public class VNCProtocol implements IProtocolInit,
 			readAuthenticationResult(in);
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
-					"VNC authenticate error: " + e.getMessage());
-			throw new ProtocolInitException("VNC authenticate error.");
+					"VNC authenticate error: " + e.getMessage()); //$NON-NLS-1$
+			throw new ProtocolInitException("VNC authenticate error."); //$NON-NLS-1$
 		}
 
 		try {
 			initPhase(handle, in, out, password);
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
-					"VNC Init Phase error: " + e.getMessage());
-			throw new ProtocolInitException("VNC Init Phase error.");
+					"VNC Init Phase error: " + e.getMessage()); //$NON-NLS-1$
+			throw new ProtocolInitException("VNC Init Phase error."); //$NON-NLS-1$
 		}
 
 	}

@@ -39,7 +39,7 @@ public class ViewerInstanceNode extends ViewerAbstractNode
     
     public String getInstanceName()
     {
-        String instanceName = "";
+        String instanceName = ""; //$NON-NLS-1$
         if (instance != null)
         {
             instanceName = instance.getName();
@@ -49,7 +49,7 @@ public class ViewerInstanceNode extends ViewerAbstractNode
     
     public String getInstanceStatus()
     {
-        String instanceStatus = "";
+        String instanceStatus = ""; //$NON-NLS-1$
         if (instance != null)
         {
             instanceStatus = instance.getStatus();

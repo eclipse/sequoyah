@@ -24,7 +24,6 @@ import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
 import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
-import org.eclipse.tml.vncviewer.registry.VNCProtocolRegistry;
 
 public class VNCProtocolExceptionHandler implements IProtocolExceptionHandler {
 

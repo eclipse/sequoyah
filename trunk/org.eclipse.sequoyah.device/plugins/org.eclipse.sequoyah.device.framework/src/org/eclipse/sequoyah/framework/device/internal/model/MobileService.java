@@ -122,15 +122,15 @@ public class MobileService implements IService {
 	
 	
 	public String toString(){
-		return "[Service: " +
-				"id=" + (id==null?"":id) +
-				",name=" + (name==null?"":name) +
-				",description=" + (description==null?"":description) + 
-				",version=" + (version==null?"":version) +
-				",provider=" + (provider==null?"":provider) +
-				",copyright=" + (copyright==null?"":copyright) +
-				",handler=" + (handler==null?"":handler.getClass().getName()) +
-				"]";
+		return "[Service: " + //$NON-NLS-1$
+				"id=" + (id==null?"":id) + //$NON-NLS-1$ //$NON-NLS-2$
+				",name=" + (name==null?"":name) + //$NON-NLS-1$ //$NON-NLS-2$
+				",description=" + (description==null?"":description) +  //$NON-NLS-1$ //$NON-NLS-2$
+				",version=" + (version==null?"":version) + //$NON-NLS-1$ //$NON-NLS-2$
+				",provider=" + (provider==null?"":provider) + //$NON-NLS-1$ //$NON-NLS-2$
+				",copyright=" + (copyright==null?"":copyright) + //$NON-NLS-1$ //$NON-NLS-2$
+				",handler=" + (handler==null?"":handler.getClass().getName()) + //$NON-NLS-1$ //$NON-NLS-2$
+				"]"; //$NON-NLS-1$
 	}
 
 	public IDeviceType getParent() {

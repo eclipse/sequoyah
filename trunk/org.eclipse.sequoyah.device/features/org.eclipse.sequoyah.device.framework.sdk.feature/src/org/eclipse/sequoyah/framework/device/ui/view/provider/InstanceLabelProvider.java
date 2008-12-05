@@ -37,11 +37,11 @@ import org.eclipse.tml.framework.status.StatusRegistry;
  */
 public class InstanceLabelProvider extends LabelProvider {
 
-	private static final String DEVICE = "Device";
-	private static final String INSTANCE_REGISTRY = "Instance registry";
-	private static final String NO_DEVICE = "No device";
-	private static final String NO_STATUS = "No status";
-	private static final String PROPERTIES = "Properties";
+	private static final String DEVICE = "Device"; //$NON-NLS-1$
+	private static final String INSTANCE_REGISTRY = "Instance registry"; //$NON-NLS-1$
+	private static final String NO_DEVICE = "No device"; //$NON-NLS-1$
+	private static final String NO_STATUS = "No status"; //$NON-NLS-1$
+	private static final String PROPERTIES = "Properties"; //$NON-NLS-1$
 	
 	private Map imageCache = new HashMap(20);
 	
@@ -121,7 +121,7 @@ public class InstanceLabelProvider extends LabelProvider {
 	}
 
 	protected RuntimeException unknownElement(Object element) {
-		return new RuntimeException("Unknown type of element in tree of type " + element.getClass().getName());
+		return new RuntimeException("Unknown type of element in tree of type " + element.getClass().getName()); //$NON-NLS-1$
 	}
 
 }

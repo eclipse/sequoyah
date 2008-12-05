@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.tml.device.qemureact.QEmuReactPlugin;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.device.qemureact.QEmuReactResources;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
@@ -27,7 +27,7 @@ public class QEmuReactStartHandler extends ServiceHandler {
 
 
 	public void runService(IInstance instance) {
-		QEmuReactPlugin.logInfo(QEmuReactResources.TML_Start_Service+"->"+instance.getName());
+		BasePlugin.logInfo(QEmuReactResources.TML_Start_Service+"->"+instance.getName()); //$NON-NLS-1$
 	}
 
 	public void updatingService(IInstance instance) {

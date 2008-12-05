@@ -14,14 +14,14 @@
 package org.eclipse.tml.common.utilities;
 
 public interface IPropertyConstants {
-	public static final String HOST = "host";
-	public static final String PORT = "port";
-	public static final String DISPLAY = "display";
-	public static final String PASSWORD = "password";
+	public static final String HOST = "host"; //$NON-NLS-1$
+	public static final String PORT = "port"; //$NON-NLS-1$
+	public static final String DISPLAY = "display"; //$NON-NLS-1$
+	public static final String PASSWORD = "password"; //$NON-NLS-1$
 
-	public static final String DEFAULT_HOST = "127.0.0.1";
-	public static final String DEFAULT_PORT = "5900";
-	public static final String DEFAULT_DISPLAY = ":0.0";
+	public static final String DEFAULT_HOST = "127.0.0.1"; //$NON-NLS-1$
+	public static final String DEFAULT_PORT = "5900"; //$NON-NLS-1$
+	public static final String DEFAULT_DISPLAY = ":0.0"; //$NON-NLS-1$
 	public static final String DEFAULT_PASSWORD = null;
 }
 

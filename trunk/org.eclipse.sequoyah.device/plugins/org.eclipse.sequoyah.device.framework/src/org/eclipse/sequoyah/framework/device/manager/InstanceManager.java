@@ -13,6 +13,8 @@
  * Yu-Fen Kuo (MontaVista) - try to replace jdom dependencies with eclipse default xml parsers.
  * Fabio Rigo (Eldorado) - [245114] Enhance persistence policies
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
  ********************************************************************************/
 package org.eclipse.tml.framework.device.manager;
 
@@ -27,8 +29,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.tml.common.utilities.PluginUtils;
+import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
 import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.common.utilities.exception.TmLExceptionHandler;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
@@ -38,10 +40,12 @@ import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.manager.persistence.DeviceXmlReader;
 import org.eclipse.tml.framework.device.manager.persistence.DeviceXmlWriter;
 import org.eclipse.tml.framework.device.manager.persistence.TmLDevice;
+import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceBuilder;
 import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
+import org.eclipse.tml.framework.device.statemachine.StateMachineHandler;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -53,8 +57,8 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public class InstanceManager {
 
-	private static final String ELEMENT_DEVICE = "deviceType";
-	private static final String ATTR_HANDLER = "handler";
+	private static final String ELEMENT_DEVICE = "deviceType"; //$NON-NLS-1$
+	private static final String ATTR_HANDLER = "handler"; //$NON-NLS-1$
 
 	private static InstanceManager _instance;
 	private IInstance currentInstance;
@@ -156,10 +160,12 @@ public class InstanceManager {
 			instance = deviceHandler.createDeviceInstance(name + deviceId);
 			instance.setDeviceTypeId(deviceId);
 			instance.setName(name);
+			((AbstractMobileInstance) instance).setStateMachineHandler(new StateMachineHandler(instance));
 			instance.setStatus(status);
 			instance.setProperties((Properties) properties.clone());
+			
 		} catch (CoreException ce) {
-			TmLExceptionHandler
+			ExceptionHandler
 					.showException(DeviceExceptionHandler
 							.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}
@@ -201,7 +207,7 @@ public class InstanceManager {
 	        DeviceXmlWriter.saveInstances(devices);
 	        InstanceEventManager.getInstance().fireInstanceDeleted(new InstanceEvent(inst));
 		} catch (TmLException te) {
-			TmLExceptionHandler
+			ExceptionHandler
 					.showException(DeviceExceptionHandler
 							.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}

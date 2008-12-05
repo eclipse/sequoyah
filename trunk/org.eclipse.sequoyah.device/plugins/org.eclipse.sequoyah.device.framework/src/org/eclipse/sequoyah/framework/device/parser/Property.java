@@ -92,11 +92,11 @@ public class Property {
 	}
 	
 	public String toString(){
-		return "[Property: id=" + (id==null?"":id) +
-				",name=" + (name==null?"":name) +
-				",description=" + (description==null?"":description) +
-				",scope=" + (scope==null?"":scope) +
-				",rule="+ (rule==null?"":rule) +" ]";
+		return "[Property: id=" + (id==null?"":id) + //$NON-NLS-1$ //$NON-NLS-2$
+				",name=" + (name==null?"":name) + //$NON-NLS-1$ //$NON-NLS-2$
+				",description=" + (description==null?"":description) + //$NON-NLS-1$ //$NON-NLS-2$
+				",scope=" + (scope==null?"":scope) + //$NON-NLS-1$ //$NON-NLS-2$
+				",rule="+ (rule==null?"":rule) +" ]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	

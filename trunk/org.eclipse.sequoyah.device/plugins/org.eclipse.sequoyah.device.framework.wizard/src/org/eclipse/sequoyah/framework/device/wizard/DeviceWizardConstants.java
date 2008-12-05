@@ -27,136 +27,136 @@ public interface DeviceWizardConstants {
 	/**
 	 * Extension ID for New Wizard of Emulator Instances
 	 */
-	public static final String EXTENSION_INSTANCE_ID = "org.eclipse.tml.device.wizard";
+	public static final String EXTENSION_INSTANCE_ID = "org.eclipse.tml.device.wizard"; //$NON-NLS-1$
 
 
-	public static final String PROPERTIES_FILENAME = "instance.properties";
-	public static final String PROPERTIES_FILENAME_FULL = "/org/eclipse/tml/device/wizard/resources/instance.properties";
+	public static final String PROPERTIES_FILENAME = "instance.properties"; //$NON-NLS-1$
+	public static final String PROPERTIES_FILENAME_FULL = "/org/eclipse/tml/device/wizard/resources/instance.properties"; //$NON-NLS-1$
 
 	
 	/**
 	 * Shortcut to New Folder Wizard
 	 */
-	public static final String SHORTCUT_FOLDER = "org.eclipse.ui.wizards.new.folder";
+	public static final String SHORTCUT_FOLDER = "org.eclipse.ui.wizards.new.folder"; //$NON-NLS-1$
 
 	/**
 	 * Shortcut to New File Wizard
 	 */
-	public static final String SHORTCUT_FILE = "org.eclipse.ui.wizards.new.file";
+	public static final String SHORTCUT_FILE = "org.eclipse.ui.wizards.new.file"; //$NON-NLS-1$
 
 	/**
 	 * ID for project page wizard
 	 */
-	public static final String PAGE_PROJECT = "projectPage";
+	public static final String PAGE_PROJECT = "projectPage"; //$NON-NLS-1$
 
 	/**
 	 * ID for property page wizard
 	 */
-	public static final String PAGE_PROPERTY = "propertyPage";
+	public static final String PAGE_PROPERTY = "propertyPage"; //$NON-NLS-1$
 
 	/**
 	 * ID for other pages wizard
 	 */
-	public static final String PAGE_OTHER = "otherPage";
+	public static final String PAGE_OTHER = "otherPage"; //$NON-NLS-1$
 
 	/**
 	 * ID for read SETTINGS elements from plugin extensions
 	 */
-	public static final String SETTINGS = "settings";
+	public static final String SETTINGS = "settings"; //$NON-NLS-1$
 
 	/**
 	 * ID for read LAUNCHER elements from plugin extensions
 	 */
-	public static final String ELEMENT_LAUNCHER = "launcher";
+	public static final String ELEMENT_LAUNCHER = "launcher"; //$NON-NLS-1$
 
 	/**
 	 * ID for read PROJECT elements from plugin extensions
 	 */
-	public static final String ELEMENT_CUSTOMIZER = "customizer";
+	public static final String ELEMENT_CUSTOMIZER = "customizer"; //$NON-NLS-1$
 
 	
 	/**
 	 * ID for read PROJECT elements from plugin extensions
 	 */
-	public static final String ELEMENT_PROJECT = "project";
+	public static final String ELEMENT_PROJECT = "project"; //$NON-NLS-1$
 
 	/**
 	 * ID for read PROPERTY elements from plugin extensions
 	 */
-	public static final String ELEMENT_PROPERTY = "property";
+	public static final String ELEMENT_PROPERTY = "property"; //$NON-NLS-1$
 
 	/**
 	 * ID for read OTHER elements from plugin extensions
 	 */
-	public static final String ELEMENT_OTHER = "other";
+	public static final String ELEMENT_OTHER = "other"; //$NON-NLS-1$
 
 	/**
 	 * ID for read xml attribute from plugin extensions
 	 */
-	public static final String ATB_XML = "xml";
+	public static final String ATB_XML = "xml"; //$NON-NLS-1$
 	
 	/**
 	 * ID for read monitor attribute from plugin extensions
 	 */
-	public static final String ATB_MONITOR = "needsProgressMonitor";
+	public static final String ATB_MONITOR = "needsProgressMonitor"; //$NON-NLS-1$
 	
 	/**
 	 * ID for read forcePreviousAndNextButtons attribute from plugin extensions
 	 */
-	public static final String ATB_FORCE = "forcePreviousAndNextButtons";
+	public static final String ATB_FORCE = "forcePreviousAndNextButtons"; //$NON-NLS-1$
 	
 	/**
 	 * ID for read canFinishEarly attribute from plugin extensions
 	 */
-	public static final String ATB_FINISH = "canFinishEarly";
+	public static final String ATB_FINISH = "canFinishEarly"; //$NON-NLS-1$
 	
 	/**
 	 * ID for read image attribute from plugin extensions
 	 */
-	public static final String ATB_IMAGE = "image";
+	public static final String ATB_IMAGE = "image"; //$NON-NLS-1$
 	
 	/**
 	 * ID for read title attribute from plugin extensions
 	 */
-	public static final String ATB_TITLE = "title";
+	public static final String ATB_TITLE = "title"; //$NON-NLS-1$
 
 	/**
 	 * ID for read class attribute from plugin extensions
 	 */
-	public static final String ATB_CLASS = "class";
+	public static final String ATB_CLASS = "class"; //$NON-NLS-1$
 
 	/**
 	 * ID for read name attribute from plugin extensions
 	 */
 
-	public static final String ATB_NAME = "name";
+	public static final String ATB_NAME = "name"; //$NON-NLS-1$
 
 	/**
 	 * ID for read description attribute from plugin extensions
 	 */
-	public static final String ATB_DESCRIPTION = "description";
+	public static final String ATB_DESCRIPTION = "description"; //$NON-NLS-1$
 
     /**
      * ID for read USAGE elements from plugin extensions
      */
-    public static final String ELEMENT_USAGE = "usage";
+    public static final String ELEMENT_USAGE = "usage"; //$NON-NLS-1$
 
     /**
      * ID for read device attribute from plugin extensions
      */
-    public static final String ATB_DEVICE = "device";
+    public static final String ATB_DEVICE = "device"; //$NON-NLS-1$
 
     /**
      * A null string
      */
-	public static final String STRING_NULL = "";
+	public static final String STRING_NULL = ""; //$NON-NLS-1$
 	/**
 	 * 
 	 */
-	public static final String FOLDER_SEPARATOR = "/";
+	public static final String FOLDER_SEPARATOR = "/"; //$NON-NLS-1$
 	/**
 	 * 
 	 */
-	public static final String SLASH = "\\";
+	public static final String SLASH = "\\"; //$NON-NLS-1$
 
 }

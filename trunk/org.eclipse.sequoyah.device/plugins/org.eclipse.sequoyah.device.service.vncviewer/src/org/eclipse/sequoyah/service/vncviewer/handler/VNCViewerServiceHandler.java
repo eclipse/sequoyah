@@ -24,6 +24,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.IPropertyConstants;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
@@ -31,7 +32,6 @@ import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 import org.eclipse.tml.protocol.PluginProtocolActionDelegate;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
-import org.eclipse.tml.service.vncviewer.VNCViewerServicePlugin;
 import org.eclipse.tml.service.vncviewer.VNCViewerServiceResources;
 import org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView;
 import org.eclipse.ui.PartInitException;
@@ -45,18 +45,18 @@ public class VNCViewerServiceHandler extends ServiceHandler
             IProgressMonitor monitor)
     {
 
-        VNCViewerServicePlugin.logInfo(VNCViewerServiceResources.TML_VNCViewer_Service + "->"
+        BasePlugin.logInfo(VNCViewerServiceResources.TML_VNCViewer_Service + "->" //$NON-NLS-1$
                 + instance.getName());
 
         String host = instance.getProperties().getProperty(IPropertyConstants.HOST);
         int port = Integer.parseInt(instance.getProperties().getProperty(IPropertyConstants.PORT));
-        String protoVersion = "VNC 3.3";
+        String protoVersion = "VNC 3.3"; //$NON-NLS-1$
         String password = instance.getProperties().getProperty(IPropertyConstants.PASSWORD);
 
         try
         {
 
-            if (instance.getStatus().equals("IDLE-VNC"))
+            if (instance.getStatus().equals("IDLE-VNC")) //$NON-NLS-1$
             {
                 VNCViewerView.stop();
                 try
@@ -76,7 +76,7 @@ public class VNCViewerServiceHandler extends ServiceHandler
 
 				public void run() {
 					try {
-						PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().showView("org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView");
+						PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().showView("org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView"); //$NON-NLS-1$
 					} catch (PartInitException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -112,7 +112,7 @@ public class VNCViewerServiceHandler extends ServiceHandler
          *  The code below is a fix for QEMU-ARM which expect 
          *  the sequence ctrl+alt+3 to show it's display. 
          *****/
-        if (instance.getDeviceTypeId().equals("org.eclipse.tml.device.qemuarm.qemuarmDevice"))
+        if (instance.getDeviceTypeId().equals("org.eclipse.tml.device.qemuarm.qemuarmDevice")) //$NON-NLS-1$
         {
 
             try
@@ -120,22 +120,22 @@ public class VNCViewerServiceHandler extends ServiceHandler
 
             	ProtocolHandle handle = VNCViewerView.protocolHandle;
                 ProtocolMessage qemumsg = new ProtocolMessage(0x04);
-                qemumsg.setFieldValue("downFlag", 1);
-                qemumsg.setFieldValue("padding", 0);
+                qemumsg.setFieldValue("downFlag", 1); //$NON-NLS-1$
+                qemumsg.setFieldValue("padding", 0); //$NON-NLS-1$
 
-                qemumsg.setFieldValue("key", 0xFFE3);
+                qemumsg.setFieldValue("key", 0xFFE3); //$NON-NLS-1$
                 PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
-                qemumsg.setFieldValue("key", 0xFFE9);
+                qemumsg.setFieldValue("key", 0xFFE9); //$NON-NLS-1$
                 PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
-                qemumsg.setFieldValue("key", 0x033);
+                qemumsg.setFieldValue("key", 0x033); //$NON-NLS-1$
                 PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
 
-                qemumsg.setFieldValue("downFlag", 0);
-                qemumsg.setFieldValue("key", 0xFFE3);
+                qemumsg.setFieldValue("downFlag", 0); //$NON-NLS-1$
+                qemumsg.setFieldValue("key", 0xFFE3); //$NON-NLS-1$
                 PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
-                qemumsg.setFieldValue("key", 0xFFE9);
+                qemumsg.setFieldValue("key", 0xFFE9); //$NON-NLS-1$
                 PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
-                qemumsg.setFieldValue("key", 0x033);
+                qemumsg.setFieldValue("key", 0x033); //$NON-NLS-1$
                 PluginProtocolActionDelegate.sendMessageToServer(handle, qemumsg);
 
             }
@@ -152,8 +152,8 @@ public class VNCViewerServiceHandler extends ServiceHandler
     @Override
     public IStatus updatingService(IInstance instance, IProgressMonitor monitor)
     {
-        VNCViewerServicePlugin.logInfo(VNCViewerServiceResources.TML_VNCViewer_Service_Update
-                + "->" + instance.getName());
+        BasePlugin.logInfo(VNCViewerServiceResources.TML_VNCViewer_Service_Update
+                + "->" + instance.getName()); //$NON-NLS-1$
         return Status.OK_STATUS;
     }
 

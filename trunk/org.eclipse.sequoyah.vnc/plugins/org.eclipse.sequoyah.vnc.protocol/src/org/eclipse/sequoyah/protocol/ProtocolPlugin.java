@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 public class ProtocolPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.protocol";
+	public static final String PLUGIN_ID = "org.eclipse.tml.protocol"; //$NON-NLS-1$
 
 	// The shared instance
 	private static ProtocolPlugin plugin;

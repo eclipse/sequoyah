@@ -27,17 +27,17 @@ import org.osgi.framework.BundleContext;
 public class QEmuARMPlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.device.qemuarm";
-	public static final String DEVICE_ID = "org.eclipse.tml.device.qemuarm.qemuarmDevice";
-	public static final String WIZARD_ID = "org.eclipse.tml.device.qemuarm.qemuarmWizard";
+	public static final String PLUGIN_ID = "org.eclipse.tml.device.qemuarm"; //$NON-NLS-1$
+	public static final String DEVICE_ID = "org.eclipse.tml.device.qemuarm.qemuarmDevice"; //$NON-NLS-1$
+	public static final String WIZARD_ID = "org.eclipse.tml.device.qemuarm.qemuarmWizard"; //$NON-NLS-1$
 	
-	public static final String ICON_DEVICE_QEMUARM = "ICON_DEVICE_QEMUARM";
+	public static final String ICON_DEVICE_QEMUARM = "ICON_DEVICE_QEMUARM"; //$NON-NLS-1$
 	
-	public static final String EMULATOR_NAME = "qemu";
-	public static final String EMULATOR_PARAMS = "-kernel integratorcp.zImage -pidfile qemuarm.id -initrd arm_root.img -M integratorcp1026 -vnc ";
-	public static final String EMULATOR_BIN = "qemu-arm-vnc.bat";
-	public static final String EMULATOR_KILL = "qemu-system-arm.exe";
-	public static final String EMULATOR_FILE_ID = "qemuarm.id";
+	public static final String EMULATOR_NAME = "qemu"; //$NON-NLS-1$
+	public static final String EMULATOR_PARAMS = "-kernel integratorcp.zImage -pidfile qemuarm.id -initrd arm_root.img -M integratorcp1026 -vnc "; //$NON-NLS-1$
+	public static final String EMULATOR_BIN = "qemu-arm-vnc.bat"; //$NON-NLS-1$
+	public static final String EMULATOR_KILL = "qemu-system-arm.exe"; //$NON-NLS-1$
+	public static final String EMULATOR_FILE_ID = "qemuarm.id"; //$NON-NLS-1$
 
 	// The shared instance
 	private static QEmuARMPlugin plugin;

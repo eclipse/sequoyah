@@ -22,9 +22,9 @@ import org.osgi.framework.BundleContext;
 public class StopServicePlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.service.stop";
-	public static final String ICON_SERVICE_STOP = "ICON_SERVICE_STOP";
-	public static final String ICON_SERVICE_REFRESH = "ICON_SERVICE_REFRESH";
+	public static final String PLUGIN_ID = "org.eclipse.tml.service.stop"; //$NON-NLS-1$
+	public static final String ICON_SERVICE_STOP = "ICON_SERVICE_STOP"; //$NON-NLS-1$
+	public static final String ICON_SERVICE_REFRESH = "ICON_SERVICE_REFRESH"; //$NON-NLS-1$
 
 	// The shared instance
 	private static StopServicePlugin plugin;

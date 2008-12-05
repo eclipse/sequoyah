@@ -32,7 +32,7 @@ public class InstanceMgtViewLabelProvider extends ColumnLabelProvider
     public static final int INSTANCE_COLUMN_NUMBER = 0;
     public static final int STATUS_COLUMN_NUMBER = 1;
     
-    private static final String NO_INSTANCE_NAME = "<none>";
+    private static final String NO_INSTANCE_NAME = "<none>"; //$NON-NLS-1$
         
     /**
      * The column that is being updated by this label provider
@@ -82,7 +82,7 @@ public class InstanceMgtViewLabelProvider extends ColumnLabelProvider
 
     public String getText(Object element)
     {
-        String label = "";
+        String label = ""; //$NON-NLS-1$
         
         if (element instanceof ViewerInstanceNode)
         {
@@ -103,7 +103,7 @@ public class InstanceMgtViewLabelProvider extends ColumnLabelProvider
     
     public String getText(ViewerInstanceNode node, int columnIndex)
     {
-        String label = "";
+        String label = ""; //$NON-NLS-1$
         if (node.containsInstance())
         {
         if (columnIndex == INSTANCE_COLUMN_NUMBER)

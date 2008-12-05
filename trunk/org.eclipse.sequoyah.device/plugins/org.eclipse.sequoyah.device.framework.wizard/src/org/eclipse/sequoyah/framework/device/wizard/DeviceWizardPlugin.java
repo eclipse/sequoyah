@@ -22,8 +22,8 @@ import org.osgi.framework.BundleContext;
 public class DeviceWizardPlugin extends BasePlugin implements IStartup {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.framework.device.wizard";
-	public static final String ICON_DEVICE= "ICON_DEVICE";
+	public static final String PLUGIN_ID = "org.eclipse.tml.framework.device.wizard"; //$NON-NLS-1$
+	public static final String ICON_DEVICE= "ICON_DEVICE"; //$NON-NLS-1$
 
 	// The shared instance
 	private static DeviceWizardPlugin plugin;

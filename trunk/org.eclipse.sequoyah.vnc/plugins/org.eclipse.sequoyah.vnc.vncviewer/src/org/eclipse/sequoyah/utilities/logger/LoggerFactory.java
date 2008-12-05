@@ -70,7 +70,7 @@ public abstract class LoggerFactory
     {
         if (logFileName == null)
         {
-            logFileName = "default.log";
+            logFileName = "default.log"; //$NON-NLS-1$
         }
 
         switch (logOutput)

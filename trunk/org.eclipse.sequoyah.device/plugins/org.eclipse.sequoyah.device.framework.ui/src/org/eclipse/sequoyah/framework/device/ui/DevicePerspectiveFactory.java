@@ -23,28 +23,28 @@ import org.eclipse.ui.IPerspectiveFactory;
  *
  */
 public class DevicePerspectiveFactory implements IPerspectiveFactory {
-	private static String NAVIGATOR = "navigator";
-	private static String CONTROL   = "control";
-	private static String CENTER   = "center";
-	private static String VNC   = "vnc";
+	private static String NAVIGATOR = "navigator"; //$NON-NLS-1$
+	private static String CONTROL   = "control"; //$NON-NLS-1$
+	private static String CENTER   = "center"; //$NON-NLS-1$
+	private static String VNC   = "vnc"; //$NON-NLS-1$
 	/**
 	 * Shortcut to New Folder Wizard
 	 */
-	public static final String SHORTCUT_FOLDER = "org.eclipse.ui.wizards.new.folder";
+	public static final String SHORTCUT_FOLDER = "org.eclipse.ui.wizards.new.folder"; //$NON-NLS-1$
 
 	/**
 	 * Shortcut to New File Wizard
 	 */
-	public static final String SHORTCUT_FILE = "org.eclipse.ui.wizards.new.file";
+	public static final String SHORTCUT_FILE = "org.eclipse.ui.wizards.new.file"; //$NON-NLS-1$
 
-	public static final String VIEW_INSTANCE_MGT = "org.eclipse.tml.framework.device.ui.InstanceMgtView";
-	public static final String VIEW_DEVICE_INSTANCE = "org.eclipse.tml.framework.device.tree.ui.InstanceView";
-	public static final String VIEW_DEVICE_PLUGIN = "org.eclipse.tml.framework.device.tree.ui.DeviceView";
+	public static final String VIEW_INSTANCE_MGT = "org.eclipse.tml.framework.device.ui.InstanceMgtView"; //$NON-NLS-1$
+	public static final String VIEW_DEVICE_INSTANCE = "org.eclipse.tml.framework.device.tree.ui.InstanceView"; //$NON-NLS-1$
+	public static final String VIEW_DEVICE_PLUGIN = "org.eclipse.tml.framework.device.tree.ui.DeviceView"; //$NON-NLS-1$
 	/**
 	 * Console view identifier (value <code>"org.eclipse.ui.console.ConsoleView"</code>).
 	 */
 	public static final String ID_CONSOLE_VIEW= "org.eclipse.ui.console.ConsoleView"; //$NON-NLS-1$
-	public static final String VNC_VIEWER_VIEW="org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView";
+	public static final String VNC_VIEWER_VIEW="org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView"; //$NON-NLS-1$
 	
 	
 	/* (non-Javadoc)

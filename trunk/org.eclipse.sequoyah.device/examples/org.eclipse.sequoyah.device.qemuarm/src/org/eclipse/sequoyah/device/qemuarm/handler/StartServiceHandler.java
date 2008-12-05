@@ -20,11 +20,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.device.qemuarm.QEmuARMLauncher;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
-import org.eclipse.tml.service.start.StartServicePlugin;
 import org.eclipse.tml.service.start.StartServiceResources;
 import org.eclipse.tml.service.start.launcher.DeviceLauncherManager;
 import org.eclipse.tml.service.start.launcher.IDeviceLauncher;
@@ -32,7 +32,7 @@ import org.eclipse.tml.service.start.launcher.IDeviceLauncher;
 public class StartServiceHandler extends ServiceHandler {
 
 	public IStatus runService(IInstance instance, Map<Object, Object> arguments, IProgressMonitor monitor) {
-		StartServicePlugin.logInfo(StartServiceResources.TML_Start_Service+" Over->"+instance.getName());
+		BasePlugin.logInfo(StartServiceResources.TML_Start_Service+" Over->"+instance.getName()); //$NON-NLS-1$
 		try {
 			IDeviceLauncher launcher = new QEmuARMLauncher(instance);
 			ILaunch launch = DeviceLauncherManager.launch(launcher,instance.getName());
@@ -44,7 +44,7 @@ public class StartServiceHandler extends ServiceHandler {
 	}
 
 	public IStatus updatingService(IInstance instance, IProgressMonitor monitor) {
-		StartServicePlugin.logInfo(StartServiceResources.TML_Start_Service_Update+"->"+instance.getName());
+		BasePlugin.logInfo(StartServiceResources.TML_Start_Service_Update+"->"+instance.getName()); //$NON-NLS-1$
 		return Status.OK_STATUS;
 	}
 	

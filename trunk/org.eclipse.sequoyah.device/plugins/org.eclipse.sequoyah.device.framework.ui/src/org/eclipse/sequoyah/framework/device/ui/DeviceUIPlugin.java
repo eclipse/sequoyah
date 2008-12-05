@@ -24,22 +24,22 @@ import org.osgi.framework.BundleContext;
 public class DeviceUIPlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.framework.device.ui";
-	public static final String ICON_DEVICE = "ICON_DEVICE";
-	public static final String ICON_SERVICE = "ICON_SERVICE";
-	public static final String ICON_MOVING = "ICON_MOVING";
-	public static final String ICON_BOOK = "ICON_BOOK";
-	public static final String ICON_GAMEBOARD = "ICON_GAMEBOARD";
-	public static final String ICON_NEW_BOOK = "ICON_NEW_BOOK";
-	public static final String ICON_REMOVE = "ICON_REMOVE";
-	public static final String ICON_START = "ICON_START";
-	public static final String ICON_STOP = "ICON_STOP";
-	public static final String ICON_REFRESH = "ICON_REFRESH";
-	public static final String ICON_INACTIVE = "ICON_INACTIVE";
-	public static final String ICON_HORIZONTAL = "ICON_HORIZONTAL";
-	public static final String ICON_VERTICAL = "ICON_VERTICAL";
-	public static final String ICON_FILTER = "ICON_FILTER";
-	public static final String IMAGEKEY_NEW_DEVICE_WIZARD = "IMAGEKEY_NEW_DEVICE_WIZARD";
+	public static final String PLUGIN_ID = "org.eclipse.tml.framework.device.ui"; //$NON-NLS-1$
+	public static final String ICON_DEVICE = "ICON_DEVICE"; //$NON-NLS-1$
+	public static final String ICON_SERVICE = "ICON_SERVICE"; //$NON-NLS-1$
+	public static final String ICON_MOVING = "ICON_MOVING"; //$NON-NLS-1$
+	public static final String ICON_BOOK = "ICON_BOOK"; //$NON-NLS-1$
+	public static final String ICON_GAMEBOARD = "ICON_GAMEBOARD"; //$NON-NLS-1$
+	public static final String ICON_NEW_BOOK = "ICON_NEW_BOOK"; //$NON-NLS-1$
+	public static final String ICON_REMOVE = "ICON_REMOVE"; //$NON-NLS-1$
+	public static final String ICON_START = "ICON_START"; //$NON-NLS-1$
+	public static final String ICON_STOP = "ICON_STOP"; //$NON-NLS-1$
+	public static final String ICON_REFRESH = "ICON_REFRESH"; //$NON-NLS-1$
+	public static final String ICON_INACTIVE = "ICON_INACTIVE"; //$NON-NLS-1$
+	public static final String ICON_HORIZONTAL = "ICON_HORIZONTAL"; //$NON-NLS-1$
+	public static final String ICON_VERTICAL = "ICON_VERTICAL"; //$NON-NLS-1$
+	public static final String ICON_FILTER = "ICON_FILTER"; //$NON-NLS-1$
+	public static final String IMAGEKEY_NEW_DEVICE_WIZARD = "IMAGEKEY_NEW_DEVICE_WIZARD"; //$NON-NLS-1$
 	
 	// The shared instance
 	private static DeviceUIPlugin plugin;
@@ -91,14 +91,14 @@ public class DeviceUIPlugin extends BasePlugin {
 		putImageInRegistry(ICON_STOP, path+"full/obj16/stop.png"); //$NON-NLS-1$
 		putImageInRegistry(ICON_REFRESH, path+"full/obj16/refresh.gif"); //$NON-NLS-1$
 		putImageInRegistry(ICON_INACTIVE, path+"full/obj16/inactive.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_MOVING, path+"movingBox.gif");
-		putImageInRegistry(ICON_BOOK, path+"book.gif");
-		putImageInRegistry(ICON_GAMEBOARD, path+"gameboard.gif");
-		putImageInRegistry(ICON_NEW_BOOK, path+"newbook.gif");
-		putImageInRegistry(ICON_REMOVE, path+"remove.gif");
-		putImageInRegistry(ICON_HORIZONTAL, path+"full/obj16/horizontal.gif");
-		putImageInRegistry(ICON_VERTICAL, path+"full/obj16/vertical.gif");
-		putImageInRegistry(ICON_FILTER, path+"full/obj16/filter.gif");
+		putImageInRegistry(ICON_MOVING, path+"movingBox.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_BOOK, path+"book.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_GAMEBOARD, path+"gameboard.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_NEW_BOOK, path+"newbook.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_REMOVE, path+"remove.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_HORIZONTAL, path+"full/obj16/horizontal.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_VERTICAL, path+"full/obj16/vertical.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_FILTER, path+"full/obj16/filter.gif"); //$NON-NLS-1$
 		putImageInRegistry(IMAGEKEY_NEW_DEVICE_WIZARD, path+"full/obj16/device.gif"); //$NON-NLS-1$
 		
 	}

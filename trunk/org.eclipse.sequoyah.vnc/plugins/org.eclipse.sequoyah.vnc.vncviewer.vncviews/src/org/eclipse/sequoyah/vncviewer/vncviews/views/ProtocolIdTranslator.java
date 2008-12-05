@@ -30,14 +30,14 @@ public class ProtocolIdTranslator {
 	 */
 	public static String getProtocolId(String prot) {
 
-		if (prot.equals("VNC 3.3")) {
-			return "vncProtocol33";
+		if (prot.equals("VNC 3.3")) { //$NON-NLS-1$
+			return "vncProtocol33"; //$NON-NLS-1$
 
-		} else if (prot.equals("VNC 3.7")) {
-			return "vncProtocol37";
+		} else if (prot.equals("VNC 3.7")) { //$NON-NLS-1$
+			return "vncProtocol37"; //$NON-NLS-1$
 
-		} else if (prot.equals("VNC 3.8")) {
-			return "vncProtocol38";
+		} else if (prot.equals("VNC 3.8")) { //$NON-NLS-1$
+			return "vncProtocol38"; //$NON-NLS-1$
 		}
 
 		return null;

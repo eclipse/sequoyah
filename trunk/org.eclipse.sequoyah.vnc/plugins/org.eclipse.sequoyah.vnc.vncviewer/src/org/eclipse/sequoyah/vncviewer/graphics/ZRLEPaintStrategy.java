@@ -142,8 +142,8 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 			} while (b == 255);
 
 			if (!(len <= end - ptr))
-				throw new Exception("ZRLE decoder: assertion failed"
-						+ " (len <= end-ptr)");
+				throw new Exception("ZRLE decoder: assertion failed" //$NON-NLS-1$
+						+ " (len <= end-ptr)"); //$NON-NLS-1$
 			while (len-- > 0) {
 				tilePixels[ptr++] = pix;
 			}
@@ -166,8 +166,8 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 				} while (b == 255);
 
 				if (!(len <= end - ptr))
-					throw new Exception("ZRLE decoder: assertion failed"
-							+ " (len <= end - ptr)");
+					throw new Exception("ZRLE decoder: assertion failed" //$NON-NLS-1$
+							+ " (len <= end - ptr)"); //$NON-NLS-1$
 			}
 
 			index &= 127;
@@ -220,7 +220,7 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 					return -1;
 				}
 			} else {
-				throw new IOException("EOF");
+				throw new IOException("EOF"); //$NON-NLS-1$
 			}
 		}
 

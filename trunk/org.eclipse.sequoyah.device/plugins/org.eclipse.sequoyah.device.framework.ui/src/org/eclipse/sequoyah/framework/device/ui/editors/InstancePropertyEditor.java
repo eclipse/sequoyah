@@ -47,12 +47,12 @@ import org.eclipse.ui.dialogs.PropertyPage;
  */
 public class InstancePropertyEditor extends PropertyPage {
 
-	private static final String LABEL_INSTANCE_NAME = "Instance name: ";
-	private static final String LABEL_DEVICE_NAME = "Device Name: ";
-	private static final String LABEL_DEVICE_CLASS = "Device class: ";
-	private static final String LABEL_PROPERTIES = "Properties: ";
-	private static final String COLUMN_NAME_KEY = "Key";
-	private static final String COLUMN_NAME_VALUE = "Value";
+	private static final String LABEL_INSTANCE_NAME = "Instance name: "; //$NON-NLS-1$
+	private static final String LABEL_DEVICE_NAME = "Device Name: "; //$NON-NLS-1$
+	private static final String LABEL_DEVICE_CLASS = "Device class: "; //$NON-NLS-1$
+	private static final String LABEL_PROPERTIES = "Properties: "; //$NON-NLS-1$
+	private static final String COLUMN_NAME_KEY = "Key"; //$NON-NLS-1$
+	private static final String COLUMN_NAME_VALUE = "Value"; //$NON-NLS-1$
 
 	private Table table;
 	private MobileInstance instance;
@@ -74,8 +74,8 @@ public class InstancePropertyEditor extends PropertyPage {
 		String value = table.getSelection()[0].getText(1);
 		
         InputDialog dialog = new InputDialog(this.getShell(),
-        		key + " Property Value",
-        		"Enter a new value for " + key,
+        		key + " Property Value", //$NON-NLS-1$
+        		"Enter a new value for " + key, //$NON-NLS-1$
         		value,
         		null);
         if (dialog.open() == Window.OK) {
@@ -95,7 +95,7 @@ public class InstancePropertyEditor extends PropertyPage {
     	
     	if (instanceName != null) {
     		instanceName = instanceName.trim();
-    		if (!instanceName.equals("")) {
+    		if (!instanceName.equals("")) { //$NON-NLS-1$
 	        	if (manager.getInstancesByname(instanceName).size() == 0 ||
 	        		instanceName.equals(initialInstanceName)) {
 	        		retVal = true;

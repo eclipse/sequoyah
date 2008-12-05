@@ -17,7 +17,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  * Leo Andrade (Eldorado Research Institute) - Bug [247973] - Listener to key events is not working at SWTRemoteDisplay
- * 
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -29,6 +29,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -55,9 +56,9 @@ import org.eclipse.tml.vncviewer.registry.VNCProtocolRegistry;
  */
 public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
-	private static final String REMOTE_DISPLAY_STOP_ERROR = "Remote Display Stop error: ";
-	private static final String REMOTE_DISPLAY_MOUSE_EVENT_ERROR = "Remote Display mouse event error : ";
-	private static final String REMOTE_DISPLAY_KEY_EVENT_ERROR = "Remote Display key event error : ";
+	private static final String REMOTE_DISPLAY_STOP_ERROR = "Remote Display Stop error: "; //$NON-NLS-1$
+	private static final String REMOTE_DISPLAY_MOUSE_EVENT_ERROR = "Remote Display mouse event error : "; //$NON-NLS-1$
+	private static final String REMOTE_DISPLAY_KEY_EVENT_ERROR = "Remote Display key event error : "; //$NON-NLS-1$
 	// private IProtocolImplementer protoClient;
 	protected Canvas canvas;
 	private ProtocolHandle handle;
@@ -83,7 +84,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	private Timer refreshTimer;
 	private Listener keyListener;
 	private Listener mouseListener;
-
+	protected PaintListener paintListener = null;
+	
 	private double zoomFactor;
 
 	protected ISWTPainter painter;
@@ -160,7 +162,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 						notifyListeners(ev.type, ev);
 					} catch (Exception e) {
 						log(SWTRemoteDisplay.class).error(
-								"Remote Display error on key event.");
+								"Remote Display error on key event."); //$NON-NLS-1$
 					}
 				}
 			}
@@ -189,7 +191,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 						mouseEvent(ev);
 					} catch (Exception e) {
 						log(SWTRemoteDisplay.class).error(
-								"Remote Display error on key event.");
+								"Remote Display error on key event."); //$NON-NLS-1$
 					}
 				}
 			}
@@ -234,10 +236,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 						} catch (Exception e) {
 							stop();
 							log(SWTRemoteDisplay.class).error(
-									"Update screen error: " + e.getMessage());
-						}
-						if (!swtDisplay.isActive() || canvas.isDisposed()) {
-							stop();
+									"Update screen error: " + e.getMessage()); //$NON-NLS-1$
 						}
 					}
 				});
@@ -275,7 +274,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 			} catch (Exception e) {
 				log(SWTRemoteDisplay.class).error(
-						"Remote Display start error: " + e.getMessage());
+						"Remote Display start error: " + e.getMessage()); //$NON-NLS-1$
 
 			}
 
@@ -296,11 +295,10 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 				canvas.removeListener(SWT.MouseMove, mouseListener);
 				canvas.removeListener(SWT.MouseUp, mouseListener);
 				canvas.removeListener(SWT.MouseDown, mouseListener);
+				canvas.removePaintListener(paintListener);
 			}
 			
 		});
-
-		keyListener = null;
 
 		// repaints the background to the default color
 		if (canvas != null) {
@@ -326,16 +324,16 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			// area to be the whole screen, and defining the incremental
 			// field equal to the provided parameter
 			ProtocolMessage message = new ProtocolMessage(3);
-			message.setFieldValue("x-position", 0);
-			message.setFieldValue("y-position", 0);
-			message.setFieldValue("width", painter.getWidth());
-			message.setFieldValue("height", painter.getHeight());
-			message.setFieldValue("incremental", incremental ? 1 : 0);
+			message.setFieldValue("x-position", 0); //$NON-NLS-1$
+			message.setFieldValue("y-position", 0); //$NON-NLS-1$
+			message.setFieldValue("width", painter.getWidth()); //$NON-NLS-1$
+			message.setFieldValue("height", painter.getHeight()); //$NON-NLS-1$
+			message.setFieldValue("incremental", incremental ? 1 : 0); //$NON-NLS-1$
 
 			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
-					"Remote Display update screen error : " + e.getMessage());
+					"Remote Display update screen error : " + e.getMessage()); //$NON-NLS-1$
 			stop();
 
 		}

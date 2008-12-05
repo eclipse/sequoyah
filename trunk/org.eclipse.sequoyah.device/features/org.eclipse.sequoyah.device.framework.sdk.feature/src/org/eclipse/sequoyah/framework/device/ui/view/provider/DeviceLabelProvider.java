@@ -62,13 +62,13 @@ public class DeviceLabelProvider extends LabelProvider {
 	 */
 	public String getText(Object element) {
 		if (element instanceof IDeviceTypeRegistry) {
-			return "Device Registry";
+			return "Device Registry"; //$NON-NLS-1$
 		} else if (element instanceof IDeviceType) {
 			if (((IDeviceType) element).getLabel() == null) {
-				return "Device";
+				return "Device"; //$NON-NLS-1$
 			} else {
-				return ((IDeviceType) element).getLabel() + "("
-						+ ((IDeviceType) element).getId() + ")";
+				return ((IDeviceType) element).getLabel() + "(" //$NON-NLS-1$
+						+ ((IDeviceType) element).getId() + ")"; //$NON-NLS-1$
 			}
 		} else if (element instanceof IService) {
 			return ((IService) element).getName();
@@ -87,7 +87,7 @@ public class DeviceLabelProvider extends LabelProvider {
 	}
 
 	protected RuntimeException unknownElement(Object element) {
-		return new RuntimeException("Unknown type of element in tree of type "
+		return new RuntimeException("Unknown type of element in tree of type " //$NON-NLS-1$
 				+ element.getClass().getName());
 	}
 

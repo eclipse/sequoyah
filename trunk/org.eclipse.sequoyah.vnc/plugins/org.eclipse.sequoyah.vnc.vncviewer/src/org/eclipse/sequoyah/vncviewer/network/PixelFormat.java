@@ -16,7 +16,6 @@ package org.eclipse.tml.vncviewer.network;
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
 import java.io.DataInputStream;
-import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
 
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
 
@@ -78,8 +77,8 @@ public class PixelFormat {
 			
 		}
 		catch (Exception e){
-			log(PixelFormat.class).error("Pixel Format read error: " + e.getMessage());
-			throw new ProtocolException("Pixel Format read error.");
+			log(PixelFormat.class).error("Pixel Format read error: " + e.getMessage()); //$NON-NLS-1$
+			throw new ProtocolException("Pixel Format read error."); //$NON-NLS-1$
 		}
 	}
 

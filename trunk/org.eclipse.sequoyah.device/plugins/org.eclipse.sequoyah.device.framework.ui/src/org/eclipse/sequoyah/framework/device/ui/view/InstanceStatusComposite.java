@@ -13,7 +13,12 @@
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247085] - Instance manage view buttons are resizing after applying services filter
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247288] - Exceptions after Instance Mgt View is closed
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
+<<<<<<< InstanceStatusComposite.java
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+=======
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
+>>>>>>> 1.5.6.2
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -44,6 +49,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -76,6 +82,7 @@ import org.eclipse.tml.framework.device.events.InstanceEventManager;
 import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IDeviceType;
+import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandlerAction;
@@ -124,14 +131,14 @@ public class InstanceStatusComposite extends Composite
 		void instanceSelectionChanged(InstanceSelectionChangeEvent event);
 	}
 
-	private static final String PROPERTY_EDITOR_ID = "org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditorDefault";
-	private static final String MENU_DELETE = "Delete";
-	private static final String MENU_PROPERTIES = "Properties";
-	private static final String MENU_NEW = "New..."; 
-	private static final String TOOLBAR_NEW_TOOLTIP = "New Instance";
-	private static final String TOOLBAR_DIALOG_MESSAGE = "Select a Device to open the Instance Creation Wizard :";
-	private static final String ERROR_DIALOG_TITLE = "Error";
-	private static final String ERROR_NO_WIZARD_MESSAGE = "No wizard found for Device ";
+	private static final String PROPERTY_EDITOR_ID = "org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditorDefault"; //$NON-NLS-1$
+	private static final String MENU_DELETE = "Delete"; //$NON-NLS-1$
+	private static final String MENU_PROPERTIES = "Properties"; //$NON-NLS-1$
+	private static final String MENU_NEW = "New...";  //$NON-NLS-1$
+	private static final String TOOLBAR_NEW_TOOLTIP = "New Instance"; //$NON-NLS-1$
+	private static final String TOOLBAR_DIALOG_MESSAGE = "Select a Device to open the Instance Creation Wizard :"; //$NON-NLS-1$
+	private static final String ERROR_DIALOG_TITLE = "Error"; //$NON-NLS-1$
+	private static final String ERROR_NO_WIZARD_MESSAGE = "No wizard found for Device "; //$NON-NLS-1$
 	private static final int DEFAULT_MENU_IMAGE_SIZE = 16;
 
 	private final Set<InstanceSelectionChangeListener> listeners = new LinkedHashSet<InstanceSelectionChangeListener>();
@@ -225,8 +232,8 @@ public class InstanceStatusComposite extends Composite
 		tree.setLayout(layout);
 		tree.setHeaderVisible(true);
 
-		createColumn("Instance name", 3);
-		createColumn("Status", 1);
+		createColumn("Instance name", 3); //$NON-NLS-1$
+		createColumn("Status", 1); //$NON-NLS-1$
 
 		InstanceMgtViewLabelProvider labelProvider = new InstanceMgtViewLabelProvider();
 		viewer.setLabelProvider(labelProvider);
@@ -355,13 +362,28 @@ public class InstanceStatusComposite extends Composite
                     
                     for (IService service:device.getServices()){
                         if (service.isVisible()) {
+                        	
+                        	boolean inTransition = ((AbstractMobileInstance)instance).getStateMachineHandler().isTransitioning();
+                        	boolean isServiceEnabled = (service.getStatusTransitions(instance.getStatus())!=null);
+                        	isServiceEnabled = isServiceEnabled && !inTransition;
+                        	
                             newItem = new MenuItem(menu, SWT.PUSH);  
                             ImageData serviceImageData = service.getImage().getImageData().scaledTo(DEFAULT_MENU_IMAGE_SIZE, DEFAULT_MENU_IMAGE_SIZE);
                             Image serviceImage = new Image(getDisplay(), serviceImageData);
                             newItem.setImage(serviceImage);
-                            newItem.setEnabled((service.getStatusTransitions(instance.getStatus())!=null));
+                            newItem.setEnabled(isServiceEnabled);
                             newItem.setText(service.getName());
                             newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
+
+                            // The listener below updates the services composite
+                            final IInstance inst = instance;
+                            newItem.addListener(SWT.Selection,  new Listener(){
+    							public void handleEvent(Event event) {
+    								InstanceMgtView.getInstanceServicesComposite().setSelectedInstance(inst);
+    							}
+    							
+    						} );
+                            
                         }
                     }
                 }
@@ -661,7 +683,7 @@ public class InstanceStatusComposite extends Composite
 
         public WizardDropDownAction()
         {
-            ImageDescriptor descriptor= AbstractUIPlugin.imageDescriptorFromPlugin(DeviceUIPlugin.PLUGIN_ID, "icons/full/obj16/new_instance.gif");
+            ImageDescriptor descriptor= AbstractUIPlugin.imageDescriptorFromPlugin(DeviceUIPlugin.PLUGIN_ID, "icons/full/obj16/new_instance.gif"); //$NON-NLS-1$
             setHoverImageDescriptor(descriptor);
             setImageDescriptor(descriptor); 
             
@@ -711,7 +733,7 @@ public class InstanceStatusComposite extends Composite
            input = wizardActions.values().toArray(input);
            dialog.setInput(input);
            
-           if (dialog.open() == ListDialog.OK)
+           if (dialog.open() == Window.OK)
            {
                ((Action)dialog.getResult()[0]).run();
            }

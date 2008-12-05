@@ -20,9 +20,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.PluginUtils;
+import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
 import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.common.utilities.exception.TmLExceptionHandler;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionHandler;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
@@ -33,20 +34,20 @@ import org.eclipse.tml.framework.status.IStatusTransition;
 import org.eclipse.tml.framework.status.MobileStatusTransition;
 
 public class ServiceFactory {
-	private static final String ELEMENT_SERVICE = "service";
-	private static final String ELEMENT_STATUS = "status";
-	private static final String ATR_START_ID = "startId";
-	private static final String ATR_END_ID = "endId";
-	private static final String ATR_HALT_ID = "haltId";
-	private static final String ATR_ID = "id";
-	private static final String ATR_NAME = "name";
-	private static final String ATR_ICON = "icon";
-	private static final String ATR_DESCRIPTION = "description";
-	private static final String ATR_PROVIDER = "provider";
-	private static final String ATR_COPYRIGHT = "copyright";
-	private static final String ATR_VERSION = "version";
-	private static final String ATR_HANDLER = "handler";
-	private static final String ATR_VISIBLE = "visible";
+	private static final String ELEMENT_SERVICE = "service"; //$NON-NLS-1$
+	private static final String ELEMENT_STATUS = "status"; //$NON-NLS-1$
+	private static final String ATR_START_ID = "startId"; //$NON-NLS-1$
+	private static final String ATR_END_ID = "endId"; //$NON-NLS-1$
+	private static final String ATR_HALT_ID = "haltId"; //$NON-NLS-1$
+	private static final String ATR_ID = "id"; //$NON-NLS-1$
+	private static final String ATR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATR_ICON = "icon"; //$NON-NLS-1$
+	private static final String ATR_DESCRIPTION = "description"; //$NON-NLS-1$
+	private static final String ATR_PROVIDER = "provider"; //$NON-NLS-1$
+	private static final String ATR_COPYRIGHT = "copyright"; //$NON-NLS-1$
+	private static final String ATR_VERSION = "version"; //$NON-NLS-1$
+	private static final String ATR_HANDLER = "handler"; //$NON-NLS-1$
+	private static final String ATR_VISIBLE = "visible"; //$NON-NLS-1$
 	
 	
 	@SuppressWarnings("deprecation")
@@ -61,9 +62,9 @@ public class ServiceFactory {
 		String iconName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_SERVICE, ATR_ICON);		
 		ImageDescriptor image = null;
 			try {
-			image = DevicePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), iconName);
+			image = BasePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), iconName);
 		} catch (Throwable t) {
-			TmLExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
+			ExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}
 		service.setImage(image);
 		service.setDescription(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_SERVICE, ATR_DESCRIPTION));
@@ -81,7 +82,7 @@ public class ServiceFactory {
 			}
 			
 		} catch (CoreException e) {
-			TmLExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
+			ExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}
 		if (originalPlugin!=null) {
 			List<IConfigurationElement> statusElementList = PluginUtils.getPluginElementList(originalPlugin, ELEMENT_SERVICE, ELEMENT_STATUS);

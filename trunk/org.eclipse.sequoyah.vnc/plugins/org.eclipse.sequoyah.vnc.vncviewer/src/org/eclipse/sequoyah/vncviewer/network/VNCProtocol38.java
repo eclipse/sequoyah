@@ -28,7 +28,7 @@ public class VNCProtocol38 extends VNCProtocol {
 	/**
 	 * Constant that represents the RFB protocol version.
 	 */
-	static final String RFB_VERSION = "RFB 003.008\n"; /*
+	static final String RFB_VERSION = "RFB 003.008\n"; /* //$NON-NLS-1$
 	 * used to compare the
 	 * implemented version
 	 * with the server
@@ -51,7 +51,7 @@ public class VNCProtocol38 extends VNCProtocol {
 
 		if (!(new String(b)).equals(RFB_VERSION)) {
 
-			throw new ProtocolException("Wrong protocol version.");
+			throw new ProtocolException("Wrong protocol version."); //$NON-NLS-1$
 
 		}
 
@@ -60,7 +60,7 @@ public class VNCProtocol38 extends VNCProtocol {
 	private void handshakeFail38(DataInputStream in) throws Exception {
 
 		int failReasonLength;
-		String failReason = "";
+		String failReason = ""; //$NON-NLS-1$
 
 		failReasonLength = in.readInt();
 		for (int j = 0; j < failReasonLength; j++) {
@@ -68,7 +68,7 @@ public class VNCProtocol38 extends VNCProtocol {
 
 		}
 
-		throw new Exception("Connection failed: " + failReason);
+		throw new Exception("Connection failed: " + failReason); //$NON-NLS-1$
 
 	}
 
@@ -78,7 +78,7 @@ public class VNCProtocol38 extends VNCProtocol {
 	protected void handShake(DataInputStream in, OutputStream out)
 			throws Exception {
 
-		@SuppressWarnings("unused")
+
 		int secTypesNumber;
 		int rfbSecTypes[];
 		int handshakeOK;

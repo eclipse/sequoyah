@@ -12,8 +12,8 @@
  ********************************************************************************/
 package org.eclipse.tml.device.qemureact.handler;
 
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.device.qemureact.QEmuReactPlugin;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.status.IStatusTransition;
 import org.eclipse.tml.framework.status.StatusHandler;
@@ -26,7 +26,7 @@ public class RefreshStatusHandler extends StatusHandler {
 
 	@Override
 	public void execute(IStatusTransition transition,IInstance instance) throws TmLException {
-		QEmuReactPlugin.logInfo(transition.toString());
+		BasePlugin.logInfo(transition.toString());
 	}
 
 }

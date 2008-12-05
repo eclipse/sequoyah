@@ -134,7 +134,7 @@ public class ServerModel implements IModel {
 		if ((portToBind <= 0) || (allMessages == null)
 				|| (incomingMessages == null) || (outgoingMessages == null)) {
 			throw new ProtocolInitException(
-					"Invalid parameters provided to method");
+					"Invalid parameters provided to method"); //$NON-NLS-1$
 		}
 
         ProtocolHandle handle = new ProtocolHandle();
