@@ -17,6 +17,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [242924] - There is no way to keep the size of a Variable Size Data read
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246916] - Add the correct Number objects to ProtocolMessage objects on reading from input stream
+ * Daniel Barboza Franco (Eldorado Research Institute) - [257588] - Add support to ServerCutText message
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -1248,6 +1249,25 @@ public class ProtocolEngine {
 					value = in.readUnsignedShort();
 				}
 				break;
+			case 3:
+				if (isSigned) {
+					long tmpval;
+					tmpval = in.readByte();
+					tmpval <<= 8;
+					tmpval += in.readShort(); 
+					
+					value = tmpval;
+					
+				} else {
+					long tmpval;
+					tmpval = in.readUnsignedByte();
+					tmpval <<= 8;
+					tmpval += in.readUnsignedShort(); 
+					
+					value = tmpval;
+				}
+				break;
+				
 			case 4: // reads an integer
 				value = in.readInt();
 				break;
@@ -1418,13 +1438,14 @@ public class ProtocolEngine {
 
 						// Tries to find a message definition that has the
 						// current code
+						// Note: the code for incoming messages is kept as negative
 						ProtocolMsgDefinition messageDef = messageDefCollection
-								.get(code);
+								.get(-code);
 						if (messageDef != null) {
 							// If it finds a message with the current code,
 							// reads the remaining of the message fields.
 							synchronized (socket) {
-								readReceivedMessage(code, messageDef);
+								readReceivedMessage(-code, messageDef);
 							}
 							code = 0;
 						}

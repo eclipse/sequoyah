@@ -161,6 +161,27 @@
                isFieldSigned="false">
          </fixedSizeData>
       </message>
+      <message
+            isMessageCodeSigned="false"
+            messageCode="0x03"
+            messageCodeSizeInBytes="1"
+            messageHandler="org.eclipse.tml.vncviewer.network.handlers.ServerCutTextHandler"
+            messageId="serverCutText"
+            messageName="SERVER_CUT_TEXT"
+            protocolId="vncProtocol">
+         <fixedSizeData
+               fieldName="padding"
+               fieldSizeInBytes="3"
+               isFieldSigned="false">
+         </fixedSizeData>
+         <variableSizeData
+               charsetName="ISO-8859-1"
+               isSizeFieldSigned="false"
+               sizeFieldName="length"
+               sizeFieldSizeInBytes="4"
+               valueFieldName="text">
+         </variableSizeData>
+      </message>
    </extension>
    <extension
          point="org.eclipse.tml.protocol.protocolMessageOrientation">
@@ -178,6 +199,10 @@
       </clientMessage>
       <serverMessage
             messageId="framebufferUpdate"
+            protocolId="vncProtocol">
+      </serverMessage>
+      <serverMessage
+            messageId="serverCutText"
             protocolId="vncProtocol">
       </serverMessage>
    </extension>

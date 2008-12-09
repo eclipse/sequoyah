@@ -11,6 +11,7 @@
  * Fabio Rigo - Bug [242757] - Protocol does not support Unicode on variable sized fields
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [242924] - There is no way to keep the size of a Variable Size Data read
+ * Daniel Barboza Franco (Eldorado Research Institute) - [257588] - Add support to ServerCutText message
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.reader;
 
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
+import org.eclipse.tml.protocol.internal.model.PluginProtocolModel;
 import org.eclipse.tml.protocol.internal.model.ProtocolBean;
 import org.eclipse.tml.protocol.lib.IMessageHandler;
 import org.eclipse.tml.protocol.lib.IProtocolInit;
@@ -292,6 +294,9 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 					String extensionMsgCode = protocolMsgConf
 							.getAttribute(PROTOCOL_MESSAGE_CODE_ATTR);
 
+			
+					//TODO: Check also for the negative (server msgs) code
+					
 					// A message is read if it belongs to the protocol AND a
 					// message with same
 					// code was not read yet
@@ -381,8 +386,22 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			bean.setHandler(handler);
 			bean.setMessageData(msgDataList);
 
+			
+			PluginProtocolModel model = PluginProtocolModel.getInstance();
+			Collection<String> clientMsgs = model.getClientMessages(protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_PROTOCOL_ID_ATTR));
+			Collection<String> serverMsgs = model.getServerMessages(protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_PROTOCOL_ID_ATTR));
+
 			// Stores the bean at the provided map
-			messageDefMap.put(code, bean);
+			if (clientMsgs.contains(id)) {
+				messageDefMap.put(code, bean);				
+			}
+			
+			// Server msgs are negative
+			if (serverMsgs.contains(id)) {
+				messageDefMap.put(-code, bean);				
+			}
+
+
 
 		} catch (CoreException e) {
 			// Skip the erroneous message
@@ -556,6 +575,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 
 		Collection<String> messageOrientations = new HashSet<String>();
 
+/*
 		// Get all messages referring to the given protocols
 		// Once the messages are retrieved, build a collection with all
 		// messages ids associated to the provided protocols
@@ -567,7 +587,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 		for (ProtocolMsgDefinition aMessageDef : allMessagesDef) {
 			allMessagesIdsFromDefs.add(aMessageDef.getId());
 		}
-
+*/
 		// Get all Protocol Message Orientation extensions
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint msgOrientationExtPoint = registry
@@ -597,8 +617,10 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 							.getAttribute(PROTOCOL_MESSAGE_ORIENTATION_MESSAGE_ID_ATTR);
 
 					if ((protocols.contains(extPointProtocolId))
-							&& (allMessagesIdsFromDefs
+/*							&& (allMessagesIdsFromDefs
 									.contains(extPointMessageId))) {
+									*/
+					){
 						messageOrientations.add(extPointMessageId);
 					}
 				}

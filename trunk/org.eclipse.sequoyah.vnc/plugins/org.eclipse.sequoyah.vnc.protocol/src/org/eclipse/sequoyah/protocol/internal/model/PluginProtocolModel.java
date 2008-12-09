@@ -9,6 +9,7 @@
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
+ * Daniel Barboza Franco (Eldorado Research Institute) - [257588] - Add support to ServerCutText message
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.model;
 
@@ -156,6 +157,7 @@ public class PluginProtocolModel {
 		if (allMessages == null) {
 			allMessages = ProtocolExtensionsReader
 					.readMessageDefinitions(protocolId);
+			allMessagesMap.put(protocolId, allMessages);
 		}
 
 		return allMessages;
@@ -179,6 +181,8 @@ public class PluginProtocolModel {
 		if (clientMessages == null) {
 			clientMessages = ProtocolExtensionsReader
 					.readClientMessages(protocolId);
+			
+			clientMessagesMap.put(protocolId, clientMessages);
 		}
 
 		return clientMessages;
@@ -202,6 +206,7 @@ public class PluginProtocolModel {
 		if (serverMessages == null) {
 			serverMessages = ProtocolExtensionsReader
 					.readServerMessages(protocolId);
+			serverMessagesMap.put(protocolId, serverMessages);
 		}
 
 		return serverMessages;
