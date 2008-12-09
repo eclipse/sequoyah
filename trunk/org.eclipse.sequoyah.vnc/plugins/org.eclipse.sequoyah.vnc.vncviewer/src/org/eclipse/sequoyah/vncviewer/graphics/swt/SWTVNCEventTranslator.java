@@ -10,6 +10,7 @@
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247840] - Mouse click not working
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -30,8 +31,11 @@ import org.eclipse.tml.vncviewer.config.IVNCProperties;
  */
 public class SWTVNCEventTranslator {
 
+	// Number of buttons as defined on the RFB protocol (8 bits for buttons).
+	private static final int BUTTONS = 8; 
+	
 	private boolean shiftPressed = false;
-	private boolean buttonPressed = false;
+	private boolean buttonPressed[];
 
 	private Hashtable<Integer, Integer> swtToKeysymCodes;
 
@@ -44,6 +48,12 @@ public class SWTVNCEventTranslator {
 		this.configProperties = configProperties;
 		this.propertiesFileHandler = propertiesFileHandler;
 
+		buttonPressed = new boolean[BUTTONS];
+		
+		for(int i=0; i<BUTTONS; i++) {
+			buttonPressed[i] = false;
+		}
+		
 		initKeysyms();
 	
 	}
@@ -89,7 +99,29 @@ public class SWTVNCEventTranslator {
 		// Creates the mouse event message, providing the
 		// necessary coordinates
 		ProtocolMessage message = new ProtocolMessage(5);
-		message.setFieldValue("buttonMask", buttonPressed ? 1 : 0); //$NON-NLS-1$
+		
+		if (swtEvent.button > 0 ) {
+			if (swtEvent.type == SWT.MouseDown) {
+				if (!buttonPressed[swtEvent.button - 1]) {
+					buttonPressed[swtEvent.button - 1] = true;
+				}
+			}
+			else if (swtEvent.type == SWT.MouseUp){
+				if (buttonPressed[swtEvent.button - 1]) {
+					buttonPressed[swtEvent.button - 1] = false;
+				}
+			}
+		}
+		
+		// Create the mask as specified in the RFB protocol
+		byte mask = 0;
+		for (int i=0; i<BUTTONS; i++) {
+			if (buttonPressed[i]) {
+				mask = (byte)((byte)mask | (int)Math.pow(2,i));
+			}
+		}
+		
+		message.setFieldValue("buttonMask", mask); //$NON-NLS-1$
 		message.setFieldValue("x-position", swtEvent.x); //$NON-NLS-1$
 		message.setFieldValue("y-position", swtEvent.y); //$NON-NLS-1$
 
