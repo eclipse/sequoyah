@@ -73,25 +73,25 @@ public class StateMachineHandler {
             monitor = new NullProgressMonitor();
         }
 
-        monitor.beginTask(jobName, 3);
-        status = svcHnd.runService(instance, arguments, new SubProgressMonitor(monitor, 1));
+        monitor.beginTask(jobName, 1000);
+        status = svcHnd.runService(instance, arguments, new SubProgressMonitor(monitor, 950));
         if (status.isOK()) {
         	IServiceHandler parent = svcHnd.getParent();
             if (parent != null) {
                 if (parent instanceof ServiceHandler) {
                     status =
                             ((ServiceHandler) parent).updatingService(instance,
-                                    new SubProgressMonitor(monitor, 1));
+                                    new SubProgressMonitor(monitor, 50));
                 }
                 else {
                     parent.updatingService(instance);
-                    monitor.worked(1);
+                    monitor.worked(50);
                 }
             }
             else {
                 status =
                         svcHnd.updatingService(instance, new SubProgressMonitor(
-                                monitor, 1));
+                                monitor, 50));
             }
         }
 
