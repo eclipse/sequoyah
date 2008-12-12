@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
+ * Fabio Rigo (Eldorado Research Institute) - Bug [251595] - Proportion of ticks in ServiceHandler class is not adequate
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.statemachine;
