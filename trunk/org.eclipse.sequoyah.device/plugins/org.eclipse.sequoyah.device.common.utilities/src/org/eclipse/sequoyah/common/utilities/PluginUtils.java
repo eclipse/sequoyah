@@ -502,7 +502,7 @@ public class PluginUtils
      */
     public static File getPluginInstallationPath(Bundle pluginBundle)
     {
-        String platformPath          = Platform.getInstallLocation().getURL().getPath();
+        //String platformPath          = Platform.getInstallLocation().getURL().getPath();
         String pluginPath            = pluginBundle.getLocation();
         int removeIndex              = pluginPath.indexOf("file:"); //$NON-NLS-1$
         pluginPath                   = pluginPath.substring(removeIndex + 6);

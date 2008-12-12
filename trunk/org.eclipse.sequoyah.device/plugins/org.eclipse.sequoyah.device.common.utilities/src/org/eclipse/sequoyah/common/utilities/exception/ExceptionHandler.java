@@ -45,8 +45,8 @@ public class ExceptionHandler {
 	
 	public static void showException(TmLException exception) {
 
-		String logMessage = logException(exception);
-		Throwable t = exception.getStatus().getException();
+		logException(exception);
+		exception.getStatus().getException();
 		// UI print message
 	}
 	
