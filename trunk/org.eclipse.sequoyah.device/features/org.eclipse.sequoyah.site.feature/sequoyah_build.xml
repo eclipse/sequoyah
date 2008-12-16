@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="TmL build system" basedir="/opt/public/dsdp/tml/data" default="tml.full_build">
+<project name="TmL build system" basedir="." default="tml.full_build">
 
 	<!-- inputs: the TmL need to fill the values of the properties below according to their need-->
 	<property name="tml.export.output.path" value="${targetData}\export_output"/>
@@ -10,7 +10,7 @@
 	<property name="tml.repository.name" value="Tools for mobile Linux (TmL) " />
 	<property name="tml.dependencies.repositories.url" value="file:${data}"/>
 
-	<property environment="basedir"  value="/opt/public/dsdp/tml/data/data"/>
+	<!--property environment="basedir"  value="/opt/public/dsdp/tml/data"/-->
 	<property name="target"  value="${target}"/>
 	<property environment="eclipse.home"  value="${eclipse.home}"/>
 	<property name="tml.target.os"  value="win32"/>
@@ -33,12 +33,13 @@
 	<!-- Compile and Export the TmL's Features -->
 	<target name="tml.export_features">
 		<echo level="info" message="Exporting features..." />
+		
 		<pde.exportFeatures destination="${tml.export.output.path}" exportSource="false" exportType="jar"
 					features="${tml.features.to.export}" useJARFormat="true" />
 
-		<pde.exportFeatures destination="${tml.export.output.path}/sources" exportSource="true" exportType="jar"
-							features="${tml.features.to.export.source}" useJARFormat="true" />
-	
+		<pde.exportFeatures destination="${tml.export.output.path}/sources" exportSource="false" exportType="jar"
+						features="${tml.features.to.export.source}" useJARFormat="true" />
+		
 		<available file="${tml.export.output.path}\logs.zip" property="tml.export.features.failed" value="true"/>
 		<fail if="tml.export.features.failed" message="Failed to export features and plug-ins.\nCheck ${tml.export.output.path}\logs.zip for more information."/>
 	</target>
