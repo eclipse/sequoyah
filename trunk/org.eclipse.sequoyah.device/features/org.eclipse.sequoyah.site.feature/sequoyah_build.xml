@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="TmL build system" basedir="." default="tml.full_build">
+<project name="TmL build system" basedir="/opt/public/dsdp/tml/data" default="tml.full_build">
 
 	<!-- inputs: the TmL need to fill the values of the properties below according to their need-->
-	<property name="tml.export.output.path" value="c:\phased_build\output\export_output"/>
-    <property name="tml.features.to.export" value="org.eclipse.tml.common.feature"/>
-	<property name="tml.repository.path" value="c:\phased_build\output\tml_repository" />
+	<property name="tml.export.output.path" value="${targetData}\export_output"/>
+    <property name="tml.features.to.export" value="org.eclipse.tml.common.feature,org.eclipse.tml.device.feature,org.eclipse.tml.device.sdk.feature,org.eclipse.tml.feature,org.eclipse.tml.protocol.feature,org.eclipse.tml.sdk.feature,org.eclipse.tml.vnc.feature,org.eclipse.tml.vnc.protocol.examples.feature,org.eclipse.tml.vnc.viewer.feature"/>
+	<property name="tml.features.to.export.source" value="org.eclipse.tml.device.examples.feature,org.eclipse.tml.sdk.feature"/>
+	<property name="tml.repository.path" value="${targetData}\tml_repository" />
 	<property name="tml.repository.url" value="file:${tml.repository.path}" />
 	<property name="tml.repository.name" value="Tools for mobile Linux (TmL) " />
-	<property name="tml.dependencies.repositories.url" value="file:C:\phased_build\tml_repository"/>
+	<property name="tml.dependencies.repositories.url" value="file:${data}"/>
 
-	<!-- required for studio.install_in_platform -->
-	<property name="tml.installable.unit" value="org.eclipse.tml.common.feature.feature.group"/>
-	<property name="tml.installable.unit.version" value="0.2.0"/>
-	<property name="tml.target.profile" value="TMLProfile"/>
-	<property name="tml.target.platform.path" value="c:\tmp\output\tml"/>
-	<property name="target"  value="build.jars"/>
-	<property environment="eclipse.home"  value="c:\tml\ganymede"/>
+	<property environment="basedir"  value="/opt/public/dsdp/tml/data"/>
+	<property name="target"  value="${target}"/>
+	<property environment="eclipse.home"  value="${eclipse.home}"/>
 	<property name="tml.target.os"  value="win32"/>
 	<property name="tml.target.ws"  value="win32"/>
 	<property name="tml.target.arch"  value="x86"/>
@@ -39,7 +36,8 @@
 		<pde.exportFeatures destination="${tml.export.output.path}" exportSource="false" exportType="jar"
 					features="${tml.features.to.export}" useJARFormat="true" />
 
-		<ant antfile="build.xml" dir="org.eclipse.tml.common.feature" target="all.children"/>
+		<pde.exportFeatures destination="${tml.export.output.path}/sources" exportSource="true" exportType="jar"
+							features="${tml.features.to.export.source}" useJARFormat="true" />
 	
 		<available file="${tml.export.output.path}\logs.zip" property="tml.export.features.failed" value="true"/>
 		<fail if="tml.export.features.failed" message="Failed to export features and plug-ins.\nCheck ${tml.export.output.path}\logs.zip for more information."/>
