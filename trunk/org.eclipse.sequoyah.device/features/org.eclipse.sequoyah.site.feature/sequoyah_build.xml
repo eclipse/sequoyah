@@ -10,7 +10,7 @@
 	<property name="tml.repository.name" value="Tools for mobile Linux (TmL) " />
 	<property name="tml.dependencies.repositories.url" value="file:${data}"/>
 
-	<property environment="basedir"  value="/opt/public/dsdp/tml/data"/>
+	<property environment="basedir"  value="/opt/public/dsdp/tml/data/data"/>
 	<property name="target"  value="${target}"/>
 	<property environment="eclipse.home"  value="${eclipse.home}"/>
 	<property name="tml.target.os"  value="win32"/>
