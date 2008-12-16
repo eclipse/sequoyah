@@ -39,7 +39,9 @@ public class DeviceUIPlugin extends BasePlugin {
 	public static final String ICON_HORIZONTAL = "ICON_HORIZONTAL"; //$NON-NLS-1$
 	public static final String ICON_VERTICAL = "ICON_VERTICAL"; //$NON-NLS-1$
 	public static final String ICON_FILTER = "ICON_FILTER"; //$NON-NLS-1$
+	public static final String ICON_PROPERTY = "ICON_PROPERTY"; //$NON-NLS-1$
 	public static final String IMAGEKEY_NEW_DEVICE_WIZARD = "IMAGEKEY_NEW_DEVICE_WIZARD"; //$NON-NLS-1$
+
 	
 	// The shared instance
 	private static DeviceUIPlugin plugin;
@@ -93,6 +95,7 @@ public class DeviceUIPlugin extends BasePlugin {
 		putImageInRegistry(ICON_INACTIVE, path+"full/obj16/inactive.gif"); //$NON-NLS-1$
 		putImageInRegistry(ICON_MOVING, path+"movingBox.gif"); //$NON-NLS-1$
 		putImageInRegistry(ICON_BOOK, path+"book.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_PROPERTY, path+"book.gif"); //$NON-NLS-1$
 		putImageInRegistry(ICON_GAMEBOARD, path+"gameboard.gif"); //$NON-NLS-1$
 		putImageInRegistry(ICON_NEW_BOOK, path+"newbook.gif"); //$NON-NLS-1$
 		putImageInRegistry(ICON_REMOVE, path+"remove.gif"); //$NON-NLS-1$
@@ -100,7 +103,7 @@ public class DeviceUIPlugin extends BasePlugin {
 		putImageInRegistry(ICON_VERTICAL, path+"full/obj16/vertical.gif"); //$NON-NLS-1$
 		putImageInRegistry(ICON_FILTER, path+"full/obj16/filter.gif"); //$NON-NLS-1$
 		putImageInRegistry(IMAGEKEY_NEW_DEVICE_WIZARD, path+"full/obj16/device.gif"); //$NON-NLS-1$
-		
+
 	}
 
 

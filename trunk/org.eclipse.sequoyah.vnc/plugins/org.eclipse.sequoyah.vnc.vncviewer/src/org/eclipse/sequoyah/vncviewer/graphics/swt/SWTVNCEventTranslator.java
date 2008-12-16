@@ -125,6 +125,7 @@ public class SWTVNCEventTranslator {
 		message.setFieldValue("x-position", swtEvent.x); //$NON-NLS-1$
 		message.setFieldValue("y-position", swtEvent.y); //$NON-NLS-1$
 
+
 		return message;
 	}
 

@@ -57,6 +57,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	public static final String TML_STATUS_IDLE="IDLE"; //$NON-NLS-1$
 	public static final String TML_STATUS_OFF="OFF"; //$NON-NLS-1$
 	public static final String TML_STATUS_INACTIVE ="INACTIVE"; //$NON-NLS-1$
+
 	public static final Properties DEFAULT_PROPERTIES = new Properties();	
 
 	// The shared instance

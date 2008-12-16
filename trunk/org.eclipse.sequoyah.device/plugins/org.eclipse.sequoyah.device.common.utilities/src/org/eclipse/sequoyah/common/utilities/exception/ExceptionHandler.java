@@ -44,7 +44,6 @@ public class ExceptionHandler {
 	}
 	
 	public static void showException(TmLException exception) {
-
 		logException(exception);
 		exception.getStatus().getException();
 		// UI print message

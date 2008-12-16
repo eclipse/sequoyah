@@ -217,7 +217,6 @@ public final class SimpleLogger implements ILogger
     /**
      * Sets a Appender HTML File
      */
-   
 	@SuppressWarnings("unused")
 	private void setAppenderHTML()
     {

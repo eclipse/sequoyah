@@ -15,7 +15,7 @@ package org.eclipse.tml.framework.device.manager.persistence;
 interface IDeviceXmlTags
 {
     String TML_DEVICE_DATAFILE = "tml_devices.xml"; //$NON-NLS-1$
-    
+ 
     String TML_XML_DEVICES = "devices"; //$NON-NLS-1$
     String TML_XML_DEVICE = "deviceType"; //$NON-NLS-1$
     String TML_XML_DEVICE_ID = "id"; //$NON-NLS-1$
@@ -25,4 +25,5 @@ interface IDeviceXmlTags
     String TML_XML_INSTANCE_NAME = "name"; //$NON-NLS-1$
     String TML_XML_INSTANCE_DEVICE_ID = "deviceType_id"; //$NON-NLS-1$
     String TML_XML_ROOT = "tml"; //$NON-NLS-1$
+
 }

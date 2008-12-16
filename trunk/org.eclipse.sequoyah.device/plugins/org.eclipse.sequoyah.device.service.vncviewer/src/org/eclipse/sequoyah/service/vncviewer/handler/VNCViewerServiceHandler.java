@@ -112,7 +112,7 @@ public class VNCViewerServiceHandler extends ServiceHandler
          *  The code below is a fix for QEMU-ARM which expect 
          *  the sequence ctrl+alt+3 to show it's display. 
          *****/
-        if (instance.getDeviceTypeId().equals("org.eclipse.tml.device.qemuarm.qemuarmDevice")) //$NON-NLS-1$
+        if (instance.getDeviceTypeId().equals("org.eclipse.tml.device.qemuarm.qemuarmDevice"))
         {
 
             try

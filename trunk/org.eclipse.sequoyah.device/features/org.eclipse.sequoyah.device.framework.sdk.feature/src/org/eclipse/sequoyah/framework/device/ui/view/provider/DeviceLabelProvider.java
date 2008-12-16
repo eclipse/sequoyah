@@ -89,6 +89,6 @@ public class DeviceLabelProvider extends LabelProvider {
 	protected RuntimeException unknownElement(Object element) {
 		return new RuntimeException("Unknown type of element in tree of type " //$NON-NLS-1$
 				+ element.getClass().getName());
-	}
+}
 
 }

@@ -14,11 +14,24 @@
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247288] - Exceptions after Instance Mgt View is closed
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
 <<<<<<< InstanceStatusComposite.java
+<<<<<<< InstanceStatusComposite.java
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
 =======
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
 >>>>>>> 1.5.6.2
+=======
+<<<<<<< InstanceStatusComposite.java
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+=======
+<<<<<<< InstanceStatusComposite.java
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+=======
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
+>>>>>>> 1.5.6.2
+>>>>>>> 1.7
+>>>>>>> 1.5.12.2
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -73,7 +86,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.DeviceUtils;
 import org.eclipse.tml.framework.device.events.IInstanceListener;
 import org.eclipse.tml.framework.device.events.InstanceAdapter;
@@ -81,8 +93,8 @@ import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
 import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
-import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandlerAction;
@@ -355,7 +367,7 @@ public class InstanceStatusComposite extends Composite
                     // menu item "Properties"
                     newItem = new MenuItem(menu, SWT.PUSH);
                     newItem.setText(MENU_PROPERTIES);
-                    newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DevicePlugin.ICON_PROPERTY));
+                    newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DeviceUIPlugin.ICON_PROPERTY));
                     newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
                    
                     newItem = new MenuItem(menu, SWT.SEPARATOR);

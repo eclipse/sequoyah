@@ -19,8 +19,8 @@ import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
 /**
  * Basic implementation of IInstance.
  */
+
 public class MobileInstance extends AbstractMobileInstance {
-	
 	
 	/**
 	 * Constructor - Basic implementation of IInstance.

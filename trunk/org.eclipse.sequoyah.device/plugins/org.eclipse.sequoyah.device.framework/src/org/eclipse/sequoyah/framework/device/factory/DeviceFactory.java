@@ -40,7 +40,6 @@ public class DeviceFactory {
 	private static final String ATR_VERSION = "version"; //$NON-NLS-1$
 	private static final String ATR_HANDLER = "handler"; //$NON-NLS-1$
 	
-	
 	public static IDeviceType createDevice(String deviceId) {
 
 		IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, deviceId);
