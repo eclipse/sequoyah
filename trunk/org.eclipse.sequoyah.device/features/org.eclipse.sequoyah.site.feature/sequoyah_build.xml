@@ -37,7 +37,7 @@
 		<pde.exportFeatures destination="${tml.export.output.path}" exportSource="false" exportType="jar"
 					features="${tml.features.to.export}" useJARFormat="true" />
 
-		<pde.exportFeatures destination="${tml.export.output.path}/sources" exportSource="false" exportType="jar"
+		<pde.exportFeatures destination="${tml.export.output.path}/sources" exportSource="true" exportType="jar"
 						features="${tml.features.to.export.source}" useJARFormat="true" />
 		
 		<available file="${tml.export.output.path}\logs.zip" property="tml.export.features.failed" value="true"/>
