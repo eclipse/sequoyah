@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="http://www.eclipse.org/default_style.css" type="text/css">
-<title>Build Notes for TmL 0.1</title>
+<title>Build Notes for TmL 0.3M4</title>
 </head>
 
 <body>
@@ -25,7 +25,7 @@
 <ul>
 <li>There is a new update site:
     <a href="http://download.eclipse.org/dsdp/tml/updates/0.3M4">
-    http://download.eclipse.org/dsdp/tm/signedUpdates</a>.<br/>
+    http://download.eclipse.org/dsdp/tml/updates/0.3M4</a>.<br/>
     We will continue with more testing and migrate the main update site to
     use signed jars as well as soon as possible.</li>
 <li>This is the first release of TmL, please help us to keep it growing up. Report bugs and send us your suggestions.</li>
@@ -62,7 +62,7 @@ connection setup and important tasks.</p>
 <table><tbody><tr><td>
 <p>As per the TmL
 <a href="http://www.eclipse.org/dsdp/tml/development/plan.php">plan</a>,
-we will have small API changes for 0.2 release in December,2008.</p>
+we will have small API changes for 0.3 release in December,2008.</p>
 <p>All such API changes will be voted on
 by committers on the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tml-dev">
 dsdp-tml-dev</a> developer mailing list, and documented in a migration guide
