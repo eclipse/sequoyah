@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  *
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Enhancing instance wizard
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Enhancing instance wizard
  ********************************************************************************/
 
 package org.eclipse.tml.device.qemureact.wizard;

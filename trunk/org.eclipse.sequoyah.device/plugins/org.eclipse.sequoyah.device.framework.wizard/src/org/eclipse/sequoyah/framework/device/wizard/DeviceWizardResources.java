@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Added a 
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Added a 
  *                                                            new message string.
  ********************************************************************************/
 

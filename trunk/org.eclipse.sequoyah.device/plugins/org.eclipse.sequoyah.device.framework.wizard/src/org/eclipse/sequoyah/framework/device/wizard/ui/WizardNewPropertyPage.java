@@ -9,7 +9,7 @@
  *
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Cleanup.
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Cleanup.
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.wizard.ui;

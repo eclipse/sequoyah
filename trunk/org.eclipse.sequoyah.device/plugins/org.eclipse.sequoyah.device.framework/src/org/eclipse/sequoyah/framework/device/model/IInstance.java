@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Yu-Fen Kuo (MontaVista) - bug#236476 - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
  ********************************************************************************/

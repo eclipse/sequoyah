@@ -8,7 +8,7 @@
  * Fabio Fantato (Eldorado Research Institute)
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence* Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence* Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
  * Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
  *  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/

@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributors:
- * Otávio Ferranti (Motorola)
+ * Otavio Ferranti (Motorola)
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Creates a new instance wizard.
- * @author Otávio Ferranti
+ * @author Otavio Ferranti
  *
  */
 public class WizardNewProjectPage extends WizardPage implements IWizardProjectPage {

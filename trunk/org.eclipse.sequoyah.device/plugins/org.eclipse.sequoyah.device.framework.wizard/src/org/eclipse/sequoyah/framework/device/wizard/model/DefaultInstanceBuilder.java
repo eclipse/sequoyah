@@ -9,7 +9,7 @@
  * 
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221736 - new instance wizard
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - removing the
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - removing the
  *                              project location field from the default project page
  ********************************************************************************/
 package org.eclipse.tml.framework.device.wizard.model;

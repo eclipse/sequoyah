@@ -9,7 +9,7 @@
  *
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221736 - new instance wizard
- * Otávio Ferranti (Eldorado Research Institute) - bug#221733 - removing the
+ * Otavio Ferranti (Eldorado Research Institute) - bug#221733 - removing the
  *                          project location field from the default project page
  ********************************************************************************/
 

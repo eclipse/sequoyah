@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
- * Otávio Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
+ * Otavio Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * 
  * Contributors:
  * Fabio Rigo (Eldorado Research Institute) - [244951] Implement listener/event mechanism at device framework
@@ -43,7 +43,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
  * Basic device instance property editor
- * @author Otávio Ferranti
+ * @author Otavio Ferranti
  */
 public class InstancePropertyEditor extends PropertyPage {
 

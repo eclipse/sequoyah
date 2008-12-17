@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup.
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup.
  * Fabio Rigo (Eldorado) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
  ********************************************************************************/
 package org.eclipse.tml.framework.status;

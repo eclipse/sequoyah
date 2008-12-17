@@ -9,7 +9,7 @@
  * 
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Yu-Fen Kuo (MontaVista) - try to replace jdom dependencies with eclipse default xml parsers.
  * Fabio Rigo (Eldorado) - [245114] Enhance persistence policies
 <<<<<<< InstanceManager.java

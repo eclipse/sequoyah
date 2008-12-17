@@ -9,7 +9,7 @@
  *
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
- * Otávio Ferranti (Motorola) - bug#221733 - Enhancing the device instance wizard
+ * Otavio Ferranti (Motorola) - bug#221733 - Enhancing the device instance wizard
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244856] - Instance View usability should be improved
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/

@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup
  * Fabio Rigo (Eldorado Research Institute) - bug 244052 - The dirtyChanged method is being called out of UI thread
  ********************************************************************************/
 package org.eclipse.tml.framework.device.factory;

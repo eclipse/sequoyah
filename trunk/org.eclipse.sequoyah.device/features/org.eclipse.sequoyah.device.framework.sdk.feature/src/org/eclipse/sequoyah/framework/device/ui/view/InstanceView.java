@@ -8,7 +8,7 @@
  * Fabio Fantato (Eldorado Research Institute)
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) -[221733] - Adding data persistence
+ * Otavio Luiz Ferranti (Eldorado Research Institute) -[221733] - Adding data persistence
  * Daniel Barboza Franco (Eldorado Research Institute) - [239970] - Invisible Services
  * Fabio Rigo (Eldorado Research Institute) - [244951] Implement listener/event mechanism at device framework
  * Fabio Rigo (Eldorado Research Institute) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion

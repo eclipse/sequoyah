@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup.
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup.
  * Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/

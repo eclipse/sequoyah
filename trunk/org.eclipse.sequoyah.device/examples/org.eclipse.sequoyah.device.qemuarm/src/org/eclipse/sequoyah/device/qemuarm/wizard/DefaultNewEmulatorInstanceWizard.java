@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  *
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Enhancing instance wizard
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Enhancing instance wizard
  * Fabio Fantato (Eldorado Research Institute) - [221733] Persistence and New wizard for manage Device Instances
  ********************************************************************************/
 

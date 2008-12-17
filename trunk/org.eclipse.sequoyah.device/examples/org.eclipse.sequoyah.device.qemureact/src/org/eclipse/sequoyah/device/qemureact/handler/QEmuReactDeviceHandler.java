@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - [bug221733]Device handlers
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - [bug221733]Device handlers
  *                                         shall be able to create device instances.
  ********************************************************************************/
 
