@@ -18,12 +18,12 @@ package org.eclipse.tml.framework.device.wizard;
  * <p>
  * The purpose of this constants is keep together all definitions for extension
  * points, views, shortcuts, propertys, attributes e several others.
- * 
+ *
  * @author Fabio Fantato
  */
 public interface DeviceWizardConstants {
 
-	
+
 	/**
 	 * Extension ID for New Wizard of Emulator Instances
 	 */
@@ -33,7 +33,7 @@ public interface DeviceWizardConstants {
 	public static final String PROPERTIES_FILENAME = "instance.properties"; //$NON-NLS-1$
 	public static final String PROPERTIES_FILENAME_FULL = "/org/eclipse/tml/device/wizard/resources/instance.properties"; //$NON-NLS-1$
 
-	
+
 	/**
 	 * Shortcut to New Folder Wizard
 	 */
@@ -74,7 +74,7 @@ public interface DeviceWizardConstants {
 	 */
 	public static final String ELEMENT_CUSTOMIZER = "customizer"; //$NON-NLS-1$
 
-	
+
 	/**
 	 * ID for read PROJECT elements from plugin extensions
 	 */
@@ -94,27 +94,27 @@ public interface DeviceWizardConstants {
 	 * ID for read xml attribute from plugin extensions
 	 */
 	public static final String ATB_XML = "xml"; //$NON-NLS-1$
-	
+
 	/**
 	 * ID for read monitor attribute from plugin extensions
 	 */
 	public static final String ATB_MONITOR = "needsProgressMonitor"; //$NON-NLS-1$
-	
+
 	/**
 	 * ID for read forcePreviousAndNextButtons attribute from plugin extensions
 	 */
 	public static final String ATB_FORCE = "forcePreviousAndNextButtons"; //$NON-NLS-1$
-	
+
 	/**
 	 * ID for read canFinishEarly attribute from plugin extensions
 	 */
 	public static final String ATB_FINISH = "canFinishEarly"; //$NON-NLS-1$
-	
+
 	/**
 	 * ID for read image attribute from plugin extensions
 	 */
 	public static final String ATB_IMAGE = "image"; //$NON-NLS-1$
-	
+
 	/**
 	 * ID for read title attribute from plugin extensions
 	 */
@@ -151,11 +151,11 @@ public interface DeviceWizardConstants {
      */
 	public static final String STRING_NULL = ""; //$NON-NLS-1$
 	/**
-	 * 
+	 *
 	 */
 	public static final String FOLDER_SEPARATOR = "/"; //$NON-NLS-1$
 	/**
-	 * 
+	 *
 	 */
 	public static final String SLASH = "\\"; //$NON-NLS-1$
 
