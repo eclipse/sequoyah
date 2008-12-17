@@ -163,9 +163,9 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
      * @param pageId
      *            is the page if
      * @param title
-     *            is a string that represents the pages´s title
+     *            is a string that represents the pagesï¿½s title
      * @param description
-     *            is a strint that represents the pages´s description
+     *            is a strint that represents the pagesï¿½s description
      */
     @SuppressWarnings("unchecked")
     private void addPage(WizardPage page, String title, String description)
