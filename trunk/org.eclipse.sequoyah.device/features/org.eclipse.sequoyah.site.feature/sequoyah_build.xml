@@ -5,7 +5,7 @@
 	<property name="tml.export.output.path" value="${targetData}/export_output"/>
 	<property name="tml.features.to.export" value="org.eclipse.tml.sdk.feature"/>
 	<!--property name="tml.features.to.export" value="org.eclipse.tml.common.feature,org.eclipse.tml.device.feature,org.eclipse.tml.device.sdk.feature,org.eclipse.tml.feature,org.eclipse.tml.protocol.feature,org.eclipse.tml.sdk.feature,org.eclipse.tml.vnc.feature,org.eclipse.tml.vnc.protocol.examples.feature,org.eclipse.tml.vnc.viewer.feature"/-->
-	<property name="tml.features.to.export.source" value="org.eclipse.tml.device.examples.feature,org.eclipse.tml.sdk.feature"/>
+	<property name="tml.features.to.export.source" value="org.eclipse.tml.sdk.feature"/>
 	<property name="tml.repository.path" value="${targetData}/tml_repository" />
 	<property name="tml.repository.url" value="file:${tml.repository.path}" />
 	<property name="tml.repository.name" value="Tools for mobile Linux (TmL) " />
