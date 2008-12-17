@@ -2,10 +2,10 @@
 <project name="TmL build system" basedir="." default="tml.full_build">
 
 	<!-- inputs: the TmL need to fill the values of the properties below according to their need-->
-	<property name="tml.export.output.path" value="${targetData}\export_output"/>
+	<property name="tml.export.output.path" value="${targetData}/export_output"/>
     <property name="tml.features.to.export" value="org.eclipse.tml.common.feature,org.eclipse.tml.device.feature,org.eclipse.tml.device.sdk.feature,org.eclipse.tml.feature,org.eclipse.tml.protocol.feature,org.eclipse.tml.sdk.feature,org.eclipse.tml.vnc.feature,org.eclipse.tml.vnc.protocol.examples.feature,org.eclipse.tml.vnc.viewer.feature"/>
 	<property name="tml.features.to.export.source" value="org.eclipse.tml.device.examples.feature,org.eclipse.tml.sdk.feature"/>
-	<property name="tml.repository.path" value="${targetData}\tml_repository" />
+	<property name="tml.repository.path" value="${targetData}/tml_repository" />
 	<property name="tml.repository.url" value="file:${tml.repository.path}" />
 	<property name="tml.repository.name" value="Tools for mobile Linux (TmL) " />
 	<property name="tml.dependencies.repositories.url" value="file:${data}"/>
@@ -16,7 +16,7 @@
 	<property name="tml.target.os"  value="win32"/>
 	<property name="tml.target.ws"  value="win32"/>
 	<property name="tml.target.arch"  value="x86"/>
-	<property name="tml.target.platform.zip" value="c:\tmp\output\platform-${tml.target.os}.${tml.target.ws}.${tml.target.arch}.zip"/>
+	<property name="tml.target.platform.zip" value="c:/tmp/output/platform-${tml.target.os}.${tml.target.ws}.${tml.target.arch}.zip"/>
 	
 	<!-- Remove outputs of a previous build -->
 	<target name="tml.clean_build_output">
