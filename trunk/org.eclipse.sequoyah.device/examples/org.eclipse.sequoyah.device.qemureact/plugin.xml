@@ -8,9 +8,10 @@
          point="org.eclipse.tml.deviceTypes">
       <deviceType
             handler="org.eclipse.tml.device.qemureact.handler.QEmuReactDeviceHandler"
+            icon="icons/full/obj16/qemureact.gif"
             id="org.eclipse.tml.device.qemureact.qemureactDevice"
-            name="QEmuReact Mobile Device"
-            label="QEmuReact Mobile Device"/>
+            label="QEmuReact Mobile Device"
+            name="QEmuReact Mobile Device"/>
    </extension>
    <extension
          id="org.eclipse.tml.device.qemureact.qemureactDevice"

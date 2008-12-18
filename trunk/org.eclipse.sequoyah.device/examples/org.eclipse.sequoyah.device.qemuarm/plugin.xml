@@ -6,10 +6,11 @@
          name="qemuarmDevice"
          point="org.eclipse.tml.deviceTypes">
        <deviceType
-         handler="org.eclipse.tml.device.qemuarm.handler.QEmuARMDeviceHandler"
-         id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
-         name="QEmuARM Mobile Device"
-         label="QEmuARM Mobile Device"/>
+             handler="org.eclipse.tml.device.qemuarm.handler.QEmuARMDeviceHandler"
+             icon="icons/full/obj16/qemuarm.gif"
+             id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
+             label="QEmuARM Mobile Device"
+             name="QEmuARM Mobile Device"/>
    </extension>
    <extension
           point="org.eclipse.tml.device.wizard"

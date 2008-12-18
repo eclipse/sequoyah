@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [259243] - instance management view is showing device type ids instead of names
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view.provider;
@@ -94,7 +95,7 @@ public class InstanceMgtViewLabelProvider extends ColumnLabelProvider
             if (isProvidingForFirstColumn())
             {
                 ViewerDeviceNode node = (ViewerDeviceNode) element;
-                label = node.getDeviceName();
+                label = node.getDevice().getLabel();
             }
         }        
         

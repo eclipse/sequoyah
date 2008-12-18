@@ -7,20 +7,29 @@
  *
  * Contributors:
  *     Yu-Fen Kuo (MontaVista) - initial API and implementation
+ *     Daniel Barboza Franco (Eldorado Research Institute) - Bug [259243] - instance management view is showing device type ids instead of names
  *******************************************************************************/
 package org.eclipse.tml.framework.device.internal.model;
 
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
 
 public class MobileDeviceType implements IDeviceType {
+	
+	private static final String ELEMENT_DEVICE = "deviceType";
+	private static final String ATR_ICON = "icon";
+	
 	private static final String PROPERTY_ICON = "icon"; //$NON-NLS-1$
 	private String id;
 	private String label;
@@ -99,9 +108,24 @@ public class MobileDeviceType implements IDeviceType {
 			Image image = DevicePlugin.getDefault().getImageFromRegistry(
 					getBundleName(), path);
 			return image;
-	}
-
-		return null;
+		}
+		else {
+			IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, id);
+			String iconName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_ICON);
+			ImageDescriptor descr = null;
+			
+			try {
+				descr = DevicePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), iconName);
+			} catch (InvalidRegistryObjectException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return descr.createImage();
+		}
 	}
 
 	public String toString() {
