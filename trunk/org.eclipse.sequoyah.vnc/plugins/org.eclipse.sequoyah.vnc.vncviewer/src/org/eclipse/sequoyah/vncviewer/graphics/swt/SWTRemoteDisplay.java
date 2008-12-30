@@ -18,6 +18,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  * Leo Andrade (Eldorado Research Institute) - Bug [247973] - Listener to key events is not working at SWTRemoteDisplay
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
+ * Leo Andrade (Eldorado Research Institute) - Bug [247973] - notifyListeners(ev.type, ev) into addMouseListener.
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -189,6 +190,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 					try {
 						mouseEvent(ev);
+						notifyListeners(ev.type, ev);
 					} catch (Exception e) {
 						log(SWTRemoteDisplay.class).error(
 								"Remote Display error on key event."); //$NON-NLS-1$
