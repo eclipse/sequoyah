@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [259243] - image in the wizards
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view.model;
@@ -37,7 +38,7 @@ public class ViewerDeviceNode extends ViewerAbstractNode
     
     public String getDeviceName()
     {
-        return device.getBundleName();
+        return device.getLabel();
     }
     
     public IDeviceType getDevice()

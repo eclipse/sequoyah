@@ -13,25 +13,10 @@
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247085] - Instance manage view buttons are resizing after applying services filter
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247288] - Exceptions after Instance Mgt View is closed
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
-<<<<<<< InstanceStatusComposite.java
-<<<<<<< InstanceStatusComposite.java
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
-=======
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
->>>>>>> 1.5.6.2
-=======
-<<<<<<< InstanceStatusComposite.java
- * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
-=======
-<<<<<<< InstanceStatusComposite.java
- * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
-=======
- * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
- * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
->>>>>>> 1.5.6.2
->>>>>>> 1.7
->>>>>>> 1.5.12.2
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [259243] - image in the wizards
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -274,7 +259,7 @@ public class InstanceStatusComposite extends Composite
     {
         for (final IDeviceType device : DeviceTypeRegistry.getInstance().getDeviceTypes())
         {
-            wizardActions.put(device.getBundleName(), new Action(device.getBundleName())
+            wizardActions.put(device.getLabel(), new Action(device.getLabel())
             {
                 @Override
                 public void run()
@@ -296,7 +281,7 @@ public class InstanceStatusComposite extends Composite
                             public void run()
                             {
                                 IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                                MessageDialog.openError(ww.getShell(), ERROR_DIALOG_TITLE, ERROR_NO_WIZARD_MESSAGE + device.getBundleName());
+                                MessageDialog.openError(ww.getShell(), ERROR_DIALOG_TITLE, ERROR_NO_WIZARD_MESSAGE + device.getLabel());
                             }
                         });
                     }
@@ -346,7 +331,7 @@ public class InstanceStatusComposite extends Composite
                     String statusId = instance.getStatus();
                     IStatus status = StatusRegistry.getInstance().getStatus(statusId);
                     IDeviceType device = DeviceUtils.getDeviceType(instance);
-                    String deviceName = device.getBundleName();
+                    String deviceName = device.getLabel();
                     
                     // menu item "New..."
                     newItem = new MenuItem(menu, SWT.PUSH);
