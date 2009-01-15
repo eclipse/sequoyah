@@ -11,8 +11,8 @@
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" width="80%">
-		<p><b><font class=indextop>TmL Release Build: 0.2</font></b><br>
-		Jan 14, 2009 </p>
+		<p><b><font class=indextop>TmL Release Build: 0.3M4</font></b><br>
+		Dec 17, 2008 </p>
 		<p>These downloads are provided under the
 		<a href="http://www.eclipse.org/legal/epl/notice.php">Eclipse.org Software
 		User Agreement</a>.</p>
@@ -21,7 +21,7 @@
 		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
 		</strong></font></p>
 
-		To download a update site archive, click <a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.2-200901142200/TmL-UpdateSite-R-0.2.zip">here</a>
+		To download a update site archive, click <a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M4-200901151700/TmL-UpdateSite-R-0.3M4.zip">here</a>
 		<!--To view the map file entries for this build, click
 		<a href="directory.txt">here</a>.<br>
 		To view the compile logs for this build, click
@@ -37,10 +37,7 @@
 </table>
 <table>
   <tbody>
-    <tr><td><b>TmL requires Eclipse-3.4 Ganymede
-       (<a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.4/index.php">download page</a>)
-       or later, e.g.
-       <a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.4/index.php">3.4.1</a>.
+    <tr><td><b>TmL requires Eclipse-3.5M4 Galileo or later, e.g.
     </b></td></tr>
     <tr><td>Earlier versions will <b>not</b> work!</td></tr>
   </tbody>
@@ -67,11 +64,11 @@
 		<td width="30%"><b>Notes</b></td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.2-200901142200/TmL-SDK-R-0.2.zip">TmL-SDK-R-0.2.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M4-200901151700/TmL-SDK-R-0.3M4.zip">TmL-SDK-R-0.3M4.zip</a></td>
         <td>without sources files</td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.2-200901142200/TmL-SDK-R-0.2-src.zip">TmL-SDK-R-0.2-src.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M4-200901151700/TmL-SDK-R-0.3M4-src.zip">TmL-SDK-R-0.3M4src</a></td>
 		<td>contain all sources</td>
 </tr>
 </table>
@@ -93,7 +90,7 @@
 		<td width="30%"><b>Notes</b></td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.2-200901142200/TmL-Runtime-R-0.2.zip">TmL-Runtime-R-0.2.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M4-200901151700/TmL-Runtime-R-0.3M4.zip">TmL-Runtime-R-0.3M4.zip</a></td>
 		<td>all components</td>
 </tr>
 
@@ -118,22 +115,22 @@
 		<td width="20%"><b>Pre-req</b></td>
 	    <tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.2-200901142200/TmL-Common-R-0.2.zip">TmL-Common-R-0.2.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M4-200901151700/TmL-Common-R-0.3M4.zip">TmL-Common-R-0.3M4.zip</a></td>
 		<td>Common package</td>
 		<td>none</td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.2-200901142200/TmL-Device-R-0.2.zip">TmL-Device-R-0.2.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M4-200901151700/TmL-Device-R-0.3M4.zip">TmL-Device-R-0.3M4.zip</a></td>
 		<td>Device Framework</td>
 		<td>Common Package</td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.2-200901142200/TmL-VNC-R-0.2.zip">TmL-VNC-R-0.2.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M4-200901151700/TmL-VNC-R-0.3M4.zip">TmL-VNC-R-0.3M4.zip</a></td>
 		<td>VNC Viewer</td>
 		<td>Protocol mechanism</td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.2-200901142200/TmL-Protocol-R-0.2.zip">TmL-Protocol-R-0.2.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M4-200901151700/TmL-Protocol-R-0.3M4.zip">TmL-Protocol-R-0.3M4.zip</a></td>
 		<td>Protocol mechanism</td>
 		<td>none</td>
 
@@ -160,7 +157,7 @@
 		<td width="20%"><b>Pre-req</b></td>
 	    <tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.2-200901142200/TmL-Examples-R-0.2.zip">TmL-Examples-R-0.2.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M4-200901151700/TmL-Examples-R-0.3M4.zip">TmL-Examples-R-0.3M4.zip</a></td>
 		<td>All examples</td>
 		<td>Runtime</td>
 </tr>
