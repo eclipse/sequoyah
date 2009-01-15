@@ -28,9 +28,9 @@
     http://download.eclipse.org/dsdp/tml/updates/0.2</a>.<br/>
     We will continue with more testing and migrate the main update site to
     use signed jars as well as soon as possible.</li>
-<li>This is the first release of TmL for ganymede, please help us to keep it growing up. Report bugs and send us your suggestions.</li>
+<li>Please help us to keep it growing up. Report bugs and send us your suggestions.</li>
 <li>For details on checkins, see the
-  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/S-0.2RC1-200812191209/tml-log.csv">
+  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/R-0.2-200901142200/tml-log.cvs">
   TmL CVS changelog</a>.</li>
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/index.php/DSDP/TML/TML_FAQ">TmL FAQ</a></li>
@@ -82,7 +82,7 @@ APIs better.
 <p>Click
 <a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=TmL&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&format=table&action=wrap">here</a>
 for a complete up-to-date bugzilla status report, or
-<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=TmL&component=RSE&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&target_milestone=0.1&format=table&action=wrap">here</a>
+<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=TmL&component=RSE&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&target_milestone=0.2&format=table&action=wrap">here</a>
 for a report on bugs fixed so far.
 </p>
 </td></tr></tbody></table>
