@@ -8,7 +8,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Yu-Fen Kuo (MontaVista) - bug#236476 - Provide a generic device type
  ********************************************************************************/
 
@@ -19,6 +19,7 @@ import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
 /**
  * Basic implementation of IInstance.
  */
+
 public class MobileInstance extends AbstractMobileInstance {
 	
 	/**
@@ -29,5 +30,4 @@ public class MobileInstance extends AbstractMobileInstance {
 		this.pid=0;
 	}
 	
-
 }

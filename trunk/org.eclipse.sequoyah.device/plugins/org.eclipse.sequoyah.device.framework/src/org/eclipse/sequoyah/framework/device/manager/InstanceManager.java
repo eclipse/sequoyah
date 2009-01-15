@@ -1,6 +1,4 @@
-
-
-/**
+/********************************************************************************
  * Copyright (c) 2007-2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
@@ -11,12 +9,22 @@
  * 
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
- * Ot�vio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
+ * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Yu-Fen Kuo (MontaVista) - try to replace jdom dependencies with eclipse default xml parsers.
  * Fabio Rigo (Eldorado) - [245114] Enhance persistence policies
+<<<<<<< InstanceManager.java
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
+=======
+<<<<<<< InstanceManager.java
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+=======
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
+>>>>>>> 1.8
+>>>>>>> 1.6.18.2
  ********************************************************************************/
 package org.eclipse.tml.framework.device.manager;
 
