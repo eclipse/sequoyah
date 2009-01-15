@@ -4,7 +4,11 @@
    <description url="http://download.eclipse.org/dsdp/tml/updates/0.3M4/">
       This is the Tool for mobile Linux Project 0.3M4 Update Site.
    </description>
-   <feature url="features/org.eclipse.tml.feature_0.2.0.200812161327.jar" id="org.eclipse.tml.feature" version="0.2.0.200812161327">
+   
+   
+   
+   
+   <feature url="features/org.eclipse.tml.feature_0.2.0.200901151700.jar" id="org.eclipse.tml.feature" version="0.2.0.200812161327">
       <category name="TmL 0.3M4 Runtime"/>
    </feature>
    <feature url="features/org.eclipse.tml.sdk.feature_0.2.0.200812161327.jar" id="org.eclipse.tml.sdk.feature" version="0.2.0.200812161327">
