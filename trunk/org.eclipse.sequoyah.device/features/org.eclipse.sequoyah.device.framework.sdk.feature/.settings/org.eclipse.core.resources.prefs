@@ -1,4 +1,12 @@
-#Thu Jan 15 00:02:40 BRST 2009
+#Thu Jan 15 00:15:16 BRST 2009
 eclipse.preferences.version=1
-encoding//src/org/eclipse/tml/framework/device/additional/DeviceAddPlugin.java=UTF-8
+encoding//src/org/eclipse/tml/framework/device/additional/DeviceAddResources.properties=UTF-8
+encoding//src/org/eclipse/tml/framework/device/ui/view/DeviceView.java=UTF-8
+encoding//src/org/eclipse/tml/framework/device/ui/view/InstanceView.java=UTF-8
+encoding//src/org/eclipse/tml/framework/device/ui/view/provider/DeviceContentProvider.java=UTF-8
+encoding//src/org/eclipse/tml/framework/device/ui/view/provider/DeviceLabelProvider.java=UTF-8
+encoding//src/org/eclipse/tml/framework/device/ui/view/provider/InstanceContentProvider.java=UTF-8
+encoding//src/org/eclipse/tml/framework/device/ui/view/provider/InstanceLabelProvider.java=UTF-8
+encoding//src/org/eclipse/tml/framework/device/ui/view/sorter/InstanceSorter.java=UTF-8
+encoding//src/org/eclipse/tml/framework/device/ui/view/sorter/StatusSorter.java=UTF-8
 encoding/src=UTF-8
