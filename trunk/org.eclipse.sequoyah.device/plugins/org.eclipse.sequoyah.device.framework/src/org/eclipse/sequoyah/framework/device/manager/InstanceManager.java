@@ -1,3 +1,5 @@
+
+
 /********************************************************************************
  * Copyright (c) 2007-2008 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
@@ -9,7 +11,7 @@
  * 
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
+ * Otï¿½vio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Yu-Fen Kuo (MontaVista) - try to replace jdom dependencies with eclipse default xml parsers.
  * Fabio Rigo (Eldorado) - [245114] Enhance persistence policies
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type

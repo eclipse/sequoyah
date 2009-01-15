@@ -1,3 +1,5 @@
+
+
 /********************************************************************************
  * Copyright (c) 2007-2008 Motorola Inc and Others. All rights reserverd.
  * This program and the accompanying materials are made available under the terms
@@ -8,7 +10,7 @@
  * Fabio Fantato (Eldorado Research Institute)
  * 
  * Contributors:
- * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence* Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
+ * Otï¿½vio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence* Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
  * Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
  *  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  ********************************************************************************/
