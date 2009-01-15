@@ -3,14 +3,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="http://www.eclipse.org/default_style.css" type="text/css">
-<title>Build Notes for TmL 0.3M4</title>
+<title>Build Notes for TmL 0.2</title>
 </head>
 
 <body>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" width="80%">
-		<p><b><font class=indextop>Build Notes for TmL 0.3M4</font></b><br>
+		<p><b><font class=indextop>Build Notes for TmL 0.2</font></b><br>
 		Oct 10.2008 </p>
 		</td>
 	</tr>
@@ -24,16 +24,13 @@
 <table><tbody><tr><td>
 <ul>
 <li>There is a new update site:
-    <a href="http://download.eclipse.org/dsdp/tml/updates/0.3M4">
-    http://download.eclipse.org/dsdp/tml/updates/0.3M4</a>.<br/>
+    <a href="http://download.eclipse.org/dsdp/tml/updates/0.2">
+    http://download.eclipse.org/dsdp/tml/updates/0.2</a>.<br/>
     We will continue with more testing and migrate the main update site to
     use signed jars as well as soon as possible.</li>
-<li>This is the first release of TmL, please help us to keep it growing up. Report bugs and send us your suggestions.</li>
-<li>Use
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2008-10-10&chfield=resolution&cmdtype=doit">
-  this query</a> to show the list of bugs fixed.</li>
+<li>This is the first release of TmL for ganymede, please help us to keep it growing up. Report bugs and send us your suggestions.</li>
 <li>For details on checkins, see the
-  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/R-0.3M4/tml-log.cvs">
+  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/S-0.2RC1-200812191209/tml-log.csv">
   TmL CVS changelog</a>.</li>
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/index.php/DSDP/TML/TML_FAQ">TmL FAQ</a></li>

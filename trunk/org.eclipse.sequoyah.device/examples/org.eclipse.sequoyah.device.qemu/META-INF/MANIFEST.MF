@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Qemu Plug-in
 Bundle-SymbolicName: org.eclipse.tml.device.qemu;singleton:=true
-Bundle-Version: 0.1.0
+Bundle-Version: 0.2.0
 Bundle-Activator: org.eclipse.tml.device.qemu.QEmuPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -14,7 +14,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.tml.framework.device.ui;bundle-version="0.2.0",
  org.eclipse.tml.framework.device.wizard;bundle-version="0.2.0"
 Bundle-ActivationPolicy: lazy
-Bundle-Localization: plugin
 Export-Package: org.eclipse.tml.device.qemu;
   uses:="org.eclipse.core.runtime,
    org.eclipse.jface.resource,

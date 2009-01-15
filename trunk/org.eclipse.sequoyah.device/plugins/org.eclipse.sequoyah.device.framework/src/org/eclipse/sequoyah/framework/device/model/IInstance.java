@@ -8,16 +8,14 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
+ * Otávio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Yu-Fen Kuo (MontaVista) - bug#236476 - provide a generic device type
- * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.model;
 
-import java.util.Properties;
-
 import org.eclipse.core.runtime.IAdaptable;
+import java.util.Properties;
 
 /**
  * Interface which defines the requirements of the device instance classes 
@@ -36,5 +34,4 @@ public interface IInstance extends IAdaptable {
 	public void setStatus(String status);
 	public Properties getProperties();
 	public void setProperties(Properties properties);
-
 }

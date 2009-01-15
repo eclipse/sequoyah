@@ -14,9 +14,13 @@
 <<<<<<< InstanceServicesComposite.java
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
 =======
+<<<<<<< InstanceServicesComposite.java
+ * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+=======
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
 >>>>>>> 1.3.6.4
+>>>>>>> 1.5
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -41,6 +45,8 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.tml.framework.device.DeviceUtils;
 import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
@@ -49,8 +55,6 @@ import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandlerAction;
 import org.eclipse.tml.framework.device.ui.DeviceUIPlugin;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Event;
 
 public class InstanceServicesComposite extends Composite {
 

@@ -41,7 +41,6 @@ public class DeviceUIPlugin extends BasePlugin {
 	public static final String ICON_FILTER = "ICON_FILTER"; //$NON-NLS-1$
 	public static final String ICON_PROPERTY = "ICON_PROPERTY"; //$NON-NLS-1$
 	public static final String IMAGEKEY_NEW_DEVICE_WIZARD = "IMAGEKEY_NEW_DEVICE_WIZARD"; //$NON-NLS-1$
-
 	
 	// The shared instance
 	private static DeviceUIPlugin plugin;
@@ -103,7 +102,6 @@ public class DeviceUIPlugin extends BasePlugin {
 		putImageInRegistry(ICON_VERTICAL, path+"full/obj16/vertical.gif"); //$NON-NLS-1$
 		putImageInRegistry(ICON_FILTER, path+"full/obj16/filter.gif"); //$NON-NLS-1$
 		putImageInRegistry(IMAGEKEY_NEW_DEVICE_WIZARD, path+"full/obj16/device.gif"); //$NON-NLS-1$
-
 	}
 
 

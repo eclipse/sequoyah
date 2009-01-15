@@ -138,7 +138,7 @@ public abstract class AbstractMobileInstance implements IInstance {
 				"id=" + (id==null?"":id) + //$NON-NLS-1$ //$NON-NLS-2$
 				",name=" + (name==null?"":name) + //$NON-NLS-1$ //$NON-NLS-2$
 				",device=" + (deviceId==null?"":deviceId) + //$NON-NLS-1$ //$NON-NLS-2$
-				",status=" + (status==null?"":status) + //$NON-NLS-1$ //$NON-NLS-2$
+				",status=" + (status==null?"":status) +   //$NON-NLS-1$//$NON-NLS-2$
 				"]"; //$NON-NLS-1$
 	}
 

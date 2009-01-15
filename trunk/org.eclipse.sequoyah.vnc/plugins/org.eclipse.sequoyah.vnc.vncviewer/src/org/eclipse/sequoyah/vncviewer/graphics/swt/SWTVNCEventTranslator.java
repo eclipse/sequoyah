@@ -99,7 +99,6 @@ public class SWTVNCEventTranslator {
 		// Creates the mouse event message, providing the
 		// necessary coordinates
 		ProtocolMessage message = new ProtocolMessage(5);
-		
 		if (swtEvent.button > 0 ) {
 			if (swtEvent.type == SWT.MouseDown) {
 				if (!buttonPressed[swtEvent.button - 1]) {
@@ -124,7 +123,6 @@ public class SWTVNCEventTranslator {
 		message.setFieldValue("buttonMask", mask); //$NON-NLS-1$
 		message.setFieldValue("x-position", swtEvent.x); //$NON-NLS-1$
 		message.setFieldValue("y-position", swtEvent.y); //$NON-NLS-1$
-
 
 		return message;
 	}
