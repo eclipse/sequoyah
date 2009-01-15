@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/updates/0.3M4/site.xml&amp;format=xml&amp;protocol=http">
+<site
+      mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/updates/0.3M4/site.xml&amp;format=xml&amp;protocol=http">
    <description url="http://download.eclipse.org/dsdp/tml/updates/0.3M4/">
-      This is the Tool for mobile Linux Project 0.2 Update Site.
+      This is the Tool for mobile Linux Project 0.3M4 Update Site.
    </description>
    <feature url="features/org.eclipse.tml.feature_0.2.0.200812161327.jar" id="org.eclipse.tml.feature" version="0.2.0.200812161327">
       <category name="TmL 0.3M4 Runtime"/>
    </feature>
    <feature url="features/org.eclipse.tml.sdk.feature_0.2.0.200812161327.jar" id="org.eclipse.tml.sdk.feature" version="0.2.0.200812161327">
-   <category name="TmL 0.3M4 SDK"/>
+      <category name="TmL 0.3M4 SDK"/>
    </feature>
    <feature url="features/org.eclipse.tml.common.feature_0.3.0.200812161327.jar" id="org.eclipse.tml.common.feature" version="0.3.0.200812161327">
       <category name="TmL 0.3M4 Components"/>
@@ -42,4 +43,4 @@
          Examples of the 0.3M4 release of Tools for mobile Linux (TmL).
       </description>
    </category-def>
-   </site>
+</site>
