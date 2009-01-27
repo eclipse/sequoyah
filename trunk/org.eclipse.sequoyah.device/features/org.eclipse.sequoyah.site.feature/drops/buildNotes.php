@@ -24,7 +24,7 @@
 <table><tbody><tr><td>
 <ul>
 <li>There is a new update site:
-    <a href="http://download.eclipse.org/dsdp/tml/updates/0.3M4">
+    <a href="http://download.eclipse.org/dsdp/tml/updates/0.3M4/">
     http://download.eclipse.org/dsdp/tml/updates/0.3M4</a>.<br/>
     We will continue with more testing and migrate the main update site to
     use signed jars as well as soon as possible.</li>
