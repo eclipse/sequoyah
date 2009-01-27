@@ -25,13 +25,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
-import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidInputStreamDataException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
 import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
@@ -119,21 +119,21 @@ public class ServerModel implements IModel {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 */
 	public ProtocolHandle startListeningToPort(int portToBind,
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
-			IProtocolInit protocolInitializer,
+			IProtocolHandshake protocolInitializer,
 			IProtocolExceptionHandler exceptionHandler,
-			boolean isBigEndianProtocol) throws ProtocolInitException,
+			boolean isBigEndianProtocol) throws ProtocolHandshakeException,
 			IOException {
 
 		if ((portToBind <= 0) || (allMessages == null)
 				|| (incomingMessages == null) || (outgoingMessages == null)) {
-			throw new ProtocolInitException(
+			throw new ProtocolHandshakeException(
 					"Invalid parameters provided to method"); //$NON-NLS-1$
 		}
 
@@ -182,11 +182,11 @@ public class ServerModel implements IModel {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 */
 	public void restartServerProtocol(ProtocolHandle handle)
-			throws IOException, ProtocolInitException {
+			throws IOException, ProtocolHandshakeException {
 
 		ServerSocket ss = openedServerSockets.get(handle);
 		
@@ -311,9 +311,9 @@ public class ServerModel implements IModel {
 					// Delegate the exception to user
 					if (e instanceof IOException) {
 						exceptionHandler.handleIOException(handle, (IOException) e);
-					} else if (e instanceof ProtocolInitException) {
+					} else if (e instanceof ProtocolHandshakeException) {
 						exceptionHandler
-								.handleProtocolInitException(handle, (ProtocolInitException) e);
+								.handleProtocolInitException(handle, (ProtocolHandshakeException) e);
 					} else if (e instanceof MessageHandleException) {
 						exceptionHandler
 								.handleMessageHandleException(handle, (MessageHandleException) e);

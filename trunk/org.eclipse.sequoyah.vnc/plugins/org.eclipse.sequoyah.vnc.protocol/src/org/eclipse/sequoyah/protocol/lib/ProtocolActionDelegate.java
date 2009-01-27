@@ -22,7 +22,7 @@ import java.util.Map;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.model.ClientModel;
 import org.eclipse.tml.protocol.lib.internal.model.ServerModel;
@@ -74,7 +74,7 @@ public class ProtocolActionDelegate {
 	 *             DOCUMENT ME!!
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 */
 	
@@ -82,12 +82,12 @@ public class ProtocolActionDelegate {
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
-			IProtocolInit protocolInitializer,
+			IProtocolHandshake protocolInitializer,
 			IProtocolExceptionHandler exceptionHandler,
 			Boolean isBigEndianProtocol,
 			String host, int port,
 			Map<String, Object> parameters)
-			throws UnknownHostException, IOException, ProtocolInitException {
+			throws UnknownHostException, IOException, ProtocolHandshakeException {
 
 		ClientModel model = ClientModel.getInstance();
 		return model.startClientProtocol(allMessages, incomingMessages,
@@ -120,17 +120,17 @@ public class ProtocolActionDelegate {
      *
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 */
 	public static ProtocolHandle startServerProtocol(int portToBind,
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
-			IProtocolInit protocolInitializer,
+			IProtocolHandshake protocolInitializer,
 			IProtocolExceptionHandler exceptionHandler,
 			boolean isBigEndianProtocol) throws IOException,
-			ProtocolInitException {
+			ProtocolHandshakeException {
 
 		ServerModel model = ServerModel.getInstance();
 		return model.startListeningToPort(portToBind, allMessages, incomingMessages,
@@ -166,11 +166,11 @@ public class ProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 */
 	public static void restartProtocol(ProtocolHandle handle)
-			throws IOException, ProtocolInitException, ProtocolException {
+			throws IOException, ProtocolHandshakeException, ProtocolException {
 
 		ClientModel clientModel = ClientModel.getInstance();
 		clientModel.restartClientProtocol(handle);

@@ -17,9 +17,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
-import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
@@ -47,7 +47,7 @@ public class ServerProtocolEngineFactory {
 	/**
 	 * The sequence of steps to execute for connection initialization
 	 */
-	private IProtocolInit protocolInitializer;
+	private IProtocolHandshake protocolInitializer;
 
 	/**
 	 * A map containing all messages that belong to the protocol. The message
@@ -103,16 +103,16 @@ public class ServerProtocolEngineFactory {
 	 *            True if the protocol is big endian, false if little endian
 	 */
 	public ServerProtocolEngineFactory(ProtocolHandle handle, 
-			IProtocolInit protocolInitializer,
+			IProtocolHandshake protocolInitializer,
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolExceptionHandler exceptionHandler,
-			boolean isBigEndianProtocol) throws ProtocolInitException {
+			boolean isBigEndianProtocol) throws ProtocolHandshakeException {
 			
 		if (protocolInitializer == null)
 		{
-			throw new ProtocolInitException("An initializer must be provided to run the server protocol"); //$NON-NLS-1$
+			throw new ProtocolHandshakeException("An initializer must be provided to run the server protocol"); //$NON-NLS-1$
 		}	
 		
 		this.handle = handle;

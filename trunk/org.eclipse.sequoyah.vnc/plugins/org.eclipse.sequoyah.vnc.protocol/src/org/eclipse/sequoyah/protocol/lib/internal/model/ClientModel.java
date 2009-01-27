@@ -22,13 +22,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
-import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
@@ -109,19 +109,19 @@ public class ClientModel implements IModel {
 	 *             DOCUMENT ME!!
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 */
 	public ProtocolHandle startClientProtocol(
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
-			IProtocolInit protocolInitializer,
+			IProtocolHandshake protocolInitializer,
 			IProtocolExceptionHandler exceptionHandler,
 			Boolean isBigEndianProtocol,
 			String host, int port,
 			Map <String, Object> parameters)
-			throws UnknownHostException, IOException, ProtocolInitException {
+			throws UnknownHostException, IOException, ProtocolHandshakeException {
 
 		Integer retriesObj = (Integer) parameters.get("connectionRetries"); //$NON-NLS-1$
 		int retries  = (retriesObj != null) ? retriesObj : -1;
@@ -163,11 +163,11 @@ public class ClientModel implements IModel {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 */
 	public void restartClientProtocol(ProtocolHandle handle)
-			throws IOException, ProtocolInitException, ProtocolException {
+			throws IOException, ProtocolHandshakeException, ProtocolException {
 		ProtocolEngine eng = runningEngines.get(handle);
 		if (eng != null) {
 			eng.restartProtocol();

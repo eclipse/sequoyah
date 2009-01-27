@@ -19,8 +19,8 @@
    </license>
 
    <url>
-      <update label="%tmlUpdateSiteName" url="http://download.ehttp://download.eclipse.org/dsdp/tml/updates/0.3M4"/>
-      <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.1"/>
+      <update label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3M4/"/>
+      <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3M4/"/>
    </url>
 
    <includes

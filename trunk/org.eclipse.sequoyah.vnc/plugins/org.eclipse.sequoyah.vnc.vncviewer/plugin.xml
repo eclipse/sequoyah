@@ -4,23 +4,27 @@
    <extension
          point="org.eclipse.tml.protocol.protocolDefinition">
       <protocol
+            handshake="org.eclipse.tml.vncviewer.network.VNCProtocol"
             initializer="org.eclipse.tml.vncviewer.network.VNCProtocol"
             isBigEndianProtocol="true"
             protocolId="vncProtocol">
       </protocol>
       <protocol
+            handshake="org.eclipse.tml.vncviewer.network.VNCProtocol33"
             initializer="org.eclipse.tml.vncviewer.network.VNCProtocol33"
             isBigEndianProtocol="true"
             parentProtocol="vncProtocol"
             protocolId="vncProtocol33">
       </protocol>
       <protocol
+            handshake="org.eclipse.tml.vncviewer.network.VNCProtocol37"
             initializer="org.eclipse.tml.vncviewer.network.VNCProtocol37"
             isBigEndianProtocol="true"
             parentProtocol="vncProtocol"
             protocolId="vncProtocol37">
       </protocol>
       <protocol
+            handshake="org.eclipse.tml.vncviewer.network.VNCProtocol38"
             initializer="org.eclipse.tml.vncviewer.network.VNCProtocol38"
             isBigEndianProtocol="true"
             parentProtocol="vncProtocol"
@@ -184,7 +188,7 @@
       </message>
    </extension>
    <extension
-         point="org.eclipse.tml.protocol.protocolMessageOrientation">
+         point="org.eclipse.tml.protocol.protocolMessageDirection">
       <clientMessage
             messageId="framebufferUpdateRequest"
             protocolId="vncProtocol">

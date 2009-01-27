@@ -13,7 +13,7 @@
 
 package org.eclipse.tml.vncviewer.network;
 
-import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 
 /**
  * This class implements the "abstract factory method" pattern.
@@ -29,7 +29,7 @@ public class ProtocolFactory {
 	 * 
 	 * @return the Protocol instance or null if prot can't be associated to a known protocol.
 	 */
-	public static IProtocolInit getProtocol (String prot) {
+	public static IProtocolHandshake getProtocol (String prot) {
 		
 		if (prot.equals("VNC 3.3")) { //$NON-NLS-1$
 			return (VNCProtocol) (new VNCProtocol33());

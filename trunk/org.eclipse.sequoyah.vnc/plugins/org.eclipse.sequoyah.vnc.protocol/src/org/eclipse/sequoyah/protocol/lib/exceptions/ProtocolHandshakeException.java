@@ -12,12 +12,12 @@
 package org.eclipse.tml.protocol.lib.exceptions;
 
 @SuppressWarnings("serial")
-public class ProtocolInitException extends ProtocolException {
+public class ProtocolHandshakeException extends ProtocolException {
 
 	/**
 	 * Constructor with no arguments
 	 */
-	public ProtocolInitException() {
+	public ProtocolHandshakeException() {
 		super();
 	}
 
@@ -28,7 +28,7 @@ public class ProtocolInitException extends ProtocolException {
 	 * @param message
 	 *            The message to be added to exception
 	 */
-	public ProtocolInitException(String message) {
+	public ProtocolHandshakeException(String message) {
 		super(message);
 	}
 
@@ -39,7 +39,7 @@ public class ProtocolInitException extends ProtocolException {
 	 * @param cause
 	 *            The throwable that caused the exception to happen
 	 */
-	public ProtocolInitException(Throwable cause) {
+	public ProtocolHandshakeException(Throwable cause) {
 		super(cause);
 	}
 
@@ -53,7 +53,7 @@ public class ProtocolInitException extends ProtocolException {
 	 * @param cause
 	 *            The throwable that caused the exception to happen
 	 */
-	public ProtocolInitException(String message, Throwable cause) {
+	public ProtocolHandshakeException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

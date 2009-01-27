@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
 import org.eclipse.tml.protocol.internal.reader.ProtocolExtensionsReader;
-import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
 /**
@@ -123,7 +123,7 @@ public class PluginProtocolModel {
 	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
-	public IProtocolInit getProtocolInit(String protocolId)
+	public IProtocolHandshake getProtocolInit(String protocolId)
 			throws MalformedProtocolExtensionException {
 
 		ProtocolBean bean = protocolDataMap.get(protocolId);

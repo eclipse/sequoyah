@@ -17,7 +17,7 @@ import java.io.DataInputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 
 /**
  * DESCRIPTION: This interface describes the contract to be used by an object
@@ -29,12 +29,12 @@ import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
  * 
  * COLABORATORS: None.<br>
  * 
- * USAGE: The protocol initializer must be provided as a protocol start parameter.<br>
+ * USAGE: The protocol handshake must be provided as a protocol start parameter.<br>
  */
-public interface IProtocolInit {
+public interface IProtocolHandshake {
 
 	/**
-	 * Performs protocol initialization at server side. If this protocol
+	 * Performs protocol handshake at server side. If this protocol
 	 * implementation does not include the server part, the method can be left
 	 * blank.<br>
 	 * <br>
@@ -51,15 +51,15 @@ public interface IProtocolInit {
 	 * @param parameters
 	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.            
 	 * 
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
-	void serverInit(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
-			throws ProtocolInitException;
+	void serverHandshaking(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
+			throws ProtocolHandshakeException;
 
 	/**
-	 * Performs protocol initialization at client side. If this protocol
+	 * Performs protocol handshake at client side. If this protocol
 	 * implementation does not include the client part, the method can be left
 	 * blank.<br>
 	 * <br>
@@ -74,10 +74,10 @@ public interface IProtocolInit {
 	 * @param out
 	 *            The output stream where to write data to send to the client
 	 * 
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
-	void clientInit(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
-			throws ProtocolInitException;
+	void clientHandshaking(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
+			throws ProtocolHandshakeException;
 }

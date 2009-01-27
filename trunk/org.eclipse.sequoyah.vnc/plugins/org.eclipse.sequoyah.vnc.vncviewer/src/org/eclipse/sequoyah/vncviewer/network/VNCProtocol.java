@@ -25,16 +25,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
 import org.eclipse.tml.vncviewer.registry.VNCProtocolRegistry;
 
 /**
  * Abstract class that defines the main behavior of the VNC Protocol.
  */
-abstract public class VNCProtocol implements IProtocolInit,
+abstract public class VNCProtocol implements IProtocolHandshake,
 		IRFBConstants {
 
 	private static final int PROTOCOL_VERSION_MESSAGE_SIZE = 12;
@@ -251,8 +251,8 @@ abstract public class VNCProtocol implements IProtocolInit,
 		}
 	}
 
-	public void clientInit(ProtocolHandle handle, DataInputStream in,
-			OutputStream out, Map parameters) throws ProtocolInitException {
+	public void clientHandshaking(ProtocolHandle handle, DataInputStream in,
+			OutputStream out, Map parameters) throws ProtocolHandshakeException {
 
 		String password = (String) parameters.get("password"); //$NON-NLS-1$
 
@@ -261,7 +261,7 @@ abstract public class VNCProtocol implements IProtocolInit,
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
 					"VNC protocol negotiation error: " + e.getMessage()); //$NON-NLS-1$
-			throw new ProtocolInitException("VNC protocol negotiation error."); //$NON-NLS-1$
+			throw new ProtocolHandshakeException("VNC protocol negotiation error."); //$NON-NLS-1$
 		}
 
 		int securityType;
@@ -270,7 +270,7 @@ abstract public class VNCProtocol implements IProtocolInit,
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
 					"VNC security negotiation error: " + e.getMessage()); //$NON-NLS-1$
-			throw new ProtocolInitException("VNC security negotiation error."); //$NON-NLS-1$
+			throw new ProtocolHandshakeException("VNC security negotiation error."); //$NON-NLS-1$
 		}
 
 		try {
@@ -279,7 +279,7 @@ abstract public class VNCProtocol implements IProtocolInit,
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
 					"VNC authenticate error: " + e.getMessage()); //$NON-NLS-1$
-			throw new ProtocolInitException("VNC authenticate error."); //$NON-NLS-1$
+			throw new ProtocolHandshakeException("VNC authenticate error."); //$NON-NLS-1$
 		}
 
 		try {
@@ -287,13 +287,13 @@ abstract public class VNCProtocol implements IProtocolInit,
 		} catch (Exception e) {
 			log(VNCProtocol.class).error(
 					"VNC Init Phase error: " + e.getMessage()); //$NON-NLS-1$
-			throw new ProtocolInitException("VNC Init Phase error."); //$NON-NLS-1$
+			throw new ProtocolHandshakeException("VNC Init Phase error."); //$NON-NLS-1$
 		}
 
 	}
 
-	public void serverInit(ProtocolHandle handle, DataInputStream in,
-			OutputStream out, Map parameters) throws ProtocolInitException {
+	public void serverHandshaking(ProtocolHandle handle, DataInputStream in,
+			OutputStream out, Map parameters) throws ProtocolHandshakeException {
 
 	}
 }

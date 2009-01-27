@@ -31,7 +31,7 @@ public interface IExtensionConstants {
 	// Constants that defines the extension points ids
 	String PROTOCOL_EXTENSION_POINT = "org.eclipse.tml.protocol.protocolDefinition"; //$NON-NLS-1$
 	String PROTOCOL_MESSAGE_EXTENSION_POINT = "org.eclipse.tml.protocol.protocolMessage"; //$NON-NLS-1$
-	String PROTOCOL_MESSAGE_ORIENTATION_EXTENSION_POINT = "org.eclipse.tml.protocol.protocolMessageOrientation"; //$NON-NLS-1$
+	String PROTOCOL_MESSAGE_ORIENTATION_EXTENSION_POINT = "org.eclipse.tml.protocol.protocolMessageDirection"; //$NON-NLS-1$
 
 	// Constants that define base constants of ProtocolDefinition extension
 	// point
@@ -39,7 +39,7 @@ public interface IExtensionConstants {
 	String PROTOCOL_ID_ATTR = "protocolId"; //$NON-NLS-1$
 	String PROTOCOL_PARENT_PROTOCOL_ATTR = "parentProtocol"; //$NON-NLS-1$
 	String PROTOCOL_IS_BIG_ENDIAN_ATTR = "isBigEndianProtocol"; //$NON-NLS-1$
-	String PROTOCOL_INITIALIZER_ATTR = "initializer"; //$NON-NLS-1$
+	String PROTOCOL_INITIALIZER_ATTR = "handshake"; //$NON-NLS-1$
 
 	// Constants that define base constants of ProtocolMessage extension point
 	String PROTOCOL_MESSAGE_ELEM = "message"; //$NON-NLS-1$

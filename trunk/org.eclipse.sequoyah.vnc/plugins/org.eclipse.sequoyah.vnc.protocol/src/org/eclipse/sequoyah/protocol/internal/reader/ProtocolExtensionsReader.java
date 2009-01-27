@@ -32,7 +32,7 @@ import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
 import org.eclipse.tml.protocol.internal.model.PluginProtocolModel;
 import org.eclipse.tml.protocol.internal.model.ProtocolBean;
 import org.eclipse.tml.protocol.lib.IMessageHandler;
-import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.IRawDataHandler;
 import org.eclipse.tml.protocol.lib.msgdef.NullMessageHandler;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
@@ -85,12 +85,12 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 		try {
 			Object initSeedObj = confElem
 					.createExecutableExtension(PROTOCOL_INITIALIZER_ATTR);
-			if (initSeedObj instanceof IProtocolInit) {
+			if (initSeedObj instanceof IProtocolHandshake) {
 				bean
-						.setProtocolInitSeed((IProtocolInit) initSeedObj);
+						.setProtocolInitSeed((IProtocolHandshake) initSeedObj);
 			} else {
 				throw new MalformedProtocolExtensionException(
-						"The protocol has not declared a valid initializer"); //$NON-NLS-1$
+						"The protocol has not declared a valid handshake"); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
 			throw new MalformedProtocolExtensionException(e.getMessage(), e);

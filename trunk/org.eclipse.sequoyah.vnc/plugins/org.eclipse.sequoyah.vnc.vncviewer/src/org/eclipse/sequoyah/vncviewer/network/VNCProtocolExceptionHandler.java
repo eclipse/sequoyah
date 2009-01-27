@@ -22,7 +22,7 @@ import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidInputStreamDataException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
 import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 
 public class VNCProtocolExceptionHandler implements IProtocolExceptionHandler {
@@ -48,7 +48,7 @@ public class VNCProtocolExceptionHandler implements IProtocolExceptionHandler {
 	}
 
 	public void handleProtocolInitException(ProtocolHandle handle,
-			ProtocolInitException e) {
+			ProtocolHandshakeException e) {
 	}
 
 	public void handleProtocolRawHandlingException(ProtocolHandle handle,

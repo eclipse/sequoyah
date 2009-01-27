@@ -11,7 +11,7 @@
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.model;
 
-import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 
 /**
  * DESCRIPTION: This class represents a bean that holds data retrieved from the
@@ -31,7 +31,7 @@ public class ProtocolBean {
 	private String protocolId;
 	private String parentProtocol;
 	private boolean isBigEndianProtocol;
-	private IProtocolInit protocolInitSeed;
+	private IProtocolHandshake protocolInitSeed;
 
 	/*
 	 * Setters section
@@ -49,7 +49,7 @@ public class ProtocolBean {
 	}
 
 	public void setProtocolInitSeed(
-			IProtocolInit protocolInitSeed) {
+			IProtocolHandshake protocolInitSeed) {
 		this.protocolInitSeed = protocolInitSeed;
 	}
 
@@ -68,15 +68,15 @@ public class ProtocolBean {
 		return isBigEndianProtocol;
 	}
 
-	public IProtocolInit getProtocolInit() {
+	public IProtocolHandshake getProtocolInit() {
 
 		// Use reflection to guarantee that every time the method is invoked
 		// a new instance of the class will be created to return to the user.
 		// The "seed" object (the one created by the extension framework) is
 		// kept intact
-		Class<? extends IProtocolInit> classObj = protocolInitSeed
+		Class<? extends IProtocolHandshake> classObj = protocolInitSeed
 				.getClass();
-		IProtocolInit newInstance = null;
+		IProtocolHandshake newInstance = null;
 		try {
 			newInstance = classObj.newInstance();
 		} catch (Exception e) {

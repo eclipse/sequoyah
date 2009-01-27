@@ -37,7 +37,7 @@ import java.util.Map;
 
 import org.eclipse.tml.protocol.lib.IMessageHandler;
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
-import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.IRawDataHandler;
 import org.eclipse.tml.protocol.lib.MessageFieldsStore;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
@@ -47,7 +47,7 @@ import org.eclipse.tml.protocol.lib.exceptions.InvalidInputStreamDataException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
 import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.model.ClientModel;
 import org.eclipse.tml.protocol.lib.internal.model.IModel;
@@ -132,7 +132,7 @@ public class ProtocolEngine {
 	/**
 	 * The sequence of steps to execute for connection initialization
 	 */
-	private IProtocolInit initProcedure;
+	private IProtocolHandshake initProcedure;
 
 	/**
 	 * The handler that was registered with the protocol at the moment it
@@ -193,7 +193,7 @@ public class ProtocolEngine {
 	 * - Role of the engine (server, client)
 	 */
 	public ProtocolEngine(
-	        ProtocolHandle handle, IProtocolInit initProcedure,
+	        ProtocolHandle handle, IProtocolHandshake initProcedure,
 			Map<Long, ProtocolMsgDefinition> messageDefCollection,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
@@ -228,12 +228,12 @@ public class ProtocolEngine {
 	 *             If the provided host cannot be resolved.
 	 * @throws IOException
 	 *             If the communication socket cannot be opened.
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             If the protocol fails to initialize.
 	 */
      public synchronized void startProtocol(String host, int port,
 			Map parameters) throws UnknownHostException,
-			IOException, ProtocolInitException {
+			IOException, ProtocolHandshakeException {
 		startProtocol(host, port, parameters, -1);
 	}
 
@@ -255,12 +255,12 @@ public class ProtocolEngine {
 	 *             If the provided host cannot be resolved.
 	 * @throws IOException
 	 *             If the communication socket cannot be opened.
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             If the protocol fails to initialize.
 	 */
 	public synchronized void startProtocol(String host, int port,
 			Map parameters, int timeout)
-			throws UnknownHostException, IOException, ProtocolInitException {
+			throws UnknownHostException, IOException, ProtocolHandshakeException {
 		// Stores the host and port, that will be used if a restart is necessary
 		this.host = host;
 		this.port = port;
@@ -314,11 +314,11 @@ public class ProtocolEngine {
 	 *            client
 	 * 
 	 * @throws IOException
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 */
 	public synchronized void startProtocol(Socket connectedSocket,
 			Map parameters) throws IOException,
-			ProtocolInitException {
+			ProtocolHandshakeException {
 		this.socket = connectedSocket;
 		this.host = socket.getInetAddress().getHostAddress();
 		this.port = socket.getPort();
@@ -336,17 +336,17 @@ public class ProtocolEngine {
 	 * Starts the protocol message exchange, by running the handshaking procedure
 	 * and starting the consumer thread.  
 	 * 
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 */
-	private void doStartProtocol() throws ProtocolInitException
+	private void doStartProtocol() throws ProtocolHandshakeException
 	{		
 		if (initProcedure != null)
 		{
 			// Delegate the initialization to the concrete protocol class
 			if (isServer) {
-				initProcedure.serverInit(handle, in, out, parameters);
+				initProcedure.serverHandshaking(handle, in, out, parameters);
 			} else {
-				initProcedure.clientInit(handle, in, out, parameters);
+				initProcedure.clientHandshaking(handle, in, out, parameters);
 			}
 
 			// After all initialization is done, start the consumer thread, which
@@ -374,7 +374,7 @@ public class ProtocolEngine {
 	}
 
 	
-	private void reconnect(int serialNumber) throws UnknownHostException, ProtocolInitException, IOException, ProtocolException{
+	private void reconnect(int serialNumber) throws UnknownHostException, ProtocolHandshakeException, IOException, ProtocolException{
 	
 		if (this.connectionSerialNumber == serialNumber){
 			
@@ -406,11 +406,11 @@ public class ProtocolEngine {
 	 *             known or inexistent.
 	 * @throws IOException
 	 *             If the communication socket cannot be opened or closed.
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             If the protocol fails to initialize.
 	 */
 	public void restartProtocol() throws UnknownHostException, IOException,
-			ProtocolInitException, ProtocolException {
+			ProtocolHandshakeException, ProtocolException {
 		
 		if (this.isConnected()) {
 			stopProtocol();
@@ -1464,9 +1464,9 @@ public class ProtocolEngine {
 
 					if (exceptionHandler != null) {
 						// Delegate the exception to user
-						if (e instanceof ProtocolInitException) {
+						if (e instanceof ProtocolHandshakeException) {
 							exceptionHandler
-									.handleProtocolInitException(handle, (ProtocolInitException) e);
+									.handleProtocolInitException(handle, (ProtocolHandshakeException) e);
 						} else if (e instanceof MessageHandleException) {
 							exceptionHandler
 									.handleMessageHandleException(handle, (MessageHandleException) e);

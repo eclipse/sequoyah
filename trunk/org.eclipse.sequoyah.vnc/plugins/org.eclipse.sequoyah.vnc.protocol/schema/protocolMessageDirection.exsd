@@ -1,17 +1,22 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.tml.protocol">
+<schema targetNamespace="org.eclipse.tml.protocol" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
-         <meta.schema plugin="org.eclipse.tml.protocol" id="protocolMessageOrientation" name="Protocol Message Orientation"/>
-      </appInfo>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.tml.protocol" id="protocolMessageDirection" name="Protocol Message Direction"/>
+      </appinfo>
       <documentation>
-         The protocol orientation extension is used to define which part (client or server) owns a message. In the protocol framework context, the message owner is the part that sends a message.&lt;br&gt;&lt;br&gt;
+         The protocol direction extension is used to define which part (client or server) owns a message. In the protocol framework context, the message owner is the part that sends a message.&lt;br&gt;&lt;br&gt;
 &lt;b&gt;Example: &lt;/b&gt;If the message X is declared as &lt;samp&gt;clientMessage&lt;/samp&gt;, the client is the one that sends X to the server. On the other hand, if message Y is declared as &lt;samp&gt;serverMessage&lt;/samp&gt;, the server is the one that sends Y to the client.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="clientMessage" minOccurs="0" maxOccurs="unbounded"/>
@@ -36,9 +41,9 @@
                <documentation>
                   An optional name of the extension instance.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -54,7 +59,7 @@
          <attribute name="protocolId" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of the protocol that owns the message identified by the &lt;i&gt;messageId&lt;/i&gt; attribute in this element. 
+                  The id of the protocol that owns the message identified by the &lt;i&gt;messageId&lt;/i&gt; attribute in this element.
                </documentation>
             </annotation>
          </attribute>
@@ -78,7 +83,7 @@
          <attribute name="protocolId" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of the protocol that owns the message identified by the &lt;i&gt;messageId&lt;/i&gt; attribute in this element. 
+                  The id of the protocol that owns the message identified by the &lt;i&gt;messageId&lt;/i&gt; attribute in this element.
                </documentation>
             </annotation>
          </attribute>
@@ -93,18 +98,18 @@
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          0.4.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of the extension point:
 &lt;p&gt;
@@ -126,27 +131,27 @@
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point does not demand implementation or extension.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         Every message declared through the &lt;samp&gt;ProtocolMessage&lt;/samp&gt; extension point should have a &lt;samp&gt;ProtocolMessageOrientation&lt;/samp&gt; declaration associated. If a message does not have its orientation defined, it will not be used by the protocol framework. 
+         Every message declared through the &lt;samp&gt;ProtocolMessage&lt;/samp&gt; extension point should have a &lt;samp&gt;ProtocolMessageOrientation&lt;/samp&gt; declaration associated. If a message does not have its orientation defined, it will not be used by the protocol framework.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies

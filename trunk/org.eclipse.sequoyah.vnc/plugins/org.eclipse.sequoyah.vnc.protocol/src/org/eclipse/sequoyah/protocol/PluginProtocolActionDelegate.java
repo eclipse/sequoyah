@@ -22,14 +22,14 @@ import java.util.Map;
 import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
 import org.eclipse.tml.protocol.internal.model.PluginProtocolModel;
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
-import org.eclipse.tml.protocol.lib.IProtocolInit;
+import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.ProtocolActionDelegate;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
@@ -63,14 +63,14 @@ public class PluginProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	public static ProtocolHandle startClientProtocol(String protocolId,
 			IProtocolExceptionHandler exceptionHandler, String host, int port,
-			Map parameters) throws IOException, ProtocolInitException,
+			Map parameters) throws IOException, ProtocolHandshakeException,
 			MalformedProtocolExtensionException {
 
 		PluginProtocolModel model = PluginProtocolModel.getInstance();
@@ -80,7 +80,7 @@ public class PluginProtocolActionDelegate {
 				.getServerMessages(protocolId);
 		Collection<String> outgoingMessages = model
 				.getClientMessages(protocolId);
-		IProtocolInit protocolInitializer = model
+		IProtocolHandshake protocolInitializer = model
 				.getProtocolInit(protocolId);
 		boolean isBigEndianProtocol = model.isBigEndianProtocol(protocolId);
 
@@ -104,14 +104,14 @@ public class PluginProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
 	public static ProtocolHandle startServerProtocol(String protocolId, int serverPort, 
 			IProtocolExceptionHandler exceptionHandler) throws IOException,
-			ProtocolInitException, MalformedProtocolExtensionException {
+			ProtocolHandshakeException, MalformedProtocolExtensionException {
 
 		PluginProtocolModel model = PluginProtocolModel.getInstance();
 		Map<Long, ProtocolMsgDefinition> allMessages = model
@@ -120,7 +120,7 @@ public class PluginProtocolActionDelegate {
 				.getClientMessages(protocolId);
 		Collection<String> outgoingMessages = model
 				.getServerMessages(protocolId);
-		IProtocolInit protocolInitializer = model
+		IProtocolHandshake protocolInitializer = model
 				.getProtocolInit(protocolId);
 		boolean isBigEndianProtocol = model.isBigEndianProtocol(protocolId);
 
@@ -154,11 +154,11 @@ public class PluginProtocolActionDelegate {
 	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
-	 * @throws ProtocolInitException
+	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 */
 	public static void restartProtocol(ProtocolHandle handle)
-			throws IOException, ProtocolInitException, ProtocolException {
+			throws IOException, ProtocolHandshakeException, ProtocolException {
 
 		ProtocolActionDelegate.restartProtocol(handle);
 	}

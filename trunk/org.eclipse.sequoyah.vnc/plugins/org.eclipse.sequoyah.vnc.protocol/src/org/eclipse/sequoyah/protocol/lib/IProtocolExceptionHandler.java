@@ -19,7 +19,7 @@ import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidInputStreamDataException;
 import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
 import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolInitException;
+import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 
 /**
@@ -40,7 +40,7 @@ public interface IProtocolExceptionHandler {
 
 	void handleIOException(ProtocolHandle handle, IOException e);
 
-	void handleProtocolInitException(ProtocolHandle handle, ProtocolInitException e);
+	void handleProtocolInitException(ProtocolHandle handle, ProtocolHandshakeException e);
 
 	void handleMessageHandleException(ProtocolHandle handle, MessageHandleException e);
 
