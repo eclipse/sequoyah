@@ -6,10 +6,10 @@ Bundle-Version: 0.3.0
 Bundle-Localization: plugin
 Bundle-Activator: org.eclipse.tml.framework.device.DevicePlugin
 Bundle-Vendor: %providerName
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.tml.common.utilities,
- org.eclipse.core.resources
+Require-Bundle: org.eclipse.ui;visibility:=reexport,
+ org.eclipse.core.runtime;visibility:=reexport,
+ org.eclipse.tml.common.utilities;visibility:=reexport,
+ org.eclipse.core.resources;visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tml.framework.device,
  org.eclipse.tml.framework.device.events,
