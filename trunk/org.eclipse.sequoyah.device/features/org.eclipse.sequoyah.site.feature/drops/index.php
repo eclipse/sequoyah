@@ -21,7 +21,7 @@
 		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
 		</strong></font></p>
 
-		To download a update site archive, click <a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M5-200901300600/TmL-UpdateSite-R-0.3M5.zip">here</a>
+		To download a update site archive, click <a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/S-0.3M5-200901300600/TmL-UpdateSite-R-0.3M5.zip">here</a>
 		<!--To view the map file entries for this build, click
 		<a href="directory.txt">here</a>.<br>
 		To view the compile logs for this build, click
@@ -64,11 +64,11 @@
 		<td width="30%"><b>Notes</b></td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M5-200901300600/TmL-SDK-R-0.3M5.zip">TmL-SDK-R-0.3M5.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/S-0.3M5-200901300600/TmL-SDK-R-0.3M5.zip">TmL-SDK-R-0.3M5.zip</a></td>
         <td>without sources files</td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M5-200901300600/TmL-SDK-R-0.3M5-src.zip">TmL-SDK-R-0.3M5src</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/S-0.3M5-200901300600/TmL-SDK-R-0.3M5-src.zip">TmL-SDK-R-0.3M5src</a></td>
 		<td>contain all sources</td>
 </tr>
 </table>
@@ -90,7 +90,7 @@
 		<td width="30%"><b>Notes</b></td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M5-200901300600/TmL-Runtime-R-0.3M5.zip">TmL-Runtime-R-0.3M5.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/S-0.3M5-200901300600/TmL-Runtime-R-0.3M5.zip">TmL-Runtime-R-0.3M5.zip</a></td>
 		<td>all components</td>
 </tr>
 
@@ -114,7 +114,7 @@
 		<td width="30%"><b>Notes</b></td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M5-200901300600/TmL-ProcTools-R-0.3M5.zip">TmL-ProcTools-R-0.3M5.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/S-0.3M5-200901300600/TmL-ProcTools-R-0.3M5.zip">TmL-ProcTools-R-0.3M5.zip</a></td>
 		<td>rse,tcf,apache.oro,apache.commons.net</td>
 </tr>
 
@@ -139,22 +139,22 @@
 		<td width="20%"><b>Pre-req</b></td>
 	    <tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M5-200901300600/TmL-Common-R-0.3M5.zip">TmL-Common-R-0.3M5.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/S-0.3M5-200901300600/TmL-Common-R-0.3M5.zip">TmL-Common-R-0.3M5.zip</a></td>
 		<td>Common package</td>
 		<td>none</td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M5-200901300600/TmL-Device-R-0.3M5.zip">TmL-Device-R-0.3M5.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/S-0.3M5-200901300600/TmL-Device-R-0.3M5.zip">TmL-Device-R-0.3M5.zip</a></td>
 		<td>Device Framework</td>
 		<td>Common Package</td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M5-200901300600/TmL-VNC-R-0.3M5.zip">TmL-VNC-R-0.3M5.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/S-0.3M5-200901300600/TmL-VNC-R-0.3M5.zip">TmL-VNC-R-0.3M5.zip</a></td>
 		<td>VNC Viewer</td>
 		<td>Protocol mechanism</td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M5-200901300600/TmL-Protocol-R-0.3M5.zip">TmL-Protocol-R-0.3M5.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/S-0.3M5-200901300600/TmL-Protocol-R-0.3M5.zip">TmL-Protocol-R-0.3M5.zip</a></td>
 		<td>Protocol mechanism</td>
 		<td>none</td>
 
@@ -181,7 +181,7 @@
 		<td width="20%"><b>Pre-req</b></td>
 	    <tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
-		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/R-0.3M5-200901300600/TmL-Examples-R-0.3M5.zip">TmL-Examples-R-0.3M5.zip</a></td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/downloads/drops/S-0.3M5-200901300600/TmL-Examples-R-0.3M5.zip">TmL-Examples-R-0.3M5.zip</a></td>
 		<td>All examples</td>
 		<td>Runtime</td>
 </tr>
