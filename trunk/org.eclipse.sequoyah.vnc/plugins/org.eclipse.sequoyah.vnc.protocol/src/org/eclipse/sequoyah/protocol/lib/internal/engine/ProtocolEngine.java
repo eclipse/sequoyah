@@ -1439,13 +1439,14 @@ public class ProtocolEngine {
 						// Tries to find a message definition that has the
 						// current code
 						// Note: the code for incoming messages is kept as negative
+						long auxCode = (isServer)?code:-code;
 						ProtocolMsgDefinition messageDef = messageDefCollection
-								.get(-code);
+								.get(auxCode);
 						if (messageDef != null) {
 							// If it finds a message with the current code,
 							// reads the remaining of the message fields.
 							synchronized (socket) {
-								readReceivedMessage(-code, messageDef);
+								readReceivedMessage(auxCode, messageDef);
 							}
 							code = 0;
 						}
