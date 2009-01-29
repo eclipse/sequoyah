@@ -22,6 +22,11 @@
       <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3M4/"/>
    </url>
 
+   <includes
+         id="org.eclipse.tml.device.feature"
+         version="0.0.0"
+         search-location="both"/>
+
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
