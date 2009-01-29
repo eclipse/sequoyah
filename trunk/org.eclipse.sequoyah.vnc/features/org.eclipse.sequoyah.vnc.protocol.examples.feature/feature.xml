@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tml.vnc.protocol.examples.feature"
       label="%featureName"
-      version="0.2.0.qualifier"
+      version="0.2.0.200901300600"
       provider-name="%providerName"
       plugin="org.eclipse.tml.echo">
 
