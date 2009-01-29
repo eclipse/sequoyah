@@ -33,7 +33,7 @@
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2008-10-10&chfield=resolution&cmdtype=doit">
   this query</a> to show the list of bugs fixed.</li>
 <li>For details on checkins, see the
-  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/R-0.3M5-200901300600/tml-log.csv">
+  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/S-0.3M5-200901300600/tml-log.csv">
   TmL CVS changelog</a>.</li>
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/index.php/DSDP/TML/TML_FAQ">TmL FAQ</a></li>
