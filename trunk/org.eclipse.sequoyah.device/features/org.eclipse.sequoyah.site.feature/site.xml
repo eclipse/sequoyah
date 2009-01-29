@@ -1,46 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site
-      mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/updates/0.3M4/site.xml&amp;format=xml&amp;protocol=http">
-   <description url="http://download.eclipse.org/dsdp/tml/updates/0.3M4/">
-      This is the Tool for mobile Linux Project 0.3M4 Update Site.
+      mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/updates/0.3M5/site.xml&amp;format=xml&amp;protocol=http">
+   <description url="http://download.eclipse.org/dsdp/tml/updates/0.3M5/">
+      This is the Tool for mobile Linux Project 0.3M5 Update Site.
    </description>
    <feature url="features/org.eclipse.tml.feature_0.2.0.200901151620.jar" id="org.eclipse.tml.feature" version="0.2.0.200901151620">
-      <category name="TmL 0.3M4 Runtime"/>
+      <category name="TmL 0.3M5 Runtime"/>
    </feature>
    <feature url="features/org.eclipse.tml.sdk.feature_0.2.0.200901151620.jar" id="org.eclipse.tml.sdk.feature" version="0.2.0.200901151620">
-      <category name="TmL 0.3M4 SDK"/>
+      <category name="TmL 0.3M5 SDK"/>
+   </feature>
+   <feature url="features/org.eclipse.tml.linuxtools.feature_0.1.0.200901151620.jar" id="org.eclipse.tml.linuxtools.feature" version="0.1.0.200901151620">
+      <category name="TmL 0.3M5 /proc Tools"/>
    </feature>
    <feature url="features/org.eclipse.tml.common.feature_0.3.0.200901151620.jar" id="org.eclipse.tml.common.feature" version="0.3.0.200901151620">
-      <category name="TmL 0.3M4 Components"/>
+      <category name="TmL 0.3M5 Components"/>
    </feature>
    <feature url="features/org.eclipse.tml.device.feature_0.3.0.200901151620.jar" id="org.eclipse.tml.device.feature" version="0.3.0.200901151620">
-      <category name="TmL 0.3M4 Components"/>
+      <category name="TmL 0.3M5 Components"/>
    </feature>
    <feature url="features/org.eclipse.tml.vnc.feature_0.5.0.200901151620.jar" id="org.eclipse.tml.vnc.feature" version="0.5.0.200901151620">
-      <category name="TmL 0.3M4 Components"/>
+      <category name="TmL 0.3M5 Components"/>
    </feature>
    <feature url="features/org.eclipse.tml.protocol.feature_0.2.0.200901151620.jar" id="org.eclipse.tml.protocol.feature" version="0.2.0.200901151620">
-      <category name="TmL 0.3M4 Components"/>
+      <category name="TmL 0.3M5 Components"/>
    </feature>
    <feature url="features/org.eclipse.tml.vnc.viewer.feature_0.5.0.200901151620.jar" id="org.eclipse.tml.vnc.viewer.feature" version="0.5.0.200901151620">
-      <category name="TmL 0.3M4 Library"/>
+      <category name="TmL 0.3M5 Library"/>
    </feature>
    <feature url="features/org.eclipse.tml.device.examples.feature_0.3.0.200901151620.jar" id="org.eclipse.tml.device.examples.feature" version="0.3.0.200901151620">
-      <category name="TmL 0.3M4 Examples"/>
+      <category name="TmL 0.3M5 Examples"/>
    </feature>
    <feature url="features/org.eclipse.tml.vnc.protocol.examples.feature_0.2.0.200901151620.jar" id="org.eclipse.tml.vnc.protocol.examples.feature" version="0.2.0.200901151620">
-      <category name="TmL 0.3M4 Examples"/>
+      <category name="TmL 0.3M5 Examples"/>
    </feature>
    <feature url="features/org.eclipse.tml.device.sdk.feature_0.3.0.200901151620.jar" id="org.eclipse.tml.device.sdk.feature" version="0.3.0.200901151620">
-      <category name="TmL 0.3M4 Components"/>
+      <category name="TmL 0.3M5 Components"/>
    </feature>
-   <category-def name="TmL 0.3M4 Runtime" label="TmL 0.3M4 Runtime"/>
-   <category-def name="TmL 0.3M4 SDK" label="TmL 0.3M4 SDK"/>
-   <category-def name="TmL 0.3M4 Components" label="TmL 0.3M4 Components"/>
-   <category-def name="TmL 0.3M4 Library" label="TmL 0.3M4 Library"/>
-   <category-def name="TmL 0.3M4 Examples" label="TmL 0.3M4 Examples">
+   <category-def name="TmL 0.3M5 Runtime" label="TmL 0.3M5 Runtime"/>
+   <category-def name="TmL 0.3M5 SDK" label="TmL 0.3M5 SDK"/>
+   <category-def name="TmL 0.3M5 /proc Tools" label="TmL 0.3M5 /proc Tools"/>
+   <category-def name="TmL 0.3M5 Components" label="TmL 0.3M5 Components"/>
+   <category-def name="TmL 0.3M5 Library" label="TmL 0.3M5 Library"/>
+   <category-def name="TmL 0.3M5 Examples" label="TmL 0.3M5 Examples">
       <description>
-         Examples of the 0.3M4 release of Tools for mobile Linux (TmL).
+         Examples of the 0.3M5 release of Tools for mobile Linux (TmL).
       </description>
    </category-def>
 </site>

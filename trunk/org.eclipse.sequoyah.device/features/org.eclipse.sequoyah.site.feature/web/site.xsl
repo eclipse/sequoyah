@@ -5,7 +5,7 @@
 <xsl:for-each select="site">
 	<html>
 	<head>
-	<title>Tools for mobile Linux Project 0.3M4 Updates</title>
+	<title>Tools for mobile Linux Project 0.3M5 Updates</title>
 	<style>@import url("web/site.css");</style>
 	</head>
 	<body>
