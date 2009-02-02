@@ -17,11 +17,11 @@ import org.eclipse.tml.device.qemu.QEmuPlugin;
 import org.eclipse.tml.device.qemu.exception.QEmuDeviceExceptionHandler;
 import org.eclipse.tml.device.qemu.exception.QEmuDeviceExceptionStatus;
 import org.eclipse.tml.device.qemu.launcher.QEmuLauncher;
+import org.eclipse.tml.framework.device.model.IDeviceLauncher;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.status.IStatusTransition;
 import org.eclipse.tml.framework.status.StatusHandler;
 import org.eclipse.tml.service.start.launcher.DeviceLauncherManager;
-import org.eclipse.tml.service.start.launcher.IDeviceLauncher;
 
 public class StartStatusHandler extends StatusHandler {
 

@@ -29,12 +29,6 @@ import org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView;
 
 public class UnplugVNCViewerServiceHandler extends ServiceHandler {
 
-    public UnplugVNCViewerServiceHandler() {
-
-        //VNCViewerView.stop();
-        //VNCViewerView.
-
-    }
 
     public IServiceHandler newInstance() {
         return new UnplugVNCViewerServiceHandler();
@@ -50,7 +44,6 @@ public class UnplugVNCViewerServiceHandler extends ServiceHandler {
             PluginProtocolActionDelegate.stopProtocol(handle);            
         }
         catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

@@ -39,14 +39,9 @@ import org.eclipse.ui.PlatformUI;
 
 public class VNCViewerServiceHandler extends ServiceHandler
 {
-
-    @Override
-    public IStatus runService(IInstance instance, Map<Object, Object> arguments,
+	public IStatus runService(IInstance instance, Map<Object, Object> arguments,
             IProgressMonitor monitor)
     {
-
-        BasePlugin.logInfo(VNCViewerServiceResources.TML_VNCViewer_Service + "->" //$NON-NLS-1$
-                + instance.getName());
 
         String host = instance.getProperties().getProperty(IPropertyConstants.HOST);
         int port = Integer.parseInt(instance.getProperties().getProperty(IPropertyConstants.PORT));
@@ -78,7 +73,6 @@ public class VNCViewerServiceHandler extends ServiceHandler
 					try {
 						PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().showView("org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView"); //$NON-NLS-1$
 					} catch (PartInitException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -88,7 +82,6 @@ public class VNCViewerServiceHandler extends ServiceHandler
         }
         catch (Exception e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -101,7 +94,6 @@ public class VNCViewerServiceHandler extends ServiceHandler
             }
             catch (IOException e)
             {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -141,7 +133,6 @@ public class VNCViewerServiceHandler extends ServiceHandler
             }
             catch (Exception e)
             {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -152,9 +143,7 @@ public class VNCViewerServiceHandler extends ServiceHandler
     @Override
     public IStatus updatingService(IInstance instance, IProgressMonitor monitor)
     {
-        BasePlugin.logInfo(VNCViewerServiceResources.TML_VNCViewer_Service_Update
-                + "->" + instance.getName()); //$NON-NLS-1$
-        return Status.OK_STATUS;
+       return Status.OK_STATUS;
     }
 
     @Override

@@ -15,12 +15,18 @@
 
 package org.eclipse.tml.device.qemu.handler;
 
+import org.eclipse.tml.device.qemu.launcher.QEmuLauncher;
 import org.eclipse.tml.framework.device.internal.model.MobileInstance;
+import org.eclipse.tml.framework.device.model.IDeviceLauncher;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
 
 public class QEmuGenericDeviceHandler implements IDeviceHandler {
 	public IInstance createDeviceInstance(String id) {
 		return new MobileInstance(id);
+	}
+
+	public IDeviceLauncher createDeviceLauncher(IInstance instance) {
+		return new QEmuLauncher(instance);
 	}
 }

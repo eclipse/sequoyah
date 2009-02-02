@@ -13,6 +13,8 @@
 
 package org.eclipse.tml.service.start.launcher;
 
+import org.eclipse.tml.framework.device.model.IConnection;
+
 
 /**
  * Define a default configuration for one connection. This class should be

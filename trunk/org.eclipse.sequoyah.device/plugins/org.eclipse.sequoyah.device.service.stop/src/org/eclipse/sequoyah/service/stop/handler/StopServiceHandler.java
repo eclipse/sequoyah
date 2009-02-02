@@ -27,12 +27,16 @@ import org.eclipse.tml.service.stop.StopServiceResources;
 public class StopServiceHandler extends ServiceHandler {
 
 	public IStatus runService(IInstance instance, Map<Object , Object> arguments , IProgressMonitor monitor) {
-		BasePlugin.logInfo(StopServiceResources.TML_Stop_Service+"->"+instance.getName()); //$NON-NLS-1$
-		return Status.OK_STATUS;		
+		String kill = "taskkill /f /PID "+String.valueOf(instance.getPID());		 //$NON-NLS-1$
+		try {
+			Process p = Runtime.getRuntime().exec(kill);
+		} catch (Throwable t) {
+			return Status.CANCEL_STATUS;
+		}
+		return Status.OK_STATUS;				
 	}
 
 	public IStatus updatingService(IInstance instance, IProgressMonitor monitor) {
-		BasePlugin.logInfo(StopServiceResources.TML_Stop_Service_Update+"->"+instance.getName()); //$NON-NLS-1$
 		return Status.OK_STATUS;
 	}
 	

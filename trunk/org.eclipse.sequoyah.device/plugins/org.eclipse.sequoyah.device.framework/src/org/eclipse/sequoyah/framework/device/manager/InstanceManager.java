@@ -51,6 +51,7 @@ import org.eclipse.tml.framework.device.manager.persistence.DeviceXmlReader;
 import org.eclipse.tml.framework.device.manager.persistence.DeviceXmlWriter;
 import org.eclipse.tml.framework.device.manager.persistence.TmLDevice;
 import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
+import org.eclipse.tml.framework.device.model.IDeviceLauncher;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceBuilder;
@@ -141,6 +142,28 @@ public class InstanceManager {
 		return this.currentInstance;
 	}
 
+	
+	
+	public IDeviceLauncher createLauncher(IInstance instance) throws TmLException {
+
+		IDeviceHandler deviceHandler = null;
+		IDeviceLauncher launcher = null;
+		try {
+			IExtension fromPlugin = PluginUtils.getExtension(
+					DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, instance.getDeviceTypeId());
+			deviceHandler = (IDeviceHandler) PluginUtils
+					.getExecutableAttribute(fromPlugin, ELEMENT_DEVICE,
+							ATTR_HANDLER);
+			launcher = deviceHandler.createDeviceLauncher(instance);
+		} catch (CoreException ce) {
+			ExceptionHandler
+					.showException(DeviceExceptionHandler
+							.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
+		}
+		InstanceEventManager.getInstance().fireInstanceCreated(new InstanceEvent(instance));
+		return launcher;
+	}
+	
 	/**
 	 * Creates a new instance.
 	 * 

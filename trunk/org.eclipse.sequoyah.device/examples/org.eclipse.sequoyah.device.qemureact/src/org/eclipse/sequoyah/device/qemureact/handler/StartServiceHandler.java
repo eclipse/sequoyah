@@ -22,12 +22,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.device.qemureact.QEmuReactLauncher;
+import org.eclipse.tml.framework.device.model.IDeviceLauncher;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 import org.eclipse.tml.service.start.StartServiceResources;
 import org.eclipse.tml.service.start.launcher.DeviceLauncherManager;
-import org.eclipse.tml.service.start.launcher.IDeviceLauncher;
 
 public class StartServiceHandler extends ServiceHandler {
 

@@ -8,10 +8,11 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  ********************************************************************************/
 
-package org.eclipse.tml.service.start.launcher;
+package org.eclipse.tml.framework.device.model;
+
 
 
 /**

@@ -29,6 +29,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.exception.AbstractExceptionStatus;
 import org.eclipse.tml.common.utilities.exception.TmLException;
+import org.eclipse.tml.framework.device.model.IDeviceLauncher;
 import org.eclipse.tml.service.start.exception.StartServiceExceptionHandler;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 

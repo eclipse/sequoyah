@@ -10,16 +10,23 @@
  * Contributors:
  * Otavio Luiz Ferranti (Eldorado Research Institute) - [bug221733]Device handlers
  *                                         shall be able to create device instances.
- ********************************************************************************/
+ * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
+ *******************************************************************************/
 
 package org.eclipse.tml.device.qemureact.handler;
 
+import org.eclipse.tml.device.qemureact.QEmuReactLauncher;
 import org.eclipse.tml.framework.device.internal.model.MobileInstance;
+import org.eclipse.tml.framework.device.model.IDeviceLauncher;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
 
 public class QEmuReactDeviceHandler implements IDeviceHandler {
 	public IInstance createDeviceInstance(String id) {
 		return new MobileInstance(id);
+	}
+
+	public IDeviceLauncher createDeviceLauncher(IInstance instance) {
+		return new QEmuReactLauncher(instance);
 	}
 }

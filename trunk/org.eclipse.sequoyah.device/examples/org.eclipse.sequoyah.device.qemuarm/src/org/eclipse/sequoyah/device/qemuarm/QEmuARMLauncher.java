@@ -10,16 +10,17 @@
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - Package was changed to make able to any
  * 							  other plugin access these constants values
+ * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  ********************************************************************************/
 
 package org.eclipse.tml.device.qemuarm;
 
 import org.eclipse.tml.common.utilities.IPropertyConstants;
 import org.eclipse.tml.common.utilities.PluginUtils;
+import org.eclipse.tml.framework.device.model.IConnection;
+import org.eclipse.tml.framework.device.model.IDeviceLauncher;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.service.start.launcher.DefaultConnection;
-import org.eclipse.tml.service.start.launcher.IConnection;
-import org.eclipse.tml.service.start.launcher.IDeviceLauncher;
 
 public class QEmuARMLauncher implements IDeviceLauncher {
 	public static final String SLASH = "\\"; //$NON-NLS-1$
