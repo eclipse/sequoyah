@@ -14,4 +14,4 @@ REM QEMU_AUDIO_LOG_TO_MONITOR=1 displays log messages in QEMU monitor.
 SET QEMU_AUDIO_LOG_TO_MONITOR=0
 
 
-qemu-system-arm.exe  -L . -kernel integratorcp.zImage -initrd arm_root.img -M integratorcp1026
+qemu-system-arm.exe  -L . -kernel integratorcp.zImage -initrd arm_root.img -M integratorcp1026 -vnc 127.0.0.1:0.0
