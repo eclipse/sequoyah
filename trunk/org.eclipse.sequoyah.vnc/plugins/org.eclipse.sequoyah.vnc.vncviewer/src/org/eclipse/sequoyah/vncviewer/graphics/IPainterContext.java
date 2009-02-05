@@ -8,7 +8,7 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
@@ -68,7 +68,7 @@ public interface IPainterContext {
 	
 	
 	// TODO : insert javadoc here 
-	int[] readpixels(DataInputStream is, int w, int h);
+	int[] readpixels(DataInputStream is, int w, int h) throws Exception;
 	
 	
 	

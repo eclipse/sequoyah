@@ -10,6 +10,7 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  * Daniel Barboza Franco (Eldorado Research Institute) - [257588] - Add support to ServerCutText message
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.model;
 
@@ -171,11 +172,8 @@ public class PluginProtocolModel {
 	 * 
 	 * @return A collection of all client messages of the provided protocol
 	 * 
-	 * @throws MalformedProtocolExtensionException
-	 *             DOCUMENT ME!!
 	 */
-	public Collection<String> getClientMessages(String protocolId)
-			throws MalformedProtocolExtensionException {
+	public Collection<String> getClientMessages(String protocolId) {
 
 		Collection<String> clientMessages = clientMessagesMap.get(protocolId);
 		if (clientMessages == null) {
@@ -195,12 +193,9 @@ public class PluginProtocolModel {
 	 *            The protocol that owns the desired server messages
 	 * 
 	 * @return A collection of all server messages of the provided protocol
-	 * 
-	 * @throws MalformedProtocolExtensionException
-	 *             DOCUMENT ME!!
+	 *
 	 */
-	public Collection<String> getServerMessages(String protocolId)
-			throws MalformedProtocolExtensionException {
+	public Collection<String> getServerMessages(String protocolId) {
 
 		Collection<String> serverMessages = serverMessagesMap.get(protocolId);
 		if (serverMessages == null) {

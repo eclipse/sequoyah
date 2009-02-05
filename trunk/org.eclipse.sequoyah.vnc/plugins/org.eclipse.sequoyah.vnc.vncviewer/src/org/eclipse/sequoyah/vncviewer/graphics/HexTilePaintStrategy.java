@@ -8,7 +8,7 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
@@ -25,6 +25,8 @@ public class HexTilePaintStrategy extends AbstractPaintStrategy {
 	private static final int ANY_SUBRECTS = 8;
 	private static final int SUBRECTS_COLOURED = 16;
 
+	private static final int TIMEOUT = 5000;
+	
 	protected int hextileBackground = 0;;
 
 	protected int hextileForeground = 0;
@@ -49,7 +51,7 @@ public class HexTilePaintStrategy extends AbstractPaintStrategy {
 	
 	void processHextileSubrect(DataInputStream in, int x, int y, int width, int height)
 			throws Exception {
-		int subencoding = in.readUnsignedByte();
+		int subencoding = readUnsignedByteFromStream(in);
 		if ((subencoding & RAW) != 0) {
 			getContext().processRectangle(new RectHeader(x, y, width, height, IRFBConstants.RAW_ENCODING),in);
 			return;
@@ -66,20 +68,37 @@ public class HexTilePaintStrategy extends AbstractPaintStrategy {
 			return;
 
 		boolean colored = (subencoding & SUBRECTS_COLOURED) != 0;
-		int subRectsCount = in.readUnsignedByte();
+		int subRectsCount = readUnsignedByteFromStream(in);
 		for (int i = 0; i < subRectsCount; i++) {
 			int pix = hextileForeground;
 			if (colored) {
 				pix = getContext().readPixel(in);
 				hextileForeground = pix;
 			}
-			int position = in.readUnsignedByte();
-			int size = in.readUnsignedByte();
+			int position = readUnsignedByteFromStream(in);
+			int size = readUnsignedByteFromStream(in);
 			int subRectX = x + (position >> 4);
 			int subRectY = y + (position & 0xF);
 			int subRectWidth = (size >> 4) + 1;
 			int subRectHeight = (size & 0xF) + 1;
 			getContext().fillRect(pix, subRectX, subRectY, subRectWidth, subRectHeight);
 		}
+	}
+	
+	private int readUnsignedByteFromStream(DataInputStream in) throws Exception {	    
+	    long timeoutLimit = System.currentTimeMillis() + TIMEOUT;
+	    int byteFromStream = -1;
+	    
+	    while (byteFromStream == -1) {
+	        if (in.available() > 0) {
+	            byteFromStream = in.readUnsignedByte();
+	        }
+	        
+	        if (System.currentTimeMillis() > timeoutLimit) {
+	            throw new Exception("Timeout detected while reading stream");
+	        }
+	    }
+	    
+	    return byteFromStream;
 	}
 }

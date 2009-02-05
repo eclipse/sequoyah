@@ -11,6 +11,7 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -70,10 +71,6 @@ public class ProtocolActionDelegate {
 	 * 
 	 * @return A handle to identify the connection just made
 	 * 
-	 * @throws UnknownHostException
-	 *             DOCUMENT ME!!
-	 * @throws IOException
-	 *             DOCUMENT ME!!
 	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 */
@@ -87,7 +84,7 @@ public class ProtocolActionDelegate {
 			Boolean isBigEndianProtocol,
 			String host, int port,
 			Map<String, Object> parameters)
-			throws UnknownHostException, IOException, ProtocolHandshakeException {
+			throws ProtocolHandshakeException {
 
 		ClientModel model = ClientModel.getInstance();
 		return model.startClientProtocol(allMessages, incomingMessages,
@@ -170,13 +167,19 @@ public class ProtocolActionDelegate {
 	 *             DOCUMENT ME!!
 	 */
 	public static void restartProtocol(ProtocolHandle handle)
-			throws IOException, ProtocolHandshakeException, ProtocolException {
+			throws ProtocolHandshakeException, IOException {
 
+	    boolean restartPerformed = false;
+	    
 		ClientModel clientModel = ClientModel.getInstance();
-		clientModel.restartClientProtocol(handle);
+		restartPerformed |= clientModel.restartClientProtocol(handle);
 
 		ServerModel serverModel = ServerModel.getInstance();
-		serverModel.restartServerProtocol(handle);
+		restartPerformed |= serverModel.restartServerProtocol(handle);
+		
+		if (!restartPerformed) {
+		    throw new ProtocolHandshakeException("The restart operation could not be performed.");
+		}
 	}
 
 	/**
@@ -205,5 +208,17 @@ public class ProtocolActionDelegate {
 			InvalidMessageException, InvalidDefinitionException {
 		ClientModel model = ClientModel.getInstance();
 		model.sendMessage(handle, message);
+	}
+	
+	/**
+     * Tests if the protocol identified by handle is running or not
+     * 
+     * @param handle The handle that identifies a protocol instance
+     * 
+     * @return True if the protocol is running, false otherwise
+     */
+	public static boolean isProtocolRunning(ProtocolHandle handle) {
+	    return ClientModel.getInstance().isClientProtocolRunning(handle) || 
+	           ServerModel.getInstance().isListeningToPort(handle);
 	}
 }

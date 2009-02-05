@@ -12,6 +12,7 @@
  * Fabio Rigo - Bug [244067] - The exception handling interface should forward the protocol implementer object
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -180,14 +181,17 @@ public class ServerModel implements IModel {
 	 *            The object that identifies the server socket that is to
 	 *            be reconnected.
 	 * 
+	 * @return True if the restart was performed; false otherwise
+	 * 
 	 * @throws IOException
 	 *             DOCUMENT ME!!
 	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 */
-	public void restartServerProtocol(ProtocolHandle handle)
+	public boolean restartServerProtocol(ProtocolHandle handle)
 			throws IOException, ProtocolHandshakeException {
 
+	    boolean restartPerformed = false;
 		ServerSocket ss = openedServerSockets.get(handle);
 		
 		if (ss != null) {
@@ -200,7 +204,10 @@ public class ServerModel implements IModel {
 					.getIncomingMessages(), factory.getOutgoingMessages(),
 					null, factory.getExceptionHandler(), factory
 							.isBigEndianProtocol());
+			restartPerformed = true;
 		}
+		
+		return restartPerformed;
 	}
 
 	/**
@@ -214,11 +221,31 @@ public class ServerModel implements IModel {
 					.get(key);
 			for (ProtocolEngine aImpl : aImplCollection) {
 				if (!aImpl.isConnected()) {
+				    aImpl.dispose();
 					aImplCollection.remove(aImpl);
 				}
 			}
 		}
 	}
+	
+	/**
+     * Tests if the protocol identified by handle is listening to some port
+     * 
+     * @param handle The handle that identify the protocol instance
+     * 
+     * @return True if the protocol is running; false otherwise
+     */
+    public boolean isListeningToPort(ProtocolHandle handle)
+    {   
+        boolean isListeningToPort = false;
+        
+        ServerSocket ss = openedServerSockets.get(handle);
+        if (ss != null)
+        {
+            isListeningToPort = ss.isBound() && !ss.isClosed();
+        }
+        return isListeningToPort;
+    }
 
 	/**
 	 * DESCRIPTION: This class is the deamon that runs after a port starts to be
@@ -291,7 +318,7 @@ public class ServerModel implements IModel {
 
 						final ProtocolEngine eng = factory
 								.getServerProtocolEngine();
-						eng.startProtocol(s, null);
+						eng.requestStart(s, null, null);
 
 						Collection<ProtocolEngine> allClients = connectedClients
 								.get(handle);
@@ -345,8 +372,9 @@ public class ServerModel implements IModel {
 					Collection<ProtocolEngine> allClients = connectedClients
 							.get(serverSocket.getLocalPort());
 					for (ProtocolEngine aClient : allClients) {
-						aClient.stopProtocol();
+						aClient.requestStop();
 						allClients.remove(aClient);
+						aClient.dispose();
 					}
 
 					openedServerSockets.remove(handle);

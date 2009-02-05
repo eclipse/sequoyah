@@ -18,6 +18,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246916] - Add the correct Number objects to ProtocolMessage objects on reading from input stream
  * Daniel Barboza Franco (Eldorado Research Institute) - [257588] - Add support to ServerCutText message
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -34,6 +35,8 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.eclipse.tml.protocol.lib.IMessageHandler;
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
@@ -80,6 +83,16 @@ public class ProtocolEngine {
 	private static final int RECONNECTION_MAX = 5;
 
 	/**
+	 * A variable that controls the event thread count
+	 */
+	private static int engineEventCounter = 0;
+
+	/**
+	 * A variable that controls the consumer thread count
+	 */
+	private static int consumerCounter = 0;
+
+	/**
 	 * True if the protocol is big endian, false if little endian. Note: If a
 	 * number has more than one byte, a big endian protocol sends firstly the
 	 * most significant byte to the stream. A little endian protocol, on the
@@ -88,7 +101,7 @@ public class ProtocolEngine {
 	private boolean isBigEndianProtocol;
 
 	/**
-	 * The object used to map this connection at the model 
+	 * The object used to map this connection at the model
 	 */
 	private ProtocolHandle handle;
 
@@ -99,24 +112,23 @@ public class ProtocolEngine {
 	private Map<Long, ProtocolMsgDefinition> messageDefCollection;
 
 	/**
-	 * Number of connection retries left. 
+	 * Number of connection retries left.
 	 */
 	private int retries;
-	
+
 	/**
-	 * Maximum number of reconnection attempts. 
+	 * Maximum number of reconnection attempts.
 	 */
 	private int retriesMax = RECONNECTION_MAX;
 
-	
 	/**
 	 * This variable is used control concurrency between two consecutive restart
 	 * requests. When a restart is successfully done it's value is incremented.
-	 * This is necessary to avoid that two consecutive re-connections happen for the same reason.
+	 * This is necessary to avoid that two consecutive re-connections happen for
+	 * the same reason.
 	 */
 	private int connectionSerialNumber = 0;
-	
-	
+
 	/**
 	 * A collection of the incoming messages ids, used to validate if a message
 	 * can be retrieved from the input stream.>
@@ -154,18 +166,23 @@ public class ProtocolEngine {
 	 * General parameters associated to the protocol implementation, initialized
 	 * by the protocol user.
 	 */
-	private Map parameters;
+	private Map<?, ?> parameters;
 
 	/**
 	 * The port to which the socket is connected.
 	 */
-	private int port;
+	private int port = -1;
+
+	/**
+	 * The timeout defined for socket connection
+	 */
+	private int timeout = -1;
 
 	/**
 	 * True if this protocol is running as server. False if running as client.
 	 * This information shall be kept as argument to allow restarting.
 	 */
-	private boolean isServer; 
+	private boolean isServer;
 
 	/**
 	 * The stream from where the incoming bytes flow
@@ -184,22 +201,23 @@ public class ProtocolEngine {
 	private Consumer consumer;
 
 	/**
-	 * Constructor. Sets the attributes that turns the generic engine into a 
-	 * specific engine, which are: 
-	 * - Protocol handle for identification
-	 * - An init/handshaking procedure
-	 * - Messages used in interaction phase (definitions and directions)
-	 * - Specific exception handling procedures 
-	 * - Role of the engine (server, client)
+	 * The event handler that will control requests for this engine instance
 	 */
-	public ProtocolEngine(
-	        ProtocolHandle handle, IProtocolHandshake initProcedure,
+	private EngineEventHandler eventHandler = new EngineEventHandler();
+
+	/**
+	 * Constructor. Sets the attributes that turns the generic engine into a
+	 * specific engine, which are: - Protocol handle for identification - An
+	 * init/handshaking procedure - Messages used in interaction phase
+	 * (definitions and directions) - Specific exception handling procedures -
+	 * Role of the engine (server, client)
+	 */
+	public ProtocolEngine(ProtocolHandle handle, IProtocolHandshake initProcedure,
 			Map<Long, ProtocolMsgDefinition> messageDefCollection,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolExceptionHandler exceptionHandler,
-			boolean isBigEndianProtocol, boolean isServer, 
-			int retries) {
+			boolean isBigEndianProtocol, boolean isServer, int retries) {
 
 		this.handle = handle;
 		this.initProcedure = initProcedure;
@@ -211,6 +229,17 @@ public class ProtocolEngine {
 		this.isServer = isServer;
 		this.retriesMax = (retries >= 0) ? retries : RECONNECTION_MAX;
 		this.retries = this.retriesMax;
+
+		engineEventCounter++;
+		(new Thread(eventHandler, "Protocol Event Handler-"
+				+ engineEventCounter)).start();
+	}
+
+	public void dispose() {
+		if (eventHandler != null) {
+			eventHandler.stopEventHandler();
+			eventHandler = null;
+		}
 	}
 
 	/**
@@ -231,10 +260,9 @@ public class ProtocolEngine {
 	 * @throws ProtocolHandshakeException
 	 *             If the protocol fails to initialize.
 	 */
-     public synchronized void startProtocol(String host, int port,
-			Map parameters) throws UnknownHostException,
-			IOException, ProtocolHandshakeException {
-		startProtocol(host, port, parameters, -1);
+	public void requestStart(String host, int port, Map<?, ?> parameters,
+			Thread interruptOnError) {
+		requestStart(host, port, parameters, -1, interruptOnError);
 	}
 
 	/**
@@ -251,51 +279,21 @@ public class ProtocolEngine {
 	 *            The maximum time to wait for the connection to remote site to
 	 *            open.
 	 * 
-	 * @throws UnknownHostException
-	 *             If the provided host cannot be resolved.
 	 * @throws IOException
 	 *             If the communication socket cannot be opened.
 	 * @throws ProtocolHandshakeException
 	 *             If the protocol fails to initialize.
 	 */
-	public synchronized void startProtocol(String host, int port,
-			Map parameters, int timeout)
-			throws UnknownHostException, IOException, ProtocolHandshakeException {
-		// Stores the host and port, that will be used if a restart is necessary
-		this.host = host;
-		this.port = port;
+	public void requestStart(String host, int port, Map<?, ?> parameters,
+			int timeout, Thread interruptOnError) {
 
-		this.parameters = parameters;
-
-		Boolean bypassProxy = (Boolean)parameters.get("bypassProxy"); //$NON-NLS-1$
-		bypassProxy = (bypassProxy != null)? bypassProxy : new Boolean(false);
-		
-		Proxy proxy = (Proxy)parameters.get("proxy"); //$NON-NLS-1$
-			
-		if (bypassProxy) { // The connection will not use proxy settings
-			socket = new Socket(Proxy.NO_PROXY);
-		}
-		else if (proxy != null){ // The connection will use this proxy
-			socket = new Socket(proxy); 
-		} else { // The connection will use default proxy settings, if any
-			socket = new Socket(); 
-		}
-			
-		InetSocketAddress socketAdress = new InetSocketAddress(host, port);
-		
-		if (timeout < 0) {
-			socket.connect(socketAdress);
-		} else {
-			socket.connect(socketAdress, timeout);
-		}
-
-		// When the socket is opened, keep the input and output streams in
-		// the appropriate attributes
-		in = new DataInputStream(socket.getInputStream());
-		out = socket.getOutputStream();
-
-		doStartProtocol();
-
+		String nextHost = (host != null ? host : this.host);
+		int nextPort = (port != -1 ? port : this.port);
+		Map<?, ?> nextParameters = (parameters != null ? parameters
+				: this.parameters);
+		int nextTimeout = (timeout != -1 ? timeout : this.timeout);
+		eventHandler.requestStart(socket, nextHost, nextPort, nextTimeout,
+				nextParameters, interruptOnError);
 	}
 
 	/**
@@ -316,45 +314,72 @@ public class ProtocolEngine {
 	 * @throws IOException
 	 * @throws ProtocolHandshakeException
 	 */
-	public synchronized void startProtocol(Socket connectedSocket,
-			Map parameters) throws IOException,
-			ProtocolHandshakeException {
-		this.socket = connectedSocket;
-		this.host = socket.getInetAddress().getHostAddress();
-		this.port = socket.getPort();
-		this.parameters = parameters;
+	public void requestStart(Socket connectedSocket, Map<?, ?> parameters,
+			Thread interruptOnError) {
+
+		Socket nextSocket = (connectedSocket != null ? connectedSocket
+				: this.socket);
+		String nextHost = socket.getInetAddress().getHostAddress();
+		int nextPort = socket.getPort();
+		Map<?, ?> nextParameters = (parameters != null ? parameters
+				: this.parameters);
+		eventHandler.requestStart(nextSocket, nextHost, nextPort, -1,
+				nextParameters, interruptOnError);
+	}
+
+	/**
+	 * Starts the protocol message exchange, by running the handshaking
+	 * procedure and starting the consumer thread.
+	 * 
+	 * @throws ProtocolHandshakeException
+	 */
+	private void doStartProtocol() throws ProtocolHandshakeException, IOException {
+		if (socket == null) {
+			Boolean bypassProxy = (Boolean) parameters.get("bypassProxy"); //$NON-NLS-1$
+			bypassProxy = (bypassProxy != null) ? bypassProxy : new Boolean(
+					false);
+
+			Proxy proxy = (Proxy) parameters.get("proxy"); //$NON-NLS-1$
+
+			if (bypassProxy) { // The connection will not use proxy settings
+				socket = new Socket(Proxy.NO_PROXY);
+			} else if (proxy != null) { // The connection will use this proxy
+				socket = new Socket(proxy);
+			} else { // The connection will use default proxy settings, if any
+				socket = new Socket();
+			}
+
+			InetSocketAddress socketAdress = new InetSocketAddress(host, port);
+
+			if (timeout < 0) {
+				socket.connect(socketAdress);
+			} else {
+				socket.connect(socketAdress, timeout);
+			}
+		}
 
 		// When the socket is opened, keep the input and output streams in
 		// the appropriate attributes
 		in = new DataInputStream(socket.getInputStream());
 		out = socket.getOutputStream();
 
-		doStartProtocol();
-	}
-	
-	/**
-	 * Starts the protocol message exchange, by running the handshaking procedure
-	 * and starting the consumer thread.  
-	 * 
-	 * @throws ProtocolHandshakeException
-	 */
-	private void doStartProtocol() throws ProtocolHandshakeException
-	{		
-		if (initProcedure != null)
-		{
+		if (initProcedure != null) {
 			// Delegate the initialization to the concrete protocol class
 			if (isServer) {
-				initProcedure.serverHandshaking(handle, in, out, parameters);
+				initProcedure.serverHandshake(handle, in, out, parameters);
 			} else {
-				initProcedure.clientHandshaking(handle, in, out, parameters);
+				initProcedure.clientHandshake(handle, in, out, parameters);
 			}
 
-			// After all initialization is done, start the consumer thread, which
+			// After all initialization is done, start the consumer thread,
+			// which
 			// will listen to the input stream to collect any byte that arrive
 			consumer = new Consumer();
-			Thread consumerThread = new Thread(consumer);
+			consumerCounter++;
+			Thread consumerThread = new Thread(consumer, "Consumer-"
+					+ consumerCounter);
 			consumerThread.start();
-			
+
 			retries = retriesMax;
 			connectionSerialNumber++;
 		}
@@ -362,73 +387,66 @@ public class ProtocolEngine {
 
 	/**
 	 * Stops the communication with the current site.
+	 */
+	public void requestStop() {
+		eventHandler.requestStop();
+	}
+
+	/**
+	 * Performs the actual stop protocol operation
 	 * 
 	 * @throws IOException
 	 *             If an error occurs while closing the streams and socket.
 	 */
-	public synchronized void stopProtocol() throws IOException {
-		consumer.stopConsumer();
-		out.close();
-		in.close();
-		socket.close();
+	private void doStopProtocol() throws IOException {
+		if (consumer != null) {
+			consumer.stopConsumer();
+			consumer = null;
+		}
+
+		if (socket != null) {
+			socket.close();
+			socket = null;
+		}
+
+		if (in != null) {
+			in.close();
+			in = null;
+		}
+
+		if (out != null) {
+			out.close();
+			out = null;
+		}
 	}
 
-	
-	private void reconnect(int serialNumber) throws UnknownHostException, ProtocolHandshakeException, IOException, ProtocolException{
-	
-		if (this.connectionSerialNumber == serialNumber){
-			
-			if (retries > 0) { 
-				
+	private void reconnect(int serialNumber) throws UnknownHostException,
+			ProtocolHandshakeException, IOException, ProtocolException {
+
+		if (this.connectionSerialNumber == serialNumber) {
+
+			if (retries > 0) {
+
 				try {
-					synchronized (this) {
-						retries--;
-						restartProtocol();
-					}
-				}
-				catch (Exception e) {
+					retries--;
+					eventHandler.requestRestart();
+				} catch (Exception e) {
 					reconnect(serialNumber);
 				}
-	
-			} else throw new ProtocolException ("Number of connection retries exceeded the limit of " + retriesMax + "."); //$NON-NLS-1$ //$NON-NLS-2$
+
+			} else
+				throw new ProtocolException(
+						"Number of connection retries exceeded the limit of " + retriesMax + "."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
-		
+
 	}
-	
-	
+
 	/**
 	 * Restarts the protocol by closing the current connection (if opened) and
 	 * opening it again.
-	 * 
-	 * @throws UnknownHostException
-	 *             If the host used to start the protocol previously is not
-	 *             known or inexistent.
-	 * @throws IOException
-	 *             If the communication socket cannot be opened or closed.
-	 * @throws ProtocolHandshakeException
-	 *             If the protocol fails to initialize.
 	 */
-	public void restartProtocol() throws UnknownHostException, IOException,
-			ProtocolHandshakeException, ProtocolException {
-		
-		if (this.isConnected()) {
-			stopProtocol();
-		}
-
-		/*
-		try {
-			startProtocol(null, host, port, parameters, isServer);
-		} catch (Exception e) {
-			reconnect(connectionSerialNumber);
-		}
-		*/
-		
-		startProtocol(host, port, parameters);
-
-
-
-		
+	public void requestRestart() {
+		eventHandler.requestRestart();
 	}
 
 	/**
@@ -447,10 +465,32 @@ public class ProtocolEngine {
 	}
 
 	/**
+	 * Tests if the protocol is started and at execution phase
+	 * 
+	 * @return True if the protocol is started; false otherwise
+	 */
+	public boolean isRunning() {
+		return (consumer != null) && consumer.isRunning();
+	}
+
+	/**
 	 * Sends the provided message to the communication stream, serializing it
 	 * according to the current message definitions map.<br>
 	 * That map contains message definitions declared by this protocol and its
 	 * parents.
+	 * 
+	 * @param message
+	 *            The message to send.
+	 * 
+	 */
+	public void requestSendMessage(ProtocolMessage message) {
+		if (message != null) {
+			eventHandler.queueMessage(message);
+		}
+	}
+
+	/**
+	 * Performs the actual send message operation
 	 * 
 	 * @param message
 	 *            The message to send.
@@ -468,7 +508,7 @@ public class ProtocolEngine {
 	 *             If an output stream disconnection is detected while writing
 	 *             data.
 	 */
-	public synchronized final void sendMessage(ProtocolMessage message)
+	private final void doSendMessage(ProtocolMessage message)
 			throws ProtocolRawHandlingException, InvalidMessageException,
 			InvalidDefinitionException, IOException {
 		// Can only send a message if the protocol is connected
@@ -509,14 +549,17 @@ public class ProtocolEngine {
 
 					try {
 						reconnect(connectionSerialNumber);
+						if (out != null) {
+							byteOutputStream.writeTo(out);
+							out.flush();
+						}
 					} catch (ProtocolException eReconnection) {
-						
+
 						handleIOExceptionOnStream();
 						throw e;
 
-						
 					}
-					
+
 				}
 			}
 		}
@@ -612,8 +655,8 @@ public class ProtocolEngine {
 			if (value instanceof Number) {
 				// If a value is defined, then write the field to the output
 				// stream.
-				writeNumberToStream(streamToWriteTo, (Number) value,
-						fieldSize, isSigned);
+				writeNumberToStream(streamToWriteTo, (Number) value, fieldSize,
+						isSigned);
 			} else {
 				// If a value is not defined, than raise a protocol exception
 				// to warn the caller that this it provided an invalid message
@@ -676,21 +719,20 @@ public class ProtocolEngine {
 				// In the variable size data field case, it is needed to write
 				// firstly
 				// the size of the field, and then its contents.
-				try
-                {
-                    byte[] valueBytes = ((String) value).getBytes(charsetName);
-                    int valueBytesSize = valueBytes.length;
-                    writeNumberToStream(streamToWriteTo, valueBytesSize,
-                    		sizeFieldSize, isSizeSigned);
+				try {
+					byte[] valueBytes = ((String) value).getBytes(charsetName);
+					int valueBytesSize = valueBytes.length;
+					writeNumberToStream(streamToWriteTo, valueBytesSize,
+							sizeFieldSize, isSizeSigned);
 
-                    streamToWriteTo.write(valueBytes, 0, valueBytes.length);
-                }
-                catch (UnsupportedEncodingException e)
-                {
-                    // If the encoding provided is not supported, that means that the
-                    // message definition is incorrect.
-                    throw new InvalidDefinitionException("Invalid charset name provided at message definition", e); //$NON-NLS-1$
-                }
+					streamToWriteTo.write(valueBytes, 0, valueBytes.length);
+				} catch (UnsupportedEncodingException e) {
+					// If the encoding provided is not supported, that means
+					// that the
+					// message definition is incorrect.
+					throw new InvalidDefinitionException(
+							"Invalid charset name provided at message definition", e); //$NON-NLS-1$
+				}
 			} else {
 				// If a value is not defined, than raise a protocol exception
 				// to warn the caller that this it provided an invalid message
@@ -729,7 +771,8 @@ public class ProtocolEngine {
 		ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
 		IRawDataHandler handler = messageDataDef.getHandler();
 
-		handler.writeRawDataToStream(handle, tempStream, message, isBigEndianProtocol);
+		handler.writeRawDataToStream(handle, tempStream, message,
+				isBigEndianProtocol);
 
 		try {
 			tempStream.writeTo(streamToWriteTo);
@@ -891,9 +934,10 @@ public class ProtocolEngine {
 			// description and how to use then can be found at
 			// the ProtocolMessage extension point documentation.
 
-			ProtocolMessage returnedMessage = handler.handleMessage(handle, message);
+			ProtocolMessage returnedMessage = handler.handleMessage(handle,
+					message);
 			if (returnedMessage != null) {
-				sendMessage(returnedMessage);
+				requestSendMessage(returnedMessage);
 			}
 		}
 	}
@@ -932,16 +976,20 @@ public class ProtocolEngine {
 		if (messageDataDef instanceof FixedSizeDataBean) {
 			readFixedSizeData((FixedSizeDataBean) messageDataDef, message,
 					iterableBlockId, index);
-			FixedSizeDataBean fixedMsgDataDef = (FixedSizeDataBean)messageDataDef;
-			message.setFieldSize(fixedMsgDataDef.getFieldName(), iterableBlockId, index, fixedMsgDataDef.getFieldSizeInBytes());	
-			
+			FixedSizeDataBean fixedMsgDataDef = (FixedSizeDataBean) messageDataDef;
+			message.setFieldSize(fixedMsgDataDef.getFieldName(),
+					iterableBlockId, index, fixedMsgDataDef
+							.getFieldSizeInBytes());
+
 		} else if (messageDataDef instanceof VariableSizeDataBean) {
 			readVariableSizeData((VariableSizeDataBean) messageDataDef,
 					message, iterableBlockId, index);
 			VariableSizeDataBean variableMsgDataDef = (VariableSizeDataBean) messageDataDef;
-			
-			message.setFieldSize(variableMsgDataDef.getSizeFieldName(), iterableBlockId, index, variableMsgDataDef.getSizeFieldSizeInBytes());
-			
+
+			message.setFieldSize(variableMsgDataDef.getSizeFieldName(),
+					iterableBlockId, index, variableMsgDataDef
+							.getSizeFieldSizeInBytes());
+
 		} else if (messageDataDef instanceof RawDataBean) {
 			readRawData((RawDataBean) messageDataDef, message, iterableBlockId,
 					index);
@@ -1037,7 +1085,7 @@ public class ProtocolEngine {
 		// Retrieve data from the message definition object.
 		// The fields description and how to use then can be found at
 		// the ProtocolMessage extension point documentation.
-		
+
 		String sizeFieldName = messageDataDef.getSizeFieldName();
 		boolean isSizeSigned = messageDataDef.isSizeFieldSigned();
 		int sizeFieldSize = messageDataDef.getSizeFieldSizeInBytes();
@@ -1076,12 +1124,11 @@ public class ProtocolEngine {
 			message
 					.setFieldValue(valueFieldName, iterableBlockId, index,
 							value);
-			
-			if(sizeFieldName != null && !sizeFieldName.equals("")) //$NON-NLS-1$
+
+			if (sizeFieldName != null && !sizeFieldName.equals("")) //$NON-NLS-1$
 				message.setFieldValue(sizeFieldName, iterableBlockId, index,
-							new Integer(sizeFieldSize).toString());
-			
-			
+						new Integer(sizeFieldSize).toString());
+
 		} else {
 			// The definition of this fixed data does not contain all
 			// information it should have.
@@ -1131,8 +1178,9 @@ public class ProtocolEngine {
 		// Delegates the read operation to the raw data handler
 		Map<String, Object> returnedFields = null;
 		try {
-			returnedFields = handler.readRawDataFromStream(handle, delegatableStream,
-					currentlyReadFields, isBigEndianProtocol);
+			returnedFields = handler
+					.readRawDataFromStream(handle, delegatableStream,
+							currentlyReadFields, isBigEndianProtocol);
 
 			// Merge the data read by the handler to the current message being
 			// read.
@@ -1254,20 +1302,20 @@ public class ProtocolEngine {
 					long tmpval;
 					tmpval = in.readByte();
 					tmpval <<= 8;
-					tmpval += in.readShort(); 
-					
+					tmpval += in.readShort();
+
 					value = tmpval;
-					
+
 				} else {
 					long tmpval;
 					tmpval = in.readUnsignedByte();
 					tmpval <<= 8;
-					tmpval += in.readUnsignedShort(); 
-					
+					tmpval += in.readUnsignedShort();
+
 					value = tmpval;
 				}
 				break;
-				
+
 			case 4: // reads an integer
 				value = in.readInt();
 				break;
@@ -1365,13 +1413,7 @@ public class ProtocolEngine {
 	 */
 	private void handleIOExceptionOnStream() {
 
-		if (isConnected()) {
-			try {
-				stopProtocol();
-			} catch (IOException e1) {
-				// Do nothing
-			}
-		}
+		requestRestart();
 
 		IModel model = ClientModel.getInstance();
 		model.cleanStoppedProtocols();
@@ -1400,7 +1442,7 @@ public class ProtocolEngine {
 		 * Flag that indicates if the consumer is monitoring the input stream
 		 * and collecting bytes from it.
 		 */
-		private boolean isRunning = true;
+		private boolean isRunning = false;
 
 		/**
 		 * Starts monitoring and consuming bytes from the input stream.
@@ -1415,6 +1457,7 @@ public class ProtocolEngine {
 		public void run() {
 
 			long code = 0;
+			isRunning = true;
 			// Executes the monitoring while the consumer is not stopped.
 			while (isRunning) {
 				try {
@@ -1428,7 +1471,7 @@ public class ProtocolEngine {
 						// impossible to recover
 						System.out
 								.println("Message not found. Stopping protocol..."); //$NON-NLS-1$
-						stopProtocol();
+						requestStop();
 					} else {
 						// Reads a byte from the input stream and append it to
 						// the current code variable
@@ -1445,7 +1488,7 @@ public class ProtocolEngine {
 						if (messageDef != null) {
 							// If it finds a message with the current code,
 							// reads the remaining of the message fields.
-							synchronized (socket) {
+							synchronized (in) {
 								readReceivedMessage(auxCode, messageDef);
 							}
 							code = 0;
@@ -1466,23 +1509,26 @@ public class ProtocolEngine {
 					if (exceptionHandler != null) {
 						// Delegate the exception to user
 						if (e instanceof ProtocolHandshakeException) {
-							exceptionHandler
-									.handleProtocolInitException(handle, (ProtocolHandshakeException) e);
+							exceptionHandler.handleProtocolInitException(
+									handle, (ProtocolHandshakeException) e);
 						} else if (e instanceof MessageHandleException) {
-							exceptionHandler
-									.handleMessageHandleException(handle, (MessageHandleException) e);
+							exceptionHandler.handleMessageHandleException(
+									handle, (MessageHandleException) e);
 						} else if (e instanceof InvalidMessageException) {
-							exceptionHandler
-									.handleInvalidMessageException(handle, (InvalidMessageException) e);
+							exceptionHandler.handleInvalidMessageException(
+									handle, (InvalidMessageException) e);
 						} else if (e instanceof InvalidInputStreamDataException) {
 							exceptionHandler
-									.handleInvalidInputStreamDataException(handle, (InvalidInputStreamDataException) e);
+									.handleInvalidInputStreamDataException(
+											handle,
+											(InvalidInputStreamDataException) e);
 						} else if (e instanceof InvalidDefinitionException) {
-							exceptionHandler
-									.handleInvalidDefinitionException(handle, (InvalidDefinitionException) e);
+							exceptionHandler.handleInvalidDefinitionException(
+									handle, (InvalidDefinitionException) e);
 						} else if (e instanceof ProtocolRawHandlingException) {
 							exceptionHandler
-									.handleProtocolRawHandlingException(handle, (ProtocolRawHandlingException) e);
+									.handleProtocolRawHandlingException(handle,
+											(ProtocolRawHandlingException) e);
 						}
 					}
 				}
@@ -1495,6 +1541,289 @@ public class ProtocolEngine {
 		 */
 		public void stopConsumer() {
 			isRunning = false;
+		}
+
+		/**
+		 * Tests if the consumer is running
+		 * 
+		 * @return True if the consumer is running; false otherwise
+		 */
+		public boolean isRunning() {
+			return isRunning;
+		}
+	}
+
+	/**
+	 * DESCRIPTION: This class handles all the requests that imposes IO
+	 * operations, centralizing the handling activities and enhancing
+	 * robustness. <br>
+	 * 
+	 * RESPONSIBILITY: Handle start, stop, restart and send message requests
+	 * from all threads.<br>
+	 * 
+	 * COLABORATORS: None.<br>
+	 * 
+	 * USAGE: The class is intended to be used by the protocol engine class
+	 * only.<br>
+	 * For that, create a thread and set this class as its runnable. When it is
+	 * no more needed, run method stopEventHandler.<br>
+	 * 
+	 */
+	private class EngineEventHandler implements Runnable {
+		/**
+		 * How much time one must wait before requesting a restart. This is used
+		 * to prevent several restarts for the same reason
+		 */
+		private static final long RESTART_REQUESTS_DELAY = 3000;
+
+		/**
+		 * Controls the running state of the thread
+		 */
+		private boolean isRunning = true;
+
+		/**
+		 * Request flags used for flow control in the scheduling
+		 */
+		private boolean restartRequested = false;
+		private boolean startRequested = false;
+		private boolean stopRequested = false;
+
+		/**
+		 * A queue of messages that were requested to be sent through the
+		 * communication channel
+		 */
+		private Queue<ProtocolMessage> messagesToSend = new ConcurrentLinkedQueue<ProtocolMessage>();
+
+		/**
+		 * Variables to be used in the next start process. They must be provided
+		 * by the start requester
+		 */
+		private Socket nextSocket = null;
+		private String nextHost = null;
+		private int nextPort = -1;
+		private int nextTimeout = -1;
+		private Map<?, ?> nextParameters = null;
+
+		/**
+		 * The thread that is waiting for the start process to complete and that
+		 * must be interrupted if the process is erroneous
+		 */
+		private Thread interruptOnError;
+
+		/**
+		 * Variable that controls when was the last restart request placed
+		 */
+		private long lastRestartGrantedTime = -1;
+
+		/**
+		 * @see Runnable#run()
+		 * 
+		 *      The scheduling process While the process is running, the
+		 *      scheduler checks if there are requests for start, stop or
+		 *      restart. While such requests are not placed, it picks a message
+		 *      from the message queue and send it.
+		 */
+		public void run() {
+		    ProtocolMessage messageToSend = null;
+			while (isRunning) {
+			    
+			    synchronized (messagesToSend) {
+			        if (!startRequested && !stopRequested && 
+			                !restartRequested && messagesToSend.isEmpty()) {	                 
+			            try {
+			                messagesToSend.wait();
+			            } catch (InterruptedException e) {
+			                // Do nothing
+			            }
+			        }
+
+			        if (!messagesToSend.isEmpty()) {
+			            messageToSend = messagesToSend.poll();
+			        }
+			    }
+			    
+				try {
+					if (startRequested && !isConnected() && (consumer == null)) {
+						// Handles a start request, if the socket is not
+						// connected and the consumer is not
+						// available (indicating that the protocol is not
+						// running). When a request like this
+						// is placed, the previous message queue is cleared and
+						// the start parameters are set
+						// to the protocol engine
+						startRequested = false;
+						messagesToSend.clear();
+
+						socket = nextSocket;
+						host = nextHost;
+						port = nextPort;
+						timeout = nextTimeout;
+						parameters = nextParameters;
+
+						doStartProtocol();
+						interruptOnError = null;
+
+					} else if (stopRequested && isConnected()) {
+						// Handles a stop request, if the socket is connected
+						stopRequested = false;
+						messagesToSend.clear();
+						doStopProtocol();
+
+					} else if (restartRequested && isConnected()) {
+						// Handles a restart request, if the socket is connected
+						restartRequested = false;
+						messagesToSend.clear();
+
+						synchronized (this) {
+							if (isConnected() || isRunning()) {
+								doStopProtocol();
+							}
+							doStartProtocol();
+						}
+					}
+				} catch (Exception e) {
+					try {
+						doStopProtocol();
+					} catch (IOException e1) {
+						// Do nothing
+					}
+
+					if (exceptionHandler != null) {
+						// Delegate the exception to user
+						if (e instanceof ProtocolHandshakeException) {
+							exceptionHandler.handleProtocolInitException(
+									handle, (ProtocolHandshakeException) e);
+						} else if (e instanceof IOException) {
+							exceptionHandler.handleIOException(handle,
+									(IOException) e);
+						}
+					}
+
+					// Interrupt the waiting start thread, if available
+					if (interruptOnError != null) {
+						interruptOnError.interrupt();
+					}
+				}
+
+				// Send the next message of the queue
+				if (isConnected() && (messageToSend != null)) {
+					try {
+						doSendMessage(messageToSend);
+						messageToSend = null;
+					} catch (Exception e) {
+						if (exceptionHandler != null) {
+							// Delegate the exception to user
+							if (e instanceof ProtocolRawHandlingException) {
+								exceptionHandler
+										.handleProtocolRawHandlingException(
+												handle,
+												(ProtocolRawHandlingException) e);
+							} else if (e instanceof InvalidMessageException) {
+								exceptionHandler
+										.handleInvalidMessageException(
+												handle,
+												(InvalidMessageException) e);
+							} else if (e instanceof InvalidDefinitionException) {
+								exceptionHandler
+										.handleInvalidDefinitionException(
+												handle,
+												(InvalidDefinitionException) e);
+							} else if (e instanceof IOException) {
+								exceptionHandler.handleIOException(handle,
+										(IOException) e);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		/**
+		 * Adds a message to the scheduler queue
+		 * 
+		 * @param message
+		 *            The message to add to the queue
+		 */
+		public void queueMessage(ProtocolMessage message) {
+			synchronized (messagesToSend) {				
+					messagesToSend.offer(message);
+					messagesToSend.notify();
+			}
+		}
+
+		/**
+		 * Requests a restart to the event handler The request will be performed
+		 * when there are no messages being sent through the socket. The request
+		 * may not be accepted if placed right after another threads request
+		 */
+		public void requestRestart() {
+			if ((lastRestartGrantedTime == -1)
+					|| (System.currentTimeMillis() - lastRestartGrantedTime > RESTART_REQUESTS_DELAY)) {
+			    synchronized (messagesToSend) {
+			        restartRequested = true;
+			        lastRestartGrantedTime = System.currentTimeMillis();
+			        messagesToSend.notify();
+			    }
+			}
+		}
+
+		/**
+		 * Requests a protocol start to the event handler
+		 * 
+		 * @param socket
+		 *            A connected socket, if available, or <code>null</code>
+		 *            otherwise
+		 * @param host
+		 *            The host where to connect, or <code>null</code> if the
+		 *            current host shall be used. This will be ignored if a
+		 *            connected socket is provided
+		 * @param port
+		 *            The port where to connect, or <code>null</code> if the
+		 *            current port shall be used. This will be ignored if a
+		 *            connected socket is provided
+		 * @param timeout
+		 *            The desired connection timeout, or -1 if the default
+		 *            timeout shall be used
+		 * @param parameters
+		 *            The connection parameters to use, or <code>null</code> if
+		 *            the current parameters shall be used.
+		 * @param interruptOnError
+		 *            A thread that shall be interrupt if the start process
+		 *            fails
+		 */
+		public void requestStart(Socket socket, String host, int port,
+				int timeout, Map<?, ?> parameters, Thread interruptOnError) {
+		    synchronized (messagesToSend) {
+		        nextSocket = socket;
+		        nextHost = host;
+		        nextPort = port;
+		        nextTimeout = timeout;
+		        nextParameters = parameters;
+		        this.interruptOnError = interruptOnError;			
+		        startRequested = true;
+		        messagesToSend.notify();
+		    }
+		}
+
+		/**
+		 * Requests a protocol stop to the event handler
+		 */
+		public void requestStop() {
+		    synchronized (messagesToSend) {
+		        stopRequested = true;
+		        messagesToSend.notify();
+		    }
+		}
+
+		/**
+		 * Stops the event handler. Its thread ends after this action. This
+		 * method shall only be called when the protocol engine will be disposed
+		 */
+		public void stopEventHandler() {
+			isRunning = false;
+	         synchronized (messagesToSend) {
+	             messagesToSend.notify();
+	         }
 		}
 	}
 

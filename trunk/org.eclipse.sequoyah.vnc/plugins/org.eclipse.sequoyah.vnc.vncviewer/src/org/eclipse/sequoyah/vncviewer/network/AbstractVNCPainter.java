@@ -10,6 +10,7 @@
  * Contributors:
  * Daniel Barboza Franco (Motorola) - Bug [227793] - Implementation of the several enc(...). A little improvement into the reading mechanism (readPixels()).
  * Daniel Barboza Franco (Motorola) - Bug [242129] - Raw enconding not implemented correctly
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.network;
 
@@ -129,20 +130,32 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 		byte pixelsb[] = new byte[bytesNum];
 		
 		int bytesRead = 0;
+		long currentTime = System.currentTimeMillis();
+		long timeout = 15000;
 		
 		// Read the array of pixels from the VNC Server
+		int numRead;
 		while (bytesRead < bytesNum) {
-			int numRead;
+			numRead = 0;
 			
 			try {
-				numRead = in.read(pixelsb, bytesRead, bytesNum - bytesRead);
+			    if (in.available() > 0) {
+			        numRead = in.read(pixelsb, bytesRead, bytesNum - bytesRead);
+			        if (numRead != -1) {
+			            currentTime = System.currentTimeMillis();
+			        }
+			    }
+			    
+				if (System.currentTimeMillis() - currentTime > timeout) {
+				    throw new ProtoClientException("Timeout reading pixels."); //$NON-NLS-1$
+				}
 			}
 			catch (IOException ioe){
 				log(VNCProtocol.class).error("Rectangle message error: " + ioe.getMessage()); //$NON-NLS-1$
 				throw new ProtoClientException("Rectangle message error."); //$NON-NLS-1$
 			}
 			
-			if (numRead >= 0) {
+			if (numRead > 0) {
 				bytesRead += numRead;
 			}
 		}
@@ -152,7 +165,7 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 	}
 	
 	
-	public int[] readPixels(DataInputStream is, int w, int h){
+	public int[] readPixels(DataInputStream is, int w, int h) throws Exception {
 		
 		byte pixelsBucket[] = {0x00};
 		int result[] = new int[w*h];
@@ -160,13 +173,7 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 		int pixelsNum = w * h;
 		int bytesToRead = pixelsNum * ((pixelFormat.getBitsPerPixel())/8);
 		
-		try {
-			pixelsBucket = readpixelsbytes(is, bytesToRead);
-		} catch (ProtoClientException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		pixelsBucket = readpixelsbytes(is, bytesToRead);
 		
 		for (int j=0; j < (pixelsNum); j++) {
 			//int line = ((int)(j / width));

@@ -10,6 +10,7 @@
  * Daniel Barboza Franco - Bug [233775] - Does not have a way to enter the session password for the vnc connection
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -55,7 +56,7 @@ public interface IProtocolHandshake {
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
-	void serverHandshaking(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
+	void serverHandshake(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
 			throws ProtocolHandshakeException;
 
 	/**
@@ -78,6 +79,6 @@ public interface IProtocolHandshake {
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
-	void clientHandshaking(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
+	void clientHandshake(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
 			throws ProtocolHandshakeException;
 }

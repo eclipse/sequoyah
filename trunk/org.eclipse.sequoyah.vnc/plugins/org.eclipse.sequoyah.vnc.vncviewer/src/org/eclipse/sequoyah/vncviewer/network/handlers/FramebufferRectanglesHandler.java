@@ -11,6 +11,7 @@
  * Daniel Barboza Franco (Motorola) - Integration with code from bug 227793 to correctly deal with the redesigned painting process.
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  *******************************************************************************/
 package org.eclipse.tml.vncviewer.network.handlers;
 
@@ -44,19 +45,10 @@ import org.eclipse.tml.vncviewer.registry.VNCProtocolRegistry;
  */
 public class FramebufferRectanglesHandler implements IRawDataHandler {
 
-	private int current_rect = 1;
-	private int x0, y0 = Integer.MAX_VALUE;
-	private int x1, y1 = 0;
-
 	public Map<String, Object> readRawDataFromStream(ProtocolHandle handle,
 			InputStream dataStream, IMessageFieldsStore currentlyReadFields,
 			boolean isBigEndian) throws IOException,
 			ProtocolRawHandlingException {
-
-		// Determine the number of pixels using the width and height already
-		// read
-		int w = (Integer) currentlyReadFields.getFieldValue("width"); //$NON-NLS-1$
-		int h = (Integer) currentlyReadFields.getFieldValue("height"); //$NON-NLS-1$
 
 		Map<String, Object> fieldsMap = new HashMap<String, Object>();
 
@@ -74,39 +66,16 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 			int height = (Integer) currentlyReadFields.getFieldValue("height"); //$NON-NLS-1$
 			int encoding = (Integer) currentlyReadFields
 					.getFieldValue("encodingType"); //$NON-NLS-1$
-			// byte[] data = (byte[])
-			// currentlyReadFields.getFieldValue("pixelsData");
 
 			// Process the rectangle data into the painter
-
 			try {
 				painter.processRectangle(new RectHeader(x, y, width, height,
 						encoding), protocolData.getInputStream());
+			} catch (IOException e) {
+			    throw e;
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new ProtocolRawHandlingException(e);
 			}
-
-			int numRect = (Integer) currentlyReadFields
-					.getFieldValue("numberOfRectangles"); //$NON-NLS-1$
-
-			x0 = Math.min(x0, x);
-			y0 = Math.min(y0, y);
-			x1 = Math.max(x1, x + w);
-			y1 = Math.max(y1, y + h);
-
-			if (current_rect == numRect) {
-				current_rect = 1;
-
-				painter.updateRectangle(x0, y0, x1, y1);
-
-				x0 = y0 = Integer.MAX_VALUE;
-				x1 = y1 = 0;
-
-			} else {
-				current_rect += 1;
-			}
-
 		}
 
 		return fieldsMap;

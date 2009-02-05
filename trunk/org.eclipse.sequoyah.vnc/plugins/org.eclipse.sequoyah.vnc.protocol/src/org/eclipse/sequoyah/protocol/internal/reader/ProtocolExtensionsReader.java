@@ -12,6 +12,7 @@
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [242924] - There is no way to keep the size of a Variable Size Data read
  * Daniel Barboza Franco (Eldorado Research Institute) - [257588] - Add support to ServerCutText message
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.reader;
 
@@ -129,12 +130,8 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * 
 	 * @return A collection containing the ids of all messages that belongs to
 	 *         the server part of the protocol
-	 * 
-	 * @throws MalformedProtocolExtensionException
-	 *             DOCUMENT ME!!
 	 */
-	public static Collection<String> readServerMessages(String protocolId)
-			throws MalformedProtocolExtensionException {
+	public static Collection<String> readServerMessages(String protocolId) {
 		return getMessagesOrientations(getAllParentProtocols(protocolId),
 				PROTOCOL_MESSAGE_ORIENTATION_SERVER_ELEM);
 	}
@@ -149,12 +146,8 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * 
 	 * @return A collection containing the ids of all messages that belongs to
 	 *         the client part of the protocol
-	 * 
-	 * @throws MalformedProtocolExtensionException
-	 *             DOCUMENT ME!!
 	 */
-	public static Collection<String> readClientMessages(String protocolId)
-			throws MalformedProtocolExtensionException {
+	public static Collection<String> readClientMessages(String protocolId) {
 		return getMessagesOrientations(getAllParentProtocols(protocolId),
 				PROTOCOL_MESSAGE_ORIENTATION_CLIENT_ELEM);
 	}
@@ -291,18 +284,8 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 				for (IConfigurationElement protocolMsgConf : protocolMsgConfArray) {
 					String extensionProtocolId = protocolMsgConf
 							.getAttribute(PROTOCOL_MESSAGE_PROTOCOL_ID_ATTR);
-					String extensionMsgCode = protocolMsgConf
-							.getAttribute(PROTOCOL_MESSAGE_CODE_ATTR);
 
-			
-					//TODO: Check also for the negative (server msgs) code
-					
-					// A message is read if it belongs to the protocol AND a
-					// message with same
-					// code was not read yet
-					if ((protocol.equals(extensionProtocolId))
-							&& (!messageDefCollection
-									.containsKey(extensionMsgCode))) {
+					if ((protocol.equals(extensionProtocolId))) {
 						readMsgDefToCollection(protocolMsgConf,
 								messageDefCollection, readFields);
 					}
@@ -393,12 +376,14 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 
 			// Stores the bean at the provided map
 			if (clientMsgs.contains(id)) {
-				messageDefMap.put(code, bean);				
+				if (!messageDefMap.containsKey(code))
+					messageDefMap.put(code, bean);				
 			}
 			
 			// Server msgs are negative
 			if (serverMsgs.contains(id)) {
-				messageDefMap.put(-code, bean);				
+				if (!messageDefMap.containsKey(-code))
+					messageDefMap.put(-code, bean);				
 			}
 
 
@@ -566,12 +551,9 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 *         protocols) that are declared as server/client messages, depending
 	 *         on the provided messageOrientationElem parameter
 	 * 
-	 * @throws MalformedProtocolExtensionException
-	 *             DOCUMENT ME!!
 	 */
 	private static Collection<String> getMessagesOrientations(
-			List<String> protocols, String messageOrientationElem)
-			throws MalformedProtocolExtensionException {
+			List<String> protocols, String messageOrientationElem) {
 
 		Collection<String> messageOrientations = new HashSet<String>();
 

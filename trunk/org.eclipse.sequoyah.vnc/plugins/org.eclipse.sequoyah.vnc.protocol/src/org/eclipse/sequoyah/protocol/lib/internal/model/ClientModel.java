@@ -11,6 +11,7 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -121,7 +122,7 @@ public class ClientModel implements IModel {
 			Boolean isBigEndianProtocol,
 			String host, int port,
 			Map <String, Object> parameters)
-			throws UnknownHostException, IOException, ProtocolHandshakeException {
+			throws ProtocolHandshakeException {
 
 		Integer retriesObj = (Integer) parameters.get("connectionRetries"); //$NON-NLS-1$
 		int retries  = (retriesObj != null) ? retriesObj : -1;
@@ -129,8 +130,23 @@ public class ClientModel implements IModel {
 		ProtocolHandle handle = new ProtocolHandle();
 		ProtocolEngine eng = new ProtocolEngine(handle, protocolInitializer, allMessages, incomingMessages,
 				outgoingMessages, exceptionHandler, isBigEndianProtocol, false, retries);
-		eng.startProtocol(host, port, parameters);
+		eng.requestStart(host, port, parameters, Thread.currentThread());
 		runningEngines.put(handle, eng);
+		
+		// TODO: Think of a better way to handle the protocol start delay than a busy wait
+		while (!eng.isRunning())
+		{
+		    try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                // An interruption will happen if the start operation fails. 
+                // In this case, abort execution of the start operation
+                runningEngines.remove(handle);
+                eng.dispose();
+                throw new ProtocolHandshakeException("Protocol start error");
+            }
+		}
+		
 		return handle;
 	}
 
@@ -149,8 +165,20 @@ public class ClientModel implements IModel {
 
 		ProtocolEngine eng = runningEngines.get(handle);
 		if (eng != null) {
-			eng.stopProtocol();
-		}
+			eng.requestStop();
+			
+		     // TODO: Think of a better way to handle the protocol stop delay than a busy wait
+	        while (eng.isRunning())
+	        {
+	            try {
+	                Thread.sleep(50);
+	            } catch (InterruptedException e) {
+	                // Do nothing
+	            }
+	        }
+			
+			eng.dispose();
+		}	
 		runningEngines.remove(handle);
 	}
 
@@ -161,17 +189,16 @@ public class ClientModel implements IModel {
 	 *            The object that identifies the connection that is to 
 	 *            be restarted.
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolHandshakeException
-	 *             DOCUMENT ME!!
+	 * @return True if the restart was requested; false otherwise
 	 */
-	public void restartClientProtocol(ProtocolHandle handle)
-			throws IOException, ProtocolHandshakeException, ProtocolException {
+	public boolean restartClientProtocol(ProtocolHandle handle) {
+	    boolean restartRequested = false;
 		ProtocolEngine eng = runningEngines.get(handle);
 		if (eng != null) {
-			eng.restartProtocol();
-		}
+			eng.requestRestart();
+			restartRequested = true; 
+		} 
+		return restartRequested;
 	}
 
 	/**
@@ -199,7 +226,7 @@ public class ClientModel implements IModel {
 
 		ProtocolEngine eng = runningEngines.get(handle);
 		if (eng != null) {
-			eng.sendMessage(message);
+			eng.requestSendMessage(message);
 		}
 	}
 
@@ -212,8 +239,28 @@ public class ClientModel implements IModel {
 		for (ProtocolHandle key : keys) {
 			ProtocolEngine aEng = runningEngines.get(key);
 			if (!aEng.isConnected()) {
+			    aEng.dispose();
 				runningEngines.remove(key);
 			}
 		}
+	}
+	
+	/**
+	 * Tests if the protocol identified by handle is running
+	 * 
+	 * @param handle The handle that identify the protocol instance
+	 * 
+	 * @return True if the protocol is running; false otherwise
+	 */
+	public boolean isClientProtocolRunning(ProtocolHandle handle)
+	{
+	    boolean isRunning = false;
+	    
+	    ProtocolEngine eng = runningEngines.get(handle);
+	    if (eng != null) {
+	        isRunning = eng.isRunning();
+	    }
+	    
+	    return isRunning;
 	}
 }

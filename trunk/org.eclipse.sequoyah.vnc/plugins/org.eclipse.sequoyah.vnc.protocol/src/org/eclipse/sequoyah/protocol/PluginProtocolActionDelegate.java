@@ -12,6 +12,7 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 package org.eclipse.tml.protocol;
 
@@ -61,8 +62,6 @@ public class PluginProtocolActionDelegate {
 	 * 
 	 * @return A handle to identify the connection just made
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
 	 * @throws ProtocolHandshakeException
 	 *             DOCUMENT ME!!
 	 * @throws MalformedProtocolExtensionException
@@ -70,7 +69,7 @@ public class PluginProtocolActionDelegate {
 	 */
 	public static ProtocolHandle startClientProtocol(String protocolId,
 			IProtocolExceptionHandler exceptionHandler, String host, int port,
-			Map parameters) throws IOException, ProtocolHandshakeException,
+			Map parameters) throws ProtocolHandshakeException,
 			MalformedProtocolExtensionException {
 
 		PluginProtocolModel model = PluginProtocolModel.getInstance();
@@ -158,7 +157,7 @@ public class PluginProtocolActionDelegate {
 	 *             DOCUMENT ME!!
 	 */
 	public static void restartProtocol(ProtocolHandle handle)
-			throws IOException, ProtocolHandshakeException, ProtocolException {
+			throws IOException, ProtocolHandshakeException {
 
 		ProtocolActionDelegate.restartProtocol(handle);
 	}
@@ -190,5 +189,16 @@ public class PluginProtocolActionDelegate {
 
 		ProtocolActionDelegate
 				.sendMessageToServer(handle, message);
+	}
+	
+	/**
+	 * Tests if the protocol identified by handle is running or not
+	 * 
+	 * @param handle The handle that identifies a protocol instance
+	 * 
+	 * @return True if the protocol is running, false otherwise
+	 */
+	public static boolean isProtocolRunning(ProtocolHandle handle) {
+	    return ProtocolActionDelegate.isProtocolRunning(handle);
 	}
 }

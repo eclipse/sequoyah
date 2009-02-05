@@ -14,6 +14,7 @@
  * Daniel Barboza Franco - Bug [233062] - Protocol connection port is static.
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
@@ -251,7 +252,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 		}
 	}
 
-	public void clientHandshaking(ProtocolHandle handle, DataInputStream in,
+	public void clientHandshake(ProtocolHandle handle, DataInputStream in,
 			OutputStream out, Map parameters) throws ProtocolHandshakeException {
 
 		String password = (String) parameters.get("password"); //$NON-NLS-1$
@@ -292,7 +293,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 
 	}
 
-	public void serverHandshaking(ProtocolHandle handle, DataInputStream in,
+	public void serverHandshake(ProtocolHandle handle, DataInputStream in,
 			OutputStream out, Map parameters) throws ProtocolHandshakeException {
 
 	}

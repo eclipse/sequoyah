@@ -11,6 +11,7 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
+ * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt.img;
@@ -166,7 +167,7 @@ public class Painter extends AbstractVNCPainter implements ISWTPainter {
 				Painter.this.setPixels(x, y, width, height, pixels, start);
 			}
 
-			public int[] readpixels(DataInputStream is, int w, int h) {
+			public int[] readpixels(DataInputStream is, int w, int h) throws Exception {
 				return  Painter.this.readPixels(is, w, h);
 			}
 		};
