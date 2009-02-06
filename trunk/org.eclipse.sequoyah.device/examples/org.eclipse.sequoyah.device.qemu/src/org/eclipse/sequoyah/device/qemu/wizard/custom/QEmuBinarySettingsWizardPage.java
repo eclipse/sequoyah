@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 MontaVista Software, Inc.
+ * Copyright (c) 2008-2009 MontaVista Software, Inc and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
+ * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  *******************************************************************************/
 package org.eclipse.tml.device.qemu.wizard.custom;
 
@@ -390,7 +391,7 @@ public class QEmuBinarySettingsWizardPage extends WizardPage implements
 		StringBuffer buffer = new StringBuffer();
 		if (emulatorBinaryText.getText().trim() != "") { //$NON-NLS-1$
 			buffer.append(emulatorBinaryText.getText().trim());
-			buffer.append(" -L . "); //$NON-NLS-1$
+			//buffer.append(" -L . "); //$NON-NLS-1$
 		}
 		if (kernelImageText.getText().trim() != "") { //$NON-NLS-1$
 			buffer.append(" -kernel "); //$NON-NLS-1$

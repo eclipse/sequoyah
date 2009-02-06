@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
-<plugin>
-   <!--extension
+<plugin>   
+   <extension
          point="org.eclipse.tml.deviceTypes">
       <deviceType
             description="Abstract device for QEMU"
@@ -9,20 +9,12 @@
             id="org.eclipse.tml.device.qemu.abstract"
             isAbstract="true"
             label="Abstract QEMU device"
-            name="Abstract QEMU device">
+            name="Abstract QEMU device"
+            superClass="org.eclipse.tml.device.emulator">
          <property
                name="icon"
                value="icons/full/obj16/qemu.gif">
          </property>
-      </deviceType>
-       <deviceType
-            description="Generic device for QEMU"
-            handler="org.eclipse.tml.device.qemu.handler.QEmuGenericDeviceHandler"
-            id="org.eclipse.tml.device.qemu.generic"
-            isAbstract="false"
-            superClass="org.eclipse.tml.device.qemu.abstract"
-            label="Generic QEMU device"
-            name="Generic QEMU device">
       </deviceType>
    </extension>
    <extension
@@ -30,8 +22,7 @@
          name="startService"
          point="org.eclipse.tml.serviceDefinition">
       <service
-            handler="org.eclipse.tml.device.qemu.handler.QEmuStartHandler"
-            id="org.eclipse.tml.service.start.startService">
+           id="org.eclipse.tml.service.start.startService">
          <status
                endId="IDLE"
                haltId="OFF"
@@ -50,92 +41,94 @@
                haltId="IDLE"
                startId="IDLE">
          </status>
-         <status
-               endId="OFF"
-               haltId="IDLE-VNC"
-               startId="IDLE-VNC">
-         </status>
       </service>
    </extension>
-   <extension
+	<extension
+
           id="org.eclipse.tml.device.qemu.abstract"
+
           name="vncViewerService"
+
           point="org.eclipse.tml.serviceDefinition">
+
        <service
+
              id="org.eclipse.tml.service.vncviewer.vncViewerService">
+
           <status
                 endId="IDLE-VNC"
                 haltId="IDLE"
-                startId="IDLE">
+    			startId="IDLE">
+
           </status>
           <status
                 endId="IDLE-VNC"
-                haltId="IDLE-VNC"
+                haltId="IDLE"
                 startId="IDLE-VNC">
-          </status>
-        </service>
-    </extension>
-        <extension
-          id="org.eclipse.tml.device.qemu.abstract"
-          name="unplugVncViewerService"
-          point="org.eclipse.tml.serviceDefinition">
-       <service
-             id="org.eclipse.tml.service.vncviewer.unplugVncViewerService">
-          <status
-                endId="IDLE"
-                haltId="IDLE-VNC"
-                startId="IDLE-VNC">
-          </status>
-        </service>
-    </extension>
+          </status></service>
 
-    <extension
-          point="org.eclipse.tml.device.ui.newDeviceWizardPages">
-       <wizardPage
-             id="org.eclipse.tml.device.qemu.wizardPage1"
-             pageClass="org.eclipse.tml.device.qemu.wizard.custom.QEmuConnectionInfoWizardPage">
-          <deviceType
-                deviceTypeId="org.eclipse.tml.device.qemu.abstract">
-          </deviceType>
-       </wizardPage>
     </extension>
     <extension
+
+          id="org.eclipse.tml.device.qemu.abstract"
+
+          name="unplugVncViewerService"
+
+          point="org.eclipse.tml.serviceDefinition">
+
+       <service
+
+             id="org.eclipse.tml.service.vncviewer.unplugVncViewerService">
+
+          <status
+
+                endId="IDLE"
+
+                haltId="IDLE"
+
+                startId="IDLE-VNC">
+
+          </status></service>
+
+    </extension>
+    
+   <extension
+         id="generic"
+         name="generic"
+         point="org.eclipse.tml.deviceTypes">
+      <deviceType
+            description="generic device for QEMU"
+            handler="org.eclipse.tml.device.qemu.handler.QEmuGenericDeviceHandler"
+            id="org.eclipse.tml.device.qemu.generic"
+            isAbstract="false"
+            label="Generic QEMU device"
+            name="Generic QEMU device"
+            superClass="org.eclipse.tml.device.qemu.abstract">
+         <property
+               name="icon"
+               value="icons/full/obj16/qemu.gif">
+         </property>
+      </deviceType>
+   </extension>
+   <extension
           point="org.eclipse.tml.device.ui.newDeviceWizardPages">
        <wizardPage
-             id="org.eclipse.tml.device.qemu.wizardPage2"
+             id="org.eclipse.tml.device.qemu.generic.wizardPage1"
              pageClass="org.eclipse.tml.device.qemu.wizard.custom.QEmuBinarySettingsWizardPage">
           <deviceType
                 deviceTypeId="org.eclipse.tml.device.qemu.generic">
           </deviceType>
        </wizardPage>
-    </extension>
-    <extension
-         id="qemuWizard"
-         name="Qemu Instance Wizard"
-         point="org.eclipse.ui.newWizards">
-     <category
-	   id = "org.eclipse.ui.emulators"
-	   name="Emulators">
-	 </category>
-      <wizard
-            canFinishEarly="true"
-            category="org.eclipse.ui.emulators"
-            class="org.eclipse.tml.framework.device.ui.wizard.NewDeviceWizard"
-            hasPages="true"
-            icon="icons/full/obj16/qemu.gif"
-            id="qemuWizard"
-            name="Qemu Device Instance Wizard"
-            project="true">
-            <description>Create a new QEmu device instance</description>
-      </wizard>
    </extension>
-    <extension
-         id="IDLE-VNC"
-         point="org.eclipse.tml.status">
-      <status
-            id="IDLE-VNC"
-            image="icons/full/obj16/qemu.gif"
-            name="IDLE-VNC">
-      </status>
-   </extension-->
+   <extension
+          point="org.eclipse.tml.device.ui.newDeviceWizardPages">
+       <wizardPage
+             id="org.eclipse.tml.device.qemu.generic.wizardPage2"
+             pageClass="org.eclipse.tml.device.qemu.wizard.custom.QEmuConnectionInfoWizardPage">
+          <deviceType
+                deviceTypeId="org.eclipse.tml.device.qemu.generic">
+          </deviceType>
+       </wizardPage>
+   </extension>
+
 </plugin>

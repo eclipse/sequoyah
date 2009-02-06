@@ -9,120 +9,22 @@
              handler="org.eclipse.tml.device.qemuarm.handler.QEmuARMDeviceHandler"
              icon="icons/full/obj16/qemuarm.gif"
              id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
+             isAbstract="false"
              label="QEmuARM Mobile Device"
-             name="QEmuARM Mobile Device"/>
+             name="QEmuARM Mobile Device"
+             superClass="org.eclipse.tml.device.qemu.abstract"/>
    </extension>
    <extension
-          point="org.eclipse.tml.device.wizard"
-          id="qemuarmWizard"
-          name="Settings for QEmuArm Emulator">
-          <settings
-                 needsProgressMonitor="true"
-                 forcePreviousAndNextButtons="true"
-                 canFinishEarly="false"
-         		 image="icons/full/cview16/emulator_ban.gif"
-         		 title="QemuARM Device Instance Wizard">
-          </settings>     
-          <customizer class ="org.eclipse.tml.device.qemuarm.wizard.DefaultWizardCustomizer" >          
-          </customizer>
-          <usage
-                class="org.eclipse.tml.device.qemuarm.wizard.DefaultNewEmulatorInstanceWizard"
-                device="org.eclipse.tml.device.qemuarm.qemuarmDevice">
-          </usage>    
-    </extension>
-       
-    <extension
-         id="qemuarmWizard"
-         name="QemuArm Device Instance Wizard"
-         point="org.eclipse.ui.newWizards">
-     <category
-	   id = "org.eclipse.ui.emulators"
-	   name="Emulators">
-	 </category>
-      <wizard
-            canFinishEarly="true"
-            category="org.eclipse.ui.emulators"
-            class="org.eclipse.tml.device.qemuarm.wizard.DefaultNewEmulatorInstanceWizard"
-            hasPages="true"
-            icon="icons/full/obj16/qemuarm.gif"
-            id="qemuarmWizard"
-            name="QemuArm Device Instance Wizard"
-            project="true">
-            <description>Create a new QEmu ARM device instance</description>
-      </wizard>
-   </extension>
-   
-   <extension
-         id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
-         name="startService"
-         point="org.eclipse.tml.serviceDefinition">
-      <service
-            handler="org.eclipse.tml.device.qemuarm.handler.StartServiceHandler"
-            id="org.eclipse.tml.service.start.startService">
-         <status
-               endId="IDLE"
-               haltId="OFF"
-               startId="OFF">
-         </status>
-      </service>
-   </extension>
-   <extension
-         id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
-         name="stopService"
-         point="org.eclipse.tml.serviceDefinition">
-      <service
-            handler="org.eclipse.tml.device.qemuarm.handler.StopServiceHandler"
-            id="org.eclipse.tml.service.stop.stopService">
-         <status
-               endId="OFF"
-               haltId="IDLE"
-               startId="IDLE">
-         </status>
-         <status
-               endId="OFF"
-               haltId="IDLE-VNC"
-               startId="IDLE-VNC">
-         </status>
-      </service>
-   </extension>
-   <extension
-          id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
-          name="vncViewerService"
-          point="org.eclipse.tml.serviceDefinition">
-       <service
-             id="org.eclipse.tml.service.vncviewer.vncViewerService">
-          <status
-                endId="IDLE-VNC"
-                haltId="IDLE"
-                startId="IDLE">
-          </status>
-          <status
-                endId="IDLE-VNC"
-                haltId="IDLE-VNC"
-                startId="IDLE-VNC">
-          </status></service>
-    </extension>
-   <extension
-         id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
-         name="unplugVncViewerService"
-         point="org.eclipse.tml.serviceDefinition">
-      <service
-            id="org.eclipse.tml.service.vncviewer.unplugVncViewerService">
-         <status
-               endId="IDLE"
-               haltId="IDLE-VNC"
-              startId="IDLE-VNC">
-         </status>
-      </service>
-   </extension>
-   <extension
-         id="IDLE-VNC"
-         point="org.eclipse.tml.status">
-      <status
-            id="IDLE-VNC"
-            image="icons/full/obj16/qemuarm.gif"
-            name="IDLE-VNC">
-      </status>
+          point="org.eclipse.tml.device.ui.newDeviceWizardPages">
+       <wizardPage
+             id="org.eclipse.tml.device.wizardPage1"
+             pageClass="org.eclipse.tml.framework.device.ui.wizard.DefaultConnectionInfoWizardPage">
+          <deviceType
+                deviceTypeId="org.eclipse.tml.device.qemuarm.qemuarmDevice">
+          </deviceType>
+       </wizardPage>
    </extension>
 
+   
+    
 </plugin>

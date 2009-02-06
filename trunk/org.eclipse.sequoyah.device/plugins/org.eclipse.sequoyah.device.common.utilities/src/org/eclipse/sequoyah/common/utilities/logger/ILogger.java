@@ -1,14 +1,14 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2009 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributor:
- * Fabio Fantato (Motorola)
+ * Fabio Fantato (Instituto Eldorado)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  ********************************************************************************/
 
 
@@ -96,6 +96,11 @@ public interface ILogger
      */
     public void setLogToConsole();
 
+    /**
+     * Show the log in Default Console
+     */
+    public void setLogToDefault();
+    
     /**
      * Write the log into a file
      *

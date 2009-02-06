@@ -30,16 +30,14 @@ import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.ui.internal.model.DeviceTypeCustomWizardPage;
 import org.eclipse.tml.framework.device.ui.model.IDeviceTypeCustomWizardPage;
-import org.eclipse.tml.framework.device.ui.wizard.DefaultDeviceTypeWizardPage;
-import org.eclipse.tml.framework.device.ui.wizard.NewDeviceWizard;
 
 /*
  * handler used by the new device instance wizard. It tries to find the custom
  * pages defined from the new device wizard pages extension point and add them
  * dynamically when the specified device type is selected by user.
  */
-public class DeviceTypeCustomWizardPageHandler {
-	private NewDeviceWizard wizard;
+public class DeviceTypeCustomMenuWizardPageHandler {
+	private NewDeviceMenuWizard wizard;
 	private static final String WIZARD_PAGES_EXTENSION_POINT_ID = "org.eclipse.tml.device.ui.newDeviceWizardPages"; //$NON-NLS-1$
 	private static final String XML_ELEMENT_WIZARD_PAGE = "wizardPage"; //$NON-NLS-1$
 	private static final String XML_ATTRIBUTE_ID = "id"; //$NON-NLS-1$
@@ -50,7 +48,7 @@ public class DeviceTypeCustomWizardPageHandler {
 
 	private static Map<String, ArrayList<IDeviceTypeCustomWizardPage>> customPages = new HashMap<String, ArrayList<IDeviceTypeCustomWizardPage>>();
 
-	public DeviceTypeCustomWizardPageHandler(NewDeviceWizard wizard) {
+	public DeviceTypeCustomMenuWizardPageHandler(NewDeviceMenuWizard wizard) {
 		super();
 		this.wizard = wizard;
 	}
@@ -61,7 +59,7 @@ public class DeviceTypeCustomWizardPageHandler {
 				.getCurrentDeviceTypeId());
 		if (pages == null)
 			return null;
-		if (currentPage instanceof DefaultDeviceTypeWizardPage) {
+		if (currentPage instanceof DefaultDeviceTypeMenuWizardPage) {
 			return pages.get(0).getPageClass();
 		} else {
 
@@ -78,13 +76,13 @@ public class DeviceTypeCustomWizardPageHandler {
 
 	public IWizardPage getPreviousPage(IWizardPage currentPage) {
 		loadExtensionsSynchronized();
-		if (currentPage instanceof DefaultDeviceTypeWizardPage) {
+		if (currentPage instanceof DefaultDeviceTypeMenuWizardPage) {
 			return null;
 		}
 		ArrayList<IDeviceTypeCustomWizardPage> pages = customPages.get(wizard
 				.getCurrentDeviceTypeId());
 		if (pages != null) {
-			if (currentPage instanceof DefaultDeviceTypeWizardPage) {
+			if (currentPage instanceof DefaultDeviceTypeMenuWizardPage) {
 				return null;
 			} else {
 
@@ -93,7 +91,7 @@ public class DeviceTypeCustomWizardPageHandler {
 					if (page.getPageClass().equals(currentPage)) {
 						if (i == 0) {
 							return wizard
-									.getPage(NewDeviceWizard.DEFAULT_PAGE_ID);
+									.getPage(NewDeviceMenuWizard.DEFAULT_PAGE_ID);
 						} else {
 							return pages.get(i - 1).getPageClass();
 						}

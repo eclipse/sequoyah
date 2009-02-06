@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc and others.
+ * Copyright (c) 2007-2009 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,6 +10,7 @@
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
  * Yu-Fen Kuo (MontaVista)  - bug#236476 - Provide a generic device type
+ * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  ********************************************************************************/
 
 package org.eclipse.tml.device.qemu.launcher;
@@ -85,7 +86,7 @@ public class QEmuLauncher implements IDeviceLauncher {
 		StringBuffer buffer = new StringBuffer();
 		String kernelImage = instance.getProperties().getProperty(
 				IPropertyConstants.KERNEL_IMAGE);
-		buffer.append(" -L . "); //$NON-NLS-1$
+		//buffer.append(" -L . "); //$NON-NLS-1$
 		if (kernelImage != null && kernelImage != "") { //$NON-NLS-1$
 			buffer.append(" -kernel "); //$NON-NLS-1$
 			buffer.append(kernelImage);

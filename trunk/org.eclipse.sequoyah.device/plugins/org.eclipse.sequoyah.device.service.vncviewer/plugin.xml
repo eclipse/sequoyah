@@ -33,4 +33,17 @@
             visible="true">
       </service>
    </extension>
+    <extension
+         id="IDLE-VNC"
+         point="org.eclipse.tml.status">
+      <status
+            id="IDLE-VNC"
+            image="icons/full/obj16/vnc2.gif"
+            name="IDLE-VNC">
+      </status>
+   </extension>
+   
+   
+   
+   
 </plugin>

@@ -1,18 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
-<plugin>
-
+<plugin>   
    <extension
          id="qemureactDevice"
          name="qemureactDevice"
          point="org.eclipse.tml.deviceTypes">
       <deviceType
             handler="org.eclipse.tml.device.qemureact.handler.QEmuReactDeviceHandler"
-            icon="icons/full/obj16/qemureact.gif"
+            icon="icons/full/obj16/device.gif"
             id="org.eclipse.tml.device.qemureact.qemureactDevice"
             label="QEmuReact Mobile Device"
-            name="QEmuReact Mobile Device"/>
+            name="QEmuReact Mobile Device">
+            <property
+               name="icon"
+               value="icons/full/obj16/qemu.gif">
+         	</property>
+         </deviceType>
    </extension>
+   
+  <extension
+          point="org.eclipse.tml.device.ui.newDeviceWizardPages">
+       <wizardPage
+             id="org.eclipse.tml.device.qemuarm.wizardPage1"
+             pageClass="org.eclipse.tml.framework.device.ui.wizard.DefaultConnectionInfoWizardPage">
+          <deviceType
+                deviceTypeId="org.eclipse.tml.device.qemureact.qemureactDevice">
+          </deviceType>
+       </wizardPage>
+ </extension>
+   
    <extension
          id="org.eclipse.tml.device.qemureact.qemureactDevice"
          name="startService"
@@ -46,54 +62,7 @@
          </status>
       </service>
    </extension>
-   <extension
-         id="IDLE-VNC"
-         point="org.eclipse.tml.status">
-      <status
-            id="IDLE-VNC"
-            image="icons/full/obj16/qemureact2.gif"
-            name="IDLE-VNC">
-      </status>
-   </extension>
-   
-  <extension
-          point="org.eclipse.tml.device.wizard"
-          id="qemureactWizard"
-          name="Settings for QEmuReact Emulator">
-          <settings
-                 needsProgressMonitor="true"
-                 forcePreviousAndNextButtons="true"
-                 canFinishEarly="false"
-         		 image="icons/full/cview16/emulator_ban.gif"
-         		 title="QemuReact Device Instance Wizard">
-          </settings>     
-          <customizer class ="org.eclipse.tml.device.qemureact.wizard.DefaultWizardCustomizer" >          
-          </customizer>
-          <usage
-                class="org.eclipse.tml.device.qemureact.wizard.DefaultNewEmulatorInstanceWizard"
-                device="org.eclipse.tml.device.qemureact.qemureactDevice">
-          </usage>    
-    </extension>
-    <extension
-         id="qemureactWizard"
-         name="QemuReact Device Instance Wizard"
-         point="org.eclipse.ui.newWizards">
-     <category
-	   id = "org.eclipse.ui.emulators"
-	   name="Emulators">
-	 </category>
-      <wizard
-            canFinishEarly="true"
-            category="org.eclipse.ui.emulators"
-            class="org.eclipse.tml.device.qemureact.wizard.DefaultNewEmulatorInstanceWizard"
-            hasPages="true"
-            icon="icons/full/cview16/emulator_wiz.gif"
-            id="qemureactWizard"
-            name="QemuReact Device Instance Wizard"
-            project="true">
-            <description>Create a new QEmu ReactOS device instance</description>
-      </wizard>
-   </extension>
+  
 <extension
 
           id="org.eclipse.tml.device.qemureact.qemureactDevice"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 MontaVista Software, Inc.
+ * Copyright (c) 2008-2009 MontaVista Software, Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,10 @@
  *
  * Contributors:
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
+ * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
+ * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  *******************************************************************************/
-package org.eclipse.tml.device.qemuarm.wizard.custom;
+package org.eclipse.tml.framework.device.ui.wizard;
 
 import java.util.Properties;
 
@@ -21,31 +23,29 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tml.device.qemuarm.QEmuARMPlugin;
-import org.eclipse.tml.framework.device.ui.wizard.IInstanceProperties;
+import org.eclipse.tml.common.utilities.IPropertyConstants;
+import org.eclipse.tml.framework.device.ui.DeviceUIResources;
 
 /*
  * wizard page for the new QEmu device type device instance wizard. It allows
  * users to specify the host, port and display info.
  */
-public class QEmuConnectionInfoWizardPage extends WizardPage implements
+public class DefaultConnectionInfoWizardPage extends WizardPage implements
 		IInstanceProperties {
 
 	private Text hostText;
 	private Text portText;
 	private Text displayText;
 
-	protected QEmuConnectionInfoWizardPage(String pageName) {
+	protected DefaultConnectionInfoWizardPage(String pageName) {
 		super(pageName);
 		
 	}
 
-	public QEmuConnectionInfoWizardPage() {
+	public DefaultConnectionInfoWizardPage() {
 		super("$qemu_basic_info$"); //$NON-NLS-1$
-		setTitle(QEmuARMPlugin
-				.getResourceString("QEmuConnectionInfoWizardPage.title")); //$NON-NLS-1$
-		setMessage(QEmuARMPlugin
-				.getResourceString("QEmuConnectionInfoWizardPage.message")); //$NON-NLS-1$
+		setTitle(DeviceUIResources.ConnectionInfoWizardPage_title); //$NON-NLS-1$
+		setMessage(DeviceUIResources.ConnectionInfoWizardPage_message); //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {
@@ -55,8 +55,7 @@ public class QEmuConnectionInfoWizardPage extends WizardPage implements
 		container.setFont(parent.getFont());
 
 		Label label = new Label(container, SWT.NONE);
-		label.setText(QEmuARMPlugin
-				.getResourceString("QEmuConnectionInfoWizardPage.Host")); //$NON-NLS-1$
+		label.setText(DeviceUIResources.ConnectionInfoWizardPage_Host); //$NON-NLS-1$
 		label.setFont(container.getFont());
 
 		hostText = new Text(container, SWT.BORDER);
@@ -74,8 +73,7 @@ public class QEmuConnectionInfoWizardPage extends WizardPage implements
 		});
 
 		label = new Label(container, SWT.NONE);
-		label.setText(QEmuARMPlugin
-				.getResourceString("QEmuConnectionInfoWizardPage.Port")); //$NON-NLS-1$
+		label.setText(DeviceUIResources.ConnectionInfoWizardPage_Port); //$NON-NLS-1$
 		label.setFont(container.getFont());
 
 		portText = new Text(container, SWT.BORDER);
@@ -93,8 +91,7 @@ public class QEmuConnectionInfoWizardPage extends WizardPage implements
 		});
 
 		label = new Label(container, SWT.NONE);
-		label.setText(QEmuARMPlugin
-				.getResourceString("QEmuConnectionInfoWizardPage.Display")); //$NON-NLS-1$
+		label.setText(DeviceUIResources.ConnectionInfoWizardPage_Display); //$NON-NLS-1$
 		label.setFont(container.getFont());
 
 		displayText = new Text(container, SWT.BORDER);

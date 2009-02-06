@@ -11,15 +11,33 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.tml.common.utilities,
  org.eclipse.tml.framework.device,
  org.eclipse.core.resources,
- org.eclipse.tml.framework.device.wizard;bundle-version="0.2.0"
+ org.eclipse.ui.ide;bundle-version="3.5.0"
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.tml.framework.device.ui,
- org.eclipse.tml.framework.device.ui.editors,
- org.eclipse.tml.framework.device.ui.exception,
- org.eclipse.tml.framework.device.ui.internal.model,
- org.eclipse.tml.framework.device.ui.model,
- org.eclipse.tml.framework.device.ui.view,
- org.eclipse.tml.framework.device.ui.view.model,
- org.eclipse.tml.framework.device.ui.view.provider,
- org.eclipse.tml.framework.device.ui.wizard
+Export-Package: org.eclipse.tml.framework.device.ui;
+  uses:="org.eclipse.osgi.util,
+   org.eclipse.ui,
+   org.osgi.framework,
+   org.eclipse.tml.common.utilities",
+ org.eclipse.tml.framework.device.ui.editors;uses:="org.eclipse.ui.dialogs,org.eclipse.swt.widgets",
+ org.eclipse.tml.framework.device.ui.exception;uses:="org.eclipse.core.runtime,org.eclipse.tml.common.utilities.exception",
+ org.eclipse.tml.framework.device.ui.internal.model;uses:="org.eclipse.jface.wizard,org.eclipse.jface.operation,org.eclipse.tml.framework.device.ui.model",
+ org.eclipse.tml.framework.device.ui.model;uses:="org.eclipse.jface.wizard,org.eclipse.jface.operation",
+ org.eclipse.tml.framework.device.ui.view;
+  uses:="org.eclipse.tml.framework.device.model,
+   org.eclipse.ui,
+   org.eclipse.ui.part,
+   org.eclipse.swt.widgets",
+ org.eclipse.tml.framework.device.ui.view.model;uses:="org.eclipse.tml.framework.device.model,org.eclipse.tml.framework.device.ui.view.provider,org.eclipse.jface.viewers",
+ org.eclipse.tml.framework.device.ui.view.provider;uses:="org.eclipse.swt.graphics,org.eclipse.jface.viewers,org.eclipse.tml.framework.device.ui.view.model",
+ org.eclipse.tml.framework.device.ui.wizard;
+  uses:="org.eclipse.jface.wizard,
+   org.eclipse.tml.framework.device.model,
+   org.eclipse.core.runtime,
+   org.eclipse.jface.resource,
+   org.eclipse.ui,
+   org.eclipse.tml.framework.device.internal.model,
+   org.eclipse.osgi.util,
+   org.eclipse.jface.viewers,
+   org.eclipse.swt.graphics,
+   org.eclipse.swt.widgets"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

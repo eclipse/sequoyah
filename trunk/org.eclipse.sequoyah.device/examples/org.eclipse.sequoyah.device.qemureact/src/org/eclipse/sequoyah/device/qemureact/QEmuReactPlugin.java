@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2009 Motorola Inc.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,8 @@
  * 
  * Contributors:
  * Fabio Fantato (Motorola) - bug#221733 - code revisited
+ * Fabio Fantato (Instituto Eldorado) - [263188] Create new examples to support tutorial presentation
+ * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  ********************************************************************************/
 package org.eclipse.tml.device.qemureact;
 
@@ -32,7 +34,7 @@ public class QEmuReactPlugin extends BasePlugin {
 	public static final String PROPERTIES_FILENAME_FULL = "/org/eclipse/tml/emulator/qemureact/resources/instance.properties"; //$NON-NLS-1$
 
 	public static final String EMULATOR_NAME = "qemu"; //$NON-NLS-1$
-	public static final String EMULATOR_PARAMS = "-L . -m 128 -hda ReactOS.vmdk -pidfile react.id -vnc "; //$NON-NLS-1$
+	public static final String EMULATOR_PARAMS = "-L . -m 128 -hda ReactOS.hd -pidfile react.id -vnc "; //$NON-NLS-1$
 	public static final String EMULATOR_BIN = "qemu-react-vnc.bat"; //$NON-NLS-1$
 	public static final String EMULATOR_KILL = "qemu.exe"; //$NON-NLS-1$
 	public static final String EMULATOR_FILE_ID = "react.id"; //$NON-NLS-1$

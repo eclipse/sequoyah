@@ -32,4 +32,26 @@
    </view>
 </extension>
 
+    <extension
+         id="deviceWizard"
+         name="Device Instance Wizard"
+         point="org.eclipse.ui.newWizards">
+     <category
+	   id = "org.eclipse.ui.emulators"
+	   name="Emulators">
+	 </category>
+      <wizard
+            canFinishEarly="true"
+            category="org.eclipse.ui.emulators"
+            class="org.eclipse.tml.framework.device.ui.wizard.NewDeviceWizard"
+            hasPages="true"
+            icon="icons/full/obj16/device.gif"
+            id="deviceWizard"
+            name="Device Instance Wizard"
+            project="false">
+            <description>Create a new device instance</description>
+      </wizard>
+   </extension>
+ 
+
 </plugin>

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008 Motorola Inc. and Other. All rights reserved
+ * Copyright (c) 2008-2009 Motorola Inc. and Other. All rights reserved
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,8 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [259243] - image in the wizards
+ * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
+ * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -90,7 +92,7 @@ import org.eclipse.tml.framework.device.ui.view.model.ViewerDeviceNode;
 import org.eclipse.tml.framework.device.ui.view.model.ViewerInstanceNode;
 import org.eclipse.tml.framework.device.ui.view.provider.InstanceMgtViewContentProvider;
 import org.eclipse.tml.framework.device.ui.view.provider.InstanceMgtViewLabelProvider;
-import org.eclipse.tml.framework.device.wizard.model.DeviceWizardExtensionManager;
+import org.eclipse.tml.framework.device.ui.wizard.DeviceWizardExtensionManager;
 import org.eclipse.tml.framework.status.IStatus;
 import org.eclipse.tml.framework.status.StatusRegistry;
 import org.eclipse.ui.ISharedImages;
@@ -259,40 +261,42 @@ public class InstanceStatusComposite extends Composite
     {
         for (final IDeviceType device : DeviceTypeRegistry.getInstance().getDeviceTypes())
         {
-            wizardActions.put(device.getLabel(), new Action(device.getLabel())
-            {
-                @Override
-                public void run()
-                {
-                    IWizard wizard = DeviceWizardExtensionManager.getInstance().getDeviceWizard(device.getId());
-                    if (wizard != null)
-                    {
-                        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                        
-                        // Instantiates the wizard container with the wizard and opens it
-                        WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
-                        dialog.create();
-                        dialog.open();
-                    }
-                    else
-                    {
-                        Display.getDefault().asyncExec(new Runnable()
-                        {
-                            public void run()
-                            {
-                                IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                                MessageDialog.openError(ww.getShell(), ERROR_DIALOG_TITLE, ERROR_NO_WIZARD_MESSAGE + device.getLabel());
-                            }
-                        });
-                    }
-                }
-                
-                @Override
-                public String toString()
-                {
-                    return getText();
-                }
-            });
+            if (!device.isAbstract()) {
+	        	wizardActions.put(device.getLabel(), new Action(device.getLabel())
+	            {
+	                @Override
+	                public void run()
+	                {
+	                    IWizard wizard = DeviceWizardExtensionManager.getInstance().getDeviceWizard(device.getId());
+	                    if (wizard != null)
+	                    {
+	                        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	                        
+	                        // Instantiates the wizard container with the wizard and opens it
+	                        WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+	                        dialog.create();
+	                        dialog.open();
+	                    }
+	                    else
+	                    {
+	                        Display.getDefault().asyncExec(new Runnable()
+	                        {
+	                            public void run()
+	                            {
+	                                IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	                                MessageDialog.openError(ww.getShell(), ERROR_DIALOG_TITLE, ERROR_NO_WIZARD_MESSAGE + device.getLabel());
+	                            }
+	                        });
+	                    }
+	                }
+	                
+	                @Override
+	                public String toString()
+	                {
+	                    return getText();
+	                }
+	            });
+            }
         }
     }
     private void fillMenuContext()

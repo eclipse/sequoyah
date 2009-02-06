@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2008 Motorola Inc and others.
+ * Copyright (c) 2007-2009 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,19 +12,11 @@
  * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Yu-Fen Kuo (MontaVista) - try to replace jdom dependencies with eclipse default xml parsers.
  * Fabio Rigo (Eldorado) - [245114] Enhance persistence policies
-<<<<<<< InstanceManager.java
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
-=======
-<<<<<<< InstanceManager.java
- * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
-=======
- * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
- * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
- * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
->>>>>>> 1.8
->>>>>>> 1.6.18.2
+ * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
+ * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  ********************************************************************************/
 package org.eclipse.tml.framework.device.manager;
 
@@ -184,8 +176,7 @@ public class InstanceManager {
 		IDeviceHandler deviceHandler = null;
 		IInstance instance = null;
 		try {
-			IExtension fromPlugin = PluginUtils.getExtension(
-					DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, deviceId);
+			IExtension fromPlugin = PluginUtils.getExtension(DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, deviceId);
 			deviceHandler = (IDeviceHandler) PluginUtils
 					.getExecutableAttribute(fromPlugin, ELEMENT_DEVICE,
 							ATTR_HANDLER);

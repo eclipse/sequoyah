@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2009 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,7 +8,7 @@
  * Fabio Fantato (Eldorado)
  *
  * Contributors:
- * Fabio Fantato (Eldorado) - do not force to show console view
+ * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  ********************************************************************************/
 
 package org.eclipse.tml.common.utilities.logger;
@@ -51,13 +51,6 @@ public final class SimpleLogger implements ILogger
     
     private SimpleLogger()    
     {
-    	MessageConsole console = new MessageConsole("console", null); //$NON-NLS-1$
-    	ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { console });
-    	MessageConsoleStream stream = console.newMessageStream();
-
-    	System.setOut(new PrintStream(stream));
-    	System.setErr(new PrintStream(stream));
-
     }
 
     /**
@@ -206,22 +199,7 @@ public final class SimpleLogger implements ILogger
     {
     }
 
-    /**
-     * Sets a Appender File
-     */
-	private void setAppenderFile()
-    {
-    }
-
-    /**
-     * Sets a Appender HTML File
-     */
-   
-	private void setAppenderHTML()
-    {
-    }
-
-    /**
+   /**
      * Sets the level of log
      * @param level Level object
      * @see ILogger#setLevel(java.lang.Object)
@@ -235,8 +213,20 @@ public final class SimpleLogger implements ILogger
      */
     public void setLogToConsole()
     {
+    	MessageConsole console = new MessageConsole("console", null); //$NON-NLS-1$
+    	ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { console });
+    	MessageConsoleStream stream = console.newMessageStream();
+
+    	System.setOut(new PrintStream(stream));
+    	System.setErr(new PrintStream(stream));
     }
 
+    public void setLogToDefault(){
+    	System.setOut(System.out);
+    	System.setErr(System.err);
+    }
+    
+    
     /**
      * Sets the log in a file
      *
