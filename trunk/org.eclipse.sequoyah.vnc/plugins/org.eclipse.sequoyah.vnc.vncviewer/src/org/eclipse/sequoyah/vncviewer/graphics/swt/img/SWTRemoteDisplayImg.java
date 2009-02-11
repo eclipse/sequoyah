@@ -10,6 +10,7 @@
  * Contributors:
  * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [244249] - Canvas background repaint
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics.swt.img;
 
@@ -73,10 +74,6 @@ public class SWTRemoteDisplayImg extends SWTRemoteDisplay {
 		((Painter)painter).removeSWTRemoteDisplayImg((SWTRemoteDisplayImg)this);
 	}
 	
-	protected int getCanvasStyle() {
-		return SWT.NO_BACKGROUND;  
-	}
-
 	public IVNCPainter getPainter() {
 		return (Painter) painter;
 	}

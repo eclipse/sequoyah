@@ -19,6 +19,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [244249] - Canvas background repaint
  *******************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -28,7 +29,12 @@ import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tml.protocol.PluginProtocolActionDelegate;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
@@ -57,10 +63,30 @@ public class VNCViewerView extends ViewPart {
 
 	public void createPartControl(Composite parent) {
 
+		final ScrolledComposite scomposite = new ScrolledComposite(parent, SWT.H_SCROLL |   
+				  SWT.V_SCROLL | SWT.BORDER);
+		
 		swtDisplay = (SWTRemoteDisplay) RemoteDisplayFactory.getDisplay(
-				SWTDISPLAY, parent);
+				SWTDISPLAY, scomposite);
 		running = true;
+		
+		scomposite.setContent(swtDisplay);
+		scomposite.setExpandHorizontal(true);
+		scomposite.setExpandVertical(true);
+		
+		swtDisplay.getCanvas().addControlListener(new ControlListener(){
+			public void controlMoved(ControlEvent e) {
+				
+			}
 
+			public void controlResized(ControlEvent e) {
+				Point size = swtDisplay.getCanvas().getSize();
+				scomposite.setMinSize(swtDisplay.getParent().computeSize(size.x, size.y));
+			}
+		});
+
+		swtDisplay.getCanvas().setSize(0, 0);
+		
 		if (VNCViewerView.protocolHandle != null) {
 			try {
 				swtDisplay.start(protocolHandle);
@@ -141,7 +167,10 @@ public class VNCViewerView extends ViewPart {
 			if (swtDisplay.isActive()) {
 				swtDisplay.getDisplay().syncExec(new Runnable(){
 					public void run() {
-						swtDisplay.stop();						
+						swtDisplay.stop();	
+						zoomFactor = 1;
+						swtDisplay.setZoomFactor(zoomFactor);
+						swtDisplay.getCanvas().setSize(0, 0);
 					}
 	
 				});
@@ -156,6 +185,8 @@ public class VNCViewerView extends ViewPart {
 		//double zoom = swtDisplay.getZoomFactor();
 		
 		double newzoom = 1;
+		
+		if (!swtDisplay.isActive()) return;
 		
 		if (zoomFactor == -2) {
 			zoomFactor = 1;
@@ -182,6 +213,8 @@ public class VNCViewerView extends ViewPart {
 	public static void zoomOut(){
 
 		double newzoom = 1;
+		
+		if (!swtDisplay.isActive()) return;
 		
 		if (zoomFactor == 1) {
 			zoomFactor = -2;

@@ -19,6 +19,7 @@
  * Leo Andrade (Eldorado Research Institute) - Bug [247973] - Listener to key events is not working at SWTRemoteDisplay
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
  * Leo Andrade (Eldorado Research Institute) - Bug [247973] - notifyListeners(ev.type, ev) into addMouseListener.
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [244249] - Canvas background repaint
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -35,6 +36,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -111,7 +113,9 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 		this.setLayout(parent.getLayout());
 
+		//canvas = new Canvas(this, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
 		canvas = new Canvas(this, SWT.NO_BACKGROUND);
+		
 		eventTranslator = new SWTVNCEventTranslator(configProperties,
 				propertiesFileHandler);
 
@@ -270,6 +274,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 				((IVNCPainter) painter).setSize(protoClient.getFbWidth(),
 						protoClient.getFbHeight());
 
+				canvas.setSize(protoClient.getFbWidth(), protoClient.getFbHeight());
+				
 				addRefreshTimer();
 				addKeyListener();
 				addMouseListener();
@@ -310,6 +316,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			gc.dispose();
 		}
 
+		canvas.setSize(0 ,0);
 	}
 
 	/**
@@ -371,7 +378,13 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			ProtocolMessage message = eventTranslator
 					.getMouseEventMessage(event);
 			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
-
+		
+			Integer x = (Integer) message.getFieldValue("x-position");
+			Integer y = (Integer) message.getFieldValue("y-position");
+			
+			message.setFieldValue("x-position", (int) ((double)x / zoomFactor));
+			message.setFieldValue("y-position", (int) ((double)y / zoomFactor));
+		
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
 					REMOTE_DISPLAY_MOUSE_EVENT_ERROR + e.getMessage());
@@ -473,6 +486,12 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 	public void setZoomFactor(double zoomFactor) {
 		this.zoomFactor = zoomFactor;
+		
+		Point canvasSize = new Point(0, 0);
+		canvasSize.x = (int) (this.getProtocolData().getFbWidth() * zoomFactor);
+		canvasSize.y = (int) (this.getProtocolData().getFbHeight() * zoomFactor);
+		
+		this.getCanvas().setSize(canvasSize);
 	}
 
 	public void setBackground(Color color) {
