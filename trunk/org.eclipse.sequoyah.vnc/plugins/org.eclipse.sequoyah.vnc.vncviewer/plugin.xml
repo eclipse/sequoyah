@@ -186,6 +186,15 @@
                valueFieldName="text">
          </variableSizeData>
       </message>
+      <message
+            isMessageCodeSigned="false"
+            messageCode="0x02"
+            messageCodeSizeInBytes="1"
+            messageHandler="org.eclipse.tml.vncviewer.network.handlers.BellHandler"
+            messageId="bell"
+            messageName="BELL"
+            protocolId="vncProtocol">
+      </message>
    </extension>
    <extension
          point="org.eclipse.tml.protocol.protocolMessageDirection">
@@ -207,6 +216,10 @@
       </serverMessage>
       <serverMessage
             messageId="serverCutText"
+            protocolId="vncProtocol">
+      </serverMessage>
+      <serverMessage
+            messageId="bell"
             protocolId="vncProtocol">
       </serverMessage>
    </extension>
