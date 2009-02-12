@@ -80,6 +80,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="canEditProperties" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Indicates whether the properties of an device instance can be edited in this state.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -15,6 +15,8 @@
          id="INACTIVE"
          point="org.eclipse.tml.status">
       <status
+            canDeleteInstance="true"
+            canEditProperties="true"
             id="INACTIVE"
             image="icons/full/obj16/inactive.gif"
             name="INACTIVE">
@@ -24,6 +26,8 @@
           id="OFF"
           point="org.eclipse.tml.status">
       <status
+            canDeleteInstance="true"
+            canEditProperties="true"
             id="OFF"
             image="icons/full/obj16/stop.png"
             name="OFF">
@@ -33,6 +37,8 @@
           id="IDLE"
           point="org.eclipse.tml.status">
       <status
+            canDeleteInstance="false"
+            canEditProperties="false"
             id="IDLE"
             image="icons/full/obj16/start.png"
             name="IDLE">

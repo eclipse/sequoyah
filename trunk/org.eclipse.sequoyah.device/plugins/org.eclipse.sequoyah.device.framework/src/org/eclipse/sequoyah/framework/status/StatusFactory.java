@@ -10,6 +10,7 @@
  * Contributors:
  * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup.
  * Fabio Rigo (Eldorado) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
  ********************************************************************************/
 package org.eclipse.tml.framework.status;
 
@@ -29,6 +30,7 @@ public class StatusFactory {
 	private static final String ATR_NAME = "name"; //$NON-NLS-1$
 	private static final String ATR_IMAGE = "image"; //$NON-NLS-1$
 	private static final String ATR_CANDELETE = "canDeleteInstance"; //$NON-NLS-1$
+	private static final String ATR_CANEDITPROPERTIES = "canEditProperties"; //$NON-NLS-1$
 	
 	@SuppressWarnings("deprecation")
 	public static IStatus createStatus(String statusId) {
@@ -36,8 +38,10 @@ public class StatusFactory {
 		String id = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_ID);
 		String name = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_NAME);
 		boolean canDelete = Boolean.parseBoolean(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_CANDELETE));
+		boolean canEditProperties = Boolean.parseBoolean(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_CANEDITPROPERTIES));
 		IStatus status = new MobileStatus(id,name);
 		status.setCanDeleteInstance(canDelete);
+		status.setCanEditProperties(canEditProperties);
 		String imageName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_IMAGE);		
 		ImageDescriptor image = null;
 			try {

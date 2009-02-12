@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Fabio Rigo (Eldorado) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
  ********************************************************************************/
 
 package org.eclipse.tml.framework.status;
@@ -54,6 +55,10 @@ public interface IStatus {
      */
 	public boolean canDeleteInstance();
 	public void setCanDeleteInstance(boolean canDeleteInstance);
+
+	public boolean canEditProperties();
+	public void setCanEditProperties(boolean canEditProperties);
+
 	
 	/**
 	 * @return

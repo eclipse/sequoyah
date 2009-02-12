@@ -19,6 +19,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [259243] - image in the wizards
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -358,7 +359,8 @@ public class InstanceStatusComposite extends Composite
                     newItem.setText(MENU_PROPERTIES);
                     newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DeviceUIPlugin.ICON_PROPERTY));
                     newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
-                   
+                    newItem.setEnabled(status.canEditProperties());
+                    
                     newItem = new MenuItem(menu, SWT.SEPARATOR);
                     
                     for (IService service:device.getServices()){
