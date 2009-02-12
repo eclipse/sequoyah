@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008 Motorola Inc. and Other. All rights reserved
+ * Copyright (c) 2008-2009 Motorola Inc. and Other. All rights reserved
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,16 +11,10 @@
  * Contributors:
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [247085] - Instance manage view buttons are resizing after applying services filter  
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
-<<<<<<< InstanceServicesComposite.java
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
-=======
-<<<<<<< InstanceServicesComposite.java
- * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
-=======
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
->>>>>>> 1.3.6.4
->>>>>>> 1.5
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247179] - Choice of service buttons orientation on Instance Mgt View should be persisted
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -55,6 +49,7 @@ import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandlerAction;
 import org.eclipse.tml.framework.device.ui.DeviceUIPlugin;
+import org.eclipse.ui.PlatformUI;
 
 public class InstanceServicesComposite extends Composite {
 
@@ -80,6 +75,9 @@ public class InstanceServicesComposite extends Composite {
 		public ServicesFilterAction()
 		{
 			super("filter"); //$NON-NLS-1$
+			
+			showAllServices = !PlatformUI.getPreferenceStore().getBoolean(DeviceUIPlugin.FILTER_SERVICE_BY_AVAILABILITY_PREFERENCE);
+			
 			setToolTipText("Filter services by availability"); //$NON-NLS-1$
 			setChecked(!showAllServices);
 			setImageDescriptor(DeviceUIPlugin.getDefault().getImageDescriptor(DeviceUIPlugin.ICON_FILTER));
@@ -88,6 +86,9 @@ public class InstanceServicesComposite extends Composite {
 		public void run() {
 			showAllServices = !showAllServices;
 			setChecked(!showAllServices);
+			
+			PlatformUI.getPreferenceStore().setValue(DeviceUIPlugin.FILTER_SERVICE_BY_AVAILABILITY_PREFERENCE, !showAllServices);
+		
 			createServicesArea();
 		}		
 	}
@@ -97,6 +98,9 @@ public class InstanceServicesComposite extends Composite {
 	    public ServicesOrientationAction()
 	    {
 	        super("orientation"); //$NON-NLS-1$
+	        
+	        buttonsOrienation = PlatformUI.getPreferenceStore().getInt(DeviceUIPlugin.SERVICE_BUTTONS_ORIENTATION_PREFERENCE);
+	        
 	        setToolTipText("Toggle vertical/horizontal orientation"); //$NON-NLS-1$
 	        if (buttonsOrienation ==  SWT.HORIZONTAL)
             {
@@ -120,6 +124,8 @@ public class InstanceServicesComposite extends Composite {
 	            buttonsOrienation = SWT.HORIZONTAL;
 	            setImageDescriptor(DeviceUIPlugin.getDefault().getImageDescriptor(DeviceUIPlugin.ICON_HORIZONTAL));
 	        }
+
+	        PlatformUI.getPreferenceStore().setValue(DeviceUIPlugin.SERVICE_BUTTONS_ORIENTATION_PREFERENCE, buttonsOrienation);
 	        createServicesArea();
 	    }
 	}

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2008 Motorola Inc and others.
+ * Copyright (c) 2007-2009 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247333] - New icons for Start and Stop
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247179] - Choice of service buttons orientation on Instance Mgt View should be persisted
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui;
 
@@ -41,6 +42,8 @@ public class DeviceUIPlugin extends BasePlugin {
 	public static final String ICON_FILTER = "ICON_FILTER"; //$NON-NLS-1$
 	public static final String ICON_PROPERTY = "ICON_PROPERTY"; //$NON-NLS-1$
 	public static final String IMAGEKEY_NEW_DEVICE_WIZARD = "IMAGEKEY_NEW_DEVICE_WIZARD"; //$NON-NLS-1$
+	public static final String SERVICE_BUTTONS_ORIENTATION_PREFERENCE = PLUGIN_ID + "SERVICE_BUTTONS_ORIENTATION"; //$NON-NLS-1$
+	public static final String FILTER_SERVICE_BY_AVAILABILITY_PREFERENCE = PLUGIN_ID + "FILTER_SERVICE_BY_AVAILABILITY"; //$NON-NLS-1$
 	
 	// The shared instance
 	private static DeviceUIPlugin plugin;
