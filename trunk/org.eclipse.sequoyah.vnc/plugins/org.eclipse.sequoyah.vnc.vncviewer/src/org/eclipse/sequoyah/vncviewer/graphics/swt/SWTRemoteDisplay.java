@@ -20,6 +20,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
  * Leo Andrade (Eldorado Research Institute) - Bug [247973] - notifyListeners(ev.type, ev) into addMouseListener.
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [244249] - Canvas background repaint
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [265043] - Mouse problems when performing zoom
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -377,14 +378,15 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		try {
 			ProtocolMessage message = eventTranslator
 					.getMouseEventMessage(event);
-			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
 		
 			Integer x = (Integer) message.getFieldValue("x-position");
 			Integer y = (Integer) message.getFieldValue("y-position");
-			
+
 			message.setFieldValue("x-position", (int) ((double)x / zoomFactor));
 			message.setFieldValue("y-position", (int) ((double)y / zoomFactor));
-		
+			
+			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
+
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
 					REMOTE_DISPLAY_MOUSE_EVENT_ERROR + e.getMessage());
