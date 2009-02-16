@@ -13,14 +13,17 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248037] - Action for stop connection on VNC Viewer
+ * Petr Baranov (Nokia) - Bug [262371] - New Connection Dialog improvement
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
 
 import java.io.IOException;
-
-import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -34,11 +37,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 
+public class OpenConnectionDialog extends Dialog {
 
-
-public class OpenConnectionDialog extends TitleAreaDialog {
-
-
+	private static final String DIALOG_TITLE = "New VNC connection";
+	private static final String DEFAULT_PORT = "5900";
 	
 	private Text hostText;
 	private Text portText;
@@ -46,21 +48,24 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 	private Text passwordText;
 	private Button bypassProxyButton;
 	
+	private ModifyListener listener = new ModifyListener(){
+			public void modifyText(ModifyEvent e) {
+				validate();
+			}
+	};
+		
 	public OpenConnectionDialog(Shell parent) {
 		super(parent);
-		
-
 	}
-	
-	
 
 	protected Point getInitialSize() {
-
-		return new Point(250, 330);
-		//return super.getInitialSize();
+		return new Point(240, 270);
 	}
 	
-	
+	protected void configureShell(Shell newShell) {
+			super.configureShell(newShell);
+			newShell.setText(DIALOG_TITLE);
+	}
 	
 	
 	protected Control createDialogArea(Composite parent) {
@@ -72,9 +77,6 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		
 		int width, height, cols;
 
-		setTitle("New VNC connection"); //$NON-NLS-1$
-		setMessage("Enter values for your VNC connection"); //$NON-NLS-1$
-		
 		cols = 20;
 
 		Label hostLabel = new Label(fields, SWT.RIGHT);
@@ -101,6 +103,7 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		portLabel.setText("Port:"); //$NON-NLS-1$
 		portText.setSize(portText.computeSize(width, height));
 		portText.setLayoutData(gridData);
+		portText.setText(DEFAULT_PORT);
 		
 		passwordLabel.setText("Password:"); //$NON-NLS-1$
 		passwordText.setSize(passwordText.computeSize(width, height));
@@ -124,6 +127,8 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		
 		bypassProxyButton.setText("Bypass proxy settings"); //$NON-NLS-1$
 		
+		hostText.addModifyListener(listener);
+		portText.addModifyListener(listener);
 		
 		return external;
 	
@@ -153,7 +158,14 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 		
 	}
 	
-	
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		 createButton(parent, IDialogConstants.OK_ID,
+	               IDialogConstants.OK_LABEL, true).setEnabled(false);
+	     createButton(parent, IDialogConstants.CANCEL_ID,
+	               IDialogConstants.CANCEL_LABEL, false).setEnabled(true);
+	}
+
 	
 	@Override
 	protected void cancelPressed() {
@@ -190,12 +202,7 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
+
 	
 	/**
 
@@ -217,17 +224,8 @@ public class OpenConnectionDialog extends TitleAreaDialog {
 
         comboComposite.setLayout(gridLayout);
 
-        //comboComposite.setBackground(BACKGROUND_COLOR);
-
- 
-
         Label configListLabel = new Label(comboComposite, SWT.NONE);
-
         configListLabel.setText("VNC Protocol used as base:"); //$NON-NLS-1$
-
-        //configListLabel.setBackground(BACKGROUND_COLOR);
-
-
         
         Combo protocolCombo = new Combo(comboComposite, SWT.READ_ONLY);
         data  = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -242,6 +240,14 @@ public class OpenConnectionDialog extends TitleAreaDialog {
     
     }
     
+    
+    private void validate() {
+    	if(hostText!=null&&portText!=null){
+    			OpenConnectionDialog.this
+    				.getButton(IDialogConstants.OK_ID)
+    				.setEnabled(hostText.getText().length()>0&&portText.getText().length()>0);
+    	}
+    }
 
 
 }
