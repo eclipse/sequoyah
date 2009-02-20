@@ -6,7 +6,8 @@ Bundle-Version: 0.2.0
 Bundle-Activator: org.eclipse.tml.protocol.ProtocolPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui;visibility:=reexport,
- org.eclipse.core.runtime;visibility:=reexport
+ org.eclipse.core.runtime;visibility:=reexport,
+ org.eclipse.tml.common.utilities;bundle-version="0.3.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tml.protocol;uses:="org.eclipse.ui.plugin,org.osgi.framework,org.eclipse.tml.protocol.lib",
  org.eclipse.tml.protocol.lib;uses:="org.eclipse.tml.protocol.lib.exceptions",

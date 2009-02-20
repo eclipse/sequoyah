@@ -14,6 +14,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233121] - There is no support for proxies when connecting the protocol
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  ********************************************************************************/
 
 package org.eclipse.tml.service.vncviewer.handler;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.IPropertyConstants;
@@ -45,7 +47,13 @@ public class VNCViewerServiceHandler extends ServiceHandler
 
         String host = instance.getProperties().getProperty(IPropertyConstants.HOST);
         int port = Integer.parseInt(instance.getProperties().getProperty(IPropertyConstants.PORT));
-        String protoVersion = "VNC 3.3"; //$NON-NLS-1$
+        
+        String protoVersion;
+        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        	protoVersion = "VNC 3.3"; //$NON-NLS-1$	
+        }
+        else protoVersion = "VNC 3.8"; //$NON-NLS-1$
+        
         String password = instance.getProperties().getProperty(IPropertyConstants.PASSWORD);
 
         try

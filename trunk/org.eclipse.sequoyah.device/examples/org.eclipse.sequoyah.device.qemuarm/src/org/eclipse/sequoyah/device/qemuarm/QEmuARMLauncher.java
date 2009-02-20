@@ -11,10 +11,12 @@
  * Fabio Fantato (Motorola) - bug#221733 - Package was changed to make able to any
  * 							  other plugin access these constants values
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
+ * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  ********************************************************************************/
 
 package org.eclipse.tml.device.qemuarm;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.tml.common.utilities.IPropertyConstants;
 import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.framework.device.model.IConnection;
@@ -23,7 +25,7 @@ import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.service.start.launcher.DefaultConnection;
 
 public class QEmuARMLauncher implements IDeviceLauncher {
-	public static final String SLASH = "\\"; //$NON-NLS-1$
+	public static final String SLASH = "/"; //$NON-NLS-1$
 	public IConnection connection;
 	private int pid;
 	
@@ -54,8 +56,18 @@ public class QEmuARMLauncher implements IDeviceLauncher {
 	}
 
 	public String getLocation() {
+		
+		String executable = null;
+		
+        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        	executable = QEmuARMPlugin.EMULATOR_WIN32_BIN;	
+        }
+        else {
+        	executable = QEmuARMPlugin.EMULATOR_LINUX_BIN;
+        }
+		
 		return PluginUtils.getPluginInstallationPath(QEmuARMPlugin.getDefault())
-		.getAbsolutePath().concat(SLASH).concat(QEmuARMPlugin.EMULATOR_NAME).concat(SLASH).concat(QEmuARMPlugin.EMULATOR_BIN);
+		.getAbsolutePath().concat(SLASH).concat(QEmuARMPlugin.EMULATOR_NAME).concat(SLASH).concat(executable);
 
 	}
 

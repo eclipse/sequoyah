@@ -41,6 +41,11 @@
                haltId="IDLE"
                startId="IDLE">
          </status>
+         <status
+               endId="OFF"
+               haltId="IDLE-VNC"
+               startId="IDLE-VNC">
+         </status>
       </service>
    </extension>
 	<extension

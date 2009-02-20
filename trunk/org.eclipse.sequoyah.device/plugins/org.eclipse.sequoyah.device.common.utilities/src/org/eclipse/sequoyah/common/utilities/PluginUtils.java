@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Fabio Fantato (Eldorado Research Institute) - [243493] - PluginUtils has some compatibility issues with Ganymede release
+ * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  ********************************************************************************/
 
 package org.eclipse.tml.common.utilities;
@@ -502,13 +503,18 @@ public class PluginUtils
      */
     public static File getPluginInstallationPath(Bundle pluginBundle)
     {
-        //String platformPath          = Platform.getInstallLocation().getURL().getPath();
-        String pluginPath            = pluginBundle.getLocation();
-        int removeIndex              = pluginPath.indexOf("file:"); //$NON-NLS-1$
-        pluginPath                   = pluginPath.substring(removeIndex + 6);
+        //String platformPath = Platform.getInstallLocation().getURL().getPath();
+    	String pluginPath = pluginBundle.getLocation();
+        int removeIndex = pluginPath.indexOf("file:"); //$NON-NLS-1$
+        
+        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        	pluginPath = pluginPath.substring(removeIndex + 6);	
+        }
+        else {
+        	pluginPath = pluginPath.substring(removeIndex + 5);
+        }
 
         File relativeInstalationPath = new File(pluginPath);
-
         return FileUtil.getCanonicalFile(relativeInstalationPath);
     }
 

@@ -21,6 +21,7 @@
  * Leo Andrade (Eldorado Research Institute) - Bug [247973] - notifyListeners(ev.type, ev) into addMouseListener.
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [244249] - Canvas background repaint
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [265043] - Mouse problems when performing zoom
+ * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -275,7 +276,11 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 				((IVNCPainter) painter).setSize(protoClient.getFbWidth(),
 						protoClient.getFbHeight());
 
-				canvas.setSize(protoClient.getFbWidth(), protoClient.getFbHeight());
+				canvas.getDisplay().asyncExec(new Runnable(){
+					public void run() {
+						canvas.setSize(protoClient.getFbWidth(), protoClient.getFbHeight());
+					}
+				});
 				
 				addRefreshTimer();
 				addKeyListener();
@@ -317,7 +322,12 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			gc.dispose();
 		}
 
-		canvas.setSize(0 ,0);
+		canvas.getDisplay().asyncExec(new Runnable(){
+			public void run() {
+				canvas.setSize(0 ,0);
+			}
+		});
+				
 	}
 
 	/**

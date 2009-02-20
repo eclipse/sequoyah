@@ -10,6 +10,7 @@
  * Contributors:
  * Fabio Fantato (Eldorado Research Institute) - [221733] Persistence and New wizard for manage Device Instances
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type 
+ * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  ********************************************************************************/
 
 package org.eclipse.tml.device.qemuarm;
@@ -34,11 +35,15 @@ public class QEmuARMPlugin extends BasePlugin {
 	public static final String ICON_DEVICE_QEMUARM = "ICON_DEVICE_QEMUARM"; //$NON-NLS-1$
 	
 	public static final String EMULATOR_NAME = "qemu"; //$NON-NLS-1$
-	public static final String EMULATOR_PARAMS = "-kernel integratorcp.zImage -pidfile qemuarm.id -initrd arm_root.img -M integratorcp1026 -vnc "; //$NON-NLS-1$
-	public static final String EMULATOR_BIN = "qemu-arm-vnc.bat"; //$NON-NLS-1$
-	public static final String EMULATOR_KILL = "qemu-system-arm.exe"; //$NON-NLS-1$
+	public static final String EMULATOR_PARAMS = "-kernel integratorcp.zImage -pidfile qemuarm.id -initrd arm_root.img -vnc "; //$NON-NLS-1$
 	public static final String EMULATOR_FILE_ID = "qemuarm.id"; //$NON-NLS-1$
-
+	
+	public static final String EMULATOR_WIN32_BIN = "qemu-arm-vnc.bat"; //$NON-NLS-1$
+	public static final String EMULATOR_WIN32_KILL = "qemu-system-arm.exe"; //$NON-NLS-1$
+	
+	public static final String EMULATOR_LINUX_BIN = "qemu-arm-vnc.sh"; //$NON-NLS-1$
+	public static final String EMULATOR_LINUX_KILL = "qemu-system-arm"; //$NON-NLS-1$
+	
 	// The shared instance
 	private static QEmuARMPlugin plugin;
 	private ResourceBundle resourceBundle;

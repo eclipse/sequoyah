@@ -24,5 +24,5 @@ ECHO %6
 ECHO %7
 ECHO %8
 ECHO %9
-qemu-system-arm.exe  -L . %0 %1 %2 %3 %4 %5 %6 %7 %8 %9
+qemu-system-arm.exe  -L . -M integratorcp1026 %0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 REM qemu-system-arm.exe  -kernel integratorcp.zImage -initrd arm_root.img -M integratorcp1026 -vnc 127.0.0.1:0.0

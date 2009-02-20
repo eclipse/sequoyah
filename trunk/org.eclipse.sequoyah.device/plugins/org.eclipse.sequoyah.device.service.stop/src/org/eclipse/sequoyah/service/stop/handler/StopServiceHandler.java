@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
+ * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  ********************************************************************************/
 
 package org.eclipse.tml.service.stop.handler;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.framework.device.model.IInstance;
@@ -27,7 +29,16 @@ import org.eclipse.tml.service.stop.StopServiceResources;
 public class StopServiceHandler extends ServiceHandler {
 
 	public IStatus runService(IInstance instance, Map<Object , Object> arguments , IProgressMonitor monitor) {
-		String kill = "taskkill /f /PID "+String.valueOf(instance.getPID());		 //$NON-NLS-1$
+		
+		String kill = null;
+		
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			kill = "taskkill /f /PID "+String.valueOf(instance.getPID());		 //$NON-NLS-1$	
+	    }
+	    else if (Platform.getOS().equals(Platform.OS_LINUX)) {
+	    	kill = "kill -9 "+String.valueOf(instance.getPID());		 //$NON-NLS-1$
+	    }
+			
 		try {
 			Process p = Runtime.getRuntime().exec(kill);
 		} catch (Throwable t) {

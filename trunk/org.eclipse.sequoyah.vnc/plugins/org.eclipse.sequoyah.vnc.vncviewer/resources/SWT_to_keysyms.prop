@@ -1,5 +1,8 @@
 
+CR=XK_Return
+KEYPAD_CR=XK_KP_Enter
 
+ALT_L=XK_Alt_L
 CONTROL=XK_Control_L
 SHIFT=XK_Shift_L
 

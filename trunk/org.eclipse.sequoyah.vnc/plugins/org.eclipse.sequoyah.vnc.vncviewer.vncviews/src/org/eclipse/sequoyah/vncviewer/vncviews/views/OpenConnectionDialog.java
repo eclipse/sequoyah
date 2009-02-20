@@ -14,6 +14,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248037] - Action for stop connection on VNC Viewer
  * Petr Baranov (Nokia) - Bug [262371] - New Connection Dialog improvement
+ * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -59,7 +60,7 @@ public class OpenConnectionDialog extends Dialog {
 	}
 
 	protected Point getInitialSize() {
-		return new Point(240, 270);
+		return new Point(240, 290);
 	}
 	
 	protected void configureShell(Shell newShell) {
