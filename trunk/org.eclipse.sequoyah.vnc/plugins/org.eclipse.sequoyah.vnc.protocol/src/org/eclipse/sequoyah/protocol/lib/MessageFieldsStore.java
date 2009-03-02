@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246916] - Add the correct Number objects to ProtocolMessage objects on reading from input stream
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -99,8 +100,8 @@ public class MessageFieldsStore implements IMessageFieldsStore {
 						.getFieldValue(fieldName));
 			}
 		} else {
-			iteratableBlockId = null;
-			index = -1;
+		    this.iteratableBlockId = null;
+		    this.index = -1;
 		}
 	}
 

@@ -11,11 +11,12 @@
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 import java.io.OutputStream;
 
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
@@ -71,7 +72,7 @@ public class VNCProtocol37 extends VNCProtocol {
 
 	}
 
-	private void handshakeFail37(DataInputStream in) throws Exception {
+	private void handshakeFail37(DataInput in) throws Exception {
 
 		int failReasonLength;
 		String failReason = ""; //$NON-NLS-1$
@@ -89,7 +90,7 @@ public class VNCProtocol37 extends VNCProtocol {
 	/**
 	 * Implements the handshake phase of the RFB Protocol.
 	 */
-	protected void handShake(DataInputStream in, OutputStream out)
+	protected void handShake(DataInput in, OutputStream out)
 			throws Exception {
 
 		int secTypesNumber;

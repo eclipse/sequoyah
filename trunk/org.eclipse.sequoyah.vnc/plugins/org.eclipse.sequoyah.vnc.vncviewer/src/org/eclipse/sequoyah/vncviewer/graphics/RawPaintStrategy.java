@@ -9,10 +9,13 @@
  *
  * Contributors:
  * Daniel Barboza Franco (Motorola) - Bug [242129] - Raw enconding not implemented correctly
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
-import java.io.DataInputStream;
+import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
+
+import java.io.DataInput;
 
 import org.eclipse.tml.vncviewer.network.RectHeader;
 
@@ -22,11 +25,14 @@ public class RawPaintStrategy extends AbstractPaintStrategy {
 		super(context);
 	}
 	
-	public void processRectangle(RectHeader rh, DataInputStream in) throws Exception{
+	public void processRectangle(RectHeader rh, DataInput in) throws Exception{
 		int width = rh.getWidth();
 		int height = rh.getHeight();
 		int pixels[] = new int[width*height];
 		IPainterContext pc = getContext();
+		
+		log(RawPaintStrategy.class).debug("Processing rectangle defined by: w=" 
+		        + width + "; h=" + height + ".");
 		
 		pixels = pc.readpixels(in, width, height);
 		pc.setPixels(rh.getX(), rh.getY(), width, height, pixels, 0);

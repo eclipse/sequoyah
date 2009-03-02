@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  *******************************************************************************/
 package org.eclipse.tml.vncviewer.network.handlers;
 
@@ -44,8 +45,8 @@ public class FramebufferUpdateHandler implements IMessageHandler {
 	        
 	        // Determine which area of the screen shall be redrawn. It comprises the minimum 
 	        // rectangle that contains all the rectangles that were sent by this message  
-	        int minX = 0;
-	        int minY = 0;
+	        int minX = painter.getWidth();
+	        int minY = painter.getHeight();
 	        int maxX = 0;
 	        int maxY = 0;
 	        int numRect = (Integer) message.getFieldValue("numberOfRectangles");

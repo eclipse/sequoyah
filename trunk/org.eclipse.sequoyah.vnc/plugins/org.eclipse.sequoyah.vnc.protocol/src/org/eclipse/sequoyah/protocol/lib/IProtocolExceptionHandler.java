@@ -10,6 +10,7 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo - Bug [244067] - The exception handling interface should forward the protocol implementer object
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
@@ -40,7 +41,7 @@ public interface IProtocolExceptionHandler {
 
 	void handleIOException(ProtocolHandle handle, IOException e);
 
-	void handleProtocolInitException(ProtocolHandle handle, ProtocolHandshakeException e);
+	void handleProtocolHandshakeException(ProtocolHandle handle, ProtocolHandshakeException e);
 
 	void handleMessageHandleException(ProtocolHandle handle, MessageHandleException e);
 

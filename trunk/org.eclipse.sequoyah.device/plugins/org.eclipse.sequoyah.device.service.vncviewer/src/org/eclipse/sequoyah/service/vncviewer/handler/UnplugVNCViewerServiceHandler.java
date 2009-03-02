@@ -10,11 +10,11 @@
  * Contributors:
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.service.vncviewer.handler;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,30 +27,31 @@ import org.eclipse.tml.protocol.PluginProtocolActionDelegate;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView;
 
-public class UnplugVNCViewerServiceHandler extends ServiceHandler {
+public class UnplugVNCViewerServiceHandler extends ServiceHandler
+{
 
-
-    public IServiceHandler newInstance() {
+    @Override
+    public IServiceHandler newInstance()
+    {
         return new UnplugVNCViewerServiceHandler();
     }
 
+    @Override
     public IStatus runService(IInstance instance, Map<Object, Object> arguments,
-            IProgressMonitor monitor) {
+            IProgressMonitor monitor)
+    {
 
-    	VNCViewerView.stop();
+        VNCViewerView.stop();
 
-        try {
-        	ProtocolHandle handle = VNCViewerView.protocolHandle;
-            PluginProtocolActionDelegate.stopProtocol(handle);            
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        ProtocolHandle handle = VNCViewerView.protocolHandle;
+        PluginProtocolActionDelegate.requestStopProtocol(handle);
 
         return Status.OK_STATUS;
     }
 
-    public IStatus updatingService(IInstance instance, IProgressMonitor monitor) {
+    @Override
+    public IStatus updatingService(IInstance instance, IProgressMonitor monitor)
+    {
         return Status.OK_STATUS;
     }
 

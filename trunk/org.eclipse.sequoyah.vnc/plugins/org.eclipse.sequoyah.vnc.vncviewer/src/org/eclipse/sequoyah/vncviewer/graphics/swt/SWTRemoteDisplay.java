@@ -22,6 +22,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [244249] - Canvas background repaint
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [265043] - Mouse problems when performing zoom
  * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -109,7 +110,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			IPropertiesFileHandler propertiesFileHandler) {
 
 		super(parent, SWT.BACKGROUND);
-
+        log(SWTRemoteDisplay.class).debug("Constructing SWT Remote Display"); //$NON-NLS-1$
+		
 		configurationProperties = configProperties;
 		this.propertiesFileHandler = propertiesFileHandler;
 
@@ -151,6 +153,9 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 						.getProperty(IVNCProperties.REFRESH_DELAY_PERIOD_MS))
 				.longValue();
 
+		log(SWTRemoteDisplay.class).info("Using screen parameters: retries=" + connectionRetries + 
+		        "; zoomFactor=" + zoomFactor + "; firstRefreshDelay(ms)=" + firstRefreshDelayMs + 
+		        "; refreshDelay(ms)=" + refreshDelayPeriodMs + "."); //$NON-NLS-1$
 	}
 
 	/**
@@ -176,7 +181,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 		};
 
-		getCanvas().getDisplay().asyncExec(new Runnable() {
+		getCanvas().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				canvas.addListener(SWT.KeyDown, keyListener);
 				canvas.addListener(SWT.KeyUp, keyListener);
@@ -205,7 +210,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			}
 		};
 
-		getCanvas().getDisplay().asyncExec(new Runnable() {
+		getCanvas().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				canvas.addListener(SWT.MouseMove, mouseListener);
 				canvas.addListener(SWT.MouseUp, mouseListener);
@@ -231,6 +236,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 					updateRequest(false);
 				} catch (Exception e) {
 					// If the first request fails, ignore it.
+                    log(SWTRemoteDisplay.class).warn(
+                            "The first full screen request has failed. Cause: " + e.getMessage()); //$NON-NLS-1$
 				}
 			}
 		});
@@ -255,13 +262,16 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	}
 
 	public void restart() throws Exception {
+	    log(SWTRemoteDisplay.class).info("Restarting SWT remote display."); //$NON-NLS-1$
 		stop();
-		PluginProtocolActionDelegate.restartProtocol(handle);
+		PluginProtocolActionDelegate.requestRestartProtocol(handle);
 		start(handle);
+		log(SWTRemoteDisplay.class).info("SWT remote display restarted."); //$NON-NLS-1$
 	}
 
 	synchronized public void start(ProtocolHandle handle) throws Exception {
 
+	    log(SWTRemoteDisplay.class).info("Starting SWT remote display."); //$NON-NLS-1$
 		this.handle = handle;
 		protoClient = VNCProtocolRegistry.getInstance().get(handle);
 
@@ -293,11 +303,12 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			}
 
 			setRunning(true);
-		}
+			log(SWTRemoteDisplay.class).info("SWT remote display started."); //$NON-NLS-1$
+		}		
 	}
 
 	synchronized public void stop() {
-
+	    log(SWTRemoteDisplay.class).info("Stopping SWT remote display.");
 		setRunning(false);
 
 		refreshTimer.cancel();
@@ -324,10 +335,12 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 		canvas.getDisplay().asyncExec(new Runnable(){
 			public void run() {
-				canvas.setSize(0 ,0);
+				canvas.setSize(0, 0);
 			}
 		});
-				
+		
+		log(SWTRemoteDisplay.class).info("SWT remote display stopped.");
+
 	}
 
 	/**
@@ -348,6 +361,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			message.setFieldValue("y-position", 0); //$NON-NLS-1$
 			message.setFieldValue("width", painter.getWidth()); //$NON-NLS-1$
 			message.setFieldValue("height", painter.getHeight()); //$NON-NLS-1$
+			
 			message.setFieldValue("incremental", incremental ? 1 : 0); //$NON-NLS-1$
 
 			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
@@ -374,6 +388,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 			ProtocolMessage message = eventTranslator.getKeyEventMessage(event);
 			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
+			log(SWTRemoteDisplay.class).debug("Sent key event"); //$NON-NLS-1$
 
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
@@ -388,7 +403,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		try {
 			ProtocolMessage message = eventTranslator
 					.getMouseEventMessage(event);
-		
+			
+
 			Integer x = (Integer) message.getFieldValue("x-position");
 			Integer y = (Integer) message.getFieldValue("y-position");
 
@@ -396,6 +412,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			message.setFieldValue("y-position", (int) ((double)y / zoomFactor));
 			
 			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
+			log(SWTRemoteDisplay.class).debug("Sent mouse event"); //$NON-NLS-1$
 
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
@@ -454,6 +471,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 	public void dispose() {
 
+	    log(SWTRemoteDisplay.class).debug("Disposing SWT Remote Display"); //$NON-NLS-1$
 		try {
 			if (protoClient != null) {
 				// protoClient.stopProtocol();
@@ -496,14 +514,17 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		return zoomFactor;
 	}
 
-	public void setZoomFactor(double zoomFactor) {
+	public void setZoomFactor(double zoomFactor) {	    
 		this.zoomFactor = zoomFactor;
 		
-		Point canvasSize = new Point(0, 0);
-		canvasSize.x = (int) (this.getProtocolData().getFbWidth() * zoomFactor);
-		canvasSize.y = (int) (this.getProtocolData().getFbHeight() * zoomFactor);
-		
-		this.getCanvas().setSize(canvasSize);
+		VNCProtocolData data = this.getProtocolData();
+		if (data != null) {
+		       Point canvasSize = new Point(0, 0);
+		        canvasSize.x = (int) (this.getProtocolData().getFbWidth() * zoomFactor);
+		        canvasSize.y = (int) (this.getProtocolData().getFbHeight() * zoomFactor);
+		        
+		        this.getCanvas().setSize(canvasSize); 
+		}
 	}
 
 	public void setBackground(Color color) {

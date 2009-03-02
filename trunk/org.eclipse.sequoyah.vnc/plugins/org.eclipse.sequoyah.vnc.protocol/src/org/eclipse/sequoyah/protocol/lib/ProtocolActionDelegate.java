@@ -12,19 +12,14 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
-import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.protocol.lib.internal.model.ClientModel;
 import org.eclipse.tml.protocol.lib.internal.model.ServerModel;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
@@ -71,11 +66,8 @@ public class ProtocolActionDelegate {
 	 * 
 	 * @return A handle to identify the connection just made
 	 * 
-	 * @throws ProtocolHandshakeException
-	 *             DOCUMENT ME!!
 	 */
-	
-	public static ProtocolHandle startClientProtocol(
+	public static ProtocolHandle requestStartProtocolAsClient(
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
@@ -83,11 +75,11 @@ public class ProtocolActionDelegate {
 			IProtocolExceptionHandler exceptionHandler,
 			Boolean isBigEndianProtocol,
 			String host, int port,
-			Map<String, Object> parameters)
-			throws ProtocolHandshakeException {
+			Map<String, Object> parameters) {
 
+	    BasePlugin.logDebugMessage("ProtocolActionDelegate","An user is requesting to start a client protocol. host=" + host + "; port=" + port + ".");
 		ClientModel model = ClientModel.getInstance();
-		return model.startClientProtocol(allMessages, incomingMessages,
+		return model.requestStartProtocol(allMessages, incomingMessages,
 				outgoingMessages, protocolInitializer, exceptionHandler, isBigEndianProtocol, host, port, parameters);
 	}
 
@@ -115,20 +107,16 @@ public class ProtocolActionDelegate {
 	 * 
 	 * @return A handle to identify the connection just made
      *
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolHandshakeException
-	 *             DOCUMENT ME!!
 	 */
-	public static ProtocolHandle startServerProtocol(int portToBind,
+	public static ProtocolHandle requestStartProtocolAsServer(int portToBind,
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolHandshake protocolInitializer,
 			IProtocolExceptionHandler exceptionHandler,
-			boolean isBigEndianProtocol) throws IOException,
-			ProtocolHandshakeException {
+			boolean isBigEndianProtocol) {
 
+	    BasePlugin.logDebugMessage("ProtocolActionDelegate","An user is requesting to start a server protocol at port " + portToBind + ".");
 		ServerModel model = ServerModel.getInstance();
 		return model.startListeningToPort(portToBind, allMessages, incomingMessages,
 				outgoingMessages, protocolInitializer, exceptionHandler,
@@ -142,13 +130,12 @@ public class ProtocolActionDelegate {
 	 *            An object provided at the connection time, that identifies 
 	 *            the connection that is to be stopped
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
 	 */
-	public static void stopProtocol(ProtocolHandle handle)
-			throws IOException {
+	public static void requestStopProtocol(ProtocolHandle handle) {
+	    
+	    BasePlugin.logDebugMessage("ProtocolActionDelegate","A user is requesting to stop the protocol identified by " + handle);
 		ClientModel clientModel = ClientModel.getInstance();
-		clientModel.stopClientProtocol(handle);
+		clientModel.requestStopProtocol(handle);
 
 		ServerModel serverModel = ServerModel.getInstance();
 		serverModel.stopListeningToPort(handle);
@@ -161,25 +148,16 @@ public class ProtocolActionDelegate {
 	 *            An object provided at the connection time, that identifies 
 	 *            the connection that is to be restarted
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolHandshakeException
-	 *             DOCUMENT ME!!
 	 */
-	public static void restartProtocol(ProtocolHandle handle)
-			throws ProtocolHandshakeException, IOException {
+	public static void requestRestartProtocol(ProtocolHandle handle) {
 
-	    boolean restartPerformed = false;
+	    BasePlugin.logDebugMessage("ProtocolActionDelegate","An user is requesting to restart the protocol identified by " + handle);
 	    
 		ClientModel clientModel = ClientModel.getInstance();
-		restartPerformed |= clientModel.restartClientProtocol(handle);
+		clientModel.requestRestartProtocol(handle);
 
 		ServerModel serverModel = ServerModel.getInstance();
-		restartPerformed |= serverModel.restartServerProtocol(handle);
-		
-		if (!restartPerformed) {
-		    throw new ProtocolHandshakeException("The restart operation could not be performed.");
-		}
+		serverModel.requestRestartProtocol(handle);
 	}
 
 	/**
@@ -193,19 +171,10 @@ public class ProtocolActionDelegate {
 	 * @param message
 	 *            The message to send to the server
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolRawHandlingException
-	 *             DOCUMENT ME!!
-	 * @throws InvalidMessageException
-	 *             DOCUMENT ME!!
-	 * @throws InvalidDefinitionException
-	 *             DOCUMENT ME!!
 	 */
 	public static void sendMessageToServer(
-			ProtocolHandle handle, ProtocolMessage message)
-			throws IOException, ProtocolRawHandlingException,
-			InvalidMessageException, InvalidDefinitionException {
+			ProtocolHandle handle, ProtocolMessage message) {
+	    
 		ClientModel model = ClientModel.getInstance();
 		model.sendMessage(handle, message);
 	}

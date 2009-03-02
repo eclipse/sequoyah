@@ -9,13 +9,14 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
 
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.tml.vncviewer.network.IVNCPainter;
@@ -201,7 +202,7 @@ public class VNCSWTPainter implements IVNCPainter, ISWTPainter {
 		return null;
 	}
 
-	public void processRectangle(RectHeader rectHeader, DataInputStream in)
+	public void processRectangle(RectHeader rectHeader, DataInput in)
 			throws Exception {
 		// TODO Auto-generated method stub
 		

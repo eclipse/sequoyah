@@ -9,13 +9,14 @@
  *
  * Contributors:
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
 
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
 
@@ -56,7 +57,7 @@ public class PixelFormat {
 	 * 
 	 * @param in the DataInputStream that reads data coming from the server.
 	 */
-	public void getPixelFormat(DataInputStream in) throws ProtocolException {
+	public void getPixelFormat(DataInput in) throws ProtocolException {
 
 		try {
 			bitsPerPixel = in.readUnsignedByte();

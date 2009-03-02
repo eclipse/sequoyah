@@ -8,9 +8,11 @@
  * Fabio Fantato (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.config;
+
+import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,17 +24,12 @@ import org.osgi.framework.Bundle;
 
 
 
-
-
-
 public class EclipsePropertiesFileHandler implements IPropertiesFileHandler {
 
 	
-
-	
-	
 	public Properties loadPropertiesFile(String fileAddress) {
 
+	    log(EclipsePropertiesFileHandler.class).info("Loading VNC properties from " + fileAddress);
 		Properties properties = new Properties(); 
 		Bundle pluginBundle = VNCViewerPlugin.getDefault().getBundle();
 		URL vncViewerConf = pluginBundle.getResource(fileAddress);
@@ -42,6 +39,8 @@ public class EclipsePropertiesFileHandler implements IPropertiesFileHandler {
 			properties.load(vncViewerConfStream);
 		} catch (IOException e) {
 			// TODO handle properly
+		    log(EclipsePropertiesFileHandler.class).error("IOException while loading VNC properties. Cause: " + 
+		            e.getMessage());
 			e.printStackTrace();
 		}
 		

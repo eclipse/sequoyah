@@ -11,11 +11,12 @@
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc *
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer  
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 import java.io.OutputStream;
 
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
@@ -41,7 +42,7 @@ public class VNCProtocol33 extends VNCProtocol {
 	}
 
 	@Override
-	protected int[] readSecurityTypes(DataInputStream in) throws Exception {
+	protected int[] readSecurityTypes(DataInput in) throws Exception {
 		int[] result = null;
 		int secType = in.readInt();
 		switch (secType) {
@@ -66,7 +67,7 @@ public class VNCProtocol33 extends VNCProtocol {
 	}
 
 	@Override
-	protected void readAuthenticationResult(DataInputStream in) throws Exception {
+	protected void readAuthenticationResult(DataInput in) throws Exception {
 
 		/* Version 3.3 doesn't have SecurityResult */
 	}
@@ -96,7 +97,7 @@ public class VNCProtocol33 extends VNCProtocol {
 	/**
 	 * Implements the handshake phase of the RFB Protocol.
 	 */
-	protected void handShake(DataInputStream in, OutputStream out)
+	protected void handShake(DataInput in, OutputStream out)
 			throws Exception {
 
 		int rfbSecType;

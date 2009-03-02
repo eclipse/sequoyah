@@ -8,11 +8,14 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
+import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
+
 import java.io.ByteArrayInputStream;
+import java.io.DataInput;
 import java.io.DataInputStream;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -25,7 +28,7 @@ public class ZlibPaintStrategy extends AbstractPaintStrategy {
 		super(context);
 	}
 
-	public void processRectangle(RectHeader rh, DataInputStream in) throws Exception {
+	public void processRectangle(RectHeader rh, DataInput in) throws Exception {
 		int x = rh.getX();
 		int y = rh.getY();
 		int width = rh.getWidth();
@@ -34,6 +37,10 @@ public class ZlibPaintStrategy extends AbstractPaintStrategy {
 		int compressedDataLength = in.readInt();
 		byte[] compressedDataBuffer = new byte[compressedDataLength];
 
+        log(ZlibPaintStrategy.class).debug("Processing rectangle defined by: x=" + 
+                x + "; y=" + y + "; w=" + width + "; h=" + height + "zlibDataLength=" + 
+                compressedDataLength + ".");
+		
 		in.readFully(compressedDataBuffer, 0, compressedDataLength);
 		byte uncompressedDataBuffer[] = new byte[width * height* getContext().getBytesPerPixel()];
 

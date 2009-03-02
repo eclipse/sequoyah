@@ -9,17 +9,13 @@
  * [246212] - Enhance encapsulation of protocol implementer
  *
  * Contributors:
- * (name) - (contribution)
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  *******************************************************************************/
 package org.eclipse.tml.vncviewer.network;
 
-import java.io.DataInputStream;
-import java.io.OutputStream;
 
 public class VNCProtocolData {
 
-	private DataInputStream in;
-	private OutputStream out;
 	private IVNCPainter vncPainter;
 	private int fbWidth;
 	private int fbHeight;
@@ -49,14 +45,6 @@ public class VNCProtocolData {
 
 	public int getFbHeight() {
 		return fbHeight;
-	}
-
-	public DataInputStream getInputStream() {
-		return in;
-	}
-
-	public OutputStream getOutputStream() {
-		return out;
 	}
 
 	public String getPassword() {
@@ -92,14 +80,6 @@ public class VNCProtocolData {
 
 	public void setFbHeight(int fbHeight) {
 		this.fbHeight = fbHeight;
-	}
-
-	public void setInputStream(DataInputStream in) {
-		this.in = in;
-	}
-
-	public void setOutputStream(OutputStream out) {
-		this.out = out;
 	}
 
 	public void setPassword(String password) {

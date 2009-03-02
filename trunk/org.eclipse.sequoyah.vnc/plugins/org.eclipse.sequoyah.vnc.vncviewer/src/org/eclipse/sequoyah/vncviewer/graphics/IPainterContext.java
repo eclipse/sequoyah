@@ -9,10 +9,11 @@
  *
  * Contributors:
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 
 import org.eclipse.tml.vncviewer.network.PixelFormat;
 import org.eclipse.tml.vncviewer.network.RectHeader;
@@ -31,7 +32,7 @@ public interface IPainterContext {
 	 * @param in stream to read additional data from
 	 * @throws Exception
 	 */
-	public void processRectangle(RectHeader rh, DataInputStream in) throws Exception;
+	public void processRectangle(RectHeader rh, DataInput in) throws Exception;
 
 	/**
 	 * Returns the <code>PixelFormat</code> pixel format that is now in use
@@ -52,7 +53,7 @@ public interface IPainterContext {
 	 * @return read pixel
 	 * @throws Exception
 	 */
-	int readPixel(DataInputStream is) throws Exception;
+	int readPixel(DataInput is) throws Exception;
 
 	/**
 	 * Reads the pixel from the input stream according to the current pixel 
@@ -62,13 +63,13 @@ public interface IPainterContext {
 	 * @return read pixel
 	 * @throws Exception
 	 */
-	int readPixel(DataInputStream is, int bytesPerPixel) throws Exception;
+	int readPixel(DataInput is, int bytesPerPixel) throws Exception;
 	
 	
 	
 	
 	// TODO : insert javadoc here 
-	int[] readpixels(DataInputStream is, int w, int h) throws Exception;
+	int[] readpixels(DataInput is, int w, int h) throws Exception;
 	
 	
 	

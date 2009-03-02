@@ -12,11 +12,12 @@
  * Daniel Barboza Franco (Eldorado Research Institute) -  [243167] - Zoom mechanism not working properly 
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt.img;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,15 +151,15 @@ public class Painter extends AbstractVNCPainter implements ISWTPainter {
 				return bytesPerPixel;
 			}
 
-			public void processRectangle(RectHeader rh, DataInputStream in) throws Exception{
+			public void processRectangle(RectHeader rh, DataInput in) throws Exception{
 				Painter.this.processRectangle(rh, in);
 			}
 
-			public int readPixel(DataInputStream is) throws Exception {
+			public int readPixel(DataInput is) throws Exception {
 				return Painter.this.readPixel(is);
 			}
 
-			public int readPixel(DataInputStream is, int bytesPerPixel) throws Exception {
+			public int readPixel(DataInput is, int bytesPerPixel) throws Exception {
 				return Painter.this.readPixel(is, bytesPerPixel);
 			}
 
@@ -167,7 +168,7 @@ public class Painter extends AbstractVNCPainter implements ISWTPainter {
 				Painter.this.setPixels(x, y, width, height, pixels, start);
 			}
 
-			public int[] readpixels(DataInputStream is, int w, int h) throws Exception {
+			public int[] readpixels(DataInput is, int w, int h) throws Exception {
 				return  Painter.this.readPixels(is, w, h);
 			}
 		};

@@ -9,11 +9,12 @@
  *
  * Contributors:
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt.imgdata;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.tml.vncviewer.graphics.IPainterContext;
@@ -75,15 +76,15 @@ class Painter extends AbstractVNCPainter {
 				return bytesPerPixel;
 			}
 
-			public void processRectangle(RectHeader rh, DataInputStream in) throws Exception{
+			public void processRectangle(RectHeader rh, DataInput in) throws Exception{
 				Painter.this.processRectangle(rh, in);
 			}
 
-			public int readPixel(DataInputStream is) throws Exception {
+			public int readPixel(DataInput is) throws Exception {
 				return Painter.this.readPixel(is);
 			}
 
-			public int readPixel(DataInputStream is, int bytesPerPixel) throws Exception {
+			public int readPixel(DataInput is, int bytesPerPixel) throws Exception {
 				return Painter.this.readPixel(is, bytesPerPixel);
 			}
 
@@ -92,7 +93,7 @@ class Painter extends AbstractVNCPainter {
 				Painter.this.setPixels(x, y, width, height, pixels, start);
 			}
 
-			public int[] readpixels(DataInputStream is, int w, int h) {
+			public int[] readpixels(DataInput is, int w, int h) {
 				// TODO Auto-generated method stub
 				return null;
 			}

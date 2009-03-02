@@ -13,27 +13,25 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetSocketAddress;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
 import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
-import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
-import org.eclipse.tml.protocol.lib.exceptions.InvalidInputStreamDataException;
-import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
-import org.eclipse.tml.protocol.lib.exceptions.MessageHandleException;
 import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
@@ -50,7 +48,7 @@ import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
  * USAGE: This class is intended to be used by the protocol framework only.
  * 
  */
-public class ServerModel implements IModel {
+public class ServerModel {
 
 	/**
 	 * The only instance of this class
@@ -61,7 +59,7 @@ public class ServerModel implements IModel {
 	 * A map containing all sockets that are currently listening to ports
 	 * associated to the running server protocols
 	 */
-	private Map<ProtocolHandle, ServerSocket> openedServerSockets = new HashMap<ProtocolHandle, ServerSocket>();
+	private Map<ProtocolHandle, ServerSocketChannel> openedSocketChannels = new HashMap<ProtocolHandle, ServerSocketChannel>();
 
 	/**
 	 * A map containing all engine factories associated to each running server
@@ -117,11 +115,7 @@ public class ServerModel implements IModel {
 	 *            The sequence of steps to execute for connection initialization
 	 * @param isBigEndianProtocol
 	 *            True if the protocol is big endian, false if little endian
-	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolHandshakeException
-	 *             DOCUMENT ME!!
+	 *
 	 */
 	public ProtocolHandle startListeningToPort(int portToBind,
 			Map<Long, ProtocolMsgDefinition> allMessages,
@@ -129,26 +123,43 @@ public class ServerModel implements IModel {
 			Collection<String> outgoingMessages,
 			IProtocolHandshake protocolInitializer,
 			IProtocolExceptionHandler exceptionHandler,
-			boolean isBigEndianProtocol) throws ProtocolHandshakeException,
-			IOException {
+			boolean isBigEndianProtocol) {
 
+	    ProtocolHandle handle = new ProtocolHandle();
 		if ((portToBind <= 0) || (allMessages == null)
 				|| (incomingMessages == null) || (outgoingMessages == null)) {
-			throw new ProtocolHandshakeException(
-					"Invalid parameters provided to method"); //$NON-NLS-1$
+		    
+		    BasePlugin.logError("Invalid parameters provided to method");
+		    if (exceptionHandler != null) {
+		        exceptionHandler.handleProtocolHandshakeException(handle,     
+		                new ProtocolHandshakeException("Invalid parameters provided to method")); //$NON-NLS-1$)
+		    }
 		}
 
-        ProtocolHandle handle = new ProtocolHandle();
-		ServerSocket serverSocket = new ServerSocket(portToBind);
-		ServerProtocolEngineFactory factory = new ServerProtocolEngineFactory(
-				handle, protocolInitializer, allMessages, incomingMessages, outgoingMessages,
-				exceptionHandler, isBigEndianProtocol);
-		openedServerSockets.put(handle, serverSocket);
-		engineFactories.put(handle, factory);
+		BasePlugin.logDebugMessage("ServerModel","Creating a server socket channel to listen to connections at port " + 
+		        portToBind + ". Generated handle: " + handle + ".");        
+		try
+        {
+            ServerSocketChannel channel = ServerSocketChannel.open();
+            channel.socket().bind(new InetSocketAddress(portToBind));
+            BasePlugin.logDebugMessage("ServerModel","Registering needed objects at Server Model");
+            ServerProtocolEngineFactory factory = new ServerProtocolEngineFactory(
+            		handle, protocolInitializer, allMessages, incomingMessages, outgoingMessages,
+            		exceptionHandler, isBigEndianProtocol);
+            openedSocketChannels.put(handle, channel);
+            engineFactories.put(handle, factory);
 
-		Runnable deamon = new ServerDeamon(handle, serverSocket, factory);
-		Thread deamonThread = new Thread(deamon);
-		deamonThread.start();
+            Runnable deamon = new ServerDeamon(handle, channel, factory);
+            Thread deamonThread = new Thread(deamon);
+            deamonThread.start();
+        }
+        catch (IOException e)
+        {
+            BasePlugin.logError("Error opening server socket. Cause: " + e.getMessage());
+            if (exceptionHandler != null) {
+                exceptionHandler.handleIOException(handle, e);                        
+            }
+        }
 				
 		return handle;
 	}
@@ -161,17 +172,36 @@ public class ServerModel implements IModel {
 	 *            The object that identifies the server socket that is to
 	 *            stop listening to.
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
 	 */
-	public void stopListeningToPort(ProtocolHandle handle)
-			throws IOException {
+	public void stopListeningToPort(ProtocolHandle handle) {
 
-		ServerSocket serverSocket = openedServerSockets
-				.get(handle);
-		if (serverSocket != null) {
-			serverSocket.close();
-		}
+	    ServerSocketChannel channel = openedSocketChannels.get(handle);
+	    if (channel != null) {
+	        
+	        BasePlugin.logDebugMessage("ServerModel","Closing server socket channel related to provided handle.");
+	        try {
+                channel.close();
+            } catch (IOException e) {
+                BasePlugin.logError("Error closing server socket. Cause: " + e.getMessage());
+                ServerProtocolEngineFactory factory = engineFactories.get(handle);
+                if (factory != null) {
+                    IProtocolExceptionHandler excHandler = factory.getExceptionHandler();
+                    if (excHandler != null) {
+                        excHandler.handleIOException(handle, e);
+                    }                    
+                }
+            }
+
+	        BasePlugin.logDebugMessage("ServerModel","Unregistering all objects related to provided handle from Server Model");
+	        Collection<ProtocolEngine> aImplCollection = connectedClients.get(handle);
+	        for (ProtocolEngine aImpl : aImplCollection) {
+	            aImpl.dispose();        
+	            aImplCollection.remove(aImpl);
+	        }
+	        connectedClients.remove(handle);
+	        openedSocketChannels.remove(handle);
+	        engineFactories.remove(handle);
+	    }
 	}
 
 	/**
@@ -183,19 +213,12 @@ public class ServerModel implements IModel {
 	 * 
 	 * @return True if the restart was performed; false otherwise
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolHandshakeException
-	 *             DOCUMENT ME!!
 	 */
-	public boolean restartServerProtocol(ProtocolHandle handle)
-			throws IOException, ProtocolHandshakeException {
-
-	    boolean restartPerformed = false;
-		ServerSocket ss = openedServerSockets.get(handle);
+	public void requestRestartProtocol(ProtocolHandle handle) {
+		ServerSocketChannel channel = openedSocketChannels.get(handle);
 		
-		if (ss != null) {
-			int portToBind = ss.getLocalPort();
+		if (channel != null) {
+			int portToBind = channel.socket().getLocalPort();
 			ServerProtocolEngineFactory factory = engineFactories
 					.get(handle);
 	
@@ -204,25 +227,23 @@ public class ServerModel implements IModel {
 					.getIncomingMessages(), factory.getOutgoingMessages(),
 					null, factory.getExceptionHandler(), factory
 							.isBigEndianProtocol());
-			restartPerformed = true;
 		}
-		
-		return restartPerformed;
 	}
 
 	/**
-	 * @see IModel#cleanStoppedProtocols()
+	 * Finalizes and unregisters all stopped protocols from the model
 	 */
 	public void cleanStoppedProtocols() {
 
+	    BasePlugin.logDebugMessage("ServerModel","Removing all stopped protocol engines from Server Model.");
 		Set<ProtocolHandle> keys = connectedClients.keySet();
 		for (ProtocolHandle key : keys) {
 			Collection<ProtocolEngine> aImplCollection = connectedClients
 					.get(key);
 			for (ProtocolEngine aImpl : aImplCollection) {
 				if (!aImpl.isConnected()) {
-				    aImpl.dispose();
-					aImplCollection.remove(aImpl);
+				    aImpl.dispose();		
+				    aImplCollection.remove(aImpl);
 				}
 			}
 		}
@@ -239,10 +260,10 @@ public class ServerModel implements IModel {
     {   
         boolean isListeningToPort = false;
         
-        ServerSocket ss = openedServerSockets.get(handle);
-        if (ss != null)
+        ServerSocketChannel channel = openedSocketChannels.get(handle);
+        if (channel != null)
         {
-            isListeningToPort = ss.isBound() && !ss.isClosed();
+            isListeningToPort = channel.socket().isBound() && !channel.isOpen();
         }
         return isListeningToPort;
     }
@@ -268,9 +289,9 @@ public class ServerModel implements IModel {
 		private ProtocolHandle handle;
 
 		/**
-		 * The server socket that is used for listening to incoming connections
+		 * The server socket channel that is used for listening to incoming connections
 		 */
-		private ServerSocket serverSocket;
+		private ServerSocketChannel channel;
 
 		/**
 		 * A factory that is able to create new engines to handle client
@@ -283,15 +304,17 @@ public class ServerModel implements IModel {
          *
          * @param handle
 	     *            The object used to map the server at the model
-		 * @param serverSocket
-		 *            The socket to listen to
+		 * @param channel
+		 *            The socket channel to listen to
 		 * @param factory
 		 *            The factory that builds new protocol engines
 		 */
-		public ServerDeamon(ProtocolHandle handle, ServerSocket serverSocket,
+		public ServerDeamon(ProtocolHandle handle, ServerSocketChannel channel,
 				ServerProtocolEngineFactory factory) {
+		    BasePlugin.logDebugMessage("ServerDeamon","Creating a server deamon to listen to connections to port " + 
+		            channel.socket().getLocalPort());
 		    this.handle = handle;
-			this.serverSocket = serverSocket;
+			this.channel = channel;
 			this.factory = factory;
 		}
 
@@ -301,12 +324,14 @@ public class ServerModel implements IModel {
 		 * @see Runnable#run()
 		 */
 		public void run() {
-			try {
-				if ((serverSocket != null) && (factory != null)) {
+		    BasePlugin.logDebugMessage("ServerDeamon","Starting the server deamon.");
+		    try {
+				if ((channel != null) && (factory != null)) {				    
 					while (true) {
-						final Socket s;
+						final SocketChannel sc;
 						try {
-							s = serverSocket.accept();
+						    BasePlugin.logDebugMessage("ServerDeamon","Listening to incoming connections.");
+							sc = channel.accept();
 						} catch (IOException e) {
 							// stopListeningToPort closes the server socket and
 							// causes this exception to happen. The treatment
@@ -316,10 +341,12 @@ public class ServerModel implements IModel {
 							break;
 						}
 
-						final ProtocolEngine eng = factory
-								.getServerProtocolEngine();
-						eng.requestStart(s, null, null);
+						BasePlugin.logInfo("A client has connected to port " + channel.socket().getLocalPort());
+						BasePlugin.logDebugMessage("ServerDeamon","Creating a protocol engine to handle the protocol connection.");
+						final ProtocolEngine eng = factory.getServerProtocolEngine();
+						eng.requestStart(sc, null);
 
+						BasePlugin.logDebugMessage("ServerDeamon","Registering the protocol engine at Server Model");
 						Collection<ProtocolEngine> allClients = connectedClients
 								.get(handle);
 						if (allClients == null) {
@@ -328,59 +355,32 @@ public class ServerModel implements IModel {
 									allClients);
 						}
 						allClients.add(eng);
-					}
+					}					
 				}
-			} catch (Exception e) {
-				IProtocolExceptionHandler exceptionHandler = factory
-						.getExceptionHandler();
-
-				if (exceptionHandler != null) {
-					// Delegate the exception to user
-					if (e instanceof IOException) {
-						exceptionHandler.handleIOException(handle, (IOException) e);
-					} else if (e instanceof ProtocolHandshakeException) {
-						exceptionHandler
-								.handleProtocolInitException(handle, (ProtocolHandshakeException) e);
-					} else if (e instanceof MessageHandleException) {
-						exceptionHandler
-								.handleMessageHandleException(handle, (MessageHandleException) e);
-					} else if (e instanceof InvalidMessageException) {
-						exceptionHandler
-								.handleInvalidMessageException(handle, (InvalidMessageException) e);
-					} else if (e instanceof InvalidInputStreamDataException) {
-						exceptionHandler
-								.handleInvalidInputStreamDataException(handle, (InvalidInputStreamDataException) e);
-					} else if (e instanceof InvalidDefinitionException) {
-						exceptionHandler
-								.handleInvalidDefinitionException(handle, (InvalidDefinitionException) e);
-					} else if (e instanceof ProtocolRawHandlingException) {
-						exceptionHandler
-								.handleProtocolRawHandlingException(handle, (ProtocolRawHandlingException) e);
-					}
-				}
-
 			} finally {
+			    BasePlugin.logDebugMessage("ServerDeamon","Stopping the server deamon.");
 				try {
 					// Perform the cleanup before finishing the thread
 					// execution. This includes stopping all connections
 					// from server side and removing the created objects
 					// from model
-					if (!serverSocket.isClosed()) {
-						serverSocket.close();
+					if (channel.isOpen()) {
+						channel.close();
 					}
 
-					Collection<ProtocolEngine> allClients = connectedClients
-							.get(serverSocket.getLocalPort());
+					BasePlugin.logDebugMessage("ServerDeamon","Unregistering all objects related to provided handle from Server Model");
+					Collection<ProtocolEngine> allClients = connectedClients.get(handle);
 					for (ProtocolEngine aClient : allClients) {
 						aClient.requestStop();
 						allClients.remove(aClient);
 						aClient.dispose();
 					}
 
-					openedServerSockets.remove(handle);
+					openedSocketChannels.remove(handle);
 					engineFactories.remove(handle);
 					connectedClients.remove(handle);
 
+					BasePlugin.logInfo("Server deamon stopped.");
 				} catch (IOException e) {
 					IProtocolExceptionHandler exceptionHandler = factory
 							.getExceptionHandler();

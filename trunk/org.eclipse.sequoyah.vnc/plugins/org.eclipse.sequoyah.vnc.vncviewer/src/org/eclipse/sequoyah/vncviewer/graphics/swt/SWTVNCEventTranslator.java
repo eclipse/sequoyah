@@ -11,9 +11,12 @@
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247840] - Mouse click not working
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
+
+import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -34,7 +37,6 @@ public class SWTVNCEventTranslator {
 	// Number of buttons as defined on the RFB protocol (8 bits for buttons).
 	private static final int BUTTONS = 8; 
 	
-	private boolean shiftPressed = false;
 	private boolean buttonPressed[];
 
 	private Hashtable<Integer, Integer> swtToKeysymCodes;
@@ -133,29 +135,16 @@ public class SWTVNCEventTranslator {
 	 */
 	public ProtocolMessage getKeyEventMessage(Event swtEvent) {
 
-		int keysym;
 		boolean pressed;
 
-		if (swtEvent.keyCode == SWT.SHIFT) {
-			shiftPressed = (swtEvent.type == SWT.KeyDown);
-		}
-
-		keysym = getKeysym(swtEvent.keyCode);
+		int key = getKeysym(swtEvent.keyCode);
 		pressed = (swtEvent.type == SWT.KeyDown);
 
-		/*
-		 * If the shift key is pressed, SWT keeps the original key in the
-		 * Event.character field. As the VNC Protocol expects the original key
-		 * (shift press was already sent) we have to handle the case when shift
-		 * is pressed.
-		 */
 		ProtocolMessage message = new ProtocolMessage(4);
 		message.setFieldValue("downFlag", pressed ? 1 : 0); //$NON-NLS-1$
-		if (!shiftPressed) {
-			message.setFieldValue("key", keysym); //$NON-NLS-1$
-		} else {
-			message.setFieldValue("key", (int) swtEvent.character); //$NON-NLS-1$
-		}
+		message.setFieldValue("key", key); //$NON-NLS-1$
+		
+		log(SWTVNCEventTranslator.class).debug("Key event message parameters: downFlag=" + pressed + "; key=" + key + "; ");
 		return message;
 
 	}

@@ -10,6 +10,7 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -19,7 +20,6 @@ import java.util.Map;
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
 import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
@@ -108,13 +108,8 @@ public class ServerProtocolEngineFactory {
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
 			IProtocolExceptionHandler exceptionHandler,
-			boolean isBigEndianProtocol) throws ProtocolHandshakeException {
-			
-		if (protocolInitializer == null)
-		{
-			throw new ProtocolHandshakeException("An initializer must be provided to run the server protocol"); //$NON-NLS-1$
-		}	
-		
+			boolean isBigEndianProtocol) {
+					
 		this.handle = handle;
 		this.protocolInitializer = protocolInitializer;
 		this.allMessages = allMessages;

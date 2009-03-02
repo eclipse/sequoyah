@@ -11,10 +11,11 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 import java.io.OutputStream;
 import java.util.Map;
 
@@ -56,7 +57,7 @@ public interface IProtocolHandshake {
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
-	void serverHandshake(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
+	void serverHandshake(ProtocolHandle handle, DataInput in, OutputStream out, Map<?,?> parameters)
 			throws ProtocolHandshakeException;
 
 	/**
@@ -79,6 +80,6 @@ public interface IProtocolHandshake {
 	 *             If during the initialization an error that prevents the
 	 *             protocol to continue working is identified.
 	 */
-	void clientHandshake(ProtocolHandle handle, DataInputStream in, OutputStream out, Map parameters)
+	void clientHandshake(ProtocolHandle handle, DataInput in, OutputStream out, Map<?,?> parameters)
 			throws ProtocolHandshakeException;
 }

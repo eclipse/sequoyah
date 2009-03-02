@@ -13,10 +13,10 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework 
  ********************************************************************************/
 package org.eclipse.tml.protocol;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -27,11 +27,6 @@ import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.ProtocolActionDelegate;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
-import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
-import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
 /**
@@ -62,15 +57,12 @@ public class PluginProtocolActionDelegate {
 	 * 
 	 * @return A handle to identify the connection just made
 	 * 
-	 * @throws ProtocolHandshakeException
-	 *             DOCUMENT ME!!
 	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
-	public static ProtocolHandle startClientProtocol(String protocolId,
+	public static ProtocolHandle requestStartProtocolAsClient(String protocolId,
 			IProtocolExceptionHandler exceptionHandler, String host, int port,
-			Map parameters) throws ProtocolHandshakeException,
-			MalformedProtocolExtensionException {
+			Map<String, Object> parameters) throws MalformedProtocolExtensionException {
 
 		PluginProtocolModel model = PluginProtocolModel.getInstance();
 		Map<Long, ProtocolMsgDefinition> allMessages = model
@@ -83,7 +75,7 @@ public class PluginProtocolActionDelegate {
 				.getProtocolInit(protocolId);
 		boolean isBigEndianProtocol = model.isBigEndianProtocol(protocolId);
 
-		return ProtocolActionDelegate.startClientProtocol(allMessages,
+		return ProtocolActionDelegate.requestStartProtocolAsClient(allMessages,
 				incomingMessages, outgoingMessages, protocolInitializer,
 				exceptionHandler, isBigEndianProtocol, host, port, parameters);
 	}
@@ -101,16 +93,11 @@ public class PluginProtocolActionDelegate {
      *
      * @return A handle to identify the connection just made
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolHandshakeException
-	 *             DOCUMENT ME!!
 	 * @throws MalformedProtocolExtensionException
 	 *             DOCUMENT ME!!
 	 */
-	public static ProtocolHandle startServerProtocol(String protocolId, int serverPort, 
-			IProtocolExceptionHandler exceptionHandler) throws IOException,
-			ProtocolHandshakeException, MalformedProtocolExtensionException {
+	public static ProtocolHandle requestStartProtocolAsServer(String protocolId, int serverPort, 
+			IProtocolExceptionHandler exceptionHandler) throws MalformedProtocolExtensionException {
 
 		PluginProtocolModel model = PluginProtocolModel.getInstance();
 		Map<Long, ProtocolMsgDefinition> allMessages = model
@@ -123,7 +110,7 @@ public class PluginProtocolActionDelegate {
 				.getProtocolInit(protocolId);
 		boolean isBigEndianProtocol = model.isBigEndianProtocol(protocolId);
 
-		return ProtocolActionDelegate.startServerProtocol(serverPort, allMessages,
+		return ProtocolActionDelegate.requestStartProtocolAsServer(serverPort, allMessages,
 				incomingMessages, outgoingMessages, protocolInitializer,
 				exceptionHandler, isBigEndianProtocol);
 	}
@@ -134,14 +121,10 @@ public class PluginProtocolActionDelegate {
 	 * @param handle
 	 *            An object provided at the connection time, that identifies 
 	 *            the connection that is to be stopped
-	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
 	 */
-	public static void stopProtocol(ProtocolHandle handle)
-			throws IOException {
+	public static void requestStopProtocol(ProtocolHandle handle) {
 
-		ProtocolActionDelegate.stopProtocol(handle);
+		ProtocolActionDelegate.requestStopProtocol(handle);
 	}
 
 	/**
@@ -151,15 +134,10 @@ public class PluginProtocolActionDelegate {
 	 *            An object provided at the connection time, that identifies 
 	 *            the connection that is to be restarted
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolHandshakeException
-	 *             DOCUMENT ME!!
 	 */
-	public static void restartProtocol(ProtocolHandle handle)
-			throws IOException, ProtocolHandshakeException {
+	public static void requestRestartProtocol(ProtocolHandle handle) {
 
-		ProtocolActionDelegate.restartProtocol(handle);
+		ProtocolActionDelegate.requestRestartProtocol(handle);
 	}
 
 	/**
@@ -173,19 +151,9 @@ public class PluginProtocolActionDelegate {
 	 * @param message
 	 *            The message to send to the server
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolRawHandlingException
-	 *             DOCUMENT ME!!
-	 * @throws InvalidMessageException
-	 *             DOCUMENT ME!!
-	 * @throws InvalidDefinitionException
-	 *             DOCUMENT ME!!
 	 */
 	public static void sendMessageToServer(
-			ProtocolHandle handle, ProtocolMessage message)
-			throws IOException, InvalidMessageException,
-			InvalidDefinitionException, ProtocolRawHandlingException {
+			ProtocolHandle handle, ProtocolMessage message) {
 
 		ProtocolActionDelegate
 				.sendMessageToServer(handle, message);

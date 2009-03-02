@@ -13,6 +13,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [242924] - There is no way to keep the size of a Variable Size Data read
  * Daniel Barboza Franco (Eldorado Research Institute) - [257588] - Add support to ServerCutText message
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework 
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.reader;
 
@@ -29,6 +30,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.protocol.exceptions.MalformedProtocolExtensionException;
 import org.eclipse.tml.protocol.internal.model.PluginProtocolModel;
 import org.eclipse.tml.protocol.internal.model.ProtocolBean;
@@ -73,6 +75,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	public static ProtocolBean readProtocolImplDef(String protocolId)
 			throws MalformedProtocolExtensionException {
 		// Create the bean
+	    BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading protocol definition from plugin.xml. protocolId=" + protocolId);
 		ProtocolBean bean = new ProtocolBean();
 		bean.setProtocolId(protocolId);
 
@@ -90,13 +93,17 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 				bean
 						.setProtocolInitSeed((IProtocolHandshake) initSeedObj);
 			} else {
+			    BasePlugin.logError("The protocol identified by " + 
+			            protocolId + " has not declared a valid handshake.");
 				throw new MalformedProtocolExtensionException(
 						"The protocol has not declared a valid handshake"); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
+            BasePlugin.logError("It was not possible to create a handshake object for the protocol identified by " + protocolId + ".");
 			throw new MalformedProtocolExtensionException(e.getMessage(), e);
 		}
 
+		BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read protocol definition from plugin.xml. protocolId=" + protocolId);
 		return bean;
 	}
 
@@ -229,6 +236,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * @return The list of parents of the provided protocol.
 	 */
 	private static List<String> getAllParentProtocols(String protocolId) {
+	    BasePlugin.logDebugMessage("ProtocolExtensionsReader", "Getting list of all parents of protocol " + protocolId + ".");
 		List<String> allParents = new ArrayList<String>();
 		allParents.add(protocolId);
 		String aParent = protocolId;
@@ -239,6 +247,9 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			}
 		} while (aParent != null);
 
+		BasePlugin.logDebugMessage("ProtocolExtensionsReader","Retrieved list of all parents of protocol " + 
+		        protocolId + ": " + allParents);
+		
 		return allParents;
 	}
 
@@ -265,6 +276,8 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	private static Map<Long, ProtocolMsgDefinition> getAllProtocolMessages(
 			List<String> protocols, boolean readFields)
 			throws MalformedProtocolExtensionException {
+	    
+	    BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading all messages of protocols: " + protocols);
 		Map<Long, ProtocolMsgDefinition> messageDefCollection = new HashMap<Long, ProtocolMsgDefinition>();
 
 		// Get all Protocol Message extensions
@@ -286,12 +299,14 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 							.getAttribute(PROTOCOL_MESSAGE_PROTOCOL_ID_ATTR);
 
 					if ((protocol.equals(extensionProtocolId))) {
-						readMsgDefToCollection(protocolMsgConf,
-								messageDefCollection, readFields);
+					    BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading message of protocol " + protocol);					    
+						readMsgDefToCollection(protocolMsgConf, messageDefCollection, readFields);
 					}
 				}
 			}
 		}
+		
+		BasePlugin.logDebugMessage("ProtocolExtensionsReader","All messages of protocols " + protocols + " were read.");
 
 		return messageDefCollection;
 	}
@@ -313,84 +328,93 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			IConfigurationElement protocolMsgConf,
 			Map<Long, ProtocolMsgDefinition> messageDefMap, boolean readFields)
 			throws MalformedProtocolExtensionException {
-		try {
-			// Creates the bean and sets the message code to it
-			ProtocolMsgDefinition bean = new ProtocolMsgDefinition();
-			long code = Long.decode(protocolMsgConf
-					.getAttribute(PROTOCOL_MESSAGE_CODE_ATTR));
-			String id = protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_ID_ATTR);
+ 
+	    // Creates the bean and sets the message code to it
+	    ProtocolMsgDefinition bean = new ProtocolMsgDefinition();
+	    long code = Long.decode(protocolMsgConf
+	            .getAttribute(PROTOCOL_MESSAGE_CODE_ATTR));
+	    String id = protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_ID_ATTR);
 
-			boolean codeSigned = Boolean.parseBoolean(protocolMsgConf
-					.getAttribute(PROTOCOL_MESSAGE_CODE_SIGNED_ATTR));
-			int codeSize = Integer.decode(protocolMsgConf
-					.getAttribute(PROTOCOL_MESSAGE_CODE_SIZE_ATTR));
+	    BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading message definition for " + id + ". code=" + code);
 
-			// If the message handler attribute is not blank, that means the
-			// user has declared a handler for the message and wants it to be
-			// handled in its own provided way. If the handler is not provided,
-			// use the null message handler as the message handler.
-			IMessageHandler handler = null;
-			if (protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_HANDLER_ATTR) != null) {
-				Object aObject = protocolMsgConf
-						.createExecutableExtension(PROTOCOL_MESSAGE_HANDLER_ATTR);
-				if (!(aObject instanceof IMessageHandler)) {
-					throw new MalformedProtocolExtensionException(
-							"Error at message declaration. The message handler must be an instance of IMessageHandler"); //$NON-NLS-1$
-				} else {
-					handler = (IMessageHandler) aObject;
-				}
-			} else {
-				handler = new NullMessageHandler();
-			}
+	    boolean codeSigned = Boolean.parseBoolean(protocolMsgConf
+	            .getAttribute(PROTOCOL_MESSAGE_CODE_SIGNED_ATTR));
+	    int codeSize = Integer.decode(protocolMsgConf
+	            .getAttribute(PROTOCOL_MESSAGE_CODE_SIZE_ATTR));
 
-			// Collects all definitions of message fields
-			//
-			// IMPORTANT NOTE: it is extremely important to store the message
-			// fields in a collection that preserves the input order. The whole
-			// protocol is based on this order, as the iteration is done on the
-			// model to define which bytes read from the stream belongs to each
-			// field
-			List<IMsgDataBean> msgDataList = new ArrayList<IMsgDataBean>();
-			if (readFields) {
+	    try {      
+	        // If the message handler attribute is not blank, that means the
+	        // user has declared a handler for the message and wants it to be
+	        // handled in its own provided way. If the handler is not provided,
+	        // use the null message handler as the message handler.
+	        IMessageHandler handler = null;
+	        if (protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_HANDLER_ATTR) != null) {
+	            Object aObject = protocolMsgConf
+	            .createExecutableExtension(PROTOCOL_MESSAGE_HANDLER_ATTR);
+	            if (!(aObject instanceof IMessageHandler)) {
+	                BasePlugin.logError("Error at message declaration. The message handler must be an instance of IMessageHandler.");
+	                throw new MalformedProtocolExtensionException(
+	                    "Error at message declaration. The message handler must be an instance of IMessageHandler"); //$NON-NLS-1$
+	            } else {
+	                handler = (IMessageHandler) aObject;
+	            }
+	        } else {
+	            handler = new NullMessageHandler();
+	        }
 
-				IConfigurationElement[] msgDataConfArray = protocolMsgConf
-						.getChildren();
-				for (IConfigurationElement msgDataConf : msgDataConfArray) {
-					IMsgDataBean msgData = readMsgData(msgDataConf);
-					msgDataList.add(msgData);
-				}
-			}
+	        // Collects all definitions of message fields
+	        //
+	        // IMPORTANT NOTE: it is extremely important to store the message
+	        // fields in a collection that preserves the input order. The whole
+	        // protocol is based on this order, as the iteration is done on the
+	        // model to define which bytes read from the stream belongs to each
+	        // field
+	        List<IMsgDataBean> msgDataList = new ArrayList<IMsgDataBean>();
+	        if (readFields) {
 
-			// Fills the bean with information collected previously
-			bean.setCode(code);
-			bean.setId(id);
-			bean.setMsgCodeSigned(codeSigned);
-			bean.setMsgCodeSizeInBytes(codeSize);
-			bean.setHandler(handler);
-			bean.setMessageData(msgDataList);
+	            IConfigurationElement[] msgDataConfArray = protocolMsgConf.getChildren();
+	            BasePlugin.logDebugMessage("ProtocolExtensionsReader","Starting to read fields of message " + id);
+	            for (IConfigurationElement msgDataConf : msgDataConfArray) {	                
+	                IMsgDataBean msgData = readMsgData(msgDataConf);
+	                msgDataList.add(msgData);
+	            }
+	            BasePlugin.logDebugMessage("ProtocolExtensionsReader","Finished to read fields of message " + id);
+	        }
 
-			
-			PluginProtocolModel model = PluginProtocolModel.getInstance();
-			Collection<String> clientMsgs = model.getClientMessages(protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_PROTOCOL_ID_ATTR));
-			Collection<String> serverMsgs = model.getServerMessages(protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_PROTOCOL_ID_ATTR));
-
-			// Stores the bean at the provided map
-			if (clientMsgs.contains(id)) {
-				if (!messageDefMap.containsKey(code))
-					messageDefMap.put(code, bean);				
-			}
-			
-			// Server msgs are negative
-			if (serverMsgs.contains(id)) {
-				if (!messageDefMap.containsKey(-code))
-					messageDefMap.put(-code, bean);				
-			}
+	        // Fills the bean with information collected previously
+	        bean.setCode(code);
+	        bean.setId(id);
+	        bean.setMsgCodeSigned(codeSigned);
+	        bean.setMsgCodeSizeInBytes(codeSize);
+	        bean.setHandler(handler);
+	        bean.setMessageData(msgDataList);
 
 
+	        PluginProtocolModel model = PluginProtocolModel.getInstance();
+	        Collection<String> clientMsgs = model.getClientMessages(protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_PROTOCOL_ID_ATTR));
+	        Collection<String> serverMsgs = model.getServerMessages(protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_PROTOCOL_ID_ATTR));
 
-		} catch (CoreException e) {
-			// Skip the erroneous message
-		}
+	        // Stores the bean at the provided map
+	        if (clientMsgs.contains(id)) {
+	            if (!messageDefMap.containsKey(code)) {
+	                BasePlugin.logDebugMessage("ProtocolExtensionsReader","Registering the message as a client message.");
+	                messageDefMap.put(code, bean);		
+	            }
+	        }
+
+	        // Server msgs are negative
+	        if (serverMsgs.contains(id)) {
+	            if (!messageDefMap.containsKey(-code)) {
+	                BasePlugin.logDebugMessage("ProtocolExtensionsReader","Registering the message as a server message.");
+	                messageDefMap.put(-code, bean);		
+	            }
+	        }
+
+	        BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read message definition for " + id + ". code=" + code);
+	    } catch (CoreException e) {
+	        // Skip the erroneous message
+	        BasePlugin.logWarning("There is an error at the declaration of message " + id + ". Skipping it.");
+	    }			
 	}
 
 	/**
@@ -413,7 +437,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 		IMsgDataBean bean = null;
 
 		// Firstly, define the field type
-		if (msgDataConf.getName().equals(PROTOCOL_MESSAGE_FIXED_DATA_ELEM)) {
+		if (msgDataConf.getName().equals(PROTOCOL_MESSAGE_FIXED_DATA_ELEM)) {	    
 			// If it is a fixed data field, create a fixed data bean
 			FixedSizeDataBean fixedBean = new FixedSizeDataBean();
 
@@ -426,6 +450,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 					.getAttribute(PROTOCOL_MESSAGE_FIXED_FIELD_SIZE_ATTR));
 			String value = msgDataConf
 					.getAttribute(PROTOCOL_MESSAGE_FIXED_FIELD_VALUE_ATTR);
+			BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read the " + fieldName + " fixed sized field definition.");
 
 			// Sets the bean with values collected
 			fixedBean.setFieldName(fieldName);
@@ -460,6 +485,8 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			String value = msgDataConf
 					.getAttribute(PROTOCOL_MESSAGE_VARIABLE_VALUE_FIELD_VALUE_ATTR);
 
+			BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read the " + valueFieldName + " variable sized field definition.");
+			
 			// Sets the bean with values collected
 			varBean.setSizeFieldName(sizeFieldName);
 			varBean.setSizeFieldSigned(isSizeFieldSigned);
@@ -480,7 +507,9 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			// Read data from the configuration element
 			Object aObject = msgDataConf
 					.createExecutableExtension(PROTOCOL_MESSAGE_RAW_DATA_EXECUTABLE_ATTR);
+					
 			if (!(aObject instanceof IRawDataHandler)) {
+			    BasePlugin.logError("The raw data handler specified does not implement IRawDataHandler.");
 				throw new MalformedProtocolExtensionException(
 						"Error at message declaration. The raw data handler must be an instance of IRawDataHandler"); //$NON-NLS-1$
 			} else {
@@ -502,6 +531,8 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 					.getAttribute(PROTOCOL_MESSAGE_ITERATABLE_BLOCK_ID_ATTR);
 			Collection<IMsgDataBean> dataBeans = new ArrayList<IMsgDataBean>();
 
+			BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading an iteratable block definition. blockId=" + iteratableBlockId + ".");
+			
 			// Sets the bean with values collected
 			iteratableBean.setIterateOnField(iterateOnField);
 			iteratableBean.setId(iteratableBlockId);
@@ -512,12 +543,14 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			IMsgDataBean internalBean;
 			IConfigurationElement[] internalElements = msgDataConf
 					.getChildren();
+			BasePlugin.logDebugMessage("ProtocolExtensionsReader","Starting to read internal fields of iteratable block.");
 			for (IConfigurationElement internal : internalElements) {
 				// Recursive call. This allows the internal fields to be read
 				// without writing more code
 				internalBean = readMsgData(internal);
 				dataBeans.add(internalBean);
 			}
+			BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read internal fields of iteratable block.");
 			iteratableBean.setDataBeans(dataBeans);
 
 			// Sets the bean to return
@@ -525,6 +558,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 		} else {
 			// If it is an unknown field (different from fixed, variable, raw
 			// data reader/writer, iteratable block)
+		    BasePlugin.logError("Unkown data element.");
 			throw new MalformedProtocolExtensionException("Unkown data element"); //$NON-NLS-1$
 		}
 
@@ -555,6 +589,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	private static Collection<String> getMessagesOrientations(
 			List<String> protocols, String messageOrientationElem) {
 
+	    BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading all message directions for protocols: " + protocols + ". direction=" + messageOrientationElem);
 		Collection<String> messageOrientations = new HashSet<String>();
 
 /*
@@ -609,6 +644,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			}
 		}
 
+		BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read all message directions for protocols: " + protocols);
 		return messageOrientations;
 	}
 }

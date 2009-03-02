@@ -9,7 +9,7 @@
  * [246212] - Enhance encapsulation of protocol implementer
  *
  * Contributors:
- * (name) - (contribution)
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  *******************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
@@ -47,7 +47,7 @@ public class VNCProtocolExceptionHandler implements IProtocolExceptionHandler {
 			MessageHandleException e) {
 	}
 
-	public void handleProtocolInitException(ProtocolHandle handle,
+	public void handleProtocolHandshakeException(ProtocolHandle handle,
 			ProtocolHandshakeException e) {
 	}
 

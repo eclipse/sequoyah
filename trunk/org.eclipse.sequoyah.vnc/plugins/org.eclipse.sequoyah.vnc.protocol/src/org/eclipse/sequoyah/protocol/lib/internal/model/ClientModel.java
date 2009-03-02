@@ -12,25 +12,20 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [233064] - Add reconnection mechanism to avoid lose connection with the protocol
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.protocol.lib.IProtocolExceptionHandler;
 import org.eclipse.tml.protocol.lib.IProtocolHandshake;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
-import org.eclipse.tml.protocol.lib.exceptions.InvalidDefinitionException;
-import org.eclipse.tml.protocol.lib.exceptions.InvalidMessageException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolHandshakeException;
-import org.eclipse.tml.protocol.lib.exceptions.ProtocolRawHandlingException;
 import org.eclipse.tml.protocol.lib.internal.engine.ProtocolEngine;
 import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
 
@@ -47,7 +42,7 @@ import org.eclipse.tml.protocol.lib.msgdef.ProtocolMsgDefinition;
  * USAGE: This class is intended to be used by the protocol framework only.
  * 
  */
-public class ClientModel implements IModel {
+public class ClientModel {
 
 	/**
 	 * The only instance of this class
@@ -105,15 +100,8 @@ public class ClientModel implements IModel {
 	 *            The ported where the server is listening for requests at host
 	 * @param parameters
 	 *            A Map with parameters other than host and port, for customization purposes. Accepts null if apply.
-	 * 
-	 * @throws UnknownHostException
-	 *             DOCUMENT ME!!
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolHandshakeException
-	 *             DOCUMENT ME!!
 	 */
-	public ProtocolHandle startClientProtocol(
+	public ProtocolHandle requestStartProtocol(
 			Map<Long, ProtocolMsgDefinition> allMessages,
 			Collection<String> incomingMessages,
 			Collection<String> outgoingMessages,
@@ -121,32 +109,19 @@ public class ClientModel implements IModel {
 			IProtocolExceptionHandler exceptionHandler,
 			Boolean isBigEndianProtocol,
 			String host, int port,
-			Map <String, Object> parameters)
-			throws ProtocolHandshakeException {
+			Map <String, Object> parameters) {
 
 		Integer retriesObj = (Integer) parameters.get("connectionRetries"); //$NON-NLS-1$
 		int retries  = (retriesObj != null) ? retriesObj : -1;
 		
 		ProtocolHandle handle = new ProtocolHandle();
+		BasePlugin.logDebugMessage("ClientModel","Creating a protocol engine to handle the protocol connection. Generated handle: " + handle + ".");		
 		ProtocolEngine eng = new ProtocolEngine(handle, protocolInitializer, allMessages, incomingMessages,
 				outgoingMessages, exceptionHandler, isBigEndianProtocol, false, retries);
-		eng.requestStart(host, port, parameters, Thread.currentThread());
+		eng.requestStart(host, port, parameters);
+		BasePlugin.logDebugMessage("ClientModel","Registering the protocol engine at Client Model");
 		runningEngines.put(handle, eng);
-		
-		// TODO: Think of a better way to handle the protocol start delay than a busy wait
-		while (!eng.isRunning())
-		{
-		    try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                // An interruption will happen if the start operation fails. 
-                // In this case, abort execution of the start operation
-                runningEngines.remove(handle);
-                eng.dispose();
-                throw new ProtocolHandshakeException("Protocol start error");
-            }
-		}
-		
+				
 		return handle;
 	}
 
@@ -156,30 +131,18 @@ public class ClientModel implements IModel {
 	 * @param handle
 	 *            The object that identifies the connection that is to
 	 *            be stopped.
-	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
 	 */
-	public void stopClientProtocol(ProtocolHandle handle)
-			throws IOException {
+	public void requestStopProtocol(ProtocolHandle handle) {
 
 		ProtocolEngine eng = runningEngines.get(handle);
 		if (eng != null) {
 			eng.requestStop();
+						
+			cleanStoppedProtocols();
 			
-		     // TODO: Think of a better way to handle the protocol stop delay than a busy wait
-	        while (eng.isRunning())
-	        {
-	            try {
-	                Thread.sleep(50);
-	            } catch (InterruptedException e) {
-	                // Do nothing
-	            }
-	        }
-			
-			eng.dispose();
+			BasePlugin.logDebugMessage("ClientModel","Unregistering the protocol engine from Client Model");
+			runningEngines.remove(handle);
 		}	
-		runningEngines.remove(handle);
 	}
 
 	/**
@@ -191,14 +154,11 @@ public class ClientModel implements IModel {
 	 * 
 	 * @return True if the restart was requested; false otherwise
 	 */
-	public boolean restartClientProtocol(ProtocolHandle handle) {
-	    boolean restartRequested = false;
+	public void requestRestartProtocol(ProtocolHandle handle) {
 		ProtocolEngine eng = runningEngines.get(handle);
 		if (eng != null) {
-			eng.requestRestart();
-			restartRequested = true; 
+			eng.requestRestart();	
 		} 
-		return restartRequested;
 	}
 
 	/**
@@ -211,18 +171,9 @@ public class ClientModel implements IModel {
 	 * @param message
 	 *            The message to send to the server
 	 * 
-	 * @throws IOException
-	 *             DOCUMENT ME!!
-	 * @throws ProtocolRawHandlingException
-	 *             DOCUMENT ME!!
-	 * @throws InvalidMessageException
-	 *             DOCUMENT ME!!
-	 * @throws InvalidDefinitionException
-	 *             DOCUMENT ME!!
 	 */
 	public void sendMessage(ProtocolHandle handle,
-			ProtocolMessage message) throws ProtocolRawHandlingException,
-			InvalidMessageException, InvalidDefinitionException, IOException {
+			ProtocolMessage message) {
 
 		ProtocolEngine eng = runningEngines.get(handle);
 		if (eng != null) {
@@ -231,10 +182,11 @@ public class ClientModel implements IModel {
 	}
 
 	/**
-	 * @see IModel#cleanStoppedProtocols()
+	 * Removes all protocols that are stopped from the model
 	 */
 	public void cleanStoppedProtocols() {
 
+	    BasePlugin.logDebugMessage("ClientModel","Removing all stopped protocol engines from Client Model.");
 		Set<ProtocolHandle> keys = runningEngines.keySet();
 		for (ProtocolHandle key : keys) {
 			ProtocolEngine aEng = runningEngines.get(key);

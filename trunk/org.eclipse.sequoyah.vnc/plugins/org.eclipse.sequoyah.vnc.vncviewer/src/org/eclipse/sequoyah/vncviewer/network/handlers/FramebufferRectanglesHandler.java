@@ -12,12 +12,13 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  *******************************************************************************/
 package org.eclipse.tml.vncviewer.network.handlers;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ import org.eclipse.tml.vncviewer.registry.VNCProtocolRegistry;
 public class FramebufferRectanglesHandler implements IRawDataHandler {
 
 	public Map<String, Object> readRawDataFromStream(ProtocolHandle handle,
-			InputStream dataStream, IMessageFieldsStore currentlyReadFields,
+			DataInput dataStream, IMessageFieldsStore currentlyReadFields,
 			boolean isBigEndian) throws IOException,
 			ProtocolRawHandlingException {
 
@@ -70,7 +71,7 @@ public class FramebufferRectanglesHandler implements IRawDataHandler {
 			// Process the rectangle data into the painter
 			try {
 				painter.processRectangle(new RectHeader(x, y, width, height,
-						encoding), protocolData.getInputStream());
+						encoding), dataStream);
 			} catch (IOException e) {
 			    throw e;
 			} catch (Exception e) {

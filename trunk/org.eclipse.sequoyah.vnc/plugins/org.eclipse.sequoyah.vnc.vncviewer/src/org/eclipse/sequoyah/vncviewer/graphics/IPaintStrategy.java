@@ -8,16 +8,16 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 
 import org.eclipse.tml.vncviewer.network.RectHeader;
 
 public interface IPaintStrategy {
 
-	public void processRectangle(RectHeader rh, DataInputStream in) throws Exception;
+	public void processRectangle(RectHeader rh, DataInput in) throws Exception;
 
 }

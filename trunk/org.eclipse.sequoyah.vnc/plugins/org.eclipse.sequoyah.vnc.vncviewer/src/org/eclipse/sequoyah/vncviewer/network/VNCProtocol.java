@@ -15,13 +15,14 @@
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
 
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
@@ -49,7 +50,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 	 */
 	protected abstract String getVersion();
 
-	abstract protected void handShake(DataInputStream in, OutputStream out)
+	abstract protected void handShake(DataInput in, OutputStream out)
 			throws Exception;
 
 	protected int[] getSupportedEncodings() {
@@ -60,7 +61,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 	/**
 	 * Implements the init phase of the RFB Protocol.
 	 */
-	private void initPhase(ProtocolHandle handle, DataInputStream in,
+	private void initPhase(ProtocolHandle handle, DataInput in,
 			OutputStream out, String password) throws Exception {
 
 		VNCProtocolData previousData = VNCProtocolRegistry.getInstance().get(handle);
@@ -86,7 +87,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 		int nameLen = in.readInt();
 
 		byte[] serverName = new byte[nameLen];
-		in.read(serverName, 0, nameLen);
+		in.readFully(serverName, 0, nameLen);
 
 		String serverNameStr = ""; //$NON-NLS-1$
 		for (int i = 0; i < serverName.length; i++) {
@@ -94,9 +95,6 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 			serverNameStr += c;
 		}
 		data.setServerName(serverNameStr);
-
-		data.setInputStream(in);
-		data.setOutputStream(out);
 
 		VNCProtocolRegistry.getInstance().register(handle, data);
 
@@ -147,7 +145,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 		}
 	}
 
-	protected void negotiateProtocol(DataInputStream in, OutputStream out)
+	protected void negotiateProtocol(DataInput in, OutputStream out)
 			throws Exception {
 		byte[] b = new byte[PROTOCOL_VERSION_MESSAGE_SIZE];
 		in.readFully(b, 0, PROTOCOL_VERSION_MESSAGE_SIZE);
@@ -155,7 +153,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 		out.write(getVersion().getBytes());
 	}
 
-	protected int negotiateSecurity(DataInputStream in, OutputStream out)
+	protected int negotiateSecurity(DataInput in, OutputStream out)
 			throws Exception {
 		int[] securityTypes = readSecurityTypes(in);
 		int securityType = chooseSecurityType(securityTypes);
@@ -174,7 +172,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 		return SECURITY_TYPE_INVALID;
 	}
 
-	protected int[] readSecurityTypes(DataInputStream in) throws Exception {
+	protected int[] readSecurityTypes(DataInput in) throws Exception {
 		int[] result = null;
 		int secTypesNumber = in.readByte();
 		if (secTypesNumber > 0) {
@@ -193,7 +191,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 		out.write((byte) securityType);
 	}
 
-	protected void handshakeFail(DataInputStream in) throws Exception {
+	protected void handshakeFail(DataInput in) throws Exception {
 		int failReasonLength;
 		StringBuffer reason = new StringBuffer();
 		failReasonLength = in.readInt();
@@ -213,7 +211,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 		}
 	}
 
-	protected void authenticate(DataInputStream in, OutputStream out,
+	protected void authenticate(DataInput in, OutputStream out,
 			String password, int securityType) throws Exception {
 		switch (securityType) {
 		case SECURITY_TYPE_NONE:
@@ -228,7 +226,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 		}
 	}
 
-	protected void authenticateVNC(DataInputStream in, OutputStream out,
+	protected void authenticateVNC(DataInput in, OutputStream out,
 			String password) throws Exception {
 		byte[] challenge = new byte[VNC_AUTHENTICATION_CHALLENGE_MESSAGE_SIZE];
 		in.readFully(challenge, 0, VNC_AUTHENTICATION_CHALLENGE_MESSAGE_SIZE);
@@ -244,7 +242,7 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 		out.write(challenge);
 	}
 
-	protected void readAuthenticationResult(DataInputStream in)
+	protected void readAuthenticationResult(DataInput in)
 			throws Exception {
 		int securityResult = in.readInt();
 		if (securityResult != 0) {
@@ -252,8 +250,8 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 		}
 	}
 
-	public void clientHandshake(ProtocolHandle handle, DataInputStream in,
-			OutputStream out, Map parameters) throws ProtocolHandshakeException {
+	public void clientHandshake(ProtocolHandle handle, DataInput in,
+			OutputStream out, Map<?,?> parameters) throws ProtocolHandshakeException {
 
 		String password = (String) parameters.get("password"); //$NON-NLS-1$
 
@@ -293,8 +291,8 @@ abstract public class VNCProtocol implements IProtocolHandshake,
 
 	}
 
-	public void serverHandshake(ProtocolHandle handle, DataInputStream in,
-			OutputStream out, Map parameters) throws ProtocolHandshakeException {
+	public void serverHandshake(ProtocolHandle handle, DataInput in,
+			OutputStream out, Map<?,?> parameters) throws ProtocolHandshakeException {
 
 	}
 }

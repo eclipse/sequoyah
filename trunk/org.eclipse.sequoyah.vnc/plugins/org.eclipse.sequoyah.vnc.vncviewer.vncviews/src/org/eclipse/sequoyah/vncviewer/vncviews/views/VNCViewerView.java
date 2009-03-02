@@ -20,6 +20,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [244249] - Canvas background repaint
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  *******************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -137,10 +138,14 @@ public class VNCViewerView extends ViewPart {
 				parameters.put("bypassProxy", new Boolean(bypassProxy)); //$NON-NLS-1$
 				
 				VNCViewerView.protocolHandle = PluginProtocolActionDelegate
-						.startClientProtocol(protocolId,
+						.requestStartProtocolAsClient(protocolId,
 								new VNCProtocolExceptionHandler(), host, port,
 								parameters);
 
+                while(!PluginProtocolActionDelegate.isProtocolRunning(VNCViewerView.protocolHandle)) {
+                    Thread.sleep(500);
+                }
+                
 				swtDisplay.start(protocolHandle);
 
 			} catch (Exception e) {
@@ -241,7 +246,7 @@ public class VNCViewerView extends ViewPart {
 	public static void stopProtocol() throws IOException {
 
 		if (protocolHandle != null){
-			PluginProtocolActionDelegate.stopProtocol(protocolHandle);
+			PluginProtocolActionDelegate.requestStopProtocol(protocolHandle);
 		}
 	}
 

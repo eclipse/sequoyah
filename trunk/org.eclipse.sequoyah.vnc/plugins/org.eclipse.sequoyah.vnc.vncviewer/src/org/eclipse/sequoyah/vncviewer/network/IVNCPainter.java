@@ -9,11 +9,12 @@
  *
  * Contributors:
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.network;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 
 
 
@@ -34,7 +35,7 @@ public interface IVNCPainter extends IPainter{
 	/**
 	 * Process a rectangle of data sent by the VNC Server.
 	 */
-	public void processRectangle(RectHeader rectHeader, DataInputStream in) throws Exception;
+	public void processRectangle(RectHeader rectHeader, DataInput in) throws Exception;
 
 	void updateRectangle(int x1, int y1, int x2, int y2);
 

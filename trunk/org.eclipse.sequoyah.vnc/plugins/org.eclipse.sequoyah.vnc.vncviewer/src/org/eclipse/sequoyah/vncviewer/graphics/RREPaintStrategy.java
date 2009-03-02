@@ -8,11 +8,13 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
-import java.io.DataInputStream;
+import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
+
+import java.io.DataInput;
 
 import org.eclipse.tml.vncviewer.network.RectHeader;
 
@@ -22,14 +24,17 @@ public class RREPaintStrategy extends AbstractPaintStrategy {
 		super(context);
 	}
 	
-	public void processRectangle(RectHeader rh, DataInputStream in) throws Exception {
+	public void processRectangle(RectHeader rh, DataInput in) throws Exception {
 		int x = rh.getX();
 		int y = rh.getY();
 		int width = rh.getWidth();
 		int height = rh.getHeight();
-
 		int subrectsCount = in.readInt();
-	    int backgroundPixel = getContext().readPixel(in); 
+
+		log(RREPaintStrategy.class).debug("Processing rectangle defined by: x=" + x + "; y=" + y + 
+		        "; w=" + width + "; h=" + height + "subrects=" + subrectsCount + ".");
+		
+	    int backgroundPixel = getContext().readPixel(in);
         getContext().fillRect(backgroundPixel, x, y, width, height);
 
 	    for (int i = 0; i < subrectsCount; i++) {

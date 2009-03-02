@@ -9,10 +9,11 @@
  * Contributors:
  * Fabio Rigo - Bug [238191] - Enhance exception handling
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
- * 
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.msgdef;
 
+import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.protocol.lib.IMessageHandler;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
@@ -42,6 +43,7 @@ public final class NullMessageHandler implements IMessageHandler {
 			ProtocolMessage message)
 			throws MessageHandleException {
 
+	    BasePlugin.logDebugMessage("NullMessageHandler","The message was not handled, because its handler is null");
 		return null;
 	}
 }

@@ -15,18 +15,17 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246585] - VncViewerService is not working anymore after changes made in ProtocolHandle
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 
 package org.eclipse.tml.service.vncviewer.handler;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.IPropertyConstants;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
@@ -34,27 +33,27 @@ import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
 import org.eclipse.tml.protocol.PluginProtocolActionDelegate;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.protocol.lib.ProtocolMessage;
-import org.eclipse.tml.service.vncviewer.VNCViewerServiceResources;
 import org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 public class VNCViewerServiceHandler extends ServiceHandler
 {
-	public IStatus runService(IInstance instance, Map<Object, Object> arguments,
+    @Override
+    public IStatus runService(IInstance instance, Map<Object, Object> arguments,
             IProgressMonitor monitor)
     {
 
-        String host = instance.getProperties().getProperty(IPropertyConstants.HOST);
-        int port = Integer.parseInt(instance.getProperties().getProperty(IPropertyConstants.PORT));
+        final String host = instance.getProperties().getProperty(IPropertyConstants.HOST);
+        final int port = Integer.parseInt(instance.getProperties().getProperty(IPropertyConstants.PORT));
         
-        String protoVersion;
+        final String protoVersion;
         if (Platform.getOS().equals(Platform.OS_WIN32)) {
         	protoVersion = "VNC 3.3"; //$NON-NLS-1$	
         }
         else protoVersion = "VNC 3.8"; //$NON-NLS-1$
         
-        String password = instance.getProperties().getProperty(IPropertyConstants.PASSWORD);
+        final String password = instance.getProperties().getProperty(IPropertyConstants.PASSWORD);
 
         try
         {
@@ -62,51 +61,46 @@ public class VNCViewerServiceHandler extends ServiceHandler
             if (instance.getStatus().equals("IDLE-VNC")) //$NON-NLS-1$
             {
                 VNCViewerView.stop();
-                try
-                {
-                	ProtocolHandle handle = VNCViewerView.protocolHandle;
-                    PluginProtocolActionDelegate.stopProtocol(handle);
-                }
-                catch (IOException e)
-                {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                ProtocolHandle handle = VNCViewerView.protocolHandle;
+                PluginProtocolActionDelegate.requestStopProtocol(handle);
             }
-            ;
 
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable(){
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable()
+            {
 
-				public void run() {
-					try {
-						PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage().showView("org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView"); //$NON-NLS-1$
-					} catch (PartInitException e) {
-						e.printStackTrace();
-					}
-				}
-            	
+                public void run()
+                {
+                    try
+                    {
+                        PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage()
+                                .showView("org.eclipse.tml.vncviewer.vncviews.views.VNCViewerView"); //$NON-NLS-1$
+                    }
+                    catch (PartInitException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+
             });
-            
+
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
 
-        if (VNCViewerView.protocolHandle!= null)
+        if (VNCViewerView.protocolHandle != null)
         {
             VNCViewerView.stop();
-            try
-            {
-                PluginProtocolActionDelegate.stopProtocol(VNCViewerView.protocolHandle);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            PluginProtocolActionDelegate.requestStopProtocol(VNCViewerView.protocolHandle);
         }
 
-        VNCViewerView.start(host, port, protoVersion, password, false);
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+            public void run() {
+                  VNCViewerView.start(host, port, protoVersion, password, false);
+            }
+        });  
+
 
         /*
          *  The code below is a fix for QEMU-ARM which expect 
@@ -118,7 +112,7 @@ public class VNCViewerServiceHandler extends ServiceHandler
             try
             {
 
-            	ProtocolHandle handle = VNCViewerView.protocolHandle;
+                ProtocolHandle handle = VNCViewerView.protocolHandle;
                 ProtocolMessage qemumsg = new ProtocolMessage(0x04);
                 qemumsg.setFieldValue("downFlag", 1); //$NON-NLS-1$
                 qemumsg.setFieldValue("padding", 0); //$NON-NLS-1$
@@ -151,7 +145,7 @@ public class VNCViewerServiceHandler extends ServiceHandler
     @Override
     public IStatus updatingService(IInstance instance, IProgressMonitor monitor)
     {
-       return Status.OK_STATUS;
+        return Status.OK_STATUS;
     }
 
     @Override

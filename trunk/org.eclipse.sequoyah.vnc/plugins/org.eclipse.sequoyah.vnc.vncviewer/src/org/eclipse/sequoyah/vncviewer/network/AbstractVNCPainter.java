@@ -11,12 +11,13 @@
  * Daniel Barboza Franco (Motorola) - Bug [227793] - Implementation of the several enc(...). A little improvement into the reading mechanism (readPixels()).
  * Daniel Barboza Franco (Motorola) - Bug [242129] - Raw enconding not implemented correctly
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.network;
 
 import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 import java.io.IOException;
 
 import org.eclipse.tml.vncviewer.exceptions.ProtoClientException;
@@ -86,7 +87,7 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 				IRFBConstants.RRE_ENCODING, IRFBConstants.RAW_ENCODING, };
 	}
 
-	public void processRectangle(RectHeader rectHeader, DataInputStream in) throws Exception {
+	public void processRectangle(RectHeader rectHeader, DataInput in) throws Exception {
 		IPaintStrategy ps = getPaintStrategy(rectHeader.getEncoding());
 		
 		if (ps != null) {
@@ -125,47 +126,24 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 	
 	
 	
-	private byte[] readpixelsbytes(DataInputStream in, int bytesNum) throws ProtoClientException{
-		
-		byte pixelsb[] = new byte[bytesNum];
-		
-		int bytesRead = 0;
-		long currentTime = System.currentTimeMillis();
-		long timeout = 15000;
-		
-		// Read the array of pixels from the VNC Server
-		int numRead;
-		while (bytesRead < bytesNum) {
-			numRead = 0;
-			
-			try {
-			    if (in.available() > 0) {
-			        numRead = in.read(pixelsb, bytesRead, bytesNum - bytesRead);
-			        if (numRead != -1) {
-			            currentTime = System.currentTimeMillis();
-			        }
-			    }
-			    
-				if (System.currentTimeMillis() - currentTime > timeout) {
-				    throw new ProtoClientException("Timeout reading pixels."); //$NON-NLS-1$
-				}
-			}
-			catch (IOException ioe){
-				log(VNCProtocol.class).error("Rectangle message error: " + ioe.getMessage()); //$NON-NLS-1$
-				throw new ProtoClientException("Rectangle message error."); //$NON-NLS-1$
-			}
-			
-			if (numRead > 0) {
-				bytesRead += numRead;
-			}
-		}
-		
-		return pixelsb;
-		
+	private byte[] readpixelsbytes(DataInput in, int bytesNum) throws ProtoClientException{
+
+	    byte pixelsb[] = new byte[bytesNum];
+
+	    // Read the array of pixels from the VNC Server		
+	    try {
+	        in.readFully(pixelsb, 0, bytesNum);
+	    }
+	    catch (IOException ioe){
+	        log(VNCProtocol.class).error("Rectangle message error: " + ioe.getMessage()); //$NON-NLS-1$
+	        throw new ProtoClientException("Rectangle message error."); //$NON-NLS-1$
+	    }
+
+	    return pixelsb;
 	}
 	
 	
-	public int[] readPixels(DataInputStream is, int w, int h) throws Exception {
+	public int[] readPixels(DataInput is, int w, int h) throws Exception {
 		
 		byte pixelsBucket[] = {0x00};
 		int result[] = new int[w*h];
@@ -221,7 +199,7 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 	 * @return read pixel
 	 * @throws Exception
 	 */
-	protected int readPixel(DataInputStream is, int bytesPerPixel) throws Exception {
+	protected int readPixel(DataInput is, int bytesPerPixel) throws Exception {
 		int result = 0;
 		if (bytesPerPixel == 1) {
 			result = is.readByte() & 0xFF;
@@ -249,7 +227,7 @@ public abstract class AbstractVNCPainter implements IVNCPainter {
 	 * @return the pixel value
 	 * @throws Exception
 	 */
-	protected int readPixel(DataInputStream is) throws Exception {
+	protected int readPixel(DataInput is) throws Exception {
 		return readPixel(is, bytesPerPixel);
 	}
 

@@ -8,10 +8,13 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
+import static org.eclipse.tml.vncviewer.VNCViewerPlugin.log;
+
+import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +28,7 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 
 	private MemoryBlockInputStream memoryBlockStream = new MemoryBlockInputStream();
 
-	private DataInputStream zlibStream = null;
+	private DataInput zlibStream = null;
 
 	public ZRLEPaintStrategy(IPainterContext context) {
 		super(context);
@@ -44,14 +47,18 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 		return result;
 	}
 
-	public void processRectangle(RectHeader rh, DataInputStream in)
+	public void processRectangle(RectHeader rh, DataInput in)
 			throws Exception {
 		int x = rh.getX();
 		int y = rh.getY();
 		int width = rh.getWidth();
 		int height = rh.getHeight();
 
-		DataInputStream zlibInputStream = getZlibInputStream();		memoryBlockStream.readBlock(in);
+        log(ZlibPaintStrategy.class).debug("Processing rectangle defined by: x=" + 
+                x + "; y=" + y + "; w=" + width + "; h=" + height + ".");
+		
+		DataInput zlibInputStream = getZlibInputStream();		
+		memoryBlockStream.readBlock(in);
 
 		int[] tilePixels = new int[64 * 64];
 
@@ -94,17 +101,17 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 		}
 	}
 
-	void readZrlePalette(DataInputStream zrleInStream, int[] palette,
+	void readZrlePalette(DataInput zrleInStream, int[] palette,
 			int palSize) throws Exception {
 		readPixels(zrleInStream, palette, palSize);
 	}
 
-	void readZrleRawPixels(DataInputStream zrleInStream, int tilePixels[],
+	void readZrleRawPixels(DataInput zrleInStream, int tilePixels[],
 			int tw, int th) throws Exception {
 		readPixels(zrleInStream, tilePixels, tw * th);
 	}
 
-	void readZrlePackedPixels(DataInputStream zrleInStream, int[] tilePixels,
+	void readZrlePackedPixels(DataInput zrleInStream, int[] tilePixels,
 			int tw, int th, int[] palette, int palSize) throws Exception {
 
 		int bppp = ((palSize > 16) ? 8 : ((palSize > 4) ? 4
@@ -128,7 +135,7 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 		}
 	}
 
-	void readZrlePlainRLEPixels(DataInputStream zrleInStream, int[] tilePixels,
+	void readZrlePlainRLEPixels(DataInput zrleInStream, int[] tilePixels,
 			int tw, int th) throws Exception {
 		int ptr = 0;
 		int end = ptr + tw * th;
@@ -150,7 +157,7 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 		}
 	}
 
-	void readZrlePackedRLEPixels(DataInputStream zrleInStream,
+	void readZrlePackedRLEPixels(DataInput zrleInStream,
 			int[] tilePixels, int tw, int th, int[] palette) throws Exception {
 
 		int ptr = 0;
@@ -178,7 +185,7 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 		}
 	}
 
-	void readPixels(DataInputStream is, int[] dst, int count) throws Exception {
+	void readPixels(DataInput is, int[] dst, int count) throws Exception {
 		int bytesPerCPixel = getBytesPerCPixel();
 		IPainterContext pc = getContext();
 		for (int i = 0; i < count; i++) {
@@ -186,7 +193,7 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 		}
 	}
 
-	int readPixel(DataInputStream is) throws Exception {
+	int readPixel(DataInput is) throws Exception {
 		return getContext().readPixel(is, getBytesPerCPixel());
 	}
 
@@ -195,7 +202,7 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 		getContext().setPixels(x, y, width, height, tilePixels, 0);
 	}
 
-	private DataInputStream getZlibInputStream() {
+	private DataInput getZlibInputStream() {
 		if (zlibStream == null) {
 			zlibStream = new DataInputStream(new InflaterInputStream(
 					memoryBlockStream, new Inflater(), 16*1024));
@@ -224,7 +231,7 @@ public class ZRLEPaintStrategy extends AbstractPaintStrategy {
 			}
 		}
 
-		public void readBlock(DataInputStream in) throws Exception {
+		public void readBlock(DataInput in) throws Exception {
 			int n = in.readInt();
 			if (buffer == null || buffer.length < n) {
 			  buffer = new byte[n];
