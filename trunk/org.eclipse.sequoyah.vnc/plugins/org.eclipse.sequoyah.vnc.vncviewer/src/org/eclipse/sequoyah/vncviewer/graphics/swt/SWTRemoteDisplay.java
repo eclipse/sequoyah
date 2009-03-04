@@ -242,19 +242,21 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			}
 		});
 
+		final Runnable updateRefresh = new Runnable() {
+			public void run() {
+				try {
+					updateRequest(true);
+				} catch (Exception e) {
+					stop();
+					log(SWTRemoteDisplay.class).error(
+							"Update screen error: " + e.getMessage()); //$NON-NLS-1$
+				}
+			}
+		};
+		
 		refreshTimer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
-				display.syncExec(new Runnable() {
-					public void run() {
-						try {
-							updateRequest(true);
-						} catch (Exception e) {
-							stop();
-							log(SWTRemoteDisplay.class).error(
-									"Update screen error: " + e.getMessage()); //$NON-NLS-1$
-						}
-					}
-				});
+				display.syncExec(updateRefresh);
 
 			}
 		}, firstRefreshDelayMs, refreshDelayPeriodMs);

@@ -82,8 +82,8 @@ public class Painter extends AbstractVNCPainter implements ISWTPainter {
 	}
 	
 	protected void fillRect(int pixel, int x, int y, int width, int height) {
-		Color color = new Color(image.getDevice(), paletteData.getRGB(pixel));
-		imageGC.setBackground(color);
+		//Color color = new Color(image.getDevice(), paletteData.getRGB(pixel));
+		//imageGC.setBackground(color);
 		
 		int [] pixels;
 		pixels = new int[width];
@@ -96,7 +96,7 @@ public class Painter extends AbstractVNCPainter implements ISWTPainter {
 			imgData.setPixels(x, y+j, width, pixels, 0);	
 		}
 
-		color.dispose();
+		//color.dispose();
 	}
 
 	protected void setPixels(int x, int y, int width, int[] pixels, int startIndex) {
