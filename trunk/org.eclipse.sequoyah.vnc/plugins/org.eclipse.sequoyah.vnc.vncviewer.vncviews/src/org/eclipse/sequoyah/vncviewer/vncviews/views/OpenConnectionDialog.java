@@ -15,6 +15,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248037] - Action for stop connection on VNC Viewer
  * Petr Baranov (Nokia) - Bug [262371] - New Connection Dialog improvement
  * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
+ * Petr Baranov (Nokia) - Bug [262371] (reopened) - New Connection Dialog improvement
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -22,6 +23,13 @@ package org.eclipse.tml.vncviewer.vncviews.views;
 import java.io.IOException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -33,6 +41,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -146,16 +155,92 @@ public class OpenConnectionDialog extends Dialog {
 		version = protocolVersion.getItem(protocolVersion.getSelectionIndex());
 		String password = passwordText.getText();
 
-		try {
-			VNCViewerView.stopProtocol();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		VNCViewerView.start(host, port, version, password, bypassProxyButton.getSelection());
-		
-		
+		ConnectJob job = new ConnectJob(host,port,password,version,bypassProxyButton.getSelection());
+		job.schedule();
 		super.okPressed();
+	}
+		
+	public class ConnectJob extends Job{
+			final String host;
+			final int port;
+			final String password;
+			final String version;
+			final boolean isBypassProxy;
+			
+			public ConnectJob(String host,int port,String password,String version,boolean isBypassProxy){
+				super("Open VNC connection with "+host+":"+port);
+				this.host=host;
+				this.port=port;
+				this.password=password;
+				this.version=version;
+				this.isBypassProxy=isBypassProxy;
+				
+			}
+
+			public IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask("Checking Viewer state...", 2);
+					if(VNCViewerView.getSWTRemoteDisplay().isActive()){
+						if(isStopExistingClient()){
+							VNCViewerView.stop();
+							try {
+								VNCViewerView.stopProtocol();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}else{
+							monitor.done();
+							return Status.OK_STATUS;
+						}
+					}
+					
+					if(!isStepNeeded(monitor, "Starting VNC client...")){
+						return Status.CANCEL_STATUS;
+					}
+			
+					VNCViewerView.start(host, port, version, password,isBypassProxy);
+					monitor.done();
+					return Status.OK_STATUS;
+			}
+		
+			private boolean isStepNeeded(IProgressMonitor monitor,String stepName){
+					if(!monitor.isCanceled()){
+						monitor.worked(1);
+						monitor.setTaskName(stepName);
+						return true;
+					}
+					return false;
+			}
+	}
+				
+	public boolean isStopExistingClient() {
+			final Display display = Display.getDefault();
+			RunnableMessageDialog msgd = new RunnableMessageDialog(display);
+			display.syncExec(msgd);
+			return msgd.returnCode==0;
+	}
+				
+	private class RunnableMessageDialog implements Runnable{
+			private Display display;
+			int returnCode;
+			
+			public RunnableMessageDialog(Display display){
+				this.display=display;
+			}
+				 		
+			public void run() {
+						
+				MessageDialog dialog = 
+				new MessageDialog(display.getActiveShell(),
+							  "Stop VNC session",
+							  null,
+							  "Stop existing VNC session for " + VNCViewerView.getCurrentHost()
+							                             + ":" + VNCViewerView.getCurrentPort() + "?",
+							  MessageDialog.QUESTION,
+							  new String[]{"Stop","Cancel"},
+							  0);
+				dialog.open();
+				returnCode=dialog.getReturnCode();
+			}
 		
 	}
 	
