@@ -21,6 +21,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248663] - Dependency between protocol and SWTRemoteDisplay
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [244249] - Canvas background repaint
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
+ * Petr Baranov (Nokia) - Bug [262371] (reopened) - New Connection Dialog improvement
  *******************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -61,6 +62,12 @@ public class VNCViewerView extends ViewPart {
 	public static ProtocolHandle protocolHandle;
 	
 	private static int zoomFactor = 1;
+
+	private static String[] currentConnection = {"", ""};
+
+	private static String currentHost;
+
+	private static String currentPort;
 
 	public void createPartControl(Composite parent) {
 
@@ -147,6 +154,8 @@ public class VNCViewerView extends ViewPart {
                 }
                 
 				swtDisplay.start(protocolHandle);
+				currentHost = host;
+				currentPort = Integer.toString(port);
 
 			} catch (Exception e) {
 
@@ -252,6 +261,14 @@ public class VNCViewerView extends ViewPart {
 
 	public static SWTRemoteDisplay getSWTRemoteDisplay() {
 		return swtDisplay;
+	}
+
+	public static String getCurrentHost() {
+		return currentHost;
+	}
+
+	public static String getCurrentPort() {
+		return currentPort;
 	}
 
 

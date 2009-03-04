@@ -21,8 +21,7 @@
 package org.eclipse.tml.vncviewer.vncviews.views;
 
 import java.io.IOException;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
