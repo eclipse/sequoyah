@@ -10,3 +10,6 @@ ARROW_UP=XK_Up
 ARROW_DOWN=XK_Down
 ARROW_LEFT=XK_Left
 ARROW_RIGHT=XK_Right
+
+Tab=XK_Tab
+Backspace=XK_Backspace
