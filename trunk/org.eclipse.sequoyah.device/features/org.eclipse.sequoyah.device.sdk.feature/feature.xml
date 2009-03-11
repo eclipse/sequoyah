@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tml.device.sdk.feature"
       label="%featureName"
-      version="0.3.0.200903120600"
+      version="0.3.0.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -18,7 +18,7 @@
    </license>
 
    <url>
-      <update label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3M4/"/>
+      <update label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3M6/"/>
       <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3M4/"/>
    </url>
 
