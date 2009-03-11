@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tml.vnc.viewer.feature"
       label="%featureName"
-      version="0.5.0.200901300600"
+      version="0.5.0.200903120600"
       provider-name="%providerName"
       plugin="org.eclipse.tml.vncviewer">
 
