@@ -297,6 +297,13 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 				addRefreshTimer();
 				addKeyListener();
 				addMouseListener();
+				
+				// This code solves synchronization issues concerning mouse devices
+				Event event = new Event();
+				event.x = 0;
+				event.y = 0;
+				this.mouseEvent(event);
+				
 
 			} catch (Exception e) {
 				log(SWTRemoteDisplay.class).error(
