@@ -112,7 +112,7 @@ public class QEmuPlugin extends BasePlugin {
 		try {
 			if (resourceBundle == null)
 				resourceBundle = ResourceBundle.getBundle(PLUGIN_ID
-						+ ".QemuResources"); //$NON-NLS-1$
+						+ ".QEmuResources"); //$NON-NLS-1$
 		} catch (MissingResourceException e) {
 			logErrorMessage(e.getMessage());
 			resourceBundle = null;
