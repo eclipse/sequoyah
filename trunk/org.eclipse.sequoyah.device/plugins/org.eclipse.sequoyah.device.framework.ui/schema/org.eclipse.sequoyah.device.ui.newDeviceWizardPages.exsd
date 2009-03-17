@@ -62,7 +62,7 @@
          <attribute name="operationClass" type="string">
             <annotation>
                <documentation>
-                  Specifies the Java class which implements the operations associated with this page.  The class must implement either the java.lang.Runnable interface, or extend the org.eclipse.tml.framework.device.ui.wizard.DeviceWizardRunnable class if progress reporting is desired.
+                  Specifies the Java class which implements the operations associated with this page.  This class must extend org.eclipse.tml.framework.device.ui.wizard.DeviceWizardRunnable.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.tml.framework.device.ui.wizard.DeviceWizardRunnable:"/>
