@@ -1,16 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.tml.framework.device.ui">
+<schema targetNamespace="org.eclipse.tml.framework.device.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.tml.framework.device.ui" id="org.eclipse.tml.device.ui.newDeviceWizardPages" name="Custom wizard pages for new device"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          [Enter description of this extension point.]
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="wizardPage" minOccurs="1" maxOccurs="unbounded"/>
@@ -34,9 +39,9 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -57,11 +62,11 @@
          <attribute name="operationClass" type="string">
             <annotation>
                <documentation>
-                  Specifies the Java class which implements the operations associated with this page.  The class must implement either the java.lang.Runnable interface, or the org.eclipse.jface.operation.IRunnableWithProgress interface if progress reporting is desired.
+                  Specifies the Java class which implements the operations associated with this page.  The class must implement either the java.lang.Runnable interface, or extend the org.eclipse.tml.framework.device.ui.wizard.DeviceWizardRunnable class if progress reporting is desired.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.jface.operation.IRunnableWithProgress"/>
-               </appInfo>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.tml.framework.device.ui.wizard.DeviceWizardRunnable:"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="pageClass" type="string" use="required">
@@ -69,9 +74,9 @@
                <documentation>
                   Specifies the Java class which implements the added page.  This class must extend org.eclipse.jface.wizard.WizardPage and implement the org.eclipse.tml.framework.device.ui.wizard.IInstanceProperties interface.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.WizardPage:org.eclipse.tml.framework.device.ui.wizard.IInstanceProperties"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -90,48 +95,40 @@
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          [Enter the first release in which this extension point appears.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          [Enter extension point usage example here.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          [Enter API information here.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
 </schema>
