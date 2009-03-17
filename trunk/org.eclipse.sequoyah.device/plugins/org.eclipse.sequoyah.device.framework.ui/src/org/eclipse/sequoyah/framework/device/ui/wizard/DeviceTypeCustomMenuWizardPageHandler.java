@@ -10,6 +10,7 @@
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
+ * Daniel Barboza Franco (Instituto Eldorado) - [268887] - Cannot access IWizardPage from IRunnableWithProgress
  *******************************************************************************/
 package org.eclipse.tml.framework.device.ui.wizard;
 
@@ -125,7 +126,7 @@ public class DeviceTypeCustomMenuWizardPageHandler {
 						if (element.getName().equals(XML_ELEMENT_WIZARD_PAGE)) {
 
 							String id = element.getAttribute(XML_ATTRIBUTE_ID);
-							IRunnableWithProgress operationClass = null;
+							DeviceWizardRunnable operationClass = null;
 
 							IWizardPage pageClass;
 							try {
@@ -135,10 +136,11 @@ public class DeviceTypeCustomMenuWizardPageHandler {
 								// might not be present
 								if (element
 										.getAttribute(XML_ATTRIBUTE_OPERATION_CLASS) != null)
-									operationClass = (IRunnableWithProgress) element
-											.createExecutableExtension(XML_ATTRIBUTE_OPERATION_CLASS);
+									operationClass = (DeviceWizardRunnable) element.createExecutableExtension(XML_ATTRIBUTE_OPERATION_CLASS);
+								    operationClass.setPage(pageClass);
 								IDeviceTypeCustomWizardPage customPage = new DeviceTypeCustomWizardPage(
 										id, pageClass, operationClass);
+								
 								IConfigurationElement[] children = element
 										.getChildren();
 
