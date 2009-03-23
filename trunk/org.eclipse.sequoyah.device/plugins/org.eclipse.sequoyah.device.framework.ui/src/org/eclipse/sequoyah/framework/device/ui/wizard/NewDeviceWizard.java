@@ -134,9 +134,11 @@ public class NewDeviceWizard extends Wizard implements INewWizard {
 				.canFinish());
 	}
 
+	/*
 	@Override
 	public Image getDefaultPageImage() {
 		return DeviceUIPlugin.getDefault().getImageRegistry().get(
 				DeviceUIPlugin.IMAGEKEY_NEW_DEVICE_WIZARD);
 	}
+	*/
 }
