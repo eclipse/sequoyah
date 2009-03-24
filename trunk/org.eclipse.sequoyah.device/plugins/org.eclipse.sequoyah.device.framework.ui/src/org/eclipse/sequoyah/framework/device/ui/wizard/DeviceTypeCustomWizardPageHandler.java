@@ -30,8 +30,6 @@ import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.ui.internal.model.DeviceTypeCustomWizardPage;
 import org.eclipse.tml.framework.device.ui.model.IDeviceTypeCustomWizardPage;
-import org.eclipse.tml.framework.device.ui.wizard.DefaultDeviceTypeWizardPage;
-import org.eclipse.tml.framework.device.ui.wizard.NewDeviceWizard;
 
 /*
  * handler used by the new device instance wizard. It tries to find the custom
@@ -127,7 +125,7 @@ public class DeviceTypeCustomWizardPageHandler {
 						if (element.getName().equals(XML_ELEMENT_WIZARD_PAGE)) {
 
 							String id = element.getAttribute(XML_ATTRIBUTE_ID);
-							IRunnableWithProgress operationClass = null;
+							DeviceWizardRunnable operationClass = null;
 
 							IWizardPage pageClass;
 							try {
@@ -136,9 +134,12 @@ public class DeviceTypeCustomWizardPageHandler {
 								// the operation is an optional element so it
 								// might not be present
 								if (element
-										.getAttribute(XML_ATTRIBUTE_OPERATION_CLASS) != null)
-									operationClass = (IRunnableWithProgress) element
-											.createExecutableExtension(XML_ATTRIBUTE_OPERATION_CLASS);
+										.getAttribute(XML_ATTRIBUTE_OPERATION_CLASS) != null) {
+									operationClass = (DeviceWizardRunnable) element.createExecutableExtension(XML_ATTRIBUTE_OPERATION_CLASS);
+								    operationClass.setPage(pageClass);
+								}
+								
+								
 								IDeviceTypeCustomWizardPage customPage = new DeviceTypeCustomWizardPage(
 										id, pageClass, operationClass);
 								IConfigurationElement[] children = element

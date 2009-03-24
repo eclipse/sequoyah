@@ -135,9 +135,10 @@ public class DeviceTypeCustomMenuWizardPageHandler {
 								// the operation is an optional element so it
 								// might not be present
 								if (element
-										.getAttribute(XML_ATTRIBUTE_OPERATION_CLASS) != null)
+										.getAttribute(XML_ATTRIBUTE_OPERATION_CLASS) != null) {
 									operationClass = (DeviceWizardRunnable) element.createExecutableExtension(XML_ATTRIBUTE_OPERATION_CLASS);
 								    operationClass.setPage(pageClass);
+								}
 								IDeviceTypeCustomWizardPage customPage = new DeviceTypeCustomWizardPage(
 										id, pageClass, operationClass);
 								
