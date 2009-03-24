@@ -17,6 +17,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [269716] - InstanceDeleted event is been fired when a new Instance is created
  ********************************************************************************/
 package org.eclipse.tml.framework.device.manager;
 
@@ -152,7 +153,7 @@ public class InstanceManager {
 					.showException(DeviceExceptionHandler
 							.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}
-		InstanceEventManager.getInstance().fireInstanceCreated(new InstanceEvent(instance));
+		
 		return launcher;
 	}
 	
@@ -229,7 +230,6 @@ public class InstanceManager {
 			registry.addInstance(inst);
 	
 	        DeviceXmlWriter.saveInstances(devices);
-	        InstanceEventManager.getInstance().fireInstanceDeleted(new InstanceEvent(inst));
 		} catch (TmLException te) {
 			ExceptionHandler
 					.showException(DeviceExceptionHandler
