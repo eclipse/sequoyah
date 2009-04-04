@@ -10,6 +10,7 @@
  * Contributors:
  * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup
  * Fabio Rigo (Eldorado Research Institute) - bug 244052 - The dirtyChanged method is being called out of UI thread
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271180] - Instance persistence mechanism can cause instance duplication.
  ********************************************************************************/
 package org.eclipse.tml.framework.device.factory;
 
@@ -20,6 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
+import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
 
@@ -59,6 +61,8 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 * @return A list of instances.
 	 */
 	public List<IInstance> getInstances() {
+		/* If not yet instantiated, loads the instances from the xml file*/
+		InstanceManager.getInstance();
 		return instances;
 	}
 

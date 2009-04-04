@@ -18,6 +18,7 @@
  * Fabio Fantato (Eldorado Research Institute) - [244810] Migrating Device View and Instance View to a separate plugin
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271180] - Instance persistence mechanism can cause instance duplication.
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view;
 
@@ -223,6 +224,7 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 		hookListeners();
 		
 		treeViewer.setInput(getInitalInput());
+		treeViewer.refresh();
 		treeViewer.expandAll();
 	}
 	
