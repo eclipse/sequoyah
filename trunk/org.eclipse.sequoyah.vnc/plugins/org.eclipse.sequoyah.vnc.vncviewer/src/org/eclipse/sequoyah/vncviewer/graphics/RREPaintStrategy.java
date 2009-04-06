@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
+ * Daniel Barboza Franco (Eldorado Research Institute) - [271205] - Remove log for mouse, keyboard and screen events
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
@@ -31,8 +32,8 @@ public class RREPaintStrategy extends AbstractPaintStrategy {
 		int height = rh.getHeight();
 		int subrectsCount = in.readInt();
 
-		log(RREPaintStrategy.class).debug("Processing rectangle defined by: x=" + x + "; y=" + y + 
-		        "; w=" + width + "; h=" + height + "subrects=" + subrectsCount + ".");
+/*		log(RREPaintStrategy.class).debug("Processing rectangle defined by: x=" + x + "; y=" + y + 
+		        "; w=" + width + "; h=" + height + "subrects=" + subrectsCount + ".");*/
 		
 	    int backgroundPixel = getContext().readPixel(in);
         getContext().fillRect(backgroundPixel, x, y, width, height);

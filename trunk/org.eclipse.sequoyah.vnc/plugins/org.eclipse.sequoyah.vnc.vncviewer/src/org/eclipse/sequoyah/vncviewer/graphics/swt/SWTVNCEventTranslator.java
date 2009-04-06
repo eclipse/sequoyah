@@ -12,6 +12,7 @@
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247840] - Mouse click not working
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
+ * Daniel Barboza Franco (Eldorado Research Institute) - [271205] - Remove log for mouse, keyboard and screen events
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -144,7 +145,7 @@ public class SWTVNCEventTranslator {
 		message.setFieldValue("downFlag", pressed ? 1 : 0); //$NON-NLS-1$
 		message.setFieldValue("key", key); //$NON-NLS-1$
 		
-		log(SWTVNCEventTranslator.class).debug("Key event message parameters: downFlag=" + pressed + "; key=" + key + "; ");
+		//log(SWTVNCEventTranslator.class).debug("Key event message parameters: downFlag=" + pressed + "; key=" + key + "; ");
 		return message;
 
 	}

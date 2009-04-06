@@ -14,6 +14,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - [257588] - Add support to ServerCutText message
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework 
+ * Daniel Barboza Franco (Eldorado Research Institute) - [271205] - Remove log for mouse, keyboard and screen events
  ********************************************************************************/
 package org.eclipse.tml.protocol.internal.reader;
 
@@ -75,7 +76,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	public static ProtocolBean readProtocolImplDef(String protocolId)
 			throws MalformedProtocolExtensionException {
 		// Create the bean
-	    BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading protocol definition from plugin.xml. protocolId=" + protocolId);
+	    //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading protocol definition from plugin.xml. protocolId=" + protocolId);
 		ProtocolBean bean = new ProtocolBean();
 		bean.setProtocolId(protocolId);
 
@@ -103,7 +104,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			throw new MalformedProtocolExtensionException(e.getMessage(), e);
 		}
 
-		BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read protocol definition from plugin.xml. protocolId=" + protocolId);
+		//BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read protocol definition from plugin.xml. protocolId=" + protocolId);
 		return bean;
 	}
 
@@ -236,7 +237,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	 * @return The list of parents of the provided protocol.
 	 */
 	private static List<String> getAllParentProtocols(String protocolId) {
-	    BasePlugin.logDebugMessage("ProtocolExtensionsReader", "Getting list of all parents of protocol " + protocolId + ".");
+	    //BasePlugin.logDebugMessage("ProtocolExtensionsReader", "Getting list of all parents of protocol " + protocolId + ".");
 		List<String> allParents = new ArrayList<String>();
 		allParents.add(protocolId);
 		String aParent = protocolId;
@@ -247,8 +248,8 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			}
 		} while (aParent != null);
 
-		BasePlugin.logDebugMessage("ProtocolExtensionsReader","Retrieved list of all parents of protocol " + 
-		        protocolId + ": " + allParents);
+		/*BasePlugin.logDebugMessage("ProtocolExtensionsReader","Retrieved list of all parents of protocol " + 
+		        protocolId + ": " + allParents);*/
 		
 		return allParents;
 	}
@@ -277,7 +278,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			List<String> protocols, boolean readFields)
 			throws MalformedProtocolExtensionException {
 	    
-	    BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading all messages of protocols: " + protocols);
+	    //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading all messages of protocols: " + protocols);
 		Map<Long, ProtocolMsgDefinition> messageDefCollection = new HashMap<Long, ProtocolMsgDefinition>();
 
 		// Get all Protocol Message extensions
@@ -299,14 +300,14 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 							.getAttribute(PROTOCOL_MESSAGE_PROTOCOL_ID_ATTR);
 
 					if ((protocol.equals(extensionProtocolId))) {
-					    BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading message of protocol " + protocol);					    
+					    //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading message of protocol " + protocol);					    
 						readMsgDefToCollection(protocolMsgConf, messageDefCollection, readFields);
 					}
 				}
 			}
 		}
 		
-		BasePlugin.logDebugMessage("ProtocolExtensionsReader","All messages of protocols " + protocols + " were read.");
+		//BasePlugin.logDebugMessage("ProtocolExtensionsReader","All messages of protocols " + protocols + " were read.");
 
 		return messageDefCollection;
 	}
@@ -335,7 +336,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	            .getAttribute(PROTOCOL_MESSAGE_CODE_ATTR));
 	    String id = protocolMsgConf.getAttribute(PROTOCOL_MESSAGE_ID_ATTR);
 
-	    BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading message definition for " + id + ". code=" + code);
+	    //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading message definition for " + id + ". code=" + code);
 
 	    boolean codeSigned = Boolean.parseBoolean(protocolMsgConf
 	            .getAttribute(PROTOCOL_MESSAGE_CODE_SIGNED_ATTR));
@@ -373,12 +374,12 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	        if (readFields) {
 
 	            IConfigurationElement[] msgDataConfArray = protocolMsgConf.getChildren();
-	            BasePlugin.logDebugMessage("ProtocolExtensionsReader","Starting to read fields of message " + id);
+	            //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Starting to read fields of message " + id);
 	            for (IConfigurationElement msgDataConf : msgDataConfArray) {	                
 	                IMsgDataBean msgData = readMsgData(msgDataConf);
 	                msgDataList.add(msgData);
 	            }
-	            BasePlugin.logDebugMessage("ProtocolExtensionsReader","Finished to read fields of message " + id);
+	            //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Finished to read fields of message " + id);
 	        }
 
 	        // Fills the bean with information collected previously
@@ -397,7 +398,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	        // Stores the bean at the provided map
 	        if (clientMsgs.contains(id)) {
 	            if (!messageDefMap.containsKey(code)) {
-	                BasePlugin.logDebugMessage("ProtocolExtensionsReader","Registering the message as a client message.");
+	                //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Registering the message as a client message.");
 	                messageDefMap.put(code, bean);		
 	            }
 	        }
@@ -405,12 +406,12 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	        // Server msgs are negative
 	        if (serverMsgs.contains(id)) {
 	            if (!messageDefMap.containsKey(-code)) {
-	                BasePlugin.logDebugMessage("ProtocolExtensionsReader","Registering the message as a server message.");
+	                //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Registering the message as a server message.");
 	                messageDefMap.put(-code, bean);		
 	            }
 	        }
 
-	        BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read message definition for " + id + ". code=" + code);
+	        //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read message definition for " + id + ". code=" + code);
 	    } catch (CoreException e) {
 	        // Skip the erroneous message
 	        BasePlugin.logWarning("There is an error at the declaration of message " + id + ". Skipping it.");
@@ -450,7 +451,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 					.getAttribute(PROTOCOL_MESSAGE_FIXED_FIELD_SIZE_ATTR));
 			String value = msgDataConf
 					.getAttribute(PROTOCOL_MESSAGE_FIXED_FIELD_VALUE_ATTR);
-			BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read the " + fieldName + " fixed sized field definition.");
+			//BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read the " + fieldName + " fixed sized field definition.");
 
 			// Sets the bean with values collected
 			fixedBean.setFieldName(fieldName);
@@ -485,7 +486,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			String value = msgDataConf
 					.getAttribute(PROTOCOL_MESSAGE_VARIABLE_VALUE_FIELD_VALUE_ATTR);
 
-			BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read the " + valueFieldName + " variable sized field definition.");
+			//BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read the " + valueFieldName + " variable sized field definition.");
 			
 			// Sets the bean with values collected
 			varBean.setSizeFieldName(sizeFieldName);
@@ -531,7 +532,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 					.getAttribute(PROTOCOL_MESSAGE_ITERATABLE_BLOCK_ID_ATTR);
 			Collection<IMsgDataBean> dataBeans = new ArrayList<IMsgDataBean>();
 
-			BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading an iteratable block definition. blockId=" + iteratableBlockId + ".");
+			//BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading an iteratable block definition. blockId=" + iteratableBlockId + ".");
 			
 			// Sets the bean with values collected
 			iteratableBean.setIterateOnField(iterateOnField);
@@ -543,14 +544,14 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			IMsgDataBean internalBean;
 			IConfigurationElement[] internalElements = msgDataConf
 					.getChildren();
-			BasePlugin.logDebugMessage("ProtocolExtensionsReader","Starting to read internal fields of iteratable block.");
+			//BasePlugin.logDebugMessage("ProtocolExtensionsReader","Starting to read internal fields of iteratable block.");
 			for (IConfigurationElement internal : internalElements) {
 				// Recursive call. This allows the internal fields to be read
 				// without writing more code
 				internalBean = readMsgData(internal);
 				dataBeans.add(internalBean);
 			}
-			BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read internal fields of iteratable block.");
+			//BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read internal fields of iteratable block.");
 			iteratableBean.setDataBeans(dataBeans);
 
 			// Sets the bean to return
@@ -589,7 +590,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	private static Collection<String> getMessagesOrientations(
 			List<String> protocols, String messageOrientationElem) {
 
-	    BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading all message directions for protocols: " + protocols + ". direction=" + messageOrientationElem);
+	    //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Reading all message directions for protocols: " + protocols + ". direction=" + messageOrientationElem);
 		Collection<String> messageOrientations = new HashSet<String>();
 
 /*
@@ -644,7 +645,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 			}
 		}
 
-		BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read all message directions for protocols: " + protocols);
+		//BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read all message directions for protocols: " + protocols);
 		return messageOrientations;
 	}
 }

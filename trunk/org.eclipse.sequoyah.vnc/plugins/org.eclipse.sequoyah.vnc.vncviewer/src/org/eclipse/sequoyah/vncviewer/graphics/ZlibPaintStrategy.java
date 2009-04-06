@@ -9,6 +9,7 @@
  *
  * Contributors:
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
+ * Daniel Barboza Franco (Eldorado Research Institute) - [271205] - Remove log for mouse, keyboard and screen events
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
@@ -37,9 +38,9 @@ public class ZlibPaintStrategy extends AbstractPaintStrategy {
 		int compressedDataLength = in.readInt();
 		byte[] compressedDataBuffer = new byte[compressedDataLength];
 
-        log(ZlibPaintStrategy.class).debug("Processing rectangle defined by: x=" + 
+/*        log(ZlibPaintStrategy.class).debug("Processing rectangle defined by: x=" + 
                 x + "; y=" + y + "; w=" + width + "; h=" + height + "zlibDataLength=" + 
-                compressedDataLength + ".");
+                compressedDataLength + ".");*/
 		
 		in.readFully(compressedDataBuffer, 0, compressedDataLength);
 		byte uncompressedDataBuffer[] = new byte[width * height* getContext().getBytesPerPixel()];

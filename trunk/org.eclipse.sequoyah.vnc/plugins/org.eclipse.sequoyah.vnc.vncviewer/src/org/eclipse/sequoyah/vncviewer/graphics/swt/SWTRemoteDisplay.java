@@ -23,6 +23,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [265043] - Mouse problems when performing zoom
  * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
+ * Daniel Barboza Franco (Eldorado Research Institute) - [271205] - Remove log for mouse, keyboard and screen events
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -397,7 +398,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 			ProtocolMessage message = eventTranslator.getKeyEventMessage(event);
 			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
-			log(SWTRemoteDisplay.class).debug("Sent key event"); //$NON-NLS-1$
+			//log(SWTRemoteDisplay.class).debug("Sent key event"); //$NON-NLS-1$
 
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(
@@ -421,7 +422,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			message.setFieldValue("y-position", (int) ((double)y / zoomFactor));
 			
 			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
-			log(SWTRemoteDisplay.class).debug("Sent mouse event"); //$NON-NLS-1$
+			//log(SWTRemoteDisplay.class).debug("Sent mouse event"); //$NON-NLS-1$
 
 		} catch (Exception e) {
 			log(SWTRemoteDisplay.class).error(

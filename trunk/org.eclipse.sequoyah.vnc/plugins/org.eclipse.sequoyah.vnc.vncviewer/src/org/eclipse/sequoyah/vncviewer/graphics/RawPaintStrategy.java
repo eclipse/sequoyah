@@ -10,6 +10,7 @@
  * Contributors:
  * Daniel Barboza Franco (Motorola) - Bug [242129] - Raw enconding not implemented correctly
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
+ * Daniel Barboza Franco (Eldorado Research Institute) - [271205] - Remove log for mouse, keyboard and screen events
  ********************************************************************************/
 package org.eclipse.tml.vncviewer.graphics;
 
@@ -31,8 +32,8 @@ public class RawPaintStrategy extends AbstractPaintStrategy {
 		int pixels[] = new int[width*height];
 		IPainterContext pc = getContext();
 		
-		log(RawPaintStrategy.class).debug("Processing rectangle defined by: w=" 
-		        + width + "; h=" + height + ".");
+/*		log(RawPaintStrategy.class).debug("Processing rectangle defined by: w=" 
+		        + width + "; h=" + height + ".");*/
 		
 		pixels = pc.readpixels(in, width, height);
 		pc.setPixels(rh.getX(), rh.getY(), width, height, pixels, 0);
