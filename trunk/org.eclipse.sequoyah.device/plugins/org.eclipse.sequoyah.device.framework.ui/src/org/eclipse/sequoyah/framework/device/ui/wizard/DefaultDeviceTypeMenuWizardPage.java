@@ -10,8 +10,11 @@
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
  *******************************************************************************/
 package org.eclipse.tml.framework.device.ui.wizard;
+
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -28,6 +31,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
 import org.eclipse.tml.framework.device.internal.model.MobileDeviceType;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
+import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.ui.DeviceUIResources;
 
@@ -89,11 +93,13 @@ public void createControl(Composite parent) {
 			String errorMessage = null;
 
 			if (name != null) {
-				name = name.trim();
+				//name = name.trim();
 				if (!name.equals("")) { //$NON-NLS-1$
-					if (manager.getInstancesByname(name).size() == 0) {
-					} else {
+					if (! (manager.getInstancesByname(name).size() == 0)) {
 						errorMessage = DeviceUIResources.TML_Emulator_Wizard_Project_Description_Duplicated_Error;
+					}
+					else if (!AbstractMobileInstance.validName(name)){
+						errorMessage = DeviceUIResources.TML_Instance_Name_Invalid_Error;
 					}
 				}
 			}

@@ -13,6 +13,7 @@
  * Yu-Fen Kuo (MontaVista) - bug#236476 - provide a generic device type
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui;
@@ -34,6 +35,7 @@ public class DeviceUIResources extends NLS {
 	public static String TML_Resource_Not_Available;
 	public static String TML_Handler_Not_Instanced;
 	public static String TML_Instance_Name_Duplicated_Error;
+	public static String TML_Instance_Name_Invalid_Error;
 	public static String TML_Emulator_Wizard_Project_Description_Duplicated_Error;
 	public static String TML_Default_Device_Type_Wizard_Page_title;
 	public static String TML_Default_Device_Type_Wizard_Page_message;

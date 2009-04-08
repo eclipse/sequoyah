@@ -10,6 +10,7 @@
  * Contributors:
  * Fabio Rigo (Eldorado Research Institute) - [244951] Implement listener/event mechanism at device framework
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.editors;
@@ -38,6 +39,7 @@ import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
 import org.eclipse.tml.framework.device.internal.model.MobileInstance;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
+import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
 import org.eclipse.tml.framework.device.ui.DeviceUIResources;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -94,13 +96,21 @@ public class InstancePropertyEditor extends PropertyPage {
     	boolean retVal = false;
     	
     	if (instanceName != null) {
-    		instanceName = instanceName.trim();
+    		//instanceName = instanceName.trim();
     		if (!instanceName.equals("")) { //$NON-NLS-1$
+    			
 	        	if (manager.getInstancesByname(instanceName).size() == 0 ||
 	        		instanceName.equals(initialInstanceName)) {
 	        		retVal = true;
 	        	} else {
 	        		errorMessage = DeviceUIResources.TML_Instance_Name_Duplicated_Error;
+	        	}
+	        	
+	        	if (retVal) {
+	        		if (!AbstractMobileInstance.validName(instanceName)) {
+	        			retVal = false;
+	        			errorMessage = DeviceUIResources.TML_Instance_Name_Invalid_Error;
+	        		}
 	        	}
 	        }
      	}

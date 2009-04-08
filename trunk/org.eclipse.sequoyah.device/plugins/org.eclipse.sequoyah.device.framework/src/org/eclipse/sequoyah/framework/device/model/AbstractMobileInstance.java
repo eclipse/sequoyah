@@ -11,16 +11,19 @@
  * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Adding data persistence
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.model;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.eclipse.tml.framework.device.statemachine.StateMachineHandler;
 
 public abstract class AbstractMobileInstance implements IInstance {
 
+	private static final String VALID_INSTANCE_REGEXP = "([a-z]|[A-Z]|[0-9]|\\.|_|-)+";
 	protected String id;
 	private String name;
 	private String deviceId;
@@ -161,6 +164,15 @@ public abstract class AbstractMobileInstance implements IInstance {
 
 	public void setStateMachineHandler(StateMachineHandler stateMachineHandler) {
 		this.stateMachineHandler = stateMachineHandler;
+	}
+
+	/**
+	 * Check if the argument is a valid name for an instance.
+	 * @param name - the name to be validated.
+	 * @return true if the name is valid.
+	 */
+	public static boolean validName(String name) {
+		return Pattern.matches(VALID_INSTANCE_REGEXP, name);
 	}
 
 }
