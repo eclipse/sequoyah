@@ -8,6 +8,7 @@
             handler="org.eclipse.tml.device.qemu.handler.QEmuGenericDeviceHandler"
             id="org.eclipse.tml.device.qemu.abstract"
             isAbstract="true"
+            isPersistent="true"
             label="Abstract QEMU device"
             name="Abstract QEMU device"
             superClass="org.eclipse.tml.device.emulator">
@@ -106,6 +107,7 @@
             handler="org.eclipse.tml.device.qemu.handler.QEmuGenericDeviceHandler"
             id="org.eclipse.tml.device.qemu.generic"
             isAbstract="false"
+            isPersistent="true"
             label="Generic QEMU device"
             name="Generic QEMU device"
             superClass="org.eclipse.tml.device.qemu.abstract">

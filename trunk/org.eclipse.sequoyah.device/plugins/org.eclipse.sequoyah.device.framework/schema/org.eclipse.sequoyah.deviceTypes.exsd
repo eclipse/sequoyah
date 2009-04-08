@@ -114,6 +114,13 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="isPersistent" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  True if instances of this device should be persisted. This is intented to be used by devices whose instances cannot be created by users.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

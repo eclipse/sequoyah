@@ -8,6 +8,7 @@
  * Fabio Rigo (Eldorado Research Institute) 
  * [245114] Enhance persistence policies
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271695] - Support to non-persistent instances of devices
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.manager.persistence;
@@ -34,7 +35,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.tml.framework.device.DevicePlugin;
+import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
+import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -157,29 +160,37 @@ public class DeviceXmlWriter implements IDeviceXmlTags
                 .createElement(TML_XML_INSTANCES);
         InstanceRegistry registry = InstanceRegistry.getInstance();
         Iterator<IInstance> iterator = registry.getInstances().iterator();
+   
         while (iterator.hasNext()) {
-            IInstance iIInst = iterator.next();
-            Element element = document
-                    .createElement(TML_XML_INSTANCE);
-            element.setAttribute(TML_XML_INSTANCE_NAME, iIInst
-                    .getName());
-            String xml_device_id = iIInst.getDeviceTypeId();
+   
+        	IInstance iIInst = iterator.next();
+            IDeviceType device = DeviceTypeRegistry.getInstance().getDeviceTypeById(iIInst.getDeviceTypeId());
 
-            element.setAttribute(TML_XML_INSTANCE_DEVICE_ID,
-                    xml_device_id);
-            if (element != null)
-                instancesRoot.appendChild(element);
-            Properties propProp = iIInst.getProperties();
-
-            for (Enumeration<?> e = propProp.keys(); e.hasMoreElements();) {
-                String propStr = (String) e.nextElement();
-                String propValStr = propProp.getProperty(propStr);
-
-                Element propElement = document.createElement(propStr);
-                Text propNode = document.createTextNode(propValStr);
-                propElement.appendChild(propNode);
-                element.appendChild(propElement);
-
+            //check if this instance should be persisted
+            if (device.isPersistent()) {
+           
+	            Element element = document
+	                    .createElement(TML_XML_INSTANCE);
+	            element.setAttribute(TML_XML_INSTANCE_NAME, iIInst
+	                    .getName());
+	            String xml_device_id = iIInst.getDeviceTypeId();
+	
+	            element.setAttribute(TML_XML_INSTANCE_DEVICE_ID,
+	                    xml_device_id);
+	            if (element != null)
+	                instancesRoot.appendChild(element);
+	            Properties propProp = iIInst.getProperties();
+	
+	            for (Enumeration<?> e = propProp.keys(); e.hasMoreElements();) {
+	                String propStr = (String) e.nextElement();
+	                String propValStr = propProp.getProperty(propStr);
+	
+	                Element propElement = document.createElement(propStr);
+	                Text propNode = document.createTextNode(propValStr);
+	                propElement.appendChild(propNode);
+	                element.appendChild(propElement);
+	
+	            }
             }
 
         }

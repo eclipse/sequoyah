@@ -9,6 +9,7 @@
             handler="org.eclipse.tml.device.qemureact.handler.QEmuReactDeviceHandler"
             icon="icons/full/obj16/device.gif"
             id="org.eclipse.tml.device.qemureact.qemureactDevice"
+            isPersistent="true"
             label="QEmuReact Mobile Device"
             name="QEmuReact Mobile Device">
             <property

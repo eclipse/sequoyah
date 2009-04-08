@@ -8,6 +8,7 @@
  * Contributors:
  *     Yu-Fen Kuo (MontaVista) - initial API and implementation
  *     Daniel Barboza Franco (Eldorado Research Institute) - Bug [259243] - instance management view is showing device type ids instead of names
+ *     Daniel Barboza Franco (Eldorado Research Institute) - Bug [271695] - Support to non-persistent instances of devices
  *******************************************************************************/
 package org.eclipse.tml.framework.device.internal.model;
 
@@ -29,6 +30,8 @@ public class MobileDeviceType implements IDeviceType {
 	
 	private static final String ELEMENT_DEVICE = "deviceType";
 	private static final String ATR_ICON = "icon";
+	private static final String ATR_IS_PERSISTENT = "isPersistent";
+	
 	
 	private static final String PROPERTY_ICON = "icon"; //$NON-NLS-1$
 	private String id;
@@ -40,10 +43,18 @@ public class MobileDeviceType implements IDeviceType {
 	private ImageDescriptor image;
 	private Properties properties = new Properties();
 	private List<IService> services;
+	private boolean isPersistent = true;
 
 	public MobileDeviceType(String id, String label) {
 		this.id = id;
 		this.label = label;
+		
+		IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, id);
+		String isPersistentStr = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_IS_PERSISTENT);
+
+		if (isPersistentStr != null) {
+			isPersistent = Boolean.valueOf(isPersistentStr);
+		}
 	}
 
 	public String getId() {
@@ -148,6 +159,10 @@ public class MobileDeviceType implements IDeviceType {
 
 	public void setSuperClass(String superClass) {
 		this.superClass = superClass;
+	}
+
+	public boolean isPersistent() {
+		return isPersistent;
 	}
 
 }

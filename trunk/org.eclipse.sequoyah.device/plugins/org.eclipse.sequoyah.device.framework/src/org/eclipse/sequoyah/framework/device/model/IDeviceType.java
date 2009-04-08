@@ -8,6 +8,7 @@
  * Contributors:
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271695] - Support to non-persistent instances of devices
  *******************************************************************************/
 
 package org.eclipse.tml.framework.device.model;
@@ -30,6 +31,8 @@ public interface IDeviceType {
 
 	public boolean isAbstract();
 
+	public boolean isPersistent();
+	
 	public void setAbstract(boolean isAbstract);
 
 	public String getSuperClass();
