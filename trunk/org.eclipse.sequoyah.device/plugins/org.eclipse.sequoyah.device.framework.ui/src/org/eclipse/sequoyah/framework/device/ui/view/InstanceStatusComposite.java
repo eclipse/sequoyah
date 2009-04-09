@@ -20,6 +20,7 @@
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271807] - Improper use of PreferencesUtil.createPropertyDialogOn() on properties editor
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -37,6 +38,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -665,8 +667,8 @@ public class InstanceStatusComposite extends Composite
             PreferenceDialog dialog = PreferencesUtil.createPropertyDialogOn(
                     shell,
                     instance,
-                    PROPERTY_EDITOR_ID,
-                    new String[] {},
+                    null,
+                    null,
                     null);
             dialog.open();
         }
