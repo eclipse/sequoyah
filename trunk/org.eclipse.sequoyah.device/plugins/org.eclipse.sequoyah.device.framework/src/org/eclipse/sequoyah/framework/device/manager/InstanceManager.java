@@ -18,6 +18,7 @@
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [269716] - InstanceDeleted event is been fired when a new Instance is created
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [272056] - Method getInstance() on the singleton class InatanceManager is not synchronized.
  ********************************************************************************/
 package org.eclipse.tml.framework.device.manager;
 
@@ -89,7 +90,7 @@ public class InstanceManager {
 	 * 
 	 * @return The current available instance
 	 */
-	public static InstanceManager getInstance() {
+	public synchronized static InstanceManager getInstance() {
 		if (_instance == null) {
 			_instance = new InstanceManager();
 		}
