@@ -35,7 +35,7 @@
 		<echo level="info" message="Exporting features..." />
 		
 		<pde.exportFeatures destination="${tml.export.output.path}" exportSource="false" exportType="jar"
-					features="${tml.features.to.export}" useJARFormat="true" qualifier="200904092200" />
+					features="${tml.features.to.export}" useJARFormat="true" qualifier="200904132200" />
 
 		<pde.exportFeatures destination="${tml.export.output.path}/sources" exportSource="true" exportType="jar"
 						features="${tml.features.to.export.source}" useJARFormat="true" qualifier="200904092200"/>
