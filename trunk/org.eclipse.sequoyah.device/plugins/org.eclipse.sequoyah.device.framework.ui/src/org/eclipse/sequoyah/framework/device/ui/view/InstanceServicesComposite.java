@@ -15,6 +15,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247179] - Choice of service buttons orientation on Instance Mgt View should be persisted
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [272544] - Default values for filter and orientation choices not being set.
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -76,6 +77,9 @@ public class InstanceServicesComposite extends Composite {
 		{
 			super("filter"); //$NON-NLS-1$
 			
+			PlatformUI.getPreferenceStore().setDefault(DeviceUIPlugin.SERVICE_BUTTONS_ORIENTATION_PREFERENCE , SWT.HORIZONTAL);
+	    	PlatformUI.getPreferenceStore().setDefault(DeviceUIPlugin.FILTER_SERVICE_BY_AVAILABILITY_PREFERENCE , false);
+
 			showAllServices = !PlatformUI.getPreferenceStore().getBoolean(DeviceUIPlugin.FILTER_SERVICE_BY_AVAILABILITY_PREFERENCE);
 			
 			setToolTipText("Filter services by availability"); //$NON-NLS-1$
