@@ -46,10 +46,4 @@
    		id="org.eclipse.tml.device.wizard" 
    		name="Settings for New Device Instance Wizard" 
    		schema="schema/org.eclipse.tml.device.wizard.exsd"/>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.eclipse.tml.framework.device.ui.PreferenceInitializer">
-      </initializer>
-   </extension>
 </plugin>
