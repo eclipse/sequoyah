@@ -5,8 +5,8 @@
       version="1.0.0.qualifier"
       provider-name="Eclipse.org">
 
-   <description url="http://www.example.com/description">
-      Provides test for Pulsar
+   <description>
+      Provide tests for Pulsar components
    </description>
 
    <copyright>
