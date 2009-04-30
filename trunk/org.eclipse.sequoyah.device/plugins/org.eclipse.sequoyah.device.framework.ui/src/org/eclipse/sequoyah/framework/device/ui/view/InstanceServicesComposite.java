@@ -16,6 +16,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247179] - Choice of service buttons orientation on Instance Mgt View should be persisted
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [272544] - Default values for filter and orientation choices not being set.
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -58,13 +59,14 @@ public class InstanceServicesComposite extends Composite {
 	private static int buttonsOrienation = SWT.HORIZONTAL;
 	private IInstance instance = null;
 	
-	private static final String SERVICES_LABEL = "Services"; //$NON-NLS-1$
-	private static final String SERVICES_FILTERED_LABEL = "Services (filtered)"; //$NON-NLS-1$
+	private static final String SERVICES_LABEL = "Operations"; //$NON-NLS-1$
+	private static final String SERVICES_FILTERED_LABEL = "Operations (filtered)"; //$NON-NLS-1$
 	private static final String NO_LABEL = ""; //$NON-NLS-1$
 	private static final int DEFAULT_BUTTONS_WIDTH = 120;
 	private static final int DEFAULT_BUTTONS_HEIGHT = 30;
 	private static final int MAX_BUTTON_STRING_SIZE = DEFAULT_BUTTONS_WIDTH / 10;
 	private static final int DEFAULT_BUTTON_IMAGE_SIZE = 16;
+	public static final String AVAILABILITY_TOOL_TIP_TEXT = "Filter operations by availability";
 	
 	private CLabel label;
 	private ToolBar toolBar;
@@ -82,7 +84,7 @@ public class InstanceServicesComposite extends Composite {
 
 			showAllServices = !PlatformUI.getPreferenceStore().getBoolean(DeviceUIPlugin.FILTER_SERVICE_BY_AVAILABILITY_PREFERENCE);
 			
-			setToolTipText("Filter services by availability"); //$NON-NLS-1$
+			setToolTipText(AVAILABILITY_TOOL_TIP_TEXT); //$NON-NLS-1$
 			setChecked(!showAllServices);
 			setImageDescriptor(DeviceUIPlugin.getDefault().getImageDescriptor(DeviceUIPlugin.ICON_FILTER));
 		}

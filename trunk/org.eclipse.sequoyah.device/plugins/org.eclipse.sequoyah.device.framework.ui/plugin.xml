@@ -12,7 +12,7 @@
          class="org.eclipse.tml.framework.device.ui.view.InstanceMgtView"
          icon="icons/full/obj16/device.gif"
          id="org.eclipse.tml.framework.device.ui.InstanceMgtView"
-         name="Instance Management">
+         name="Device Management">
    </view>
    <category
          id="org.eclipse.tml.framework.device.ui.category"
@@ -33,7 +33,7 @@
    <page
          class="org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditor"
          id="org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditorDefault"
-         name="Instance Properties">
+         name="Device Properties">
       <enabledWhen>
          <instanceof
                value="org.eclipse.tml.framework.device.internal.model.MobileInstance">

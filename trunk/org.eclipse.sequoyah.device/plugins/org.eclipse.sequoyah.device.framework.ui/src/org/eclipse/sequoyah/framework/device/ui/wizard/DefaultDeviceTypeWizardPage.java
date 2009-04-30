@@ -9,6 +9,7 @@
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
  *******************************************************************************/
 package org.eclipse.tml.framework.device.ui.wizard;
 
@@ -52,7 +53,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 
 	private static final String PROPERTY_ICON = "icon"; //$NON-NLS-1$
 
-	private Text nameText;
+	private String instanceName = "";
 	private MobileDeviceType currentDeviceType;
 	private TreeViewer deviceTypesTreeViewer;
 
@@ -159,7 +160,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 		label.setText(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_name); //$NON-NLS-1$
 		label.setFont(container.getFont());
 
-		nameText = new Text(container, SWT.BORDER);
+		final Text nameText = new Text(container, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
 		nameText.setFont(container.getFont());
@@ -171,6 +172,8 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 				String name = nameText.getText();
 				String errorMessage = null;
 
+				instanceName = "";
+				
 				if (name != null) {
 					//name = name.trim();
 					if (!name.equals("")) { //$NON-NLS-1$
@@ -179,6 +182,9 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 						}
 						else if (!AbstractMobileInstance.validName(name)){
 							errorMessage = DeviceUIResources.TML_Instance_Name_Invalid_Error;
+						}
+						else {
+							instanceName = name;
 						}
 					}
 				}
@@ -198,7 +204,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 	public boolean isPageComplete() {
 		if (getErrorMessage() != null)
 			return false;
-		if (nameText.getText().trim() != "" && currentDeviceType != null) { //$NON-NLS-1$
+		if (instanceName.trim() != "" && currentDeviceType != null) { //$NON-NLS-1$
 			return true;
 		}
 
@@ -253,7 +259,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 	}
 
 	public String getInstanceName() {
-		return nameText.getText().trim();
+		return instanceName.trim();
 	}
 
 	public MobileDeviceType getDeviceType() {

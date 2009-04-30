@@ -11,6 +11,7 @@
  * Fabio Rigo (Eldorado Research Institute) - [244951] Implement listener/event mechanism at device framework
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.editors;
@@ -49,9 +50,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
  */
 public class InstancePropertyEditor extends PropertyPage {
 
-	private static final String LABEL_INSTANCE_NAME = "Instance name: "; //$NON-NLS-1$
-	private static final String LABEL_DEVICE_NAME = "Device Name: "; //$NON-NLS-1$
-	private static final String LABEL_DEVICE_CLASS = "Device class: "; //$NON-NLS-1$
+	private static final String LABEL_INSTANCE_NAME = "Device name: "; //$NON-NLS-1$
 	private static final String LABEL_PROPERTIES = "Properties: "; //$NON-NLS-1$
 	private static final String COLUMN_NAME_KEY = "Key"; //$NON-NLS-1$
 	private static final String COLUMN_NAME_VALUE = "Value"; //$NON-NLS-1$
@@ -148,16 +147,6 @@ public class InstancePropertyEditor extends PropertyPage {
 	                setValid(valid);
 	            }
         	});
-
-		label = new Label(composite, SWT.NULL );
-        label.setText(InstancePropertyEditor.LABEL_DEVICE_NAME);
-        label = new Label(composite, SWT.NULL );
-        label.setText(instance.getName());
-        
-		label = new Label(composite, SWT.NULL );
-        label.setText(InstancePropertyEditor.LABEL_DEVICE_CLASS);
-		label = new Label(composite, SWT.NULL );
-        label.setText(instance.getDeviceTypeId());
 
         label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL );
 		gridData = new GridData(GridData.FILL_HORIZONTAL);

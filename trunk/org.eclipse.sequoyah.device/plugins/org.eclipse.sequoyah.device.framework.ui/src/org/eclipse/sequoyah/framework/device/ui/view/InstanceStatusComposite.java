@@ -21,6 +21,7 @@
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271807] - Improper use of PreferencesUtil.createPropertyDialogOn() on properties editor
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -137,8 +138,8 @@ public class InstanceStatusComposite extends Composite
 	private static final String MENU_DELETE = "Delete"; //$NON-NLS-1$
 	private static final String MENU_PROPERTIES = "Properties"; //$NON-NLS-1$
 	private static final String MENU_NEW = "New...";  //$NON-NLS-1$
-	private static final String TOOLBAR_NEW_TOOLTIP = "New Instance"; //$NON-NLS-1$
-	private static final String TOOLBAR_DIALOG_MESSAGE = "Select a Device to open the Instance Creation Wizard :"; //$NON-NLS-1$
+	private static final String TOOLBAR_NEW_TOOLTIP = "New Device"; //$NON-NLS-1$
+	private static final String TOOLBAR_DIALOG_MESSAGE = "Select a Device to open the Creation Wizard :"; //$NON-NLS-1$
 	private static final String ERROR_DIALOG_TITLE = "Error"; //$NON-NLS-1$
 	private static final String ERROR_NO_WIZARD_MESSAGE = "No wizard found for Device "; //$NON-NLS-1$
 	private static final int DEFAULT_MENU_IMAGE_SIZE = 16;
@@ -234,7 +235,7 @@ public class InstanceStatusComposite extends Composite
 		tree.setLayout(layout);
 		tree.setHeaderVisible(true);
 
-		createColumn("Instance name", 3); //$NON-NLS-1$
+		createColumn("Devices", 3); //$NON-NLS-1$
 		createColumn("Status", 1); //$NON-NLS-1$
 
 		InstanceMgtViewLabelProvider labelProvider = new InstanceMgtViewLabelProvider();
