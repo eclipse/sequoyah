@@ -3,15 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="http://www.eclipse.org/default_style.css" type="text/css">
-<title>Build Notes for TmL 0.3 Nightly (200904132200)</title>
+<title>Build Notes for TmL 0.3M7 (200904301600)</title>
 </head>
 
 <body>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" width="80%">
-		<p><b><font class=indextop>Build Notes for TmL 0.3 Nightly (200904132200)</font></b><br>
-		Mar 12.2009 </p>
+		<p><b><font class=indextop>Build Notes for TmL 0.3M7 (200904301600)</font></b><br>
+		Apr 30, 2009 </p>
 		</td>
 	</tr>
 </table>
@@ -24,16 +24,16 @@
 <table><tbody><tr><td>
 <ul>
 <li>There is a new update site:
-    <a href="http://download.eclipse.org/dsdp/tml/updates/0.3/Nightly">
-    http://download.eclipse.org/dsdp/tml/updates/0.3/Nightly</a>.<br/>
+    <a href="http://download.eclipse.org/dsdp/tml/updates/0.3M7">
+    http://download.eclipse.org/dsdp/tml/updates/0.3M7</a>.<br/>
     We will continue with more testing and migrate the main update site to
     use signed jars as well as soon as possible.</li>
-<li>This is the first release of TmL, please help us to keep it growing up. Report bugs and send us your suggestions.</li>
+<li>This is the third release of TmL, please help us to keep it growing up. Report bugs and send us your suggestions.</li>
 <li>Use
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2008-10-10&chfield=resolution&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2009-04-30&chfield=resolution&cmdtype=doit">
   this query</a> to show the list of bugs fixed.</li>
-<li>For details on checkins, see the
-  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/N-0.3-200904132200/tml-log.csv">
+<li>For details on committed files, see the
+  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/R-0.3M7-200904301600/tml-log.csv">
   TmL CVS changelog</a>.</li>
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/index.php/DSDP/TML/TML_FAQ">TmL FAQ</a></li>
@@ -47,10 +47,10 @@
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>The TmL Documentation now has a
+<p>The TmL project has a
 <a href="http://wiki.eclipse.org/DSDP/TML">
-wiki</a> that contains some guides through installation, first steps,
-connection setup and important tasks.</p>
+wiki</a> that contains important information about installation, first steps,
+connection setup and other tasks.</p>
 </td></tr></tbody></table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
@@ -62,7 +62,7 @@ connection setup and important tasks.</p>
 <table><tbody><tr><td>
 <p>As per the TmL
 <a href="http://www.eclipse.org/dsdp/tml/development/plan.php">plan</a>,
-we will have small API changes from 0.2 release in January,2009.</p>
+we will have small API changes from 0.2 release in January 2009.</p>
 <p>All such API changes will be voted on
 by committers on the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tml-dev">
 dsdp-tml-dev</a> developer mailing list, and documented in a migration guide
