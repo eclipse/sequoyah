@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?artifactRepository class='org.eclipse.equinox.internal.p2.artifact.repository.simple.SimpleArtifactRepository' version='1.0.0'?>
+<repository name='test repo' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1'>
+  <properties size='1'>
+    <property name='p2.compressed' value='false'/>
+  </properties>
+  <mappings size='2'>
+    <rule filter='(&amp; (classifier=unzip))' output='${repoUrl}/artifacts/${id}'/>
+    <rule filter='(&amp; (classifier=exe))' output='${repoUrl}/artifacts/${id}'/>
+  </mappings>
+  <artifacts size='2'>
+    <artifact classifier='unzip' id='Test.zip' version='1.0'>
+      <properties size='2'>
+        <property name='artifact.size' value='3994'/>
+        <property name='download.size' value='3994'/>
+      </properties>
+    </artifact>
+    <artifact classifier='exe' id='Test.exe' version='1.0'>
+      <properties size='2'>
+        <property name='artifact.size' value='20'/>
+        <property name='download.size' value='20'/>
+      </properties>
+    </artifact>
+  </artifacts>
+</repository>
