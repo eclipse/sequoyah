@@ -31,8 +31,10 @@ public class SDK extends PlatformObject implements ISDK {
 	public static final String PROP_DOC_URL = "org.eclipse.pulsar.documentation.url"; //$NON-NLS-1$
 	
 	private IInstallableUnit iu;
+	private SDKRepository sdkRepository;
 
-	public SDK(IInstallableUnit iu) {
+	public SDK(SDKRepository sdkRepository, IInstallableUnit iu) {
+		this.sdkRepository = sdkRepository;
 		this.iu = iu;
 	}
 
@@ -78,4 +80,7 @@ public class SDK extends PlatformObject implements ISDK {
 		return iu;
 	}
 	
+	public SDKRepository getRepository() {
+		return sdkRepository;
+	}
 }

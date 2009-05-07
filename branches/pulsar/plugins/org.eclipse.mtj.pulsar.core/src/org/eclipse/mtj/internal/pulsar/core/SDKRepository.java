@@ -46,7 +46,7 @@ public class SDKRepository implements ISDKRepository {
 		Collector installableUnits = 
 			ProvisioningHelper.getInstallableUnits(getMetadataURI(), InstallableUnitQuery.ANY, monitor);
 		for (IInstallableUnit iu : (Collection<IInstallableUnit>) installableUnits.toCollection()) {
-			sdks.add(new SDK(iu));
+			sdks.add(new SDK(this, iu));
 		}
 		return sdks;
 	}
