@@ -165,7 +165,7 @@ public class CoreTests extends TestCase {
 				TestUtils.installIU(profile, sdkImpl.getInstallableUnit(), 
 						repository.getMetadataURI(), repository.getArtifactsURI());
 			profileIds.add(profile.getProfileId());
-			assertTrue(status.isOK());
+			assertTrue(sdk.getName() + ":" + TestUtils.getMessage(status), status.isOK());
 		}
 		for (ISDK sdk : sdks) {
 			assertTrue(sdk.getState().equals(EState.INSTALLED));
@@ -179,7 +179,7 @@ public class CoreTests extends TestCase {
 				TestUtils.installIU(profile, sdkImpl.getInstallableUnit(), 
 						repository.getMetadataURI(), repository.getArtifactsURI());
 			profileIds.add(profile.getProfileId());
-			assertTrue(status.isOK());
+			assertTrue(sdk.getName() + ":" + TestUtils.getMessage(status), status.isOK());
 		}
 		assertInstalledFilesExist();
 		cleanUpInstalledFiles();
