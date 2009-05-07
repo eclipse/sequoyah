@@ -3,7 +3,7 @@
       id="org.eclipse.mtj.pulsar.tool"
       label="Eclipse Pulsar Tooling  Feature (Incubation)"
       version="1.0.0.qualifier"
-      provider-name="Eclipse.org">
+      provider-name="Eclipse.org - Pulsar">
 
    <description url="http://www.example.com/description">
       Provides Tools for Pulsar

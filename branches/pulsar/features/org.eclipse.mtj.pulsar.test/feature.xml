@@ -3,7 +3,7 @@
       id="org.eclipse.mtj.pulsar.test"
       label="Eclipse Pulsar Tests (Incubation)"
       version="1.0.0.qualifier"
-      provider-name="Eclipse.org">
+      provider-name="Eclipse.org - Pulsar">
 
    <description>
       Provide tests for Pulsar components

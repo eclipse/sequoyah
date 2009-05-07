@@ -3,7 +3,7 @@
       id="org.eclipse.mtj.pulsar"
       label="Eclipse Pulsar (Incubation)"
       version="1.0.0.qualifier"
-      provider-name="Eclipse.org">
+      provider-name="Eclipse.org - Pulsar">
    <install-handler/>
 
    <description>
