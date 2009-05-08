@@ -25,75 +25,93 @@ import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 public class InstallersLabelProvider extends ColumnLabelProvider {
-	
-	private Device device;
-	private Map<Object, Image> imageCache;
-	
-	public InstallersLabelProvider(Device device) {
-		this.device = device;
-	}
 
-	private Image getRepositoryImage(ISDKRepository repository) {
-		ensureImageCache();
-		if (!imageCache.containsKey(repository))
-			imageCache.put(repository, repository.getImageDescriptor().createImage(device));
-		
-		return imageCache.get(repository);
-	}
+    private Device device;
+    private Map<Object, Image> imageCache;
+    private static final int IMAGE_DIMENSION = 16;
 
-	private void ensureImageCache() {
-		if (imageCache == null)
-			imageCache = new HashMap<Object, Image>();
-	}
-	
-	private Image getProvUIImage(String key) {
-		ensureImageCache();
-		if (!imageCache.containsKey(key)) {
-			ImageDescriptor imageDescriptor = 
-				ProvUIActivator.getDefault().getImageRegistry().getDescriptor(key);
-			imageCache.put(key, imageDescriptor.createImage(device));
-		}
-		
-		return imageCache.get(key);
-	}
+    public InstallersLabelProvider(Device device) {
+        this.device = device;
+    }
 
-	@Override
-	public Image getImage(Object element) {
-		Object object = ((TreeNode) element).getValue();
-		if (object instanceof ISDKRepository) {
-			return getRepositoryImage((ISDKRepository) object);
-		}
-		else if (object instanceof ISDK) {
-			return getProvUIImage(ProvUIImages.IMG_IU);
-		}
-		else if (object instanceof String) { // category
-			return getProvUIImage(ProvUIImages.IMG_CATEGORY);
-		}
-		return null;
-	}
+    private Image getRepositoryImage(ISDKRepository repository) {
+        ensureImageCache();
+        if (!imageCache.containsKey(repository)) {
+            ImageDescriptor imageDescriptor = repository.getImageDescriptor();
+            ImageData imageData = imageDescriptor.getImageData();
+            Image image;
+            if (imageData != null) {
+                if (imageData.width == IMAGE_DIMENSION
+                        && imageData.height == IMAGE_DIMENSION) {
+                    image = imageDescriptor.createImage(device);
+                } else {
+                    ImageData scaledImageData = imageData.scaledTo(
+                            IMAGE_DIMENSION, IMAGE_DIMENSION);
+                    image = new Image(device, scaledImageData);
+                }
+            } else {
+                image = PlatformUI.getWorkbench().getSharedImages()
+                        .getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER)
+                        .createImage();
+            }
+            imageCache.put(repository, image);
+        }
 
-	@Override
-	public String getText(Object element) {
-		Object object = ((TreeNode) element).getValue();
-		if (object instanceof ISDK) {
-			return ((ISDK) object).getName();
-		}
-		else if (object instanceof ISDKRepository) {
-			return ((ISDKRepository) object).getName();
-		}
-		else if (object instanceof String) {
-			return (String) object;
-		}
-		
-		return null;
-	}
+        return imageCache.get(repository);
+    }
 
-	public void dispose() {
-		for (Image image : imageCache.values()) {
-			image.dispose();
-		}
-		super.dispose();
-	}
+    private void ensureImageCache() {
+        if (imageCache == null)
+            imageCache = new HashMap<Object, Image>();
+    }
+
+    private Image getProvUIImage(String key) {
+        ensureImageCache();
+        if (!imageCache.containsKey(key)) {
+            ImageDescriptor imageDescriptor = ProvUIActivator.getDefault()
+                    .getImageRegistry().getDescriptor(key);
+            imageCache.put(key, imageDescriptor.createImage(device));
+        }
+
+        return imageCache.get(key);
+    }
+
+    @Override
+    public Image getImage(Object element) {
+        Object object = ((TreeNode) element).getValue();
+        if (object instanceof ISDKRepository) {
+            return getRepositoryImage((ISDKRepository) object);
+        } else if (object instanceof ISDK) {
+            return getProvUIImage(ProvUIImages.IMG_IU);
+        } else if (object instanceof String) { // category
+            return getProvUIImage(ProvUIImages.IMG_CATEGORY);
+        }
+        return null;
+    }
+
+    @Override
+    public String getText(Object element) {
+        Object object = ((TreeNode) element).getValue();
+        if (object instanceof ISDK) {
+            return ((ISDK) object).getName();
+        } else if (object instanceof ISDKRepository) {
+            return ((ISDKRepository) object).getName();
+        } else if (object instanceof String) {
+            return (String) object;
+        }
+
+        return null;
+    }
+
+    public void dispose() {
+        for (Image image : imageCache.values()) {
+            image.dispose();
+        }
+        super.dispose();
+    }
 }
