@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.equinox.internal.p2.touchpoint.natives.Messages;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.Util;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.actions.ActionConstants;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IFileArtifactRepository;
@@ -28,20 +27,23 @@ import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.engine.ProvisioningAction;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.mtj.internal.pulsar.core.Messages;
 import org.eclipse.mtj.pulsar.core.Activator;
-import org.eclipse.osgi.util.NLS;
 
 public class ExecuteAction extends ProvisioningAction {
 
 	public static final String ACTION_EXECUTE = "execute"; //$NON-NLS-1$
-	private static final String PARM_EXECUTABLE = "executable";
+	private static final String PARM_EXECUTABLE = "executable"; //$NON-NLS-1$
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public IStatus execute(Map parameters) {
 		String executable = (String) parameters.get(PARM_EXECUTABLE);
 		if (executable == null)
-			return Activator.makeErrorStatus(NLS.bind(Messages.param_not_set, PARM_EXECUTABLE, ACTION_EXECUTE), null);
+			return Activator.makeErrorStatus(
+					MessageFormat.format(
+							Messages.ExecuteAction_ParamNotSetError,
+							PARM_EXECUTABLE, ACTION_EXECUTE), null);
 
 		IInstallableUnit iu = (IInstallableUnit) parameters.get(ActionConstants.PARM_IU);
 		if (executable.equals(ActionConstants.PARM_ARTIFACT)) {
@@ -55,13 +57,15 @@ public class ExecuteAction extends ProvisioningAction {
 			}
 			File fileLocation = downloadCache.getArtifactFile(artifactKey);
 			if ((fileLocation == null) || !fileLocation.exists())
-				return Activator.makeErrorStatus(NLS.bind(Messages.artifact_not_available, artifactKey), null);
+				return Activator.makeErrorStatus(
+						MessageFormat.format(Messages.ExecuteAction_MissingArtifactError,
+						artifactKey), null);
 			executable = fileLocation.getAbsolutePath();
 		}
 		try {
 			execute(executable, iu);
 		} catch (Exception e) {
-			return Activator.makeErrorStatus(MessageFormat.format("could not execute \"{0}\"", executable), e);
+			return Activator.makeErrorStatus(MessageFormat.format(Messages.ExecuteAction_ExecuteError, executable), e);
 		}
 
 		return Status.OK_STATUS;
@@ -77,7 +81,7 @@ public class ExecuteAction extends ProvisioningAction {
 	@SuppressWarnings("unchecked")
 	@Override
 	public IStatus undo(Map parameters) {
-		return Activator.makeErrorStatus("undo not supported for exectutables", null);
+		return Activator.makeErrorStatus(Messages.ExecuteAction_UndoUnsupportedError, null);
 	}
 
 }

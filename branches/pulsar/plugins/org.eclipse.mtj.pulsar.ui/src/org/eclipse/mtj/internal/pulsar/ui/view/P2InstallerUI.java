@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
 import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
 import org.eclipse.equinox.internal.p2.ui.PlanAnalyzer;
-import org.eclipse.equinox.internal.p2.ui.ProvUIMessages;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
 import org.eclipse.equinox.internal.provisional.p2.director.ProvisioningPlan;
@@ -86,7 +85,7 @@ public class P2InstallerUI implements IInstallerUI {
 		changeRequest.addInstallableUnits(ius);
 		final String id = profile.getProfileId();
 		final PlannerResolutionOperation operation = 
-			new PlannerResolutionOperation(ProvUIMessages.ProfileModificationAction_ResolutionOperationLabel, 
+			new PlannerResolutionOperation(Messages.P2InstallerUI_ResoultionOperationLabel, 
 					id,	changeRequest, null, PlanAnalyzer.getProfileChangeAlteredStatus(), true);
 		Job job = ProvisioningOperationRunner.schedule(operation, StatusManager.SHOW);
 		job.addJobChangeListener(new JobChangeAdapter() {
@@ -131,7 +130,7 @@ public class P2InstallerUI implements IInstallerUI {
 	private IPath getInstallFolderFromUser(Shell parentShell, ISDK sdk) {
 		DirectoryDialog directoryDialog = new DirectoryDialog(parentShell);
 		directoryDialog.setMessage(MessageFormat.format(
-				"Please choose where to unzip the archive for {0}:", sdk.getName()));
+				Messages.P2InstallerUI_DirerctoryDialogMessage, sdk.getName()));
 		String dirPathStr = directoryDialog.open();
 		if (dirPathStr != null)
 			return new Path(dirPathStr);

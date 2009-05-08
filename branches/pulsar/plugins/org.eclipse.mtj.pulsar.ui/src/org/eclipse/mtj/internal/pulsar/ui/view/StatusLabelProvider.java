@@ -33,9 +33,9 @@ public class StatusLabelProvider extends ColumnLabelProvider {
 	private String getDisplayString(EState state) {
 		switch (state) {
 		case INSTALLED:
-			return "Installed";
+			return Messages.StatusLabelProvider_InstalledLabel;
 		case UNINSTALLED:
-			return "Uninstalled";
+			return Messages.StatusLabelProvider_UninstalledLabel;
 
 		}
 		return null;

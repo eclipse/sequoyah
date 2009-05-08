@@ -65,9 +65,9 @@ public class P2Utils {
 	
 	public static IProfile createProfileForSDK(ISDK sdk, IPath installFolder) throws ProvisionException {
 		StringBuilder sb = new StringBuilder();
-		sb.append("org.eclipse.pulsar.profile.");
+		sb.append("org.eclipse.pulsar.profile."); //$NON-NLS-1$
 		sb.append(((SDK) sdk).getInstallableUnit().getId());
-		sb.append(".");
+		sb.append("."); //$NON-NLS-1$
 		sb.append(System.currentTimeMillis());
 		
 		return createProfile(sb.toString(), installFolder);

@@ -21,8 +21,9 @@ import java.util.Collection;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.internal.provisional.p2.query.Collector;
+import org.eclipse.equinox.internal.provisional.p2.query.MatchQuery;
+import org.eclipse.equinox.internal.provisional.p2.query.Query;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
@@ -44,11 +45,24 @@ public class SDKRepository implements ISDKRepository {
 	public Collection<ISDK> getSDKs(IProgressMonitor monitor) {
 		Collection<ISDK> sdks = new ArrayList<ISDK>();
 		Collector installableUnits = 
-			ProvisioningHelper.getInstallableUnits(getMetadataURI(), InstallableUnitQuery.ANY, monitor);
+			ProvisioningHelper.getInstallableUnits(getMetadataURI(), getSDKQuery(), monitor);
 		for (IInstallableUnit iu : (Collection<IInstallableUnit>) installableUnits.toCollection()) {
 			sdks.add(new SDK(this, iu));
 		}
 		return sdks;
+	}
+
+	private Query getSDKQuery() {
+		return new MatchQuery() {
+			@Override
+			public boolean isMatch(Object candidate) {
+				if (candidate instanceof IInstallableUnit) {
+					IInstallableUnit iu = (IInstallableUnit) candidate;
+					return iu.getProperty(SDK.PROP_TYPE) != null;
+				}
+				return false;
+			}
+		};
 	}
 
 	public URI getMetadataURI() {

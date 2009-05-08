@@ -74,15 +74,15 @@ public class DefaultSDKRepositoryProvider implements ISDKRepositoryProvider {
 						repositories.add(repository);
 					}
 					catch (MalformedURLException e) {
-						Activator.logError("Could not read sdk repository url", e);
+						Activator.logError(Messages.DefaultSDKRepositoryProvider_URLError, e);
 					}
 					catch (URISyntaxException e) {
-						Activator.logError("Could not read sdk repository url", e);
+						Activator.logError(Messages.DefaultSDKRepositoryProvider_URLError, e);
 					}
 				}
 			}
 		} catch (Exception e) {
-			Activator.logError("Could not read sdk repositories properties file", e);
+			Activator.logError(Messages.DefaultSDKRepositoryProvider_FileReadError, e);
 		}
 		
 		return repositories;

@@ -47,7 +47,7 @@ public class SDK extends PlatformObject implements ISDK {
 	}
 
 	public Version getVersion() {
-		return Version.parseVersion(iu.getVersion().toString());
+		return org.eclipse.equinox.internal.provisional.p2.core.Version.toOSGiVersion(iu.getVersion());
 	}
 
 	public EType getType() {
@@ -70,7 +70,7 @@ public class SDK extends PlatformObject implements ISDK {
 			try {
 				return new URL(value);
 			} catch (MalformedURLException e) {
-				Activator.logError("could not get documentation URL for sdk", e);
+				Activator.logError(Messages.SDK_DocumentationURLError, e);
 			}
 		}
 		return null;

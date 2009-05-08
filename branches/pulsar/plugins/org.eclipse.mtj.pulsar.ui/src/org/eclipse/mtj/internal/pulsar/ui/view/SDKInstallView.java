@@ -60,8 +60,8 @@ public class SDKInstallView extends ViewPart {
 	private class InstallAction extends BaseSelectionListenerAction {
 
 		protected InstallAction() {
-			super("Install...");
-			setToolTipText("Install this SDK");
+			super(Messages.SDKInstallView_InstallActionLabel);
+			setToolTipText(Messages.SDKInstallView_InstallActionToolTip);
 			setImageDescriptor(ProvUIActivator.getDefault().getImageRegistry().getDescriptor(ProvUIImages.IMG_PROFILE));
 		}
 
@@ -90,11 +90,11 @@ public class SDKInstallView extends ViewPart {
 		TreeViewerColumn installersColumn = new TreeViewerColumn(viewer, SWT.LEFT);
 		Display display = getViewSite().getShell().getDisplay();
 		installersColumn.setLabelProvider(new TreeColumnViewerLabelProvider(new InstallersLabelProvider(display)));
-		installersColumn.getColumn().setText("SDK Installers");
+		installersColumn.getColumn().setText(Messages.SDKInstallView_InstallersColLabel);
 		
 		TreeViewerColumn statusColumn = new TreeViewerColumn(viewer, SWT.LEFT);
 		statusColumn.setLabelProvider(new StatusLabelProvider());
-		statusColumn.getColumn().setText("Status");
+		statusColumn.getColumn().setText(Messages.SDKInstallView_StatusColLabel);
 		
 		viewer.setContentProvider(new TreeNodeContentProvider());
 		viewer.getTree().setHeaderVisible(true);
@@ -109,7 +109,7 @@ public class SDKInstallView extends ViewPart {
 				installAction.selectionChanged(event);
 			}
 		});
-		Job job = new Job("Updating SDK installers"){
+		Job job = new Job(Messages.SDKInstallView_UpdatingInstallersJobTitle){
 			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				final TreeNode[] treeNodes = createTreeNodes(monitor);
@@ -135,7 +135,7 @@ public class SDKInstallView extends ViewPart {
 		Collection<TreeNode> treeNodes = new ArrayList<TreeNode>();
 		Collection<ISDKRepository> repositories = QuickInstallCore.getInstance().getSDKRepositories();
 		monitor.beginTask("", repositories.size()); //$NON-NLS-1$
-		monitor.subTask("Getting SDK repository information");
+		monitor.subTask(Messages.SDKInstallView_GettingRepoInfoMessage);
 		for (ISDKRepository repository : repositories) {
 			treeNodes.add(createRepositoryTreeNode(repository, monitor));
 		}
@@ -250,7 +250,7 @@ public class SDKInstallView extends ViewPart {
 			try {
 				QuickInstallCore.getInstance().installSDK(getSite().getShell(), sdk, P2InstallerUI.getInstance());
 			} catch (CoreException e) {
-				Activator.logError("Could not install sdk", e);
+				Activator.logError(Messages.SDKInstallView_InstallError, e);
 			}
 		}
 	}

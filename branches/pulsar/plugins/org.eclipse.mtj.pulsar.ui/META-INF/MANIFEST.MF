@@ -11,11 +11,9 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.5.0",
  org.eclipse.equinox.p2.core;bundle-version="1.0.100",
  org.eclipse.equinox.p2.engine;bundle-version="1.0.100",
  org.eclipse.equinox.p2.director;bundle-version="1.0.100",
- org.eclipse.equinox.p2.metadata.repository;bundle-version="1.0.100",
  org.eclipse.equinox.p2.metadata;bundle-version="1.0.0",
  org.eclipse.equinox.p2.repository;bundle-version="1.0.0",
  org.eclipse.equinox.p2.console;bundle-version="1.0.0",
- org.eclipse.equinox.p2.touchpoint.natives;bundle-version="1.0.0",
  org.eclipse.equinox.p2.artifact.repository;bundle-version="1.0.100",
  org.eclipse.equinox.p2.ui;bundle-version="1.0.100"
 Bundle-ActivationPolicy: lazy
