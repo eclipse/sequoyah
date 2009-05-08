@@ -44,8 +44,9 @@ import org.osgi.framework.Version;
  */
 public class CoreTests extends TestCase {
 
-	private static final String OUT_ZIP_DIR = "C:\\testdir";
+	private static final String OUT_ZIP_DIR = "C:\\Test";
 	private static final String OUT_EXE_FILE = "C:\\Test.txt";
+	private static final String OUT_ZIP_FILE = "C:\\Test.exe";
 
 	protected void setUp() throws Exception {
 	}
@@ -139,7 +140,7 @@ public class CoreTests extends TestCase {
 	}
 
 	private void assertInstalledFilesExist() throws Exception {
-		assertTrue(new File(OUT_ZIP_DIR).isDirectory());
+		assertTrue(new File(OUT_ZIP_FILE).exists());
 		TestUtils.waitFor(new Condition() {
 			public boolean test() {
 				return new File(OUT_EXE_FILE).exists();
@@ -149,6 +150,7 @@ public class CoreTests extends TestCase {
 
 	private void cleanUpInstalledFiles() {
 		new File(OUT_EXE_FILE).delete();
+		new File(OUT_ZIP_FILE).delete();
 		TestUtils.deleteDir(new File(OUT_ZIP_DIR));
 	}
 	
@@ -186,5 +188,29 @@ public class CoreTests extends TestCase {
 		for (String profileId : profileIds) {
 			P2Utils.deleteProfile(profileId);
 		}
+	}
+	
+	public void testUnzipAndExecute() throws Exception {
+		ISDKRepository repository = findTestRepository();
+		ISDK sdk = findUnzipAndExecuteSDK(repository);
+		assertNotNull(sdk);
+		SDK sdkImpl = (SDK) sdk;
+		IProfile profile = P2Utils.createProfileForSDK(sdk, new Path("C:\\"));
+		IStatus status = 
+			TestUtils.installIU(profile, sdkImpl.getInstallableUnit(), 
+					repository.getMetadataURI(), repository.getArtifactsURI());
+		assertTrue(sdk.getName() + ":" + TestUtils.getMessage(status), status.isOK());
+		assertInstalledFilesExist();
+		cleanUpInstalledFiles();
+		P2Utils.deleteProfile(profile.getProfileId());
+	}
+
+	private static ISDK findUnzipAndExecuteSDK(ISDKRepository repository) throws Exception {
+		Collection<ISDK> sdks = repository.getSDKs(null);
+		for (ISDK sdk : sdks) {
+			if (sdk.getName().equals("Test zip and exe"))
+				return sdk;
+		}
+		return null;
 	}
 }

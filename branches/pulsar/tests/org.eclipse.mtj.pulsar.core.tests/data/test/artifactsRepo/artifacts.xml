@@ -8,7 +8,7 @@
     <rule filter='(&amp; (classifier=unzip))' output='${repoUrl}/artifacts/${id}'/>
     <rule filter='(&amp; (classifier=exe))' output='${repoUrl}/artifacts/${id}'/>
   </mappings>
-  <artifacts size='2'>
+  <artifacts size='3'>
     <artifact classifier='unzip' id='Test.zip' version='1.0'>
       <properties size='2'>
         <property name='artifact.size' value='3994'/>
@@ -17,8 +17,14 @@
     </artifact>
     <artifact classifier='exe' id='Test.exe' version='1.0'>
       <properties size='2'>
-        <property name='artifact.size' value='20'/>
-        <property name='download.size' value='20'/>
+        <property name='artifact.size' value='137924'/>
+        <property name='download.size' value='137924'/>
+      </properties>
+    </artifact>
+    <artifact classifier='unzip' id='Test.exe.zip' version='1.0'>
+      <properties size='2'>
+        <property name='artifact.size' value='48120'/>
+        <property name='download.size' value='48120'/>
       </properties>
     </artifact>
   </artifacts>
