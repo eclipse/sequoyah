@@ -17,6 +17,8 @@ Import-Package: org.eclipse.equinox.internal.provisional.p2.metadata
 Bundle-Vendor: %Bundle.Vendor
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.mtj.pulsar.core.Activator
-Export-Package: org.eclipse.mtj.internal.provisional.pulsar.core,
+Export-Package: org.eclipse.mtj.internal.provisional.pulsar.core;x-internal:=true,
  org.eclipse.mtj.internal.pulsar.core;x-friends:="org.eclipse.mtj.pulsar.core.tests",
+ org.eclipse.mtj.internal.pulsar.core.action;x-internal:=true,
  org.eclipse.mtj.pulsar.core
+Bundle-Localization: plugin
