@@ -9,6 +9,7 @@
  * [244805] - Improvements on Instance view  
  *
  * Contributors:
+ * Mauren Brenner (Eldorado) - Bug [274503] - Add suffix to the instance name
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view.model;
@@ -43,6 +44,8 @@ public class ViewerInstanceNode extends ViewerAbstractNode
         if (instance != null)
         {
             instanceName = instance.getName();
+            String suffix = instance.getNameSuffix();
+            if (suffix != null) instanceName = instanceName + " (" + suffix + ")";
         }
         return instanceName;
     }

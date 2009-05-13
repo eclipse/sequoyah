@@ -12,6 +12,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
+ * Mauren Brenner (Eldorado) - Bug [274503] - Added name suffix along with getter and setter methods
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.model;
@@ -26,6 +27,7 @@ public abstract class AbstractMobileInstance implements IInstance {
 	private static final String VALID_INSTANCE_REGEXP = "([a-z]|[A-Z]|[0-9]|\\.|_|-)+";
 	protected String id;
 	private String name;
+	private String nameSuffix;
 	private String deviceId;
 	private Properties properties;
 	protected int pid;
@@ -82,9 +84,25 @@ public abstract class AbstractMobileInstance implements IInstance {
 	public void setName(String name) {		
 		this.name = name;
 	}
+	
+	/**
+	 * Retrieves the name suffix.
+	 * @return The name suffix.
+	 */
+	public String getNameSuffix() {
+		return nameSuffix;
+	}
+	
+	/**
+	 * Sets the name suffix.
+	 * @param suffix - The name suffix.
+	 */
+	public void setNameSuffix(String suffix) {
+		nameSuffix = suffix;
+	}
 
 	/**
-	 * Retieves the device id.
+	 * Retrieves the device id.
 	 * @return The device id.
 	 */
 	public String getDeviceTypeId() {
