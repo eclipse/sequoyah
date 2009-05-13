@@ -11,6 +11,7 @@
  * Fabio Rigo - Bug [221741] - Support to VNC Protocol Extension
  * Eugene Melekhov (Montavista) - Bug [227793] - Implementation of the several encodings, performance enhancement etc
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer 
+ * Daniel Barboza Franco (Eldorado Research Institute) - [275650] - Canvas rotation
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics;
@@ -18,6 +19,7 @@ package org.eclipse.tml.vncviewer.graphics;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
 import org.eclipse.tml.vncviewer.config.IPropertiesFileHandler;
+import org.eclipse.tml.vncviewer.graphics.swt.SWTRemoteDisplay;
 import org.eclipse.tml.vncviewer.network.VNCProtocolData;
 
 /**
@@ -29,6 +31,26 @@ import org.eclipse.tml.vncviewer.network.VNCProtocolData;
  * must extend the Composite class.
  */
 public interface IRemoteDisplay {
+	
+	
+	public enum Rotation {
+		ROTATION_0DEG (0),
+		ROTATION_90DEG_CLOCKWISE (90),
+		ROTATION_90DEG_COUNTERCLOCKWISE (-90),
+		ROTATION_180DEG (180);
+		
+		private int value;
+		
+		private Rotation(int value) {
+			this.value = value;
+		}
+		
+		public int value(){
+			return this.value;
+		}
+		
+	}
+	
 
 	/**
 	 * Creates the connection to the server using the protocol specified.
@@ -72,6 +94,18 @@ public interface IRemoteDisplay {
 	 */
 	public int getScreenHeight();
 
+	/**
+	 * Returns the rotation applied to the canvas.
+	 * @return The amount of degrees. This value is one of {-90, 0, 90, 180}
+	 */
+	public Rotation getRotation();
+
+	/**
+	 *  Set the amount of degrees used to rotate the canvas. Valid values are: -90, 0, 90, 180
+	 */
+	public void setRotation(Rotation degrees);
+	
+	
 	/**
 	 * Returns the Display status.
 	 */

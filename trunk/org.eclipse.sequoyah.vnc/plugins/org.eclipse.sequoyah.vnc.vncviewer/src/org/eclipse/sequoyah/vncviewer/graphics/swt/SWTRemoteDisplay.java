@@ -24,6 +24,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  * Daniel Barboza Franco (Eldorado Research Institute) - [271205] - Remove log for mouse, keyboard and screen events
+ * Daniel Barboza Franco (Eldorado Research Institute) - [275650] - Canvas rotation
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -98,6 +99,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	protected ISWTPainter painter;
 
 	private IPropertiesFileHandler propertiesFileHandler;
+	private Rotation rotation = Rotation.ROTATION_0DEG;
+	
 
 	/**
 	 * @param parent
@@ -291,7 +294,22 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 				canvas.getDisplay().asyncExec(new Runnable(){
 					public void run() {
-						canvas.setSize(protoClient.getFbWidth(), protoClient.getFbHeight());
+					
+						switch (SWTRemoteDisplay.this.getRotation()) {
+						
+							case ROTATION_0DEG: 
+							case ROTATION_180DEG:
+								canvas.setSize(protoClient.getFbWidth(), protoClient.getFbHeight());
+								break;
+							
+							case ROTATION_90DEG_CLOCKWISE: 
+							case ROTATION_90DEG_COUNTERCLOCKWISE:
+								canvas.setSize(protoClient.getFbHeight(), protoClient.getFbWidth());								
+								break;
+							
+						}
+						//canvas.setSize(protoClient.getFbWidth(), protoClient.getFbHeight());
+
 					}
 				});
 				
@@ -315,6 +333,10 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			setRunning(true);
 			log(SWTRemoteDisplay.class).info("SWT remote display started."); //$NON-NLS-1$
 		}		
+	}
+
+	public Rotation getRotation() {
+		return rotation ;
 	}
 
 	synchronized public void stop() {
@@ -418,8 +440,34 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			Integer x = (Integer) message.getFieldValue("x-position");
 			Integer y = (Integer) message.getFieldValue("y-position");
 
-			message.setFieldValue("x-position", (int) ((double)x / zoomFactor));
-			message.setFieldValue("y-position", (int) ((double)y / zoomFactor));
+			int mouseX = (int) ((double)x / zoomFactor);
+			int mouseY = (int) ((double)y / zoomFactor); 
+			switch (getRotation()) {
+			
+				case ROTATION_0DEG:
+					mouseX = (int) ((double)x / zoomFactor);
+					mouseY = (int) ((double)y / zoomFactor);
+					break;
+					
+				case ROTATION_180DEG:
+					mouseX = painter.getImageData().width - (int) ((double)x / zoomFactor);
+					mouseY = painter.getImageData().height - (int) ((double)y / zoomFactor);
+					break;
+	
+				case ROTATION_90DEG_CLOCKWISE:
+					mouseX = (int) ((double)y / zoomFactor);
+					mouseY = painter.getImageData().height - ((int) ((double)x / zoomFactor));;
+					break;
+
+				case ROTATION_90DEG_COUNTERCLOCKWISE:
+					mouseX = painter.getImageData().width - ((int) ((double)y / zoomFactor));
+					mouseY = (int) ((double)x / zoomFactor);
+					break;
+			
+			}
+
+			message.setFieldValue("x-position", mouseX);
+			message.setFieldValue("y-position", mouseY);
 			
 			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
 			//log(SWTRemoteDisplay.class).debug("Sent mouse event"); //$NON-NLS-1$
@@ -533,6 +581,13 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		        canvasSize.x = (int) (this.getProtocolData().getFbWidth() * zoomFactor);
 		        canvasSize.y = (int) (this.getProtocolData().getFbHeight() * zoomFactor);
 		        
+		        // if rotation is 90 or -90, swap width and height
+		        if (Math.abs(getRotation().value()) == Rotation.ROTATION_90DEG_CLOCKWISE.value()) {
+		        	int temp = canvasSize.x;
+		        	canvasSize.x = canvasSize.y;
+		        	canvasSize.y = temp;
+		        }
+		        
 		        this.getCanvas().setSize(canvasSize); 
 		}
 	}
@@ -556,6 +611,50 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 	public int getConnectionRetries() {
 		return connectionRetries;
+	}
+
+	public void setRotation(final Rotation degrees) {
+		
+		rotation = degrees;
+		
+		this.getDisplay().asyncExec(new Runnable(){
+
+			public void run() {
+				Point p = canvas.getSize();		
+				
+				int w = 0, h = 0;
+				
+				switch (degrees) {
+				
+					case ROTATION_0DEG:
+					case ROTATION_180DEG:
+						if (painter.getImageData() != null) {
+							w = painter.getImageData().width;
+							h = painter.getImageData().height;
+						}
+						else {
+							w = p.x;
+							h = p.y;
+						}
+						break;
+						
+					case ROTATION_90DEG_CLOCKWISE:
+					case ROTATION_90DEG_COUNTERCLOCKWISE:
+						if (painter.getImageData() != null) {
+							w = painter.getImageData().height;
+							h = painter.getImageData().width;
+						}
+						else {
+							w = p.y;
+							h = p.x;
+						}
+						break;
+					
+				}
+
+				canvas.setSize((int) (w * zoomFactor), (int) (h * zoomFactor));
+			}
+		});
 	}
 
 }
