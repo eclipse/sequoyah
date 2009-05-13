@@ -22,6 +22,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271807] - Improper use of PreferencesUtil.createPropertyDialogOn() on properties editor
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
+ * Pablo Cobucci Leite (Eldorado Research Institute) - Bug [274977] - Instance Management View does not ask user before removing a instance
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -351,7 +352,7 @@ public class InstanceStatusComposite extends Composite
                     // menu item "Delete"
                     newItem = new MenuItem(menu, SWT.PUSH);
                     newItem.setText(MENU_DELETE);
-                    newItem.addListener(SWT.Selection, new MenuDeleteListener());
+                    newItem.addListener(SWT.Selection, new MenuDeleteListener(instance));
                     newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
                     newItem.setEnabled(status.canDeleteInstance());
 
@@ -644,11 +645,37 @@ public class InstanceStatusComposite extends Composite
     /*
      * Menu handler
      */
-    private class MenuDeleteListener implements Listener {
-        public void handleEvent(Event event) {
-            removeSelected();
+	private class MenuDeleteListener implements Listener {
+		
+		private IInstance instance;
+		
+		public MenuDeleteListener(IInstance instance)
+        {
+            super();
+            this.instance = instance;
         }
-    }
+		
+		public void handleEvent(Event event) {
+			final boolean[] result = new boolean[1];
+			if(instance != null)
+			{
+				//Check with User if he really want to remove the instance.
+				Display.getDefault().syncExec(new Runnable()
+				{
+					public void run()
+					{
+						IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						result[0] = MessageDialog.openQuestion(ww.getShell(), "Instance Removal", "Device Instance '" + instance.getName() + "' will be removed.\nAre you sure?");
+					}
+				});
+				
+				if(result[0])
+				{
+					removeSelected();
+				}
+			}
+		}
+	}
 
     /*
      * Menu handler
