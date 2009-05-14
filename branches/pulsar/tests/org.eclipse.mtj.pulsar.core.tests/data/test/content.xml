@@ -1,12 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?metadataRepository class='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'?>
-<repository name='test repo' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+<repository name='Pulsar Test Repository' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
   <units size='3'>
     <unit id='test.unzip' version='1.0.0' singleton='false'>
       <properties size='3'>
-		<property name='org.eclipse.equinox.p2.name' value='Test zip'/>
-		<property name='org.eclipse.pulsar.documentation.url' value='http://www.yahoo.com'/>
+		<property name='org.eclipse.equinox.p2.name' value='Pulsar Test SDK Zip'/>
+		<property name='org.eclipse.pulsar.category.name' value='Pulsar SDKs'/>
+		<property name='org.eclipse.pulsar.documentation.url' value='http://www.eclipse.org/pulsar/'/>
 		<property name='org.eclipse.pulsar.type' value='ziparchive'/>
+		<property name='org.eclipse.equinox.p2.description' value='This SDK description is just an example...'/>
       </properties>
       <provides size='1'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='test.unzip' version='1.0.0'/>
@@ -33,8 +35,9 @@
     </unit>
     <unit id='test.exe' version='1.0.0' singleton='false'>
       <properties size='3'>
-		<property name='org.eclipse.equinox.p2.name' value='Test exe'/>
-		<property name='org.eclipse.pulsar.category.name' value='Test Category'/>
+		<property name='org.eclipse.equinox.p2.name' value='Pulsar Test SDK Bin'/>
+		<property name='org.eclipse.pulsar.category.name' value='Pulsar SDKs'/>
+		<property name='org.eclipse.equinox.p2.description' value='This SDK description is just another example...'/>
 		<property name='org.eclipse.pulsar.type' value='executable'/>
       </properties>
       <provides size='1'>
@@ -62,8 +65,7 @@
     </unit>
     <unit id='test.exe.zip' version='1.0.0' singleton='false'>
       <properties size='3'>
-		<property name='org.eclipse.equinox.p2.name' value='Test zip and exe'/>
-		<property name='org.eclipse.pulsar.category.name' value='Test Category'/>
+		<property name='org.eclipse.equinox.p2.name' value='Pulsar Test SDK ZIP/Bin'/>
 		<property name='org.eclipse.pulsar.type' value='ziparchive'/>
       </properties>
       <provides size='1'>

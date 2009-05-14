@@ -8,6 +8,7 @@
  *
  * Contributors:
  * 	David Dubrow
+ *  David Marques (Motorola) - Renaming getImageDescriptor method.
  *
  */
 
@@ -72,7 +73,7 @@ public class CoreTests extends TestCase {
 			URI uri = repository.getMetadataURI();
 			if (uri.toString().contains("nokia.com")) {
 				found = true;
-				ImageDescriptor descriptor = repository.getImageDescriptor();
+				ImageDescriptor descriptor = repository.getIconImageDescriptor();
 				assertNotNull(descriptor.getImageData());
 			}
 		}
@@ -82,7 +83,7 @@ public class CoreTests extends TestCase {
 	public void testSDKRepository() throws Exception {
 		ISDKRepository repository = findTestRepository();
 		assertNotNull(repository);
-		ImageDescriptor imgdesc = repository.getImageDescriptor();
+		ImageDescriptor imgdesc = repository.getIconImageDescriptor();
 		assertNotNull(imgdesc.getImageData());
 		Collection<ISDK> sdks = repository.getSDKs(null);
 		assertFalse(sdks.isEmpty());
