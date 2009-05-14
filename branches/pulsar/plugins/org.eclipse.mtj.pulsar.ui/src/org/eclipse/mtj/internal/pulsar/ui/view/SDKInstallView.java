@@ -8,7 +8,7 @@
  *
  * Contributors:
  * 	David Dubrow
- *
+ *  David Marques (Motorola) - Refactoring view UI.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -45,11 +45,16 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
+import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
+import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvider;
 import org.eclipse.mtj.internal.provisional.pulsar.core.QuickInstallCore;
 import org.eclipse.mtj.pulsar.core.Activator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
@@ -79,13 +84,21 @@ public class SDKInstallView extends ViewPart {
 	private InstallAction installAction;
 	private Action doubleClickAction;
 	private StructuredViewerProvisioningListener listener;
+	private SDKInstallItemViewer itemViewer;
 	
 	public SDKInstallView() {
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0x00;
+		layout.marginWidth  = 0x00;
+		parent.setLayout(layout);
+		
 		viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		Tree tree = viewer.getTree();
+		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		TreeViewerColumn installersColumn = new TreeViewerColumn(viewer, SWT.LEFT);
 		Display display = getViewSite().getShell().getDisplay();
@@ -95,6 +108,10 @@ public class SDKInstallView extends ViewPart {
 		TreeViewerColumn statusColumn = new TreeViewerColumn(viewer, SWT.LEFT);
 		statusColumn.setLabelProvider(new StatusLabelProvider());
 		statusColumn.getColumn().setText(Messages.SDKInstallView_StatusColLabel);
+		
+		TreeViewerColumn versionColumn = new TreeViewerColumn(viewer, SWT.LEFT);
+		versionColumn.setLabelProvider(new VersionLabelProvider());
+		versionColumn.getColumn().setText("Version");
 		
 		viewer.setContentProvider(new TreeNodeContentProvider());
 		viewer.getTree().setHeaderVisible(true);
@@ -107,6 +124,7 @@ public class SDKInstallView extends ViewPart {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				installAction.selectionChanged(event);
+				updateSDKItemViewer();
 			}
 		});
 		Job job = new Job(Messages.SDKInstallView_UpdatingInstallersJobTitle){
@@ -131,6 +149,33 @@ public class SDKInstallView extends ViewPart {
 		addProvisioningListener();
 	}
 	
+	/**
+	 * Updates the {@link SDKInstallItemViewer} instance contents.
+	 */
+	private void updateSDKItemViewer() {
+		Composite main = this.viewer.getTree().getParent();
+		if (main == null) {
+			return;
+		}
+		
+		ISDKInstallItemViewerContentProvider item = this.getSelectedItem();
+		if (item != null) {
+			if (itemViewer == null || itemViewer.isDisposed()) {			
+				itemViewer = new SDKInstallItemViewer(main);
+				GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, true);
+				gridData.minimumWidth = 350;
+				gridData.widthHint    = 350;
+				itemViewer.setLayoutData(gridData);
+			}
+			itemViewer.setContentProvider(item);
+		} else {
+			if (itemViewer != null && !itemViewer.isDisposed()) {
+				itemViewer.dispose();
+			}
+		}
+		main.layout(true);
+	}
+
 	private TreeNode[] createTreeNodes(IProgressMonitor monitor) {
 		Collection<TreeNode> treeNodes = new ArrayList<TreeNode>();
 		Collection<ISDKRepository> repositories = QuickInstallCore.getInstance().getSDKRepositories();
@@ -230,20 +275,82 @@ public class SDKInstallView extends ViewPart {
 		};
 	}
 	
+	/**
+	 * Gets the {@link ISDKInstallItemViewerContentProvider} for the
+	 * current selected item in the view.
+	 * 
+	 * @return an {@link ISDKInstallItemViewerContentProvider} instance.
+	 */
+	private ISDKInstallItemViewerContentProvider getSelectedItem() {
+		ISDKInstallItemViewerContentProvider result = null;
+		
+		TreeNode node = getSelectedNode();
+		if (node != null) {
+			IInstallationInfoProvider provider = null;
+			Object object = node.getValue();
+			if (!(object instanceof IInstallationInfoProvider)) {
+				TreeNode root = getRootParentNode(node);
+				if (root.getValue() instanceof IInstallationInfoProvider) {
+					provider = (IInstallationInfoProvider) root.getValue();
+				}
+			} else {
+				provider = (IInstallationInfoProvider) object;				
+			}
+			
+			if (provider != null) {				
+				IInstallationInfo info = provider.getInstallationInfo();
+				if (info != null) {
+					result = new SDKInstallItemViewerContentProvider(info);
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Gets the root {@link TreeNode} for the specified
+	 * {@link TreeNode} instance.
+	 * 
+	 * @param node target node.
+	 * @return root parent node.
+	 */
+	private TreeNode getRootParentNode(TreeNode node) {
+		TreeNode result = node;
+		if (node.getParent() != null) {
+			result = getRootParentNode(node.getParent());
+		}
+		return result;
+	}
+
 	private ISDK getSelectedSDK() {
+		ISDK result = null;
+		TreeNode node = getSelectedNode();
+		if (node != null) {
+			Object object = node.getValue();
+			if (object instanceof ISDK) {				
+				result = (ISDK) object;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Gets the current selected {@link TreeNode} instance.
+	 * 
+	 * @return {@link TreeNode} instance.
+	 */
+	private TreeNode getSelectedNode() {
+		TreeNode result = null;
 		ISelection selection = viewer.getSelection();
 		if (!selection.isEmpty()) {
 			Object selectedElement = ((IStructuredSelection) selection).getFirstElement();
 			if (selectedElement instanceof TreeNode) {
-				Object object = ((TreeNode) selectedElement).getValue();
-				if (object instanceof ISDK)
-					return (ISDK) object;
+				result = (TreeNode) selectedElement;
 			}
 		}
-		
-		return null;
+		return result;
 	}
-
+	
 	protected void installSelectedSDK() {
 		ISDK sdk = getSelectedSDK();
 		if (sdk != null) {

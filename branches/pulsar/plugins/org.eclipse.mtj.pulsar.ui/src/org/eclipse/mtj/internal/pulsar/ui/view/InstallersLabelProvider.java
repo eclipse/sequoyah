@@ -8,7 +8,7 @@
  *
  * Contributors:
  * 	David Dubrow
- *
+ *  David Marques (Motorola) - Renaming getImageDescriptor method.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -42,7 +42,7 @@ public class InstallersLabelProvider extends ColumnLabelProvider {
     private Image getRepositoryImage(ISDKRepository repository) {
         ensureImageCache();
         if (!imageCache.containsKey(repository)) {
-            ImageDescriptor imageDescriptor = repository.getImageDescriptor();
+            ImageDescriptor imageDescriptor = repository.getIconImageDescriptor();
             ImageData imageData = imageDescriptor.getImageData();
             Image image;
             if (imageData != null) {

@@ -8,17 +8,22 @@
  *
  * Contributors:
  * 	David Dubrow
- *
+ *  David Marques (Motorola) - Extending IInstallationInfoProvider.
  */
 
 package org.eclipse.mtj.internal.pulsar.core;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
+import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
 import org.eclipse.mtj.pulsar.core.Activator;
 import org.osgi.framework.Version;
 
@@ -29,9 +34,11 @@ public class SDK extends PlatformObject implements ISDK {
 	public static final String EXECUTABLE_TYPE = "executable"; //$NON-NLS-1$
 	public static final String PROP_CATEGORY = "org.eclipse.pulsar.category.name"; //$NON-NLS-1$
 	public static final String PROP_DOC_URL = "org.eclipse.pulsar.documentation.url"; //$NON-NLS-1$
+	public static final String PROP_DESCRIPTION = "org.eclipse.equinox.p2.description";
 	
-	private IInstallableUnit iu;
 	private SDKRepository sdkRepository;
+	private IInstallableUnit iu;
+	private IInstallationInfo info;
 
 	public SDK(SDKRepository sdkRepository, IInstallableUnit iu) {
 		this.sdkRepository = sdkRepository;
@@ -82,5 +89,60 @@ public class SDK extends PlatformObject implements ISDK {
 	
 	public SDKRepository getRepository() {
 		return sdkRepository;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvider#getInstallationInfo()
+	 */
+	public IInstallationInfo getInstallationInfo() {
+		if (this.info == null) {
+			this.info = new SDKInfo(this);
+		}
+		return this.info;
+	}
+	
+	private class SDKInfo implements IInstallationInfo {
+
+		private SDK sdk;
+		
+		public SDKInfo(SDK sdk) {
+			if (sdk == null) {
+				throw new IllegalArgumentException("Invalid SDK instance: null.");
+			}
+			this.sdk = sdk;
+		}
+		
+		public StringBuffer getDescription() {
+			StringBuffer result = null;
+			IInstallableUnit unit = sdk.getInstallableUnit();
+			if (unit != null) {
+				String description = unit.getProperty(PROP_DESCRIPTION);
+				if (description != null) {
+					result = new StringBuffer(description);
+				}
+			}
+			return result;
+		}
+
+		public ImageDescriptor getImageDescriptor() {
+			ImageDescriptor result = null;
+			IInstallationInfo info = this.sdk.getRepository().getInstallationInfo();
+			if (info != null) {
+				result = info.getImageDescriptor();
+			}
+			return result;
+		}
+
+		public URI getWebSiteURI() {
+			URI result = null;
+			try {
+				URL url = sdk.getDocumentationURL();
+				if (url != null) {					
+					result = url.toURI();
+				}
+			} catch (URISyntaxException e) {}
+			return result;
+		}
+		
 	}
 }

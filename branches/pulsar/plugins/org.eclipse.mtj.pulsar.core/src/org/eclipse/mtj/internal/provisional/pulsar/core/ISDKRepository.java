@@ -9,6 +9,7 @@
  * Contributors:
  *     Gustavo de Paula (Motorola) - Initial implementation
  *     David Dubrow (Nokia)
+ *     David Marques (Motorola) - Extending IInstallationInfoProvider.
  */
 package org.eclipse.mtj.internal.provisional.pulsar.core;
 
@@ -22,7 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * An SDK repository containing installable SDKs
  * 
  */
-public interface ISDKRepository {
+public interface ISDKRepository extends IInstallationInfoProvider {
 
 	/**
 	 * Returns the list of categories that this SDK repository provides
@@ -50,7 +51,7 @@ public interface ISDKRepository {
 	 * 
 	 * @return ImageDescriptor
 	 */
-	public ImageDescriptor getImageDescriptor();
+	public ImageDescriptor getIconImageDescriptor();
 	
 	/**
 	 * Returns the name of this repository
@@ -58,4 +59,5 @@ public interface ISDKRepository {
 	 * @return String
 	 */
 	public String getName();
+
 }

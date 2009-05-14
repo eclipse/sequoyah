@@ -8,13 +8,14 @@
  *
  * Contributors:
  * 	David Dubrow
- *
+ *  David Marques (Motorola) - Extending IInstallationInfoProvider.
  */
 
 package org.eclipse.mtj.internal.pulsar.core;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
@@ -23,6 +24,8 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepositoryProvider;
 import org.eclipse.mtj.pulsar.core.Activator;
@@ -37,6 +40,9 @@ public class DefaultSDKRepositoryProvider implements ISDKRepositoryProvider {
 	private static final String METADATA_KEY_SUFFIX = ".metadata"; //$NON-NLS-1$
 	private static final String ARTIFACTS_KEY_SUFFIX = ".artifacts"; //$NON-NLS-1$
 	private static final String IMAGE_KEY_SUFFIX = ".image"; //$NON-NLS-1$
+	private static final String INFO_URL_SUFFIX   = ".info.url";
+	private static final String INFO_IMAGE_SUFFIX = ".info.image";
+	private static final String INFO_TEXT_SUFFIX  = ".info.description";
 	private URL repositoriesFileUrl;
 	
 	public DefaultSDKRepositoryProvider() {
@@ -71,6 +77,9 @@ public class DefaultSDKRepositoryProvider implements ISDKRepositoryProvider {
 							repository.setImageDescriptorURL(new URL(imageUrlString));
 						}
 
+						//Reads Repository info
+						IInstallationInfo repositoryInfo = readRepositoryInfo(key, properties);
+						repository.setInstallationInfo(repositoryInfo);
 						repositories.add(repository);
 					}
 					catch (MalformedURLException e) {
@@ -86,6 +95,68 @@ public class DefaultSDKRepositoryProvider implements ISDKRepositoryProvider {
 		}
 		
 		return repositories;
+	}
+
+	/**
+	 * Gets the repository information from the repositories.properties.
+	 * 
+	 * @param key repository name.
+	 * @param properties {@link Properties} instance.
+	 * @return the {@link IInstallationInfo} instance with the repository
+	 * information.
+	 */
+	private IInstallationInfo readRepositoryInfo(String key, Properties properties) {
+		StringBuffer text = null;
+		URL imageUrl = null;
+		URL siteUrl = null;
+
+		try {
+			imageUrl = new URL(properties.getProperty(key + INFO_IMAGE_SUFFIX));
+		} catch (MalformedURLException e) {
+		}
+		
+		try {
+			siteUrl = new URL(properties.getProperty(key + INFO_URL_SUFFIX));
+		} catch (MalformedURLException e) {
+		}
+		
+		text = new StringBuffer(properties.getProperty(key + INFO_TEXT_SUFFIX, ""));
+		return new SDKRepositoryInfo(siteUrl, imageUrl, text);
+	}
+	
+	private class SDKRepositoryInfo implements IInstallationInfo {
+		
+		private URL siteUrl;
+		private URL imageUrl;
+		private StringBuffer text;
+
+		public SDKRepositoryInfo(URL siteUrl, URL imageUrl, StringBuffer text) {
+			this.siteUrl  = siteUrl;
+			this.imageUrl = imageUrl;
+			this.text = text;
+		}
+		
+		public ImageDescriptor getImageDescriptor() {
+			ImageDescriptor result = null;
+			if (this.imageUrl != null) {
+				result = ImageDescriptor.createFromURL(this.imageUrl);
+			}
+			return result;
+		}
+
+		public StringBuffer getDescription() {
+			return this.text;
+		}
+		
+		public URI getWebSiteURI() {
+			URI result = null;
+			if (this.siteUrl != null) {					
+				try {
+					result = this.siteUrl.toURI();
+				} catch (URISyntaxException e) {}
+			}
+			return result;
+		}
 	}
 	
 }

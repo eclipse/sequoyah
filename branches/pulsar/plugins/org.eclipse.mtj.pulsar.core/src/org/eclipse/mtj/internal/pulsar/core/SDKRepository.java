@@ -8,7 +8,7 @@
  *
  * Contributors:
  * 	David Dubrow
- *
+ *  David Marques (Motorola) - Extending IInstallationInfoProvider.
  */
 
 package org.eclipse.mtj.internal.pulsar.core;
@@ -27,6 +27,7 @@ import org.eclipse.equinox.internal.provisional.p2.query.Query;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
+import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
 
 public class SDKRepository implements ISDKRepository {
 
@@ -34,6 +35,7 @@ public class SDKRepository implements ISDKRepository {
 	private URI artifactsUri;
 	private String name;
 	private ImageDescriptor imageDescriptor;
+	private IInstallationInfo installationInfo;
 
 	public SDKRepository(String name, URI metadataUri, URI artifactsUri) {
 		this.name = name;
@@ -77,7 +79,7 @@ public class SDKRepository implements ISDKRepository {
 		return name;
 	}
 
-	public ImageDescriptor getImageDescriptor() {
+	public ImageDescriptor getIconImageDescriptor() {
 		return imageDescriptor;
 	}
 
@@ -85,4 +87,19 @@ public class SDKRepository implements ISDKRepository {
 		this.imageDescriptor = ImageDescriptor.createFromURL(imageUrl);
 	}
 
+	/**
+	 * Sets the {@link IInstallationInfo} for this repository.
+	 * 
+	 * @param info
+	 */
+	public void setInstallationInfo(IInstallationInfo info) {
+		this.installationInfo = info;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvider#getInstallationInfo()
+	 */
+	public IInstallationInfo getInstallationInfo() {
+		return this.installationInfo;
+	}
 }

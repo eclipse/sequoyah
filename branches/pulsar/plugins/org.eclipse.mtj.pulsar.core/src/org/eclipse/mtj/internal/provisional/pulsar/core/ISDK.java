@@ -9,6 +9,7 @@
  * Contributors:
  *     Gustavo de Paula (Motorola) - Initial implementation
  *     David Dubrow (Nokia)
+ *     David Marques (Motorola) - Extending IInstallationInfoProvider.
  */
 package org.eclipse.mtj.internal.provisional.pulsar.core;
 
@@ -21,7 +22,7 @@ import org.osgi.framework.Version;
  * Represents one SDK that will be presented in the QuickInstall view
  * 
  */
-public interface ISDK extends IAdaptable {
+public interface ISDK extends IAdaptable, IInstallationInfoProvider {
 	
 	/**
 	 * States of an SDK

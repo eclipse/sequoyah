@@ -8,20 +8,26 @@
  *
  * Contributors:
  * 	David Dubrow
+ *  David Marques (Motorola) - Implemening openWebBrowser method.
  *
  */
 
 package org.eclipse.mtj.pulsar.core;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepositoryProvider;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -37,6 +43,8 @@ public class Activator extends Plugin {
 
 	// The extension point id for sdk provider
 	private static final String SDK_REPOSITORY_PROVIDER_EXTENSION = PLUGIN_ID + ".sdkRepositoryProvider"; //$NON-NLS-1$
+
+	private static final String PULSAR_BROWSER_ID = "pulsar_browser";
 
 	private Collection<ISDKRepositoryProvider> providers;
 	
@@ -107,6 +115,17 @@ public class Activator extends Plugin {
 	}
 	
 	/**
+	 * Return an IStatus.
+	 * 
+	 * @param message String
+	 * @param t Throwable
+	 * @return IStatus
+	 */
+	public static IStatus makeStatus(int status, String message, Throwable t) {
+		return new Status(status, PLUGIN_ID, message, t);
+	}
+	
+	/**
 	 * Return an error IStatus.
 	 * 
 	 * @param message String
@@ -118,13 +137,23 @@ public class Activator extends Plugin {
 	}
 	
 	/**
+	 * Log a warning.
+	 * 
+	 * @param message String
+	 * @param t Throwable
+	 */
+	public static void logWarning(String message, Throwable t) {
+		plugin.getLog().log(makeStatus(IStatus.WARNING, message, t));
+	}
+	
+	/**
 	 * Log an error.
 	 * 
 	 * @param message String
 	 * @param t Throwable
 	 */
 	public static void logError(String message, Throwable t) {
-		plugin.getLog().log(makeErrorStatus(message, t));
+		plugin.getLog().log(makeStatus(IStatus.ERROR, message, t));
 	}
 
 	/**
@@ -134,5 +163,22 @@ public class Activator extends Plugin {
 	 */
 	public static BundleContext getContext() {
 		return plugin.getBundle().getBundleContext();
+	}
+	
+	/**
+	 * Opens the web browser on the specified {@link URL}.
+	 * 
+	 * @param url target {@link URL}.
+	 * @throws CoreException Any error occurs.
+	 */
+	public static void openWebBrowser(URL url) throws CoreException {
+		try {
+			IWebBrowser browser = PlatformUI.getWorkbench()
+					.getBrowserSupport().createBrowser(PULSAR_BROWSER_ID);
+			browser.openURL(url);
+		} catch (Exception e) {
+			String message = NLS.bind("Error opening browser: {0}", url.toString());
+			throw new CoreException(makeErrorStatus(message, e));
+		}
 	}
 }
