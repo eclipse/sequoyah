@@ -8,6 +8,7 @@
  * 
  * Contributors:
  *     David Marques (Motorola) - Initial version
+ *     David Marques (Motorola) - Fixing appearance.
  */
 package org.eclipse.mtj.internal.pulsar.ui.view;
 
@@ -83,7 +84,7 @@ public class SDKInstallItemViewer extends Composite {
 	private void createControls(Composite parent) {
 		GridLayout layout = null;
 		
-		iconLabel = new Label(parent, SWT.BORDER);
+		iconLabel = new Label(parent, SWT.BORDER_SOLID);
 		iconLabel.setBackground(parent.getBackground());
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gridData.minimumHeight = 50;
@@ -101,6 +102,7 @@ public class SDKInstallItemViewer extends Composite {
 		
 		description = new Text(group, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		description.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		description.setBackground(parent.getBackground());
 		description.setEditable(false);
 		
 		Composite c1 = new Composite(parent, SWT.NONE);
