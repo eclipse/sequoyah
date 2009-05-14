@@ -57,7 +57,7 @@ public class TestSDKRepositoryProvider implements ISDKRepositoryProvider {
 	private class TestInstallationInfo implements IInstallationInfo {
 
 		public StringBuffer getDescription() {
-			return new StringBuffer("Pulsar Rocks....");
+			return new StringBuffer("Pulsar test repository description....");
 		}
 
 		public ImageDescriptor getImageDescriptor() {
