@@ -35,10 +35,10 @@
 		<echo level="info" message="Exporting features..." />
 		
 		<pde.exportFeatures destination="${tml.export.output.path}" exportSource="false" exportType="jar"
-					features="${tml.features.to.export}" useJARFormat="true" qualifier="200905130900" />
+					features="${tml.features.to.export}" useJARFormat="true" qualifier="200905152200" />
 
 		<pde.exportFeatures destination="${tml.export.output.path}/sources" exportSource="true" exportType="jar"
-						features="${tml.features.to.export.source}" useJARFormat="true" qualifier="200905130900"/>
+						features="${tml.features.to.export.source}" useJARFormat="true" qualifier="200905152200"/>
 		
 		<available file="${tml.export.output.path}\logs.zip" property="tml.export.features.failed" value="true"/>
 		<fail if="tml.export.features.failed" message="Failed to export features and plug-ins.\nCheck ${tml.export.output.path}\logs.zip for more information."/>
