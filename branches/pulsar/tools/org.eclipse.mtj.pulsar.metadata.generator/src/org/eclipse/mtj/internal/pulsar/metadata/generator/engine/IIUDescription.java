@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Chad Peckham
+ * Henrique Magalhaes (Motorola) - Added description field
  *
  */
 
@@ -134,6 +135,16 @@ public interface IIUDescription {
 	 * @return the categoryName
 	 */
 	public String getCategoryName();
+	
+	/**
+	 * @param categoryName the artefactDescription to set
+	 */
+	public void setArtifactDescription(String artefactDescription);
+	
+	/**
+	 * @return the artefactDescription
+	 */
+	public String getArtifactDescription();
 
 	/**
 	 * @param isSingleton the isSingleton to set

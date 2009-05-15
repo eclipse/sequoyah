@@ -8,7 +8,7 @@
  *
  * Contributors:
  * 	David Dubrow
- *
+ *  Henrique Magalhaes (Motorola) - Internalization of messages
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.ui;
@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK.EType;
+import org.eclipse.mtj.internal.pulsar.metadata.generator.Messages;
 import org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription;
 import org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IRepositoryDescription;
 import org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IUDescription;
@@ -65,6 +66,7 @@ public class NewUnitDialog extends StatusDialog {
 	private Text idText;
 	private Text versionText;
 	private Text categoryText;
+	private Text descriptionText;
 	private Text locationText;
 	private Button browseButton;
 	private Text licenseURLText;
@@ -89,7 +91,7 @@ public class NewUnitDialog extends StatusDialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("New SDK Installer");
+		shell.setText(Messages.NewUnitDialog_NewSDKInstallerShellTitle);
 	}
 	
 	@Override
@@ -105,7 +107,7 @@ public class NewUnitDialog extends StatusDialog {
 		contents.setLayout(layout);
 		contents.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		createLabel(contents, "Artifact file");
+		createLabel(contents, Messages.NewUnitDialog_ArtifactFileLabel);
 
 		Composite browseComposite = new Composite(contents, SWT.NONE);
 		browseComposite.setLayout(new GridLayout(2, false));
@@ -120,19 +122,19 @@ public class NewUnitDialog extends StatusDialog {
 		
 		browseButton = new Button(browseComposite, SWT.NONE);
 		GridDataFactory.fillDefaults().applyTo(browseButton);
-		browseButton.setText("Browse...");
+		browseButton.setText(Messages.NewUnitDialog_BrowseButton);
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
 				dialog.setFilterPath(repository.getRepoLocation().toOSString());
-				dialog.setText("Select The Installer Artifact");
+				dialog.setText(Messages.NewUnitDialog_SelectArtifactDialogMessage);
 				String path = dialog.open();
 				if (path != null) {
 					IPath repoLocation = makeCanonical(repository.getRepoLocation());
 					IPath artifactLocation = makeCanonical(new Path(path));
 					if (!artifactLocation.removeLastSegments(1).equals(repoLocation)) {
-						locationText.setText("");
-						MessageDialog.openError(getShell(), "Error", "Files must in the same location as the repository");
+						locationText.setText(""); //$NON-NLS-1$
+						MessageDialog.openError(getShell(), Messages.NewUnitDialog_ErrorDialogTitle, Messages.NewUnitDialog_RepositoryLocationErrorMessage);
 					}
 					else {
 						String artifactName = artifactLocation.lastSegment();
@@ -147,7 +149,7 @@ public class NewUnitDialog extends StatusDialog {
 			}
 		});
 		
-		createLabel(contents, "Type");
+		createLabel(contents, Messages.NewUnitDialog_TypeLabel);
 		typeViewer = new ComboViewer(contents);
 		typeViewer.setContentProvider(new ArrayContentProvider());
 		typeViewer.setLabelProvider(new LabelProvider() {
@@ -156,11 +158,11 @@ public class NewUnitDialog extends StatusDialog {
 				if (element instanceof ETYPE) {
 					switch ((ETYPE) element) {
 					case UNZIP:
-						return "Unzip archive";
+						return Messages.NewUnitDialog_UnzipArchiveLabelProviderText;
 					case EXEC:
-						return "Run single executable";
+						return Messages.NewUnitDialog_SingleExecutableLabelProviderText;
 					case UNZIP_AND_EXEC:
-						return "Unzip and then exectute";
+						return Messages.NewUnitDialog_UnzipLabelProviderText;
 					}
 				}
 				
@@ -181,7 +183,7 @@ public class NewUnitDialog extends StatusDialog {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(combo);
 		combo.select(0);
 		
-		createLabel(contents, "Executable in archive");
+		createLabel(contents, Messages.NewUnitDialog_ExecutableLabel);
 		executableText = createText(contents);
 		executableText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -189,10 +191,10 @@ public class NewUnitDialog extends StatusDialog {
 			}
 		});
 
-		executableText.setToolTipText("Specify the relative path of the executable to execute after unzipping, e.g., \"setup.exe\"");
+		executableText.setToolTipText(Messages.NewUnitDialog_ExecutableToolTip);
 		executableText.setEnabled(false);
 		
-		createLabel(contents, "Display name");
+		createLabel(contents, Messages.NewUnitDialog_DisplayNameLabel);
 		displayNameText = createText(contents);
 		displayNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -200,7 +202,7 @@ public class NewUnitDialog extends StatusDialog {
 			}
 		});
 		
-		createLabel(contents, "Id");
+		createLabel(contents, Messages.NewUnitDialog_IDLabel);
 		idText = createText(contents);
 		idText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -208,43 +210,52 @@ public class NewUnitDialog extends StatusDialog {
 			}
 		});
 		
-		createLabel(contents, "Version");
+		createLabel(contents, Messages.NewUnitDialog_VersionLabel);
 		versionText = createText(contents);
-		versionText.setText("1.0.0");
+		versionText.setText("1.0.0"); //$NON-NLS-1$
 		versionText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validate();
 			}
 		});
 		
-		createLabel(contents, "Category name");
+		createLabel(contents, Messages.NewUnitDialog_CategoryNameLabel);
 		categoryText = createText(contents);
 		
-		createLabel(contents, "License URL");
+		createLabel(contents, Messages.NewUnitDialog_DescriptionLabel);
+		descriptionText = createMultiText(contents);
+		createEmptyCell(contents);
+		createEmptyCell(contents);
+				
+		createLabel(contents, Messages.NewUnitDialog_LicenseURLLabel);
 		licenseURLText = createText(contents);
-		licenseURLText.setToolTipText("The location of a document containing the full license");
+		licenseURLText.setToolTipText(Messages.NewUnitDialog_LicenseURLToolTip);
 		licenseURLText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validate();
 			}
 		});
 
-		createLabel(contents, "License body");
+		createLabel(contents, Messages.NewUnitDialog_LicenseBodyLabel);
 		licenseBodyText = createMultiText(contents);
-		licenseBodyText.setToolTipText("The license body (can hold multiple lines - resize the dialog)");
+		licenseBodyText.setToolTipText(Messages.NewUnitDialog_LicenseBodyToolTip);
+		createEmptyCell(contents);
+		createEmptyCell(contents);
 
-		createLabel(contents, "Copyright URL");
+		createLabel(contents, Messages.NewUnitDialog_CopyrightURLLabel);
 		copyrightURLText = createText(contents);
-		copyrightURLText.setToolTipText("The location of a document containing the copyright notice");
+		copyrightURLText.setToolTipText(Messages.NewUnitDialog_CopyrightURLToolTip);
 		copyrightURLText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validate();
 			}
 		});
 		
-		createLabel(contents, "Copyright body");
+		createLabel(contents, Messages.NewUnitDialog_CopyrightBodyLabel);
 		copyrightBodyText = createMultiText(contents);
-		copyrightBodyText.setToolTipText("The copyright body (can hold multiple lines - resize the dialog)");
+		copyrightBodyText.setToolTipText(Messages.NewUnitDialog_CopyrightBodyToolTip);
+		createEmptyCell(contents);
+		createEmptyCell(contents);
 		
 		return contents;
 	}
@@ -259,10 +270,17 @@ public class NewUnitDialog extends StatusDialog {
 		String value = widget.getText();
 		if (value.length() == 0) {
 			updateStatus(Activator.makeErrorStatus(
-					MessageFormat.format("{0} must have a value", widgetName), null));
+					MessageFormat.format(Messages.NewUnitDialog_CheckValueError, widgetName), null));
 			return false;
 		}
 		return true;
+	}
+
+	private void createEmptyCell(Composite parent){
+		Label typeLabel = new Label(parent, SWT.NONE);
+		GridDataFactory.defaultsFor(typeLabel).applyTo(typeLabel);
+		typeLabel.setText(""); //$NON-NLS-1$
+		typeLabel.setVisible(false);
 	}
 
 	private void createLabel(Composite parent, String text) {
@@ -276,17 +294,17 @@ public class NewUnitDialog extends StatusDialog {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(text);
 		return text;
 	}
-	
+
 	private Text createMultiText(Composite parent) {
-		Text text = new Text(parent, SWT.BORDER | SWT.MULTI);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(text);
+		Text text = new Text(parent, SWT.BORDER | SWT.MULTI |SWT.V_SCROLL);
+		GridDataFactory.fillDefaults().grab(true, true).span(1, 3).applyTo(text);
 		return text;
 	}
 	
 	private void setExectuableEnabledState(ETYPE typeVal) {
 		boolean enabled = typeVal == ETYPE.UNZIP_AND_EXEC;
 		if (!enabled)
-			executableText.setText("");
+			executableText.setText(""); //$NON-NLS-1$
 		executableText.setEnabled(enabled);
 	}
 	
@@ -308,27 +326,27 @@ public class NewUnitDialog extends StatusDialog {
 			return;
 		}
 		
-		if (!validateNotEmpty(locationText, "Artifact file"))
+		if (!validateNotEmpty(locationText, Messages.NewUnitDialog_ArtifactFileLabel))
 			return;
 		
 		if (executableText.isEnabled()) {
-			if (!validateNotEmpty(executableText, "Executable"))
+			if (!validateNotEmpty(executableText, Messages.NewUnitDialog_Executable))
 				return;
 		}
 		
-		if (!validateNotEmpty(idText, "Id"))
+		if (!validateNotEmpty(idText, Messages.NewUnitDialog_IDLabel))
 			return;
 			
-		if (!validateNotEmpty(displayNameText, "Display name"))
+		if (!validateNotEmpty(displayNameText, Messages.NewUnitDialog_DisplayNameLabel))
 			return;
 		
 		if (!validateUniqueId())
 			return;
 		
-		if (!validateValidURL(licenseURLText, "License URL"))
+		if (!validateValidURL(licenseURLText, Messages.NewUnitDialog_LicenseURLLabel))
 			return;
 		
-		if (!validateValidURL(copyrightURLText, "Copyright URL"))
+		if (!validateValidURL(copyrightURLText, Messages.NewUnitDialog_CopyrightURLLabel))
 			return;
 
 		updateStatus(Status.OK_STATUS);
@@ -340,7 +358,7 @@ public class NewUnitDialog extends StatusDialog {
 			try {
 				new URL(value);
 			} catch (MalformedURLException e) {
-				updateStatus(Activator.makeErrorStatus(widgetName + ": " + e.getMessage(), null));
+				updateStatus(Activator.makeErrorStatus(widgetName + ": " + e.getMessage(), null)); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -353,7 +371,7 @@ public class NewUnitDialog extends StatusDialog {
 			String id = idText.getText();
 			if (iud.getUnitId().equals(id)) {
 				updateStatus(Activator.makeErrorStatus(MessageFormat.format(
-						"Ids must be unique. \"{0}\" is already used.", id), null));
+						Messages.NewUnitDialog_UniqueIdError, id), null));
 				return false;
 			}
 		}
@@ -385,6 +403,9 @@ public class NewUnitDialog extends StatusDialog {
 		String category = categoryText.getText();
 		if (category.length() > 0)
 			unit.setCategoryName(category);
+		String artefactDescription = descriptionText.getText();
+		if (artefactDescription.length() > 0)
+			unit.setArtifactDescription(artefactDescription);
 		unit.setArtifactId(locationText.getText());
 		String licenseURL = licenseURLText.getText();
 		String licenseBody = licenseBodyText.getText();
@@ -395,7 +416,7 @@ public class NewUnitDialog extends StatusDialog {
 					uri = new URL(licenseURL).toURI();
 				unit.setUnitLicense(uri, licenseBody);
 			} catch (Exception e) {
-				Activator.logError("Could not set unit license", e);
+				Activator.logError(Messages.NewUnitDialog_SetUnitLicenseError, e);
 			}
 		}
 		String copyrightURL = copyrightURLText.getText();
@@ -407,7 +428,7 @@ public class NewUnitDialog extends StatusDialog {
 					uri = new URL(licenseURL).toURI();
 				unit.setUnitCopyright(uri, copyrightBody);
 			} catch (Exception e) {
-				Activator.logError("Could not set unit copyright", e);
+				Activator.logError(Messages.NewUnitDialog_SetUnitCopyrightError, e);
 			}
 		}
 		unit.setSingleton(false);

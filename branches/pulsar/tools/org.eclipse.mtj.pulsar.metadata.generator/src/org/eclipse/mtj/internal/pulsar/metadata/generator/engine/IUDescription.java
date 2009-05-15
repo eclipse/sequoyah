@@ -8,7 +8,8 @@
  *
  * Contributors:
  * Chad Peckham
- *
+ * Henrique Magalhaes (Motorola) - Added description field
+ * 
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.engine;
@@ -23,12 +24,6 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.ILicense;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK.EType;
 
-/**
- * 
- */
-/**
- *
- */
 public class IUDescription implements IIUDescription {
 	private EType artifactType;		// zip or exe
 	private String artifactId;			// e.g., com.nokia.s60
@@ -42,6 +37,7 @@ public class IUDescription implements IIUDescription {
 	private ICopyright unitCopyright;
 	private boolean isCategory;			// whether this is a category IU
 	private String categoryName;		// category name
+	private String artefactDescription; // artefact description
 	private IPath executablePath;		// installer path for unzip&execute
 
 	/**
@@ -184,6 +180,21 @@ public class IUDescription implements IIUDescription {
 	 */
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription#getArtifactDescription()
+	 */
+	public String getArtifactDescription() {
+		return this.artefactDescription;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription#setArtifactDescription(java.lang.String)
+	 */
+	public void setArtifactDescription(String artefactDescription) {
+		this.artefactDescription = artefactDescription;
+		
 	}
 
 	/* (non-Javadoc)

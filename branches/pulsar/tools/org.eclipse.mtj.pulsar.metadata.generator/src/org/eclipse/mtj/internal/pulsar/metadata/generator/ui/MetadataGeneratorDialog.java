@@ -8,7 +8,7 @@
  *
  * Contributors:
  * 	David Dubrow
- *
+ *  Henrique Magalhaes (Motorola) - Added description field/Internalization of messages
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.ui;
@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.mtj.internal.pulsar.metadata.generator.Messages;
 import org.eclipse.mtj.internal.pulsar.metadata.generator.engine.GeneratorEngine;
 import org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription;
 import org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IRepositoryDescription;
@@ -71,8 +72,8 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		
-		setTitle("Create new SDK repository");
-		setMessage("Choose a name and location for the repository and ensure the SDK installer artifacts (executables or zip archives) exist relative to that location");
+		setTitle(Messages.MetadataGeneratorDialog_DialogTitle);
+		setMessage(Messages.MetadataGeneratorDialog_DialogMessage);
 
 		Composite contents = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -81,15 +82,15 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 		
 		Label nameLabel = new Label(contents, SWT.NONE);
 		GridDataFactory.defaultsFor(nameLabel).applyTo(nameLabel);
-		nameLabel.setText("Repository name");
+		nameLabel.setText(Messages.MetadataGeneratorDialog_RepositoryNameLabel);
 		
 		nameText = new Text(contents, SWT.BORDER);
 		GridDataFactory.defaultsFor(nameText).grab(true, false).applyTo(nameText);
-		nameText.setText("New Repository");
+		nameText.setText(Messages.MetadataGeneratorDialog_NewRepositoryText);
 		nameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (nameText.getText().length() == 0)
-					setErrorMessage("The repository must have a name");
+					setErrorMessage(Messages.MetadataGeneratorDialog_MissingRepositoryNameErrorMessage);
 				else
 					setErrorMessage(null);
 			}
@@ -97,7 +98,7 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 		
 		Label locLabel = new Label(contents, SWT.NONE);
 		GridDataFactory.defaultsFor(locLabel).applyTo(locLabel);
-		locLabel.setText("Repository location");
+		locLabel.setText(Messages.MetadataGeneratorDialog_RepositoryLocationLabel);
 		
 		Composite browseComposite = new Composite(contents, SWT.NONE);
 		GridLayout layoutBrowse = new GridLayout(2, false);
@@ -110,7 +111,7 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 		
 		browseButton = new Button(browseComposite, SWT.NONE);
 		browseButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		browseButton.setText("Browse...");
+		browseButton.setText(Messages.MetadataGeneratorDialog_BrowseButton);
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				getRepositoryLocation();
@@ -134,11 +135,11 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 					IIUDescription iud = (IIUDescription) element;
 					StringBuilder sb = new StringBuilder();
 					sb.append(iud.getUnitName());
-					sb.append(" [");
+					sb.append(" ["); //$NON-NLS-1$
 					sb.append(iud.getUnitId());
-					sb.append(":");
+					sb.append(":"); //$NON-NLS-1$
 					sb.append(iud.getUnitVersion().toString());
-					sb.append("]");
+					sb.append("]"); //$NON-NLS-1$
 					return sb.toString();
 				}
 				return null;
@@ -159,7 +160,7 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 
 		addButton = new Button(buttonsComposite, SWT.NONE);
 		addButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		addButton.setText("Add...");
+		addButton.setText(Messages.MetadataGeneratorDialog_AddButton);
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				showAddNewUnitDialog();
@@ -170,7 +171,7 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 		
 		removeButton = new Button(buttonsComposite, SWT.NONE);
 		removeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		removeButton.setText("Remove");
+		removeButton.setText(Messages.MetadataGeneratorDialog_RemoveButton);
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeSelectedUnit();
@@ -221,14 +222,14 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 
 	private void getRepositoryLocation() {
 		if (isDirtyRepository()) {
-			boolean result = MessageDialog.openQuestion(getShell(), "Unsaved repository", 
-					"Are you sure you want to start a new repository without saving the current one?");
+			boolean result = MessageDialog.openQuestion(getShell(), Messages.MetadataGeneratorDialog_UnsavedRepositoryDialogTitle, 
+					Messages.MetadataGeneratorDialog_UnsavedRepositoryDialogMessage);
 			if (!result)
 				return;
 		}
 		
 		DirectoryDialog directoryDialog = new DirectoryDialog(getShell());
-		directoryDialog.setMessage("Please choose the location for the new repository");
+		directoryDialog.setMessage(Messages.MetadataGeneratorDialog_ChooseLocationDialogMessage);
 		if (lastUsedPath != null)
 			directoryDialog.setFilterPath(lastUsedPath.toOSString());
 		String dirPathStr = directoryDialog.open();
@@ -260,11 +261,11 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("New Repository");
+		shell.setText(Messages.MetadataGeneratorDialog_NewRepositoryText);
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
-		saveButton = createButton(parent, IDialogConstants.OK_ID, "Save", true);
+		saveButton = createButton(parent, IDialogConstants.OK_ID, Messages.MetadataGeneratorDialog_SaveButton, true);
 		setSaveButtonEnabledState();
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
@@ -284,7 +285,7 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 			repository.setArtifactRepoName(name);
 			GeneratorEngine.saveRespository(repository.getRepoLocation(), repository);
 		} catch (Exception x) {
-			Activator.logError("Could not save repository", x);
+			Activator.logError(Messages.MetadataGeneratorDialog_SaveRepositoryErrorMessage, x);
 		}
 		super.okPressed();
 	}

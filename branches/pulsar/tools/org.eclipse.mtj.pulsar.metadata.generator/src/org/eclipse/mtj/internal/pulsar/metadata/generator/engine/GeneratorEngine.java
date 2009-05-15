@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Chad Peckham
+ * Henrique Magalhaes (Motorola) - Internalization of messages
  *
  */
 
@@ -49,6 +50,7 @@ import org.eclipse.equinox.internal.provisional.p2.repository.IRepository;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK.EType;
 import org.eclipse.mtj.internal.pulsar.core.SDK;
+import org.eclipse.mtj.internal.pulsar.metadata.generator.Messages;
 import org.eclipse.mtj.pulsar.core.Activator;
 
 public class GeneratorEngine implements RepositoryConstants {
@@ -63,13 +65,12 @@ public class GeneratorEngine implements RepositoryConstants {
 	 * @return IRepositoryDescription null if repository does not exist
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public static IRepositoryDescription loadRepository(IPath path) throws Exception {
 		IRepositoryDescription desc = null;
 		try {
 			desc = parseRepository(path);
 		} catch (Exception e) {
-			Activator.logError("Could not parse repository", e);
+			Activator.logError(Messages.GeneratorEngine_ParseRepositoryError, e);
 			throw e;
 		}
 		return desc;
@@ -82,7 +83,7 @@ public class GeneratorEngine implements RepositoryConstants {
 	 */
 	private static IRepositoryDescription parseRepository(IPath path) throws Exception {
 		if (path == null) {
-			throw new Exception("Repository path is null");
+			throw new Exception(Messages.GeneratorEngine_NullPath);
 		}
 		File dir = path.toFile();
 		File mFile = path.append(METADATA_XML_NAME).toFile();
@@ -92,10 +93,10 @@ public class GeneratorEngine implements RepositoryConstants {
 			return new RepositoryDescription();
 		}
 		if (mFile.exists() == false) {
-			throw new Exception("Metadata repository (content.xml) does not exist");
+			throw new Exception(Messages.GeneratorEngine_MetadataDoesNotExist);
 		}
 		if (aFile.exists() == false) {
-			throw new Exception("Artifacts repository (artifacts.xml) does not exist");
+			throw new Exception(Messages.GeneratorEngine_ArtifactsDoesNotExist);
 		}
 		URI uriDir = dir.toURI();
 		
@@ -103,7 +104,7 @@ public class GeneratorEngine implements RepositoryConstants {
 		IArtifactRepository artiRepo = ProvisioningHelper.getArtifactRepository(uriDir);
 		IRepositoryDescription repoDesc = new RepositoryDescription();
 		OrderedProperties props = (OrderedProperties) metaRepo.getProperties();
-		if (props.getProperty(IRepository.PROP_COMPRESSED).equalsIgnoreCase("true")) {
+		if (props.getProperty(IRepository.PROP_COMPRESSED).equalsIgnoreCase("true")) { //$NON-NLS-1$
 			repoDesc.setCompressed(true);
 		}
 
@@ -152,10 +153,10 @@ public class GeneratorEngine implements RepositoryConstants {
 						if (exec.length() > 0) {
 							iuDesc.setExecutablePath(new Path(exec));
 						} else {
-							throw new Exception("no executable path found");
+							throw new Exception(Messages.GeneratorEngine_ExecutablePathNotFound);
 						}
 					} else {
-						throw new Exception("no executable path found");
+						throw new Exception(Messages.GeneratorEngine_ExecutablePathNotFound);
 					}
 				}
 			}
@@ -180,20 +181,20 @@ public class GeneratorEngine implements RepositoryConstants {
 		try {
 			createMetadataRepository(location, desc);
 		} catch (Exception e) {
-			Activator.logError("Could not create content.xml", e);
+			Activator.logError(Messages.GeneratorEngine_CreateMetadataError, e);
 			throw e;
 		}
 		try {
 			createArtifactRepository(location, desc);
 		} catch (Exception e) {
-			Activator.logError("Could not create artifacts.xml", e);
+			Activator.logError(Messages.GeneratorEngine_CreateArtefactsError, e);
 			throw e;
 		}
 	}
 
 	private static void createMetadataRepository(IPath location, IRepositoryDescription desc) throws Exception {
 		if (location == null) {
-			throw new Exception("Repository path is null");
+			throw new Exception(Messages.GeneratorEngine_NullPath);
 		}
 		File dir = location.toFile();
 		
@@ -208,9 +209,9 @@ public class GeneratorEngine implements RepositoryConstants {
 		
 		// compression flag
 		if (desc.isCompressed()) {
-			repo.setProperty(IRepository.PROP_COMPRESSED, "true");
+			repo.setProperty(IRepository.PROP_COMPRESSED, "true"); //$NON-NLS-1$
 		} else {
-			repo.setProperty(IRepository.PROP_COMPRESSED, "false");
+			repo.setProperty(IRepository.PROP_COMPRESSED, "false"); //$NON-NLS-1$
 		}
 		
 		// IUs
@@ -234,6 +235,11 @@ public class GeneratorEngine implements RepositoryConstants {
 				if (newIuDesc.getCategoryName() != null) {
 					p2IuDesc.setProperty(SDK.PROP_CATEGORY, newIuDesc.getCategoryName());
 				}
+				
+				if(newIuDesc.getArtifactDescription() != null){
+					p2IuDesc.setProperty(SDK.PROP_DESCRIPTION, newIuDesc.getArtifactDescription());
+				}
+				
 				if (newIuDesc.getUnitDocumentationURL() != null) {
 					p2IuDesc.setProperty(SDK.PROP_DOC_URL, newIuDesc.getUnitDocumentationURL().toString());
 				}
@@ -249,7 +255,7 @@ public class GeneratorEngine implements RepositoryConstants {
 				if (newIuDesc.getArtifactType().equals(EType.ZIP_ARCHIVE)) {
 					key = new ArtifactKey(UNZIP_ARTIFACT_CLASSIFIER, newIuDesc.getArtifactId(), newIuDesc.getArtifactVersion());
 					if (newIuDesc.getExecutablePath() != null) {
-						installData = UNZIPEXE_TOUCHPOINT_DATA + newIuDesc.getExecutablePath().toString() + ")";
+						installData = UNZIPEXE_TOUCHPOINT_DATA + newIuDesc.getExecutablePath().toString() + ")"; //$NON-NLS-1$
 					} else {
 						installData = UNZIP_TOUCHPOINT_DATA;
 					}
@@ -284,7 +290,7 @@ public class GeneratorEngine implements RepositoryConstants {
 	}
 	private static void createArtifactRepository(IPath location, IRepositoryDescription desc) throws Exception {
 		if (location == null) {
-			throw new Exception("Repository path is null");
+			throw new Exception(Messages.GeneratorEngine_NullPath);
 		}
 		File dir = location.toFile();
 		
@@ -299,9 +305,9 @@ public class GeneratorEngine implements RepositoryConstants {
 		
 		// compression flag
 		if (desc.isCompressed()) {
-			repo.setProperty(IRepository.PROP_COMPRESSED, "true");
+			repo.setProperty(IRepository.PROP_COMPRESSED, "true"); //$NON-NLS-1$
 		} else {
-			repo.setProperty(IRepository.PROP_COMPRESSED, "false");
+			repo.setProperty(IRepository.PROP_COMPRESSED, "false"); //$NON-NLS-1$
 		}
 		// IUs
 		Collection<IIUDescription> newIuDescCollection = desc.getUnitCollection();
