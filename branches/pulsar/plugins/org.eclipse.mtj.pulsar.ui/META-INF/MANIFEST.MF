@@ -15,7 +15,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.5.0",
  org.eclipse.equinox.p2.repository;bundle-version="1.0.0",
  org.eclipse.equinox.p2.console;bundle-version="1.0.0",
  org.eclipse.equinox.p2.artifact.repository;bundle-version="1.0.100",
- org.eclipse.equinox.p2.ui;bundle-version="1.0.100"
+ org.eclipse.equinox.p2.ui;bundle-version="1.0.100",
+ org.eclipse.equinox.p2.ui.sdk
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.mtj.pulsar.Activator
 Bundle-Localization: plugin

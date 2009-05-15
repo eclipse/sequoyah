@@ -14,33 +14,36 @@ package org.eclipse.mtj.internal.pulsar.ui.view;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * ISDKInstallItemViewerContentProvider interface provides content to be 
- * displayed on a {@link SDKInstallItemViewer} instance.  
+ * ISDKInstallItemLabelProvider interface defines methods to retrieve
+ * information to be displayed into an {@link SDKInstallItemViewer}.
  * 
  * @author David Marques
  */
-public interface ISDKInstallItemViewerContentProvider {
-	
+public interface ISDKInstallItemLabelProvider {
+
 	/**
 	 * Gets the install unit description.
-	 * 
+	 *
+	 * @param object target object.
 	 * @return description string.
 	 */
-	public String getDescription();
-	
-	/**
-	 * Gets the url of the web site.
-	 * 
-	 * @return the url string.
-	 */
-	public String getSite();
+	public String getDescription(Object object);
 	
 	/**
 	 * Gets an {@link Image} instance
 	 * for the installation unit.
-	 * 
+	 *
+	 * @param object target object.
 	 * @return image instance.
 	 */
-	public Image getImage();
+	public Image getImage(Object object);
+
+	/**
+	 * Gets the url of the web site.
+	 * 
+	 * @param object target object.
+	 * @return the url string.
+	 */
+	public String getSite(Object object);
 	
 }

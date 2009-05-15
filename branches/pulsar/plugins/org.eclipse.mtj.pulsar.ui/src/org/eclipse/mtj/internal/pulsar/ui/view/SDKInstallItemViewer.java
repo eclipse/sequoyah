@@ -9,11 +9,20 @@
  * Contributors:
  *     David Marques (Motorola) - Initial version
  *     David Marques (Motorola) - Fixing appearance.
+ *     David Marques (Motorola) - Refactoring to use label provider.
  */
 package org.eclipse.mtj.internal.pulsar.ui.view;
 
 import java.net.URL;
 
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
+import org.eclipse.mtj.internal.pulsar.core.SDK;
 import org.eclipse.mtj.pulsar.core.Activator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,7 +36,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 
 /**
  * SDKInstallItemViewer extends the {@link Composite} class in
@@ -38,10 +49,13 @@ import org.eclipse.swt.widgets.Text;
  */
 public class SDKInstallItemViewer extends Composite {
 
-	private ISDKInstallItemViewerContentProvider provider;
+	private ISDKInstallItemLabelProvider labelProvider;
+	private Object input;
+	
 	private Label iconLabel;
 	private Link  siteLink;
 	private Text description;
+	private Link moreLink;
 
 	/**
 	 * Creates a SDKInstallItemViewer instance child of
@@ -60,14 +74,26 @@ public class SDKInstallItemViewer extends Composite {
 	}
 	
 	/**
-	 * Sets the {@link ISDKInstallItemViewerContentProvider} instance to
-	 * provide content to be displayed on the view.
+	 * Sets the input {@link Object} to be displayed into the
+	 * viewer.
+	 * 
+	 * @param input input object.
+	 */
+	public void setInput(Object input) {
+		this.input = input;
+		if (this.input != null) {			
+			this.refresh();
+		}
+	}
+	
+	/**
+	 * Sets the {@link ISDKInstallItemLabelProvider} instance to
+	 * provide content data to be displayed on the view.
 	 * 
 	 * @param provider content provider.
 	 */
-	public void setContentProvider(ISDKInstallItemViewerContentProvider provider) {
-		this.provider = provider;
-		this.refresh();
+	public void setLabelProvider(ISDKInstallItemLabelProvider provider) {
+		this.labelProvider = provider;
 	}
 	
 	/**
@@ -102,6 +128,7 @@ public class SDKInstallItemViewer extends Composite {
 		
 		description = new Text(group, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		description.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		description.setText("Information not available...");
 		description.setBackground(parent.getBackground());
 		description.setEditable(false);
 		
@@ -126,17 +153,35 @@ public class SDKInstallItemViewer extends Composite {
 			}
 		});
 		
-//		Link moreLink = new Link(c1, SWT.NONE);
-//		moreLink.setBackground(parent.getBackground());
-//		moreLink.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, true));
-//		moreLink.setText("<a href=\"\">More...</a>");
+		moreLink = new Link(c1, SWT.NONE);
+		moreLink.setBackground(parent.getBackground());
+		moreLink.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, true));
+		moreLink.setText("<a href=\"\">More...</a>");
+		moreLink.addSelectionListener(new SelectionListener(){
+			public void widgetSelected(SelectionEvent e) {
+				if (input instanceof SDK) {
+					openSDKProperties(((SDK)input));
+				}
+			}
+		
+			private void openSDKProperties(SDK sdk) {
+				IInstallableUnit iu = sdk.getInstallableUnit();
+				PropertyDialogAction dialog = new PropertyDialogAction(
+						new ShellProvider(getShell()), new IUSelectionProvider(
+								sdk.getInstallableUnit()));
+				dialog.run();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 	}
 	
 	/**
 	 * Opens a browser instance.
 	 */
 	protected void openBrowser() {
-		String site = provider.getSite();
+		String site = labelProvider.getSite(this.input);
 		if (site != null) {
 			try {
 				Activator.openWebBrowser(new URL(site));
@@ -150,24 +195,66 @@ public class SDKInstallItemViewer extends Composite {
 	 * Updates the viewer content.
 	 */
 	private void refresh() {
-		if (this.provider != null) {
-			this.iconLabel.setImage(this.provider.getImage());
+		if (this.labelProvider != null) {
+			this.iconLabel.setImage(this.labelProvider.getImage(this.input));
 			
-			String description = this.provider.getDescription();
+			String description = this.labelProvider.getDescription(this.input);
 			if (description != null && description.trim().length() > 0) {				
 				this.description.setText(description);
 			} else {
 				this.description.setText("Information not available...");
 			}
 			
-			String site = this.provider.getSite();
+			String site = this.labelProvider.getSite(this.input);
 			if (site != null) {
-				this.siteLink.setVisible(true);
+				this.siteLink.setEnabled(true);
 				this.siteLink.setToolTipText(site);
 			} else {
-				this.siteLink.setVisible(false);
+				this.siteLink.setEnabled(false);
 			}
-			this.layout(true);
+			
+			if (this.input instanceof ISDK) {
+				this.moreLink.setEnabled(true);
+			} else {
+				this.moreLink.setEnabled(false);
+			}
+		}
+	}
+	
+	private class IUSelectionProvider implements ISelectionProvider {
+		
+		private IInstallableUnit iu;
+		
+		public IUSelectionProvider(IInstallableUnit iu) {
+			this.iu = iu;
+		}
+		
+		public ISelection getSelection() {
+			return new StructuredSelection(this.iu);
+		}
+
+		public void addSelectionChangedListener(
+				ISelectionChangedListener listener) {
+		}
+
+		public void removeSelectionChangedListener(
+				ISelectionChangedListener listener) {
+		}
+
+		public void setSelection(ISelection selection) {
+		}
+	}
+	
+	private class ShellProvider implements IShellProvider {
+		
+		private Shell shell;
+		
+		public ShellProvider(Shell shell) {
+			this.shell = shell;
+		}
+		
+		public Shell getShell() {
+			return this.shell;
 		}
 	}
 	

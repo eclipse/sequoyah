@@ -10,12 +10,15 @@
  *     Gustavo de Paula (Motorola) - Initial implementation
  *     David Dubrow (Nokia)
  *     David Marques (Motorola) - Extending IInstallationInfoProvider.
+ *     David Marques (Motorola) - Adding getInstallableUnit and getRepository
+ *                                methods.
  */
 package org.eclipse.mtj.internal.provisional.pulsar.core;
 
 import java.net.URL;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.osgi.framework.Version;
 
 /**
@@ -83,5 +86,21 @@ public interface ISDK extends IAdaptable, IInstallationInfoProvider {
 	 * @return EState
 	 */
 	public EState getState();
+	
+	/**
+	 * Gets the {@link IInstallableUnit} instance for this
+	 * {@link ISDK} instance.
+	 * 
+	 * @return an {@link IInstallableUnit} instance.
+	 */
+	public IInstallableUnit getInstallableUnit();
+	
+	/**
+	 * Gets the {@link ISDKRepository} instance that contains
+	 * this {@link ISDK} instance.
+	 * 
+	 * @return an {@link ISDKRepository} instance.
+	 */
+	public ISDKRepository getRepository();
 	
 }

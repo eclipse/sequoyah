@@ -9,6 +9,7 @@
  * Contributors:
  * 	David Dubrow
  *  David Marques (Motorola) - Refactoring view UI.
+ *  David Marques (Motorola) - Refactoring to use label provider.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -32,6 +33,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IIndexableLazyContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -43,10 +45,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvider;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
-import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
-import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvider;
 import org.eclipse.mtj.internal.provisional.pulsar.core.QuickInstallCore;
 import org.eclipse.mtj.pulsar.core.Activator;
 import org.eclipse.swt.SWT;
@@ -158,7 +159,7 @@ public class SDKInstallView extends ViewPart {
 			return;
 		}
 		
-		ISDKInstallItemViewerContentProvider item = this.getSelectedItem();
+		Object item = this.getSelectedItem();
 		if (item != null) {
 			if (itemViewer == null || itemViewer.isDisposed()) {			
 				itemViewer = new SDKInstallItemViewer(main);
@@ -167,13 +168,31 @@ public class SDKInstallView extends ViewPart {
 				gridData.widthHint    = 350;
 				itemViewer.setLayoutData(gridData);
 			}
-			itemViewer.setContentProvider(item);
+			ISDKInstallItemLabelProvider labelProvider = getLabelProvider(item);
+			itemViewer.setLabelProvider(labelProvider);
+			itemViewer.setInput(item);
 		} else {
 			if (itemViewer != null && !itemViewer.isDisposed()) {
 				itemViewer.dispose();
 			}
 		}
 		main.layout(true);
+	}
+
+	/**
+	 * Gets an {@link ISDKInstallItemLabelProvider} instance for
+	 * the specified {@link Object} in order to display it into
+	 * the {@link SDKInstallItemViewer}.
+	 * 
+	 * @param item target object.
+	 * @return an {@link ISDKInstallItemLabelProvider} instance.
+	 */
+	private ISDKInstallItemLabelProvider getLabelProvider(Object item) {
+		ISDKInstallItemLabelProvider result = null;
+		if (item instanceof IInstallationInfoProvider) {
+			result = new InstallationInfoLabelProvider();
+		}
+		return result;
 	}
 
 	private TreeNode[] createTreeNodes(IProgressMonitor monitor) {
@@ -276,32 +295,24 @@ public class SDKInstallView extends ViewPart {
 	}
 	
 	/**
-	 * Gets the {@link ISDKInstallItemViewerContentProvider} for the
-	 * current selected item in the view.
+	 * Gets the selected item {@link Object}.
 	 * 
-	 * @return an {@link ISDKInstallItemViewerContentProvider} instance.
+	 * @return selected object or null if selection
+	 * is empty.
 	 */
-	private ISDKInstallItemViewerContentProvider getSelectedItem() {
-		ISDKInstallItemViewerContentProvider result = null;
+	private Object getSelectedItem() {
+		Object result = null;
 		
 		TreeNode node = getSelectedNode();
 		if (node != null) {
-			IInstallationInfoProvider provider = null;
 			Object object = node.getValue();
-			if (!(object instanceof IInstallationInfoProvider)) {
+			if (object instanceof String) {
 				TreeNode root = getRootParentNode(node);
-				if (root.getValue() instanceof IInstallationInfoProvider) {
-					provider = (IInstallationInfoProvider) root.getValue();
+				if (root.getValue() instanceof ISDKRepository) {
+					result = root.getValue();
 				}
 			} else {
-				provider = (IInstallationInfoProvider) object;				
-			}
-			
-			if (provider != null) {				
-				IInstallationInfo info = provider.getInstallationInfo();
-				if (info != null) {
-					result = new SDKInstallItemViewerContentProvider(info);
-				}
+				result = node.getValue();				
 			}
 		}
 		return result;
