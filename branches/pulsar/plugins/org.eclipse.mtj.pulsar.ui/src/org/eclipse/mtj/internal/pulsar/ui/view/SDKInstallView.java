@@ -50,6 +50,7 @@ import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvide
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.mtj.internal.provisional.pulsar.core.QuickInstallCore;
+import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK.EState;
 import org.eclipse.mtj.pulsar.Activator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -75,7 +76,12 @@ public class SDKInstallView extends ViewPart {
 		}
 
 	    protected boolean updateSelection(IStructuredSelection selection) {
-			return getSelectedSDK() != null;
+			boolean toReturn = false;
+			// Just enable the action if the SDK state is UNINSTALLED
+	    	if (getSelectedSDK() != null) {
+	    		toReturn = getSelectedSDK().getState().equals(EState.UNINSTALLED);
+	    	}
+	    	return toReturn;
 		}
 
 		@Override
