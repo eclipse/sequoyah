@@ -9,7 +9,7 @@
  * Contributors:
  * 	David Dubrow
  *  Euclides Neto (Motorola) - Added RefreshAction entries.
- *
+ *  Euclides Neto (Motorola) - Added SDKInstallView entries.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -23,6 +23,8 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.mtj.internal.pulsar.ui.view.messages"; //$NON-NLS-1$
 	public static String P2InstallerUI_DirerctoryDialogMessage;
 	public static String P2InstallerUI_ResoultionOperationLabel;
+	public static String SDKInstallView_DetailsActionLabel;
+	public static String SDKInstallView_DetailsActionToolTip;
 	public static String SDKInstallView_GettingRepoInfoMessage;
 	public static String SDKInstallView_RefreshActionLabel;
 	public static String SDKInstallView_RefreshActionToolTip;
