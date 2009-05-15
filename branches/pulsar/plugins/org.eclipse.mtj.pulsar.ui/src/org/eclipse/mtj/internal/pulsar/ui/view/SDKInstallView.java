@@ -12,6 +12,7 @@
  *  David Marques (Motorola) - Refactoring to use label provider.
  *  Euclides Neto (Motorola) - Added refresh functionality and change the install icon.
  *  David Marques (Motorola) - Adding installation environment support.
+ *  Euclides Neto (Motorola) - Added details functionality.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -33,6 +34,7 @@ import org.eclipse.equinox.internal.provisional.p2.ui.viewers.StructuredViewerPr
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -64,6 +66,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.part.ViewPart;
 
 public class SDKInstallView extends ViewPart {
@@ -78,9 +81,9 @@ public class SDKInstallView extends ViewPart {
 
 	    protected boolean updateSelection(IStructuredSelection selection) {
 			boolean toReturn = false;
-			// Just enable the action if the SDK state is UNINSTALLED
+			// Just enable the action if the SDK state is not INSTALLED
 	    	if (getSelectedSDK() != null) {
-	    		toReturn = getSelectedSDK().getState().equals(EState.UNINSTALLED);
+	    		toReturn = !getSelectedSDK().getState().equals(EState.INSTALLED);
 	    	}
 	    	return toReturn;
 		}
@@ -100,13 +103,39 @@ public class SDKInstallView extends ViewPart {
 			setDisabledImageDescriptor(getLocalImageDescriptor("icons/refresh_disabled.gif")); //$NON-NLS-1$
 		}
 
+		@Override
+		public void run() {
+			refreshSDKs();
+		}
+	}
+	
+	private class DetailsAction extends BaseSelectionListenerAction {
+
+		protected DetailsAction() {
+			super(Messages.SDKInstallView_DetailsActionLabel);
+			setToolTipText(Messages.SDKInstallView_DetailsActionToolTip);
+			setImageDescriptor(getLocalImageDescriptor("icons/details_enabled.gif")); //$NON-NLS-1$
+			setDisabledImageDescriptor(getLocalImageDescriptor("icons/details_disabled.gif")); //$NON-NLS-1$
+		}
+
 	    protected boolean updateSelection(IStructuredSelection selection) {
-			return getSelectedSDK() != null;
+			boolean toReturn = false;
+			// Just enable the action if the SDK state is INSTALLED
+	    	if (getSelectedSDK() != null) {
+	    		toReturn = getSelectedSDK().getState().equals(EState.INSTALLED);
+	    	}
+	    	return toReturn;
 		}
 
 		@Override
 		public void run() {
-			refreshSDKs();
+			PreferenceDialog dialog = PreferencesUtil
+					.createPreferenceDialogOn(
+							viewer.getTree().getShell(),
+							"org.eclipse.mtj.ui.preferences.deviceManagementPreferencePage", //$NON-NLS-1$
+							new String[] { "org.eclipse.mtj.ui.preferences.deviceManagementPreferencePage" }, //$NON-NLS-1$
+							null);
+			dialog.open();
 		}
 	}
 	
@@ -128,6 +157,7 @@ public class SDKInstallView extends ViewPart {
 	private TreeViewer viewer;
 	private InstallAction installAction;
 	private RefreshAction refreshAction;
+	private DetailsAction detailsAction;
 	private Action doubleClickAction;
 	private StructuredViewerProvisioningListener listener;
 	private SDKInstallItemViewer itemViewer;
@@ -170,6 +200,7 @@ public class SDKInstallView extends ViewPart {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				installAction.selectionChanged(event);
+				detailsAction.selectionChanged(event);
 				updateSDKItemViewer();
 			}
 		});
@@ -333,17 +364,22 @@ public class SDKInstallView extends ViewPart {
 
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(installAction);
+		manager.add(detailsAction);
 		manager.add(refreshAction);
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(installAction);
+		manager.add(detailsAction);
 		manager.add(refreshAction);
 	}
 
 	private void makeActions() {
 		installAction = new InstallAction();
 		installAction.setEnabled(getSelectedSDK() != null);
+		
+		detailsAction = new DetailsAction();
+		detailsAction.setEnabled(getSelectedSDK() != null);
 		
 		refreshAction = new RefreshAction();
 		refreshAction.setEnabled(true);
