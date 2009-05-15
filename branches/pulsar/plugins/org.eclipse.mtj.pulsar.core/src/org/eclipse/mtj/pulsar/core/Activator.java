@@ -9,12 +9,13 @@
  * Contributors:
  * 	David Dubrow
  *  David Marques (Motorola) - Implemening openWebBrowser method.
- *
+ *  Euclides Neto (Motorola) - Externalize strings.
  */
 
 package org.eclipse.mtj.pulsar.core;
 
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -25,7 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepositoryProvider;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.mtj.internal.pulsar.core.Messages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.osgi.framework.BundleContext;
@@ -44,7 +45,7 @@ public class Activator extends Plugin {
 	// The extension point id for sdk provider
 	private static final String SDK_REPOSITORY_PROVIDER_EXTENSION = PLUGIN_ID + ".sdkRepositoryProvider"; //$NON-NLS-1$
 
-	private static final String PULSAR_BROWSER_ID = "pulsar_browser";
+	private static final String PULSAR_BROWSER_ID = "pulsar_browser"; //$NON-NLS-1$
 
 	private Collection<ISDKRepositoryProvider> providers;
 	
@@ -109,7 +110,7 @@ public class Activator extends Plugin {
 				providers.add((ISDKRepositoryProvider) extension);
 			} 
 			catch (Exception e) {
-				logError("Could not create extension", e); //$NON-NLS-1$
+				logError(Messages.Activator_CouldNotCreateExtensionError, e);
 			}
 		}
 	}
@@ -177,8 +178,8 @@ public class Activator extends Plugin {
 					.getBrowserSupport().createBrowser(PULSAR_BROWSER_ID);
 			browser.openURL(url);
 		} catch (Exception e) {
-			String message = NLS.bind("Error opening browser: {0}", url.toString());
-			throw new CoreException(makeErrorStatus(message, e));
+			throw new CoreException(makeErrorStatus(MessageFormat.format(
+					Messages.Activator_ErrorOpeningBrowserError, url.toString()), e));
 		}
 	}
 }

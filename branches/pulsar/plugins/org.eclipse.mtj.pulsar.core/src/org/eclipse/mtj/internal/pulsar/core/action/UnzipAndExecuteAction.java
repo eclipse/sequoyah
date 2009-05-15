@@ -8,7 +8,7 @@
  *
  * Contributors:
  * 	David Dubrow
- *
+ *  Euclides Neto (Motorola) - Externalize strings.
  */
 
 package org.eclipse.mtj.internal.pulsar.core.action;
@@ -52,7 +52,7 @@ public class UnzipAndExecuteAction extends UnzipAction {
 		IProfile profile = (IProfile) parameters.get(ActionConstants.PARM_PROFILE);
 		String installFolder = Util.getInstallFolder(profile);
 		if (installFolder == null)
-			return Activator.makeErrorStatus("The profile did not have an install folder", null);
+			return Activator.makeErrorStatus(Messages.ExecuteAction_ProfileInstallFolderError, null);
 		else {
 			IPath path = new Path(installFolder);
 			path = path.append(executable);

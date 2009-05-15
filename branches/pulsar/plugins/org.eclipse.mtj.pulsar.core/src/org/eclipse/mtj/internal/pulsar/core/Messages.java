@@ -8,7 +8,7 @@
  *
  * Contributors:
  * 	David Dubrow
- *
+ *  Euclides Neto (Motorola) - Adding new messages.
  */
 
 package org.eclipse.mtj.internal.pulsar.core;
@@ -20,13 +20,17 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.mtj.internal.pulsar.core.messages"; //$NON-NLS-1$
+	public static String Activator_CouldNotCreateExtensionError;
+	public static String Activator_ErrorOpeningBrowserError;
 	public static String DefaultSDKRepositoryProvider_FileReadError;
 	public static String DefaultSDKRepositoryProvider_URLError;
 	public static String ExecuteAction_ExecuteError;
 	public static String ExecuteAction_MissingArtifactError;
 	public static String ExecuteAction_ParamNotSetError;
+	public static String ExecuteAction_ProfileInstallFolderError;
 	public static String ExecuteAction_UndoUnsupportedError;
 	public static String SDK_DocumentationURLError;
+	public static String SDK_InvalidSDKInstanceError;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

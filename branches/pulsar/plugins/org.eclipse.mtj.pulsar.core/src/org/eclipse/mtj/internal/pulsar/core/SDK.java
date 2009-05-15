@@ -9,6 +9,7 @@
  * Contributors:
  * 	David Dubrow
  *  David Marques (Motorola) - Extending IInstallationInfoProvider.
+ *  Euclides Neto (Motorola) - Externalize strings.
  */
 
 package org.eclipse.mtj.internal.pulsar.core;
@@ -19,11 +20,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
 import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
+import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
 import org.eclipse.mtj.pulsar.core.Activator;
 import org.osgi.framework.Version;
 
@@ -34,7 +34,7 @@ public class SDK extends PlatformObject implements ISDK {
 	public static final String EXECUTABLE_TYPE = "executable"; //$NON-NLS-1$
 	public static final String PROP_CATEGORY = "org.eclipse.pulsar.category.name"; //$NON-NLS-1$
 	public static final String PROP_DOC_URL = "org.eclipse.pulsar.documentation.url"; //$NON-NLS-1$
-	public static final String PROP_DESCRIPTION = "org.eclipse.equinox.p2.description";
+	public static final String PROP_DESCRIPTION = "org.eclipse.equinox.p2.description"; //$NON-NLS-1$
 	
 	private SDKRepository sdkRepository;
 	private IInstallableUnit iu;
@@ -107,7 +107,7 @@ public class SDK extends PlatformObject implements ISDK {
 		
 		public SDKInfo(SDK sdk) {
 			if (sdk == null) {
-				throw new IllegalArgumentException("Invalid SDK instance: null.");
+				throw new IllegalArgumentException(Messages.SDK_InvalidSDKInstanceError);
 			}
 			this.sdk = sdk;
 		}

@@ -120,7 +120,7 @@ public class DefaultSDKRepositoryProvider implements ISDKRepositoryProvider {
 		} catch (MalformedURLException e) {
 		}
 		
-		text = new StringBuffer(properties.getProperty(key + INFO_TEXT_SUFFIX, ""));
+		text = new StringBuffer(properties.getProperty(key + INFO_TEXT_SUFFIX, "")); //$NON-NLS-1$
 		return new SDKRepositoryInfo(siteUrl, imageUrl, text);
 	}
 	
