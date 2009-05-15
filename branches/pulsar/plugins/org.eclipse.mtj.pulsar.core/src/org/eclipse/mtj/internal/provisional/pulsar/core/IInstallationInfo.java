@@ -8,6 +8,7 @@
  * 
  * Contributors:
  *     David Marques (Motorola) - Initial version
+ *     David Marques (Motorola) - Adding installation environment support.
  */
 package org.eclipse.mtj.internal.provisional.pulsar.core;
 
@@ -47,5 +48,12 @@ public interface IInstallationInfo {
 	 * @return an the web site {@link URI}.
 	 */
 	public URI getWebSiteURI();
+	
+	/**
+	 * Gets the target environment information.
+	 * 
+	 * @return an {@link IInstallationEnvironment} instance.
+	 */
+	public IInstallationEnvironment getTargetEnvironment();
 	
 }

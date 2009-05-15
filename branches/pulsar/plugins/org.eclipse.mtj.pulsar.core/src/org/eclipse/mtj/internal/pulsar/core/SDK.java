@@ -10,6 +10,7 @@
  * 	David Dubrow
  *  David Marques (Motorola) - Extending IInstallationInfoProvider.
  *  Euclides Neto (Motorola) - Externalize strings.
+ *  David Marques (Motorola) - Adding installation environment support.
  */
 
 package org.eclipse.mtj.internal.pulsar.core;
@@ -22,8 +23,10 @@ import java.net.URL;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationEnvironment;
 import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
+import org.eclipse.mtj.internal.provisional.pulsar.core.IUInstallationEnvironment;
 import org.eclipse.mtj.pulsar.core.Activator;
 import org.osgi.framework.Version;
 
@@ -143,6 +146,13 @@ public class SDK extends PlatformObject implements ISDK {
 			} catch (URISyntaxException e) {}
 			return result;
 		}
-		
+
+		public IInstallationEnvironment getTargetEnvironment() {
+			IInstallableUnit iu = sdk.getInstallableUnit();
+			if (iu != null) {
+				return new IUInstallationEnvironment(iu.getFilter());
+			}
+			return null;
+		}
 	}
 }

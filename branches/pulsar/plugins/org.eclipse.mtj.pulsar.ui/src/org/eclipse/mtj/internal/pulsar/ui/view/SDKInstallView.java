@@ -11,6 +11,7 @@
  *  David Marques (Motorola) - Refactoring view UI.
  *  David Marques (Motorola) - Refactoring to use label provider.
  *  Euclides Neto (Motorola) - Added refresh functionality and change the install icon.
+ *  David Marques (Motorola) - Adding installation environment support.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -172,6 +173,7 @@ public class SDKInstallView extends ViewPart {
 				updateSDKItemViewer();
 			}
 		});
+		viewer.addFilter(new InstallationEnvironmentFilter());
 		
 		// Updates the view with available SDKs
 		refreshSDKs();

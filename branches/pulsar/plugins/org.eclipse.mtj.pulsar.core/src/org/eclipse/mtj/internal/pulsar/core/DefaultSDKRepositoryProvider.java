@@ -9,6 +9,7 @@
  * Contributors:
  * 	David Dubrow
  *  David Marques (Motorola) - Extending IInstallationInfoProvider.
+ *  David Marques (Motorola) - Adding installation environment support.
  */
 
 package org.eclipse.mtj.internal.pulsar.core;
@@ -25,6 +26,7 @@ import java.util.Properties;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationEnvironment;
 import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepositoryProvider;
@@ -156,6 +158,10 @@ public class DefaultSDKRepositoryProvider implements ISDKRepositoryProvider {
 				} catch (URISyntaxException e) {}
 			}
 			return result;
+		}
+
+		public IInstallationEnvironment getTargetEnvironment() {
+			return null;
 		}
 	}
 	
