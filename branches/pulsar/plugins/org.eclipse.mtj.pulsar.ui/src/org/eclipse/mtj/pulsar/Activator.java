@@ -27,8 +27,15 @@ import org.osgi.framework.ServiceRegistration;
  */
 public class Activator extends AbstractUIPlugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.mtj.internal.pulsar.ui"; //$NON-NLS-1$
+	/**
+	 * Plugin id 
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.mtj.internal.pulsar.ui";
+
+	/**
+	 * Quick install view ID
+	 */
+	public static final String QUICKINSTALL_VIEW_ID = "org.eclipse.pulsar.ui.view.SDKInstallView";
 
 	private ServiceRegistration certificateUIRegistration;
 	

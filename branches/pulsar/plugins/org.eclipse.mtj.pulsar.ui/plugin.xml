@@ -16,6 +16,18 @@
       </category>
    </extension>
    <extension
+         point="org.eclipse.ui.perspectives">
+       <perspective
+             class="org.eclipse.mtj.internal.pulsar.ui.PulsarPerspectiveFactory"
+             icon="icons/mtjicon_sm.png"
+             id="org.eclipse.mtj.pulsar.ui.PulsarPerspective"
+             name="%pulsar.perspective.name">
+          <description>
+             %pulsar.perspective.description
+          </description>
+        </perspective>
+   </extension>
+   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.mtj.ui.MtjPerspective">
@@ -25,7 +37,6 @@
                relationship="stack"
                id="org.eclipse.pulsar.ui.view.SDKInstallView">
          </view>
-      </perspectiveExtension>
+      </perspectiveExtension>   
    </extension>
-
 </plugin>
