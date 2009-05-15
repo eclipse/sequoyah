@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site
+<site pack200="true" 
       mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/updates/0.3M6/site.xml&amp;format=xml&amp;protocol=http">
    <description url="http://download.eclipse.org/dsdp/tml/updates/0.3M6/">
       This is the Tool for mobile Linux Project 0.3M6 Update Site.
