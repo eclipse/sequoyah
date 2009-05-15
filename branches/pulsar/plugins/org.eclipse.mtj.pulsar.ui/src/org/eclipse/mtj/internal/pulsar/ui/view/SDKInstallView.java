@@ -10,10 +10,12 @@
  * 	David Dubrow
  *  David Marques (Motorola) - Refactoring view UI.
  *  David Marques (Motorola) - Refactoring to use label provider.
+ *  Euclides Neto (Motorola) - Added refresh functionality and change the install icon.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -22,18 +24,17 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.internal.p2.ui.ProvUIActivator;
 import org.eclipse.equinox.internal.provisional.p2.ui.ProvUI;
-import org.eclipse.equinox.internal.provisional.p2.ui.ProvUIImages;
 import org.eclipse.equinox.internal.provisional.p2.ui.viewers.StructuredViewerProvisioningListener;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IIndexableLazyContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -49,7 +50,7 @@ import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvide
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.mtj.internal.provisional.pulsar.core.QuickInstallCore;
-import org.eclipse.mtj.pulsar.core.Activator;
+import org.eclipse.mtj.pulsar.Activator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -58,6 +59,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
 import org.eclipse.ui.part.ViewPart;
 
@@ -68,7 +71,7 @@ public class SDKInstallView extends ViewPart {
 		protected InstallAction() {
 			super(Messages.SDKInstallView_InstallActionLabel);
 			setToolTipText(Messages.SDKInstallView_InstallActionToolTip);
-			setImageDescriptor(ProvUIActivator.getDefault().getImageRegistry().getDescriptor(ProvUIImages.IMG_PROFILE));
+			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		}
 
 	    protected boolean updateSelection(IStructuredSelection selection) {
@@ -80,9 +83,44 @@ public class SDKInstallView extends ViewPart {
 			installSelectedSDK();
 		}
 	}
+	
+	private class RefreshAction extends BaseSelectionListenerAction {
+
+		protected RefreshAction() {
+			super(Messages.SDKInstallView_RefreshActionLabel);
+			setToolTipText(Messages.SDKInstallView_RefreshActionToolTip);
+			setImageDescriptor(getLocalImageDescriptor("icons/refresh_enabled.gif")); //$NON-NLS-1$
+			setDisabledImageDescriptor(getLocalImageDescriptor("icons/refresh_disabled.gif")); //$NON-NLS-1$
+		}
+
+	    protected boolean updateSelection(IStructuredSelection selection) {
+			return getSelectedSDK() != null;
+		}
+
+		@Override
+		public void run() {
+			refreshSDKs();
+		}
+	}
+	
+	/**
+	 * Returns a local image descriptor.
+	 * 
+	 * @param path The local path to the image.
+	 * @return a reference to the image descriptor.
+	 */
+	private ImageDescriptor getLocalImageDescriptor(String path) {
+		ImageDescriptor image = null;
+		URL url = Activator.getDefault().find(new Path(path));
+		if (url != null) {
+			image = ImageDescriptor.createFromURL(url);
+		}
+		return image;
+	}
 
 	private TreeViewer viewer;
 	private InstallAction installAction;
+	private RefreshAction refreshAction;
 	private Action doubleClickAction;
 	private StructuredViewerProvisioningListener listener;
 	private SDKInstallItemViewer itemViewer;
@@ -128,12 +166,27 @@ public class SDKInstallView extends ViewPart {
 				updateSDKItemViewer();
 			}
 		});
+		
+		// Updates the view with available SDKs
+		refreshSDKs();
+
+		makeActions();
+		hookDoubleClickAction();
+		contributeToActionBars();
+		addProvisioningListener();
+	}
+
+	/**
+	 * Refreshes the SDKs list on Mobile SDKs view.
+	 */
+	protected void refreshSDKs() {
 		Job job = new Job(Messages.SDKInstallView_UpdatingInstallersJobTitle){
 			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				final TreeNode[] treeNodes = createTreeNodes(monitor);
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
+						viewer.getTree().removeAll();
 						viewer.setInput(treeNodes);
 						viewer.expandAll();
 						packColumns();
@@ -143,11 +196,6 @@ public class SDKInstallView extends ViewPart {
 			}
 		};
 		job.schedule();
-		
-		makeActions();
-		hookDoubleClickAction();
-		contributeToActionBars();
-		addProvisioningListener();
 	}
 	
 	/**
@@ -277,15 +325,20 @@ public class SDKInstallView extends ViewPart {
 
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(installAction);
+		manager.add(refreshAction);
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(installAction);
+		manager.add(refreshAction);
 	}
 
 	private void makeActions() {
 		installAction = new InstallAction();
 		installAction.setEnabled(getSelectedSDK() != null);
+		
+		refreshAction = new RefreshAction();
+		refreshAction.setEnabled(true);
 		
 		doubleClickAction = new Action() {
 			public void run() {
@@ -368,7 +421,8 @@ public class SDKInstallView extends ViewPart {
 			try {
 				QuickInstallCore.getInstance().installSDK(getSite().getShell(), sdk, P2InstallerUI.getInstance());
 			} catch (CoreException e) {
-				Activator.logError(Messages.SDKInstallView_InstallError, e);
+				org.eclipse.mtj.pulsar.core.Activator.logError(
+						Messages.SDKInstallView_InstallError, e);
 			}
 		}
 	}

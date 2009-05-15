@@ -8,6 +8,7 @@
  *
  * Contributors:
  * 	David Dubrow
+ *  Euclides Neto (Motorola) - Added RefreshAction entries.
  *
  */
 
@@ -23,6 +24,8 @@ public class Messages extends NLS {
 	public static String P2InstallerUI_DirerctoryDialogMessage;
 	public static String P2InstallerUI_ResoultionOperationLabel;
 	public static String SDKInstallView_GettingRepoInfoMessage;
+	public static String SDKInstallView_RefreshActionLabel;
+	public static String SDKInstallView_RefreshActionToolTip;
 	public static String SDKInstallView_InstallActionLabel;
 	public static String SDKInstallView_InstallActionToolTip;
 	public static String SDKInstallView_InstallError;
