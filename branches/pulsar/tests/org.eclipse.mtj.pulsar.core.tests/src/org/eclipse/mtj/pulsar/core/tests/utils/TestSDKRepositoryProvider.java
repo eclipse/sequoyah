@@ -9,6 +9,7 @@
  * Contributors:
  * 	David Dubrow
  *  David Marques (Motorola) - Updating test class.
+ *  David Marques (Motorola) - Adding installation environment support.
  */
 
 package org.eclipse.mtj.pulsar.core.tests.utils;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationEnvironment;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepositoryProvider;
 import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
@@ -76,6 +78,10 @@ public class TestSDKRepositoryProvider implements ISDKRepositoryProvider {
 			} catch (URISyntaxException e) {
 			}
 			return result;
+		}
+
+		public IInstallationEnvironment getTargetEnvironment() {
+			return null;
 		}
 		
 	}

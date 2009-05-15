@@ -10,6 +10,9 @@
 		<property name='org.eclipse.pulsar.type' value='ziparchive'/>
 		<property name='org.eclipse.equinox.p2.description' value='This SDK description is just an example...'/>
       </properties>
+      <filter>
+        (&amp; (osgi.ws=gtk) (osgi.os=linux) (osgi.arch=x86))
+      </filter>
       <provides size='1'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='test.unzip' version='1.0.0'/>
       </provides>
@@ -40,6 +43,9 @@
 		<property name='org.eclipse.equinox.p2.description' value='This SDK description is just another example...'/>
 		<property name='org.eclipse.pulsar.type' value='executable'/>
       </properties>
+      <filter>
+        (&amp; (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))
+      </filter>
       <provides size='1'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='test.exe' version='1.0.0'/>
       </provides>
