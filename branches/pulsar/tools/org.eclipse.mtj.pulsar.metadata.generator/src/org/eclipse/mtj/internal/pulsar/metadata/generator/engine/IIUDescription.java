@@ -9,7 +9,7 @@
  * Contributors:
  * Chad Peckham
  * Henrique Magalhaes (Motorola) - Added description field
- *
+ * David Marques (Motorola) - Implementing environment filtering.
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.engine;
@@ -176,4 +176,15 @@ public interface IIUDescription {
 	 */
 	public IPath getExecutablePath();
 	
+	public String getOs();
+
+	public void setOs(String os);
+
+	public String getWs();
+
+	public void setWs(String ws);
+
+	public String getArch();
+
+	public void setArch(String arch);
 }

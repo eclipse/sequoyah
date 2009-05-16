@@ -9,6 +9,7 @@
  * Contributors:
  * 	David Dubrow
  *  Henrique Magalhaes (Motorola) - Internalization of messages
+ *  David Marques (Motorola) - Implementing environment filtering.
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.ui;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.provisional.p2.core.Version;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -40,10 +42,12 @@ import org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IRepositoryDesc
 import org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IUDescription;
 import org.eclipse.mtj.pulsar.core.Activator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -52,12 +56,14 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class NewUnitDialog extends StatusDialog {
 
+	private EnvironmentDialog envDialog;
 	private IRepositoryDescription repository;
 	private IUDescription unit;
 	private ComboViewer typeViewer;
@@ -73,6 +79,9 @@ public class NewUnitDialog extends StatusDialog {
 	private Text licenseBodyText;
 	private Text copyrightURLText;
 	private Text copyrightBodyText;
+	private Text osText;
+	private Text wsText;
+	private Text archText;
 	
 	private enum ETYPE {
 		UNZIP, EXEC, UNZIP_AND_EXEC;
@@ -82,6 +91,7 @@ public class NewUnitDialog extends StatusDialog {
 		super(parent);
 		this.repository = repository;
 		unit = new IUDescription();
+		envDialog = new EnvironmentDialog(this.getShell());
 	}
 
 	public IIUDescription getUnit() {
@@ -98,7 +108,12 @@ public class NewUnitDialog extends StatusDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		
-		final Composite contents = new Composite(composite, SWT.NONE);
+		ScrolledComposite scroll = new ScrolledComposite(composite, SWT.V_SCROLL);
+		scroll.setExpandHorizontal(true);
+		scroll.setExpandVertical(true);
+		scroll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
+		final Composite contents = new Composite(scroll, SWT.NONE);
 		final GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginBottom = 5;
@@ -257,7 +272,90 @@ public class NewUnitDialog extends StatusDialog {
 		createEmptyCell(contents);
 		createEmptyCell(contents);
 		
-		return contents;
+		createEnvironmentSection(contents);
+		
+		scroll.setContent(contents);
+		scroll.setMinSize(contents.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		return composite;
+	}
+
+	private void createEnvironmentSection(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setText("Installation Environment");
+		group.setLayout(new GridLayout(0x03, false));
+		
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gridData.horizontalSpan = 2;
+		group.setLayoutData(gridData);
+		
+		Label osLabel = new Label(group, SWT.NONE);
+		osLabel.setText("Operating System:");
+		osLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		
+		osText = new Text(group, SWT.BORDER);
+		osText.setEditable(false);
+		osText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		
+		Button osBrowse = new Button(group, SWT.NONE);
+		osBrowse.setText("Browse...");
+		osBrowse.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		osBrowse.addSelectionListener(new SelectionListener(){
+			public void widgetSelected(SelectionEvent e) {
+				envDialog.setOptions(new String[] {"aix", "hpux", "linux", "macosx", "qnx", "solaris", "win32"});
+				if (envDialog.open() == Dialog.OK) {
+					osText.setText(envDialog.getSelectedOptions());
+				}
+			}
+		
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		Label wsLabel = new Label(group, SWT.NONE);
+		wsLabel.setText("Window System:");
+		wsLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		
+		wsText = new Text(group, SWT.BORDER);
+		wsText.setEditable(false);
+		wsText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		
+		Button wsBrowse = new Button(group, SWT.NONE);
+		wsBrowse.setText("Browse...");
+		wsBrowse.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		wsBrowse.addSelectionListener(new SelectionListener(){
+			public void widgetSelected(SelectionEvent e) {
+				envDialog.setOptions(new String[] {"carbon", "cocoa", "gtk", "motif", "photon", "win32", "wpf"});
+				if (envDialog.open() == Dialog.OK) {
+					wsText.setText(envDialog.getSelectedOptions());
+				}
+			}
+		
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		Label archLabel = new Label(group, SWT.NONE);
+		archLabel.setText("Architecture:");
+		archLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		
+		archText = new Text(group, SWT.BORDER);
+		archText.setEditable(false);
+		archText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		
+		Button archBrowse = new Button(group, SWT.NONE);
+		archBrowse.setText("Browse...");
+		archBrowse.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		archBrowse.addSelectionListener(new SelectionListener(){
+			public void widgetSelected(SelectionEvent e) {
+				envDialog.setOptions(new String[] {"ia64", "ia64_32", "PA_RISC", "ppc", "sparc", "x86", "x86_64"});
+				if (envDialog.open() == Dialog.OK) {
+					archText.setText(envDialog.getSelectedOptions());
+				}
+			}
+		
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 	}
 
 	@Override
@@ -432,6 +530,9 @@ public class NewUnitDialog extends StatusDialog {
 			}
 		}
 		unit.setSingleton(false);
+		unit.setArch(this.archText.getText());
+		unit.setOs(this.osText.getText());
+		unit.setWs(this.wsText.getText());
 		super.okPressed();
 	}
 

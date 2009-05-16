@@ -9,7 +9,7 @@
  * Contributors:
  * Chad Peckham
  * Henrique Magalhaes (Motorola) - Internalization of messages
- *
+ * David Marques (Motorola) - Implementing environment filtering.
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.engine;
@@ -52,6 +52,7 @@ import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK.EType;
 import org.eclipse.mtj.internal.pulsar.core.SDK;
 import org.eclipse.mtj.internal.pulsar.metadata.generator.Messages;
 import org.eclipse.mtj.pulsar.core.Activator;
+import org.eclipse.osgi.util.NLS;
 
 public class GeneratorEngine implements RepositoryConstants {
 
@@ -282,6 +283,30 @@ public class GeneratorEngine implements RepositoryConstants {
 					p2IuDesc.setLicense(newIuDesc.getUnitLicense());
 				if (newIuDesc.getUnitCopyright() != null)
 					p2IuDesc.setCopyright(newIuDesc.getUnitCopyright());
+				
+				StringBuffer buffer = new StringBuffer();
+				String value = null;
+				value = newIuDesc.getOs();
+				if (value != null && value.length() > 0) {
+					buffer.append(NLS.bind("(osgi.os={0})", value));
+					buffer.append(" ");
+				}
+				
+				value = newIuDesc.getWs();
+				if (value != null && value.length() > 0) {
+					buffer.append(NLS.bind("(osgi.ws={0})", value));
+					buffer.append(" ");
+				}
+				
+				value = newIuDesc.getArch();
+				if (value != null && value.length() > 0) {
+					buffer.append(NLS.bind("(osgi.arch={0})", value));
+				}
+				
+				if (buffer.length() > 0) {					
+					p2IuDesc.setFilter(buffer.toString());
+				}
+				
 				// add this IU
 				IInstallableUnit iu = MetadataFactory.createInstallableUnit(p2IuDesc);
 				repo.addInstallableUnits(new IInstallableUnit[] {iu});

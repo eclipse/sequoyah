@@ -9,6 +9,7 @@
  * Contributors:
  * 	David Dubrow
  *  Henrique Magalhaes (Motorola) - Added description field/Internalization of messages
+ *  David Marques (Motorola) - Implementing environment filtering.  
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.ui;
@@ -35,6 +36,7 @@ import org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IRepositoryDesc
 import org.eclipse.mtj.internal.pulsar.metadata.generator.engine.RepositoryDescription;
 import org.eclipse.mtj.pulsar.core.Activator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -75,7 +77,12 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 		setTitle(Messages.MetadataGeneratorDialog_DialogTitle);
 		setMessage(Messages.MetadataGeneratorDialog_DialogMessage);
 
-		Composite contents = new Composite(composite, SWT.NONE);
+		ScrolledComposite scroll = new ScrolledComposite(composite, SWT.V_SCROLL);
+		scroll.setExpandHorizontal(true);
+		scroll.setExpandVertical(true);
+		scroll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
+		Composite contents = new Composite(scroll, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		contents.setLayout(layout);
 		contents.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -183,7 +190,8 @@ public class MetadataGeneratorDialog extends TitleAreaDialog {
 		viewer.setInput(getCurrentUnits());
 
 		browseButton.setFocus();
-		
+		scroll.setContent(contents);
+		scroll.setMinSize(contents.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return contents;
 	}
 

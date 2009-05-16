@@ -9,7 +9,7 @@
  * Contributors:
  * Chad Peckham
  * Henrique Magalhaes (Motorola) - Added description field
- * 
+ * David Marques (Motorola) - Implementing environment filtering.
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.engine;
@@ -39,6 +39,9 @@ public class IUDescription implements IIUDescription {
 	private String categoryName;		// category name
 	private String artefactDescription; // artefact description
 	private IPath executablePath;		// installer path for unzip&execute
+	private String os;
+	private String ws;
+	private String arch;
 
 	/**
 	 * 
@@ -57,7 +60,7 @@ public class IUDescription implements IIUDescription {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pulsar.metadata.generator.engine.IIUDescription#setArtifactType(java.lang.String)
+	 * @see org.eclipse.pulsar.metadaversionta.generator.engine.IIUDescription#setArtifactType(java.lang.String)
 	 */
 	public void setArtifactType(EType artifactType) {
 		this.artifactType = artifactType;
@@ -252,4 +255,47 @@ public class IUDescription implements IIUDescription {
 	public void setExecutablePath(IPath executablePath) {
 		this.executablePath = executablePath;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription#getOs()
+	 */
+	public String getOs() {
+		return os;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription#setOs(java.lang.String)
+	 */
+	public void setOs(String os) {
+		this.os = os;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription#getWs()
+	 */
+	public String getWs() {
+		return ws;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription#setWs(java.lang.String)
+	 */
+	public void setWs(String ws) {
+		this.ws = ws;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription#getArch()
+	 */
+	public String getArch() {
+		return arch;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription#setArch(java.lang.String)
+	 */
+	public void setArch(String arch) {
+		this.arch = arch;
+	}
+	
 }
