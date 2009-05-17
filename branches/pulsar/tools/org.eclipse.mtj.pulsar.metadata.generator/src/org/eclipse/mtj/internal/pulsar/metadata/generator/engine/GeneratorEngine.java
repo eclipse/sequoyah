@@ -304,7 +304,7 @@ public class GeneratorEngine implements RepositoryConstants {
 				}
 				
 				if (buffer.length() > 0) {					
-					p2IuDesc.setFilter(buffer.toString());
+					p2IuDesc.setFilter(NLS.bind("({0})", buffer.toString()));
 				}
 				
 				// add this IU
