@@ -54,13 +54,13 @@ public class IUInstallationEnvironment implements IInstallationEnvironment {
 	private void processKeyValuePair(String[] pair) {
 		String key = pair[0x00];
 		if (key.equals("osgi.os")) {
-			this.os = pair[0x01];
+			this.os = pair[0x01].trim();
 		} else
 		if (key.equals("osgi.ws")) {
-			this.ws = pair[0x01];
+			this.ws = pair[0x01].trim();
 		} else
 		if (key.equals("osgi.arch")) {
-			this.arch = pair[0x01];
+			this.arch = pair[0x01].trim();
 		}
 	}
 
