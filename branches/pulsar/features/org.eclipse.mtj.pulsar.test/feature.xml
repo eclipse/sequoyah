@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.mtj.pulsar.test"
-      label="Eclipse Pulsar Tests (Incubation)"
+      label="Eclipse Pulsar Tests"
       version="1.0.0.qualifier"
       provider-name="Eclipse.org - Pulsar">
 
