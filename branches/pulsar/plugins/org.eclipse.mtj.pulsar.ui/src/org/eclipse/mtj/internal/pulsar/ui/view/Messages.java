@@ -29,13 +29,20 @@ public class Messages extends NLS {
 	public static String SDKInstallView_RefreshActionLabel;
 	public static String SDKInstallView_RefreshActionToolTip;
 	public static String SDKInstallView_InstallActionLabel;
+	public static String SDKInstallView_UninstallActionLabel;
 	public static String SDKInstallView_InstallActionToolTip;
+	public static String SDKInstallView_UninstallActionToolTip;
 	public static String SDKInstallView_InstallError;
 	public static String SDKInstallView_InstallersColLabel;
 	public static String SDKInstallView_StatusColLabel;
 	public static String SDKInstallView_UpdatingInstallersJobTitle;
 	public static String StatusLabelProvider_InstalledLabel;
 	public static String StatusLabelProvider_UninstalledLabel;
+	public static String SDKInstallView_UninstallError;
+	public static String SDKInstallView_VersionLabel;
+	
+	
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

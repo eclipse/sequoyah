@@ -13,6 +13,8 @@
  *  Euclides Neto (Motorola) - Added refresh functionality and change the install icon.
  *  David Marques (Motorola) - Adding installation environment support.
  *  Euclides Neto (Motorola) - Added details functionality.
+ *  Henrique Magalhaes(Motorola)/
+ *  Euclides Neto (Motorola) - Added uninstall action.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -94,6 +96,29 @@ public class SDKInstallView extends ViewPart {
 		}
 	}
 	
+	private class UninstallAction extends BaseSelectionListenerAction {
+
+		protected UninstallAction() {
+			super(Messages.SDKInstallView_UninstallActionLabel);
+			setToolTipText(Messages.SDKInstallView_UninstallActionToolTip);
+			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_DELETE));
+		}
+
+	    protected boolean updateSelection(IStructuredSelection selection) {
+			boolean toReturn = false;
+			// Just enable the action if the SDK state is INSTALLED
+	    	if (getSelectedSDK() != null) {
+	    		toReturn = getSelectedSDK().getState().equals(EState.INSTALLED);
+	    	}
+	    	return toReturn;
+		}
+
+		@Override
+		public void run() {
+			uninstallSelectedSDK();
+		}
+	}
+	
 	private class RefreshAction extends BaseSelectionListenerAction {
 
 		protected RefreshAction() {
@@ -158,6 +183,8 @@ public class SDKInstallView extends ViewPart {
 	private InstallAction installAction;
 	private RefreshAction refreshAction;
 	private DetailsAction detailsAction;
+	private UninstallAction uninstallAction;
+	
 	private Action doubleClickAction;
 	private StructuredViewerProvisioningListener listener;
 	private SDKInstallItemViewer itemViewer;
@@ -187,7 +214,7 @@ public class SDKInstallView extends ViewPart {
 		
 		TreeViewerColumn versionColumn = new TreeViewerColumn(viewer, SWT.LEFT);
 		versionColumn.setLabelProvider(new VersionLabelProvider());
-		versionColumn.getColumn().setText("Version");
+		versionColumn.getColumn().setText(Messages.SDKInstallView_VersionLabel);
 		
 		viewer.setContentProvider(new TreeNodeContentProvider());
 		viewer.getTree().setHeaderVisible(true);
@@ -201,6 +228,7 @@ public class SDKInstallView extends ViewPart {
 			public void selectionChanged(SelectionChangedEvent event) {
 				installAction.selectionChanged(event);
 				detailsAction.selectionChanged(event);
+				uninstallAction.selectionChanged(event);
 				updateSDKItemViewer();
 			}
 		});
@@ -365,12 +393,14 @@ public class SDKInstallView extends ViewPart {
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(installAction);
 		manager.add(detailsAction);
+		manager.add(uninstallAction);
 		manager.add(refreshAction);
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(installAction);
 		manager.add(detailsAction);
+		manager.add(uninstallAction);
 		manager.add(refreshAction);
 	}
 
@@ -380,6 +410,9 @@ public class SDKInstallView extends ViewPart {
 		
 		detailsAction = new DetailsAction();
 		detailsAction.setEnabled(getSelectedSDK() != null);
+		
+		uninstallAction = new UninstallAction();
+		uninstallAction.setEnabled(getSelectedSDK() != null);
 		
 		refreshAction = new RefreshAction();
 		refreshAction.setEnabled(true);
@@ -467,6 +500,18 @@ public class SDKInstallView extends ViewPart {
 			} catch (CoreException e) {
 				org.eclipse.mtj.pulsar.core.Activator.logError(
 						Messages.SDKInstallView_InstallError, e);
+			}
+		}
+	}
+	
+	protected void uninstallSelectedSDK() {
+		ISDK sdk = getSelectedSDK();
+		if (sdk != null) {
+			try {
+				QuickInstallCore.getInstance().uninstallSDK(getSite().getShell(), sdk, P2InstallerUI.getInstance());
+			} catch (CoreException e) {
+				org.eclipse.mtj.pulsar.core.Activator.logError(
+						Messages.SDKInstallView_UninstallError, e);
 			}
 		}
 	}
