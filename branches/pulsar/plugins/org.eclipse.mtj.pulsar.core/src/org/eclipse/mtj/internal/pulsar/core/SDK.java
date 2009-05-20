@@ -11,6 +11,7 @@
  *  David Marques (Motorola) - Extending IInstallationInfoProvider.
  *  Euclides Neto (Motorola) - Externalize strings.
  *  David Marques (Motorola) - Adding installation environment support.
+ *  David Marques (Motorola) - Adding support for feature installation.
  */
 
 package org.eclipse.mtj.internal.pulsar.core;
@@ -35,6 +36,7 @@ public class SDK extends PlatformObject implements ISDK {
 	public static final String PROP_TYPE = "org.eclipse.pulsar.type"; //$NON-NLS-1$
 	public static final String ZIPARCHIVE_TYPE = "ziparchive"; //$NON-NLS-1$
 	public static final String EXECUTABLE_TYPE = "executable"; //$NON-NLS-1$
+	public static final String OSGI_BUNDLE_TYPE = "osgi-bundle"; //$NON-NLS-1$
 	public static final String PROP_CATEGORY = "org.eclipse.pulsar.category.name"; //$NON-NLS-1$
 	public static final String PROP_DOC_URL = "org.eclipse.pulsar.documentation.url"; //$NON-NLS-1$
 	public static final String PROP_DESCRIPTION = "org.eclipse.equinox.p2.description"; //$NON-NLS-1$
@@ -66,7 +68,8 @@ public class SDK extends PlatformObject implements ISDK {
 			return EType.ZIP_ARCHIVE;
 		else if (value.equals(EXECUTABLE_TYPE))
 			return EType.EXECUTABLE;
-		
+		else if (value.equals(OSGI_BUNDLE_TYPE))
+			return EType.OSGI_BUNDLE;
 		return EType.UNKNOWN;
 	}
 	

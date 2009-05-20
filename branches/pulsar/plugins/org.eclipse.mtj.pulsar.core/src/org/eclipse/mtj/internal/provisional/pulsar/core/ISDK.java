@@ -12,6 +12,7 @@
  *     David Marques (Motorola) - Extending IInstallationInfoProvider.
  *     David Marques (Motorola) - Adding getInstallableUnit and getRepository
  *                                methods.
+ *     David Marques (Motorola) - Adding support for feature installation.
  */
 package org.eclipse.mtj.internal.provisional.pulsar.core;
 
@@ -41,7 +42,8 @@ public interface ISDK extends IAdaptable, IInstallationInfoProvider {
 	 */
 	enum EType {
 		ZIP_ARCHIVE,
-		EXECUTABLE, 
+		EXECUTABLE,
+		OSGI_BUNDLE,
 		UNKNOWN
 	}
 	

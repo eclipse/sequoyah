@@ -10,6 +10,7 @@
  *     David Marques (Motorola) - Initial version
  *     David Marques (Motorola) - Fixing appearance.
  *     David Marques (Motorola) - Refactoring to use label provider.
+ *     David Marques (Motorola) - Loading item viewer asynchronously.
  */
 package org.eclipse.mtj.internal.pulsar.ui.view;
 
@@ -81,8 +82,12 @@ public class SDKInstallItemViewer extends Composite {
 	 */
 	public void setInput(Object input) {
 		this.input = input;
-		if (this.input != null) {			
-			this.refresh();
+		if (this.input != null) {		
+			Display.getDefault().asyncExec(new Runnable(){
+				public void run() {					
+					refresh();
+				}
+			});
 		}
 	}
 	

@@ -10,7 +10,7 @@
  * 	David Dubrow
  *  Henrique Magalhaes(Motorola)/
  *  Euclides Neto (Motorola) - Fixed Install and added uninstall. 
- *
+ *  David Marques (Motorola) - Adding support for feature installation.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -86,7 +86,9 @@ public class P2InstallerUI implements IInstallerUI {
 		SDK sdkImpl = (SDK) sdk.getAdapter(SDK.class);
 		final InstallableUnit[] ius = getInstallableUnits(sdkImpl);
 		final URI artifactsUri = sdkImpl.getRepository().getArtifactsURI();
+		final URI metadataUri  = sdkImpl.getRepository().getMetadataURI();
 		ProvisioningHelper.addArtifactRepository(artifactsUri);
+		ProvisioningHelper.addMetadataRepository(metadataUri);
 		MultiStatus status = getStatus();
 		final String id = getProfileID();
 		ProfileChangeRequest changeRequest = InstallAction.computeProfileChangeRequest(ius, id, status, new NullProgressMonitor());
@@ -108,11 +110,9 @@ public class P2InstallerUI implements IInstallerUI {
 							dialog.create();
 							PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IProvHelpContextIds.INSTALL_WIZARD);
 							
-							int result = dialog.open();
-							if (result != Dialog.OK) {
-								P2Utils.deleteProfile(id);
-							}
+							dialog.open();
 							ProvisioningHelper.removeArtifactRepository(artifactsUri);
+							ProvisioningHelper.removeMetadataRepository(metadataUri);
 						}
 					});
 				}

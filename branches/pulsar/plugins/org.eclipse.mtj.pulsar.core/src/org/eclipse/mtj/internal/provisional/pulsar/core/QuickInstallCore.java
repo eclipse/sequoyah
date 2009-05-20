@@ -12,8 +12,12 @@
  */
 package org.eclipse.mtj.internal.provisional.pulsar.core;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -53,6 +57,13 @@ public class QuickInstallCore {
 			repositories.addAll(provider.getRepositories());
 		}
 		
+		// Sorts the SDK repositories by name (ignoring the case) 
+		List<ISDKRepository> list = new ArrayList<ISDKRepository>(repositories); 
+		Collections.sort(list, new Comparator<ISDKRepository>() { 
+			public int compare(ISDKRepository arg0, ISDKRepository arg1) { 
+				return arg0.getName().compareToIgnoreCase(arg1.getName()); 
+			} 
+		});
 		return repositories;
 	}
 	
