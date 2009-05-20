@@ -31,4 +31,14 @@ public interface IInstallerUI {
 	 */
 	public void runInstaller(Shell parentShell, ISDK sdk) throws CoreException;
 	
+	/**
+	 * Runs uninstaller user interface
+	 * 
+	 * @param parentShell Shell
+	 * @param sdk ISDK
+	 * 
+	 * @throws CoreException
+	 */
+	public void runUninstaller(Shell parentShell, ISDK sdk) throws CoreException;
+	
 }

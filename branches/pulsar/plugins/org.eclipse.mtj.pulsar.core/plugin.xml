@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="sdkRepositoryProvider" name="SDK Respository Provider" schema="schema/sdkRepositoryProvider.exsd"/>
+   <extension-point id="sdkRepositoryProvider" name="%extension-point.name" schema="schema/sdkRepositoryProvider.exsd"/>
    <extension
          point="org.eclipse.mtj.pulsar.core.sdkRepositoryProvider">
       <provider

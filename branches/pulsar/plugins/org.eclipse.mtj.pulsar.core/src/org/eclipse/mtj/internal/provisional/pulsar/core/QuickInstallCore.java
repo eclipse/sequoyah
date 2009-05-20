@@ -69,4 +69,18 @@ public class QuickInstallCore {
 		installerUI.runInstaller(parentShell, sdk);
 	}
 	
+	/**
+	 * Uninstalls an SDK using the installer UI
+	 * 
+	 * @param parentShell Shell
+	 * @param sdk ISDK
+	 * @param installerUI IInstallerUI
+	 * 
+	 * @throws CoreException
+	 */
+	public void uninstallSDK(Shell parentShell, ISDK sdk, IInstallerUI installerUI) throws CoreException {
+		installerUI.runUninstaller(parentShell, sdk);
+	}
+ 
+	
 }
