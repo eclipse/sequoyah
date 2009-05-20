@@ -10,6 +10,8 @@
  * Chad Peckham
  * Henrique Magalhaes (Motorola) - Internalization of messages
  * David Marques (Motorola) - Implementing environment filtering.
+ * Henrique Magalhaes(Motorola)/
+ * Euclides Neto (Motorola) - Fixed environment filtering.
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.engine;
@@ -288,23 +290,23 @@ public class GeneratorEngine implements RepositoryConstants {
 				String value = null;
 				value = newIuDesc.getOs();
 				if (value != null && value.length() > 0) {
-					buffer.append(NLS.bind("(osgi.os={0})", value));
-					buffer.append(" ");
+					buffer.append(NLS.bind("(osgi.os={0})", value).trim()); //$NON-NLS-1$
+					buffer.append(" "); //$NON-NLS-1$
 				}
 				
 				value = newIuDesc.getWs();
 				if (value != null && value.length() > 0) {
-					buffer.append(NLS.bind("(osgi.ws={0})", value));
-					buffer.append(" ");
+					buffer.append(NLS.bind("(osgi.ws={0})", value).trim()); //$NON-NLS-1$
+					buffer.append(" "); //$NON-NLS-1$
 				}
 				
 				value = newIuDesc.getArch();
 				if (value != null && value.length() > 0) {
-					buffer.append(NLS.bind("(osgi.arch={0})", value));
+					buffer.append(NLS.bind("(osgi.arch={0})", value).trim()); //$NON-NLS-1$
 				}
 				
 				if (buffer.length() > 0) {					
-					p2IuDesc.setFilter(NLS.bind("({0})", buffer.toString()));
+					p2IuDesc.setFilter(NLS.bind("(& {0})", buffer.toString())); //$NON-NLS-1$
 				}
 				
 				// add this IU

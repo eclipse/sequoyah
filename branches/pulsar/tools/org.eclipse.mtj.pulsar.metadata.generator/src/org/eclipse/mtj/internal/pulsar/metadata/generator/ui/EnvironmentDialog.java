@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.mtj.internal.pulsar.metadata.generator.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
@@ -55,7 +56,7 @@ public class EnvironmentDialog extends Dialog {
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell newShell) {
-		newShell.setText("Environment Options");
+		newShell.setText(Messages.EnvironmentDialog_EnvironmentDialogTitle);
 		super.configureShell(newShell);
 	}
 	
@@ -76,7 +77,7 @@ public class EnvironmentDialog extends Dialog {
 		contents.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		Label label = new Label(contents, SWT.NONE);
-		label.setText("Valid Values:");
+		label.setText(Messages.EnvironmentDialog_ValidValuesLabel);
 		gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gridData.horizontalSpan = 2;
 		label.setLayoutData(gridData);
@@ -92,7 +93,7 @@ public class EnvironmentDialog extends Dialog {
 		viewer.setInput(options);
 		
 		Button selectAll = new Button(contents, SWT.NONE);
-		selectAll.setText("Select All");
+		selectAll.setText(Messages.EnvironmentDialog_SelectButton);
 		selectAll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		selectAll.addSelectionListener(new SelectionListener(){
 			public void widgetSelected(SelectionEvent e) {
@@ -103,7 +104,7 @@ public class EnvironmentDialog extends Dialog {
 		});
 		
 		Button deselectAll = new Button(contents, SWT.NONE);
-		deselectAll.setText("Deselect All");
+		deselectAll.setText(Messages.EnvironmentDialog_DeselectButton);
 		deselectAll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		deselectAll.addSelectionListener(new SelectionListener(){
 			public void widgetSelected(SelectionEvent e) {
@@ -150,7 +151,7 @@ public class EnvironmentDialog extends Dialog {
 		for (Object option : selected) {
 			if (option instanceof String) {
 				if (result.length() > 0) {
-					result.append(",").append(option);
+					result.append(",").append(option); //$NON-NLS-1$
 				} else {
 					result.append(option);
 				}

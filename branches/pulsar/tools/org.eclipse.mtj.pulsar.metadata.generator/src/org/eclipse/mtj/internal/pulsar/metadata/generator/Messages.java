@@ -70,6 +70,13 @@ public class Messages extends NLS{
 	public static String GeneratorEngine_CreateMetadataError;
 	public static String GeneratorEngine_CreateArtefactsError;
 	
+	public static String EnvironmentDialog_EnvironmentDialogTitle;
+	public static String EnvironmentDialog_ValidValuesLabel;
+	public static String EnvironmentDialog_SelectButton;
+	public static String EnvironmentDialog_DeselectButton;
+	
+	
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
