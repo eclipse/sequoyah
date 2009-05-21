@@ -9,6 +9,7 @@
  * Contributors:
  *     Gustavo de Paula (Motorola) - Initial implementation
  *     David Dubrow (Nokia)
+ *     David Marques (Motorola) - Fixing sorting repositories.
  */
 package org.eclipse.mtj.internal.provisional.pulsar.core;
 
@@ -64,7 +65,7 @@ public class QuickInstallCore {
 				return arg0.getName().compareToIgnoreCase(arg1.getName()); 
 			} 
 		});
-		return repositories;
+		return list;
 	}
 	
 	/**
