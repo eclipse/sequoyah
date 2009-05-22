@@ -3,15 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="http://www.eclipse.org/default_style.css" type="text/css">
-<title>Build Notes for TmL 0.3 (200905152200)</title>
+<title>Build Notes for TmL 0.3RC2 (200905222200)</title>
 </head>
 
 <body>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" width="80%">
-		<p><b><font class=indextop>Build Notes for TmL 0.3 Nighly Build (200905192200)</font></b><br>
-		May 19, 2009 </p>
+		<p><b><font class=indextop>Build Notes for TmL 0.3 Release Candidate 2 (RC2) (200905222200)</font></b><br>
+		22 May 2009 </p>
 		</td>
 	</tr>
 </table>
@@ -29,10 +29,10 @@
 </li>
 <li>This is the third release of TmL, please help us to keep it growing up. Report bugs and send us your suggestions.</li>
 <li>Use
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2009-05-19&chfield=resolution&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2009-05-22&chfield=resolution&cmdtype=doit">
   this query</a> to show the list of bugs fixed.</li>
 <li>For details on committed files, see the
-  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/N-0.3-200905192200/tml-log.csv">
+  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/R-0.3-200905222200/tml-log.csv">
   TmL CVS changelog</a>.</li>
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/index.php/DSDP/TML/TML_FAQ">TmL FAQ</a></li>
@@ -84,7 +84,7 @@ APIs better.
 <p>Click
 <a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=TmL&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&format=table&action=wrap">here</a>
 for a complete up-to-date bugzilla status report, or
-<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=TmL&component=RSE&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&target_milestone=0.1&format=table&action=wrap">here</a>
+<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=TmL&component=RSE&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&target_milestone=0.3&format=table&action=wrap">here</a>
 for a report on bugs fixed so far.
 </p>
 </td></tr></tbody></table>
