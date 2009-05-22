@@ -23,6 +23,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271807] - Improper use of PreferencesUtil.createPropertyDialogOn() on properties editor
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
  * Pablo Cobucci Leite (Eldorado Research Institute) - Bug [274977] - Instance Management View does not ask user before removing a instance
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [277469] - Device management view blinks when user performs operations
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -603,8 +604,6 @@ public class InstanceStatusComposite extends Composite
 	    Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 Collection<String> expandedDevices = getExpandedDevices();
-                
-                viewer.setInput(viewSite);
                 viewer.refresh();
                 expandedDevices.add(instance.getDeviceTypeId());
                 expandToNodeValues(expandedDevices, instance);
@@ -619,7 +618,6 @@ public class InstanceStatusComposite extends Composite
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 Collection<String> expandedDevices = getExpandedDevices();
-                viewer.setInput(viewSite);
                 viewer.refresh();
                 expandToNodeValues(expandedDevices, null);
             }});
@@ -629,17 +627,49 @@ public class InstanceStatusComposite extends Composite
 	{
 	    Display.getDefault().asyncExec(new Runnable() {
             public void run() {
-                Collection<String> expandedDevices = getExpandedDevices();
-                IInstance selectedInstance = getSelectedInstance();
-                viewer.setInput(viewSite);
-                viewer.refresh();
-                expandToNodeValues(expandedDevices, selectedInstance);
-                
-                if (instance.equals(selectedInstance))
+                ViewerInstanceNode node = getInstanceNode(instance);
+                if (node != null)
                 {
-                    notifyInstanceSelectionChangeListeners(selectedInstance);
+                    Collection<String> expandedDevices = getExpandedDevices();
+                    IInstance selectedInstance = getSelectedInstance();
+                    viewer.update(node, null);
+                    expandToNodeValues(expandedDevices, selectedInstance);
+                    
+                    if (instance.equals(selectedInstance))
+                    {
+                        notifyInstanceSelectionChangeListeners(selectedInstance);
+                    }
                 }
             }});
+	}
+	
+	private ViewerInstanceNode getInstanceNode(IInstance instance) {
+	    ViewerInstanceNode node = null;	    
+	    TreeItem[] deviceItems = viewer.getTree().getItems();
+	    
+	    for (TreeItem devItem : deviceItems) {	        
+	        Object data = devItem.getData();
+	        
+	        if (data instanceof ViewerDeviceNode) {
+	            Set<ViewerAbstractNode> children = ((ViewerDeviceNode)data).getChildren();
+	            
+	            for (ViewerAbstractNode child : children) {
+	                if (child instanceof ViewerInstanceNode) {
+	                    IInstance nodeInstance = ((ViewerInstanceNode)child).getInstance();
+	                    if ((nodeInstance != null)&&(nodeInstance.equals(instance))) {
+	                        node = (ViewerInstanceNode) child;
+	                        break;
+	                    }
+	                }
+	            }
+	            
+	            if (node != null) {
+	                break;
+	            }
+	        }
+	    }
+	    
+	    return node;
 	}
 
     /*
