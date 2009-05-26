@@ -9,6 +9,7 @@
  * Contributors:
  * 	David Dubrow
  *  David Marques (Motorola) - Renaming getImageDescriptor method.
+ *  David Marques (Motorola) - Handling exceptions when loading icons.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -41,28 +42,33 @@ public class InstallersLabelProvider extends ColumnLabelProvider {
 
     private Image getRepositoryImage(ISDKRepository repository) {
         ensureImageCache();
-        if (!imageCache.containsKey(repository)) {
-            ImageDescriptor imageDescriptor = repository.getIconImageDescriptor();
-            ImageData imageData = imageDescriptor.getImageData();
-            Image image;
-            if (imageData != null) {
-                if (imageData.width == IMAGE_DIMENSION
-                        && imageData.height == IMAGE_DIMENSION) {
-                    image = imageDescriptor.createImage(device);
-                } else {
-                    ImageData scaledImageData = imageData.scaledTo(
-                            IMAGE_DIMENSION, IMAGE_DIMENSION);
-                    image = new Image(device, scaledImageData);
-                }
-            } else {
-                image = PlatformUI.getWorkbench().getSharedImages()
-                        .getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER)
-                        .createImage();
-            }
-            imageCache.put(repository, image);
-        }
-
-        return imageCache.get(repository);
+		if (!imageCache.containsKey(repository)) {
+			Image image = null;
+			try {
+				ImageDescriptor imageDescriptor = repository
+						.getIconImageDescriptor();
+				ImageData imageData = imageDescriptor.getImageData();
+				if (imageData != null) {
+					if (imageData.width == IMAGE_DIMENSION
+							&& imageData.height == IMAGE_DIMENSION) {
+						image = imageDescriptor.createImage(device);
+					} else {
+						ImageData scaledImageData = imageData.scaledTo(
+								IMAGE_DIMENSION, IMAGE_DIMENSION);
+						image = new Image(device, scaledImageData);
+					}
+				}
+			} catch (Exception e) {
+				// Do nothing... use default image icon...
+			}
+			if (image == null) {
+				image = PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER)
+						.createImage();
+			}
+			imageCache.put(repository, image);
+		}
+		return imageCache.get(repository);
     }
 
     private void ensureImageCache() {
