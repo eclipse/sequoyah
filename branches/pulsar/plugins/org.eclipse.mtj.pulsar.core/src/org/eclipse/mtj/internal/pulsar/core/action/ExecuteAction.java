@@ -8,7 +8,7 @@
  *
  * Contributors:
  * 	David Dubrow
- *
+ *  Gustavo de Paula (Motorola) - Add change permission in a linux OS
  */
 
 package org.eclipse.mtj.internal.pulsar.core.action;
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.Util;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.actions.ActionConstants;
+import org.eclipse.equinox.internal.p2.touchpoint.natives.actions.ChmodAction;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IFileArtifactRepository;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.engine.ProvisioningAction;
@@ -30,6 +31,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.mtj.internal.pulsar.core.Messages;
 import org.eclipse.mtj.pulsar.core.Activator;
 
+@SuppressWarnings("restriction")
 public class ExecuteAction extends ProvisioningAction {
 
 	public static final String ACTION_EXECUTE = "execute"; //$NON-NLS-1$
@@ -71,7 +73,16 @@ public class ExecuteAction extends ProvisioningAction {
 		return Status.OK_STATUS;
 	}
 
+	@SuppressWarnings("restriction")
 	private void execute(String executable, IInstallableUnit iu) throws IOException, InterruptedException {
+		String osName = System.getProperty("os.name" );
+		if( osName.equals( "Linux" ) )
+        {
+            ChmodAction ca = new ChmodAction();
+            String dir = executable.substring(0, executable.lastIndexOf('/'));
+            String file = executable.substring(executable.lastIndexOf('/')+1, executable.length());
+            ca.chmod(dir, file, "777", null);
+        }		
 		ProcessBuilder processBuilder = new ProcessBuilder(executable);
 		Process process = processBuilder.start();
 		process.waitFor();

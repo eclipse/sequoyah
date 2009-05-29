@@ -9,6 +9,7 @@
  * Contributors:
  * 	David Dubrow
  *  Euclides Neto (Motorola) - Externalize strings.
+ *  Gustavo de Paula (Motorola) - Add change permission in a linux OS  
  */
 
 package org.eclipse.mtj.internal.pulsar.core.action;
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.Util;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.actions.ActionConstants;
+import org.eclipse.equinox.internal.p2.touchpoint.natives.actions.ChmodAction;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.actions.UnzipAction;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
@@ -68,6 +70,15 @@ public class UnzipAndExecuteAction extends UnzipAction {
 	}
 
 	private void execute(String executable, IInstallableUnit iu) throws IOException, InterruptedException {
+		String osName = System.getProperty("os.name" );
+		if( osName.equals( "Linux" ) )
+        {
+            ChmodAction ca = new ChmodAction();
+            String dir = executable.substring(0, executable.lastIndexOf('/'));
+            String file = executable.substring(executable.lastIndexOf('/')+1, executable.length());
+            ca.chmod(dir, file, "777", null);
+        }		
+		
 		ProcessBuilder processBuilder = new ProcessBuilder(executable);
 		Process process = processBuilder.start();
 		process.waitFor();
