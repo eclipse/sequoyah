@@ -11,6 +11,7 @@
  *  Henrique Magalhaes(Motorola)/
  *  Euclides Neto (Motorola) - Fixed Install and added uninstall. 
  *  David Marques (Motorola) - Adding support for feature installation.
+ *  Euclides Neto (Motorola) - Keeping SDK repository on p2.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -109,10 +110,7 @@ public class P2InstallerUI implements IInstallerUI {
 							WizardDialog dialog = new WizardDialog(parentShell, wizard);
 							dialog.create();
 							PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IProvHelpContextIds.INSTALL_WIZARD);
-							
 							dialog.open();
-							ProvisioningHelper.removeArtifactRepository(artifactsUri);
-							ProvisioningHelper.removeMetadataRepository(metadataUri);
 						}
 					});
 				}
