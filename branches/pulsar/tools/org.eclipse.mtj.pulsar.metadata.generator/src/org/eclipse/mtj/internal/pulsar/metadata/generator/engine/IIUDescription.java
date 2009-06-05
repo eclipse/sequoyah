@@ -16,7 +16,6 @@ package org.eclipse.mtj.internal.pulsar.metadata.generator.engine;
 
 import java.net.URI;
 import java.net.URL;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.equinox.internal.provisional.p2.metadata.ICopyright;
@@ -26,165 +25,168 @@ import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK.EType;
 /**
  * 
  */
+@SuppressWarnings("restriction")
 public interface IIUDescription {
 
-	/**
-	 * @return the artifactType
-	 */
-	public EType getArtifactType();
+    /**
+     * @return the artifactType
+     */
+    public EType getArtifactType();
 
-	/**
-	 * @param artifactType the artifactType to set
-	 */
-	public void setArtifactType(EType artifactType);
+    /**
+     * @param artifactType the artifactType to set
+     */
+    public void setArtifactType(EType artifactType);
 
-	/**
-	 * @return the artifactId
-	 */
-	public String getArtifactId();
+    /**
+     * @return the artifactId
+     */
+    public String getArtifactId();
 
-	/**
-	 * @param artifactId the artifactId to set
-	 */
-	public void setArtifactId(String artifactId);
+    /**
+     * @param artifactId the artifactId to set
+     */
+    public void setArtifactId(String artifactId);
 
-	/**
-	 * @return the artifactVersion
-	 */
-	public Version getArtifactVersion();
+    /**
+     * @return the artifactVersion
+     */
+    public Version getArtifactVersion();
 
-	/**
-	 * @param artifactVersion the artifactVersion to set
-	 */
-	public void setArtifactVersion(Version artifactVersion);
+    /**
+     * @param artifactVersion the artifactVersion to set
+     */
+    public void setArtifactVersion(Version artifactVersion);
 
-	/**
-	 * @return the unitId
-	 */
-	public String getUnitId();
+    /**
+     * @return the unitId
+     */
+    public String getUnitId();
 
-	/**
-	 * @param unitId the unitId to set
-	 */
-	public void setUnitId(String unitId);
+    /**
+     * @param unitId the unitId to set
+     */
+    public void setUnitId(String unitId);
 
-	/**
-	 * @return the unitVersion
-	 */
-	public Version getUnitVersion();
+    /**
+     * @return the unitVersion
+     */
+    public Version getUnitVersion();
 
-	/**
-	 * @param unitVersion the unitVersion to set
-	 */
-	public void setUnitVersion(Version unitVersion);
+    /**
+     * @param unitVersion the unitVersion to set
+     */
+    public void setUnitVersion(Version unitVersion);
 
-	/**
-	 * @return the unitLicense
-	 */
-	public ILicense getUnitLicense();
+    /**
+     * @return the unitLicense
+     */
+    public ILicense getUnitLicense();
 
-	/**
-	 * @param unitLicense the unitLicense to set
-	 */
-	public void setUnitLicense(ILicense unitLicense);
+    /**
+     * @param unitLicense the unitLicense to set
+     */
+    public void setUnitLicense(ILicense unitLicense);
 
-	/**
-	 * 
-	 * @param location the location of a document containing the full license, or <code>null</code>
-	 * @param body the license body, cannot be <code>null</code>
-	 */
-	public void setUnitLicense(URI location, String body);
+    /**
+     * 
+     * @param location the location of a document containing the full license,
+     *            or <code>null</code>
+     * @param body the license body, cannot be <code>null</code>
+     */
+    public void setUnitLicense(URI location, String body);
 
-	/**
-	 * @return the unitCopyright
-	 */
-	public ICopyright getUnitCopyright();
+    /**
+     * @return the unitCopyright
+     */
+    public ICopyright getUnitCopyright();
 
-	/**
-	 * @param unitCopyright the unitCopyright to set
-	 */
-	public void setUnitCopyright(ICopyright unitCopyright);
+    /**
+     * @param unitCopyright the unitCopyright to set
+     */
+    public void setUnitCopyright(ICopyright unitCopyright);
 
-	/**
-	 * @param location the location of a document containing the copyright notice, or <code>null</code>
-	 * @param body the copyright body, cannot be <code>null</code>
-	 */
-	public void setUnitCopyright(URI location, String body);
-	
-	/**
-	 * @return the isCategory
-	 */
-	public boolean isCategory();
-	
-	/**
-	 * @param unitName the unitName to set
-	 */
-	public void setUnitName(String unitName);
+    /**
+     * @param location the location of a document containing the copyright
+     *            notice, or <code>null</code>
+     * @param body the copyright body, cannot be <code>null</code>
+     */
+    public void setUnitCopyright(URI location, String body);
 
-	/**
-	 * @return the unitName
-	 */
-	public String getUnitName();
+    /**
+     * @return the isCategory
+     */
+    public boolean isCategory();
 
-	/**
-	 * @param categoryName the categoryName to set
-	 */
-	public void setCategoryName(String categoryName);
+    /**
+     * @param unitName the unitName to set
+     */
+    public void setUnitName(String unitName);
 
-	/**
-	 * @return the categoryName
-	 */
-	public String getCategoryName();
-	
-	/**
-	 * @param categoryName the artefactDescription to set
-	 */
-	public void setArtifactDescription(String artefactDescription);
-	
-	/**
-	 * @return the artefactDescription
-	 */
-	public String getArtifactDescription();
+    /**
+     * @return the unitName
+     */
+    public String getUnitName();
 
-	/**
-	 * @param isSingleton the isSingleton to set
-	 */
-	public void setSingleton(boolean isSingleton);
+    /**
+     * @param categoryName the categoryName to set
+     */
+    public void setCategoryName(String categoryName);
 
-	/**
-	 * @return the isSingleton
-	 */
-	public boolean isSingleton();
-	
-	/**
-	 * @param unitDocumentationURL URL to documentation for installable unit
-	 */
-	public void setUnitDocumentationURL(URL unitDocumentationURL);
-	
-	/**
-	 * @return URL URL to installable unit documentation
-	 */
-	public URL getUnitDocumentationURL();
+    /**
+     * @return the categoryName
+     */
+    public String getCategoryName();
 
-	/**
-	 * @param executablePath
-	 */
-	public void setExecutablePath(IPath executablePath);
-	
-	/**
-	 * @return executablePath
-	 */
-	public IPath getExecutablePath();
-	
-	public String getOs();
+    /**
+     * @param categoryName the artefactDescription to set
+     */
+    public void setArtifactDescription(String artefactDescription);
 
-	public void setOs(String os);
+    /**
+     * @return the artefactDescription
+     */
+    public String getArtifactDescription();
 
-	public String getWs();
+    /**
+     * @param isSingleton the isSingleton to set
+     */
+    public void setSingleton(boolean isSingleton);
 
-	public void setWs(String ws);
+    /**
+     * @return the isSingleton
+     */
+    public boolean isSingleton();
 
-	public String getArch();
+    /**
+     * @param unitDocumentationURL URL to documentation for installable unit
+     */
+    public void setUnitDocumentationURL(URL unitDocumentationURL);
 
-	public void setArch(String arch);
+    /**
+     * @return URL URL to installable unit documentation
+     */
+    public URL getUnitDocumentationURL();
+
+    /**
+     * @param executablePath
+     */
+    public void setExecutablePath(IPath executablePath);
+
+    /**
+     * @return executablePath
+     */
+    public IPath getExecutablePath();
+
+    public String getOs();
+
+    public void setOs(String os);
+
+    public String getWs();
+
+    public void setWs(String ws);
+
+    public String getArch();
+
+    public void setArch(String arch);
 }

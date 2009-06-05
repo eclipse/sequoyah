@@ -5,21 +5,21 @@
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            label="Sample Action Set"
+            label="%actionSet.label"
             visible="true"
             id="org.eclipse.mtj.pulsar.metadata.generator.actionSet">
          <menu
-               label="Pulsar Admin"
+               label="%menu.label"
                id="pulsarAdminMenu">
             <separator
                   name="adminGroup">
             </separator>
          </menu>
          <action
-               label="New Repository"
+               label="%action.label"
                icon="icons/sample.gif"
                class="org.eclipse.mtj.internal.pulsar.metadata.generator.actions.GenerateAction"
-               tooltip="Create new repository"
+               tooltip="%action.tooltip"
                menubarPath="pulsarAdminMenu/adminGroup"
                toolbarPath="adminGroup"
                id="org.eclipse.pulsar.metadata.generator.actions.NewRepositoryAction">
