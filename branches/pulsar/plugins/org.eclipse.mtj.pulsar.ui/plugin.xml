@@ -6,7 +6,7 @@
       <view
             category="org.eclipse.mtj.pulsar.category"
             class="org.eclipse.mtj.internal.pulsar.ui.view.SDKInstallView"
-            icon="icons/mtjicon_sm.png"
+            icon="icons/pulsar_16x16.png"
             id="org.eclipse.pulsar.ui.view.SDKInstallView"
             name="%view.name.0">
       </view>
@@ -19,7 +19,7 @@
          point="org.eclipse.ui.perspectives">
        <perspective
              class="org.eclipse.mtj.internal.pulsar.ui.PulsarPerspectiveFactory"
-             icon="icons/mtjicon_sm.png"
+             icon="icons/pulsar_16x16.png"
              id="org.eclipse.mtj.pulsar.ui.PulsarPerspective"
              name="%pulsar.perspective.name">
           <description>
