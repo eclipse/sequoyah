@@ -10,8 +10,8 @@
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" width="80%">
-		<p><b><font class=indextop>Build Notes for TmL 0.3 Release Candidate 3 (RC3) (200905292200)</font></b><br>
-		29 May 2009 </p>
+		<p><b><font class=indextop>Build Notes for TmL 0.3 Release Candidate 4 (RC4) (200906052200)</font></b><br>
+		05 June 2009 </p>
 		</td>
 	</tr>
 </table>
@@ -29,10 +29,10 @@
 </li>
 <li>This is the third release of TmL, please help us to keep it growing up. Report bugs and send us your suggestions.</li>
 <li>Use
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2009-05-29&chfield=resolution&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2009-06-05&chfield=resolution&cmdtype=doit">
   this query</a> to show the list of bugs fixed.</li>
 <li>For details on committed files, see the
-  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/R-0.3-200905292200/tml-log.csv">
+  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/R-0.3-200906052200/tml-log.csv">
   TmL CVS changelog</a>.</li>
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/index.php/DSDP/TML/TML_FAQ">TmL FAQ</a></li>
