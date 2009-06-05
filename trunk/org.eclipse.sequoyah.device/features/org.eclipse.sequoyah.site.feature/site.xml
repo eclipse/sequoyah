@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site pack200="true" 
-      mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/updates/0.3RC/site.xml&amp;format=xml&amp;protocol=http">
-   <description url="http://download.eclipse.org/dsdp/tml/updates/0.3RC/">
-      This is the Tool for mobile Linux Project 0.3RC Update Site.
+<site
+      mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/dsdp/tml/updates/0.3/site.xml&amp;format=xml&amp;protocol=http">
+   <description url="http://download.eclipse.org/dsdp/tml/updates/0.3/">
+      This is the Tool for mobile Linux Project 0.3 Update Site.
    </description>
-   <feature url="features/org.eclipse.tml.feature_0.2.0.200905152200.jar" id="org.eclipse.tml.feature" version="0.2.0.200905152200">
-      <category name="TmL 0.3RC Runtime"/>
+   <feature url="features/org.eclipse.tml.feature_0.3.0.200906052200.jar" id="org.eclipse.tml.feature" version="0.2.0.200906052200">
+      <category name="TmL 0.3 Runtime"/>
    </feature>
-   <feature url="features/org.eclipse.tml.sdk.feature_0.2.0.200905152200.jar" id="org.eclipse.tml.sdk.feature" version="0.2.0.200905152200">
-      <category name="TmL 0.3RC SDK"/>
+   <feature url="features/org.eclipse.tml.sdk.feature_0.3.0.200906052200.jar" id="org.eclipse.tml.sdk.feature" version="0.2.0.200906052200">
+      <category name="TmL 0.3 SDK"/>
    </feature>
-   <feature url="features/org.eclipse.tml.linuxtools.feature_0.1.0.200905152200.jar" id="org.eclipse.tml.linuxtools.feature" version="0.1.0.200905152200">
-      <category name="TmL 0.3RC /proc Tools"/>
+   <feature url="features/org.eclipse.tml.linuxtools.feature_0.1.0.200906052200.jar" id="org.eclipse.tml.linuxtools.feature" version="0.1.0.200906052200">
+      <category name="TmL 0.3 /proc Tools"/>
    </feature>
-   <feature url="features/org.eclipse.tml.common.feature_0.3.0.200905152200.jar" id="org.eclipse.tml.common.feature" version="0.3.0.200905152200">
-      <category name="TmL 0.3RC Components"/>
+   <feature url="features/org.eclipse.tml.common.feature_0.3.0.200906052200.jar" id="org.eclipse.tml.common.feature" version="0.3.0.200906052200">
+      <category name="TmL 0.3 Components"/>
    </feature>
-   <feature url="features/org.eclipse.tml.device.feature_0.3.0.200905152200.jar" id="org.eclipse.tml.device.feature" version="0.3.0.200905152200">
-      <category name="TmL 0.3RC Components"/>
+   <feature url="features/org.eclipse.tml.device.feature_0.3.0.200906052200.jar" id="org.eclipse.tml.device.feature" version="0.3.0.200906052200">
+      <category name="TmL 0.3 Components"/>
    </feature>
-   <feature url="features/org.eclipse.tml.vnc.feature_0.5.0.200905152200.jar" id="org.eclipse.tml.vnc.feature" version="0.5.0.200905152200">
-      <category name="TmL 0.3RC Components"/>
+   <feature url="features/org.eclipse.tml.vnc.feature_0.5.0.200906052200.jar" id="org.eclipse.tml.vnc.feature" version="0.5.0.200906052200">
+      <category name="TmL 0.3 Components"/>
    </feature>
-   <feature url="features/org.eclipse.tml.protocol.feature_0.2.0.200905152200.jar" id="org.eclipse.tml.protocol.feature" version="0.2.0.200905152200">
-      <category name="TmL 0.3RC Components"/>
+   <feature url="features/org.eclipse.tml.protocol.feature_0.2.0.200906052200.jar" id="org.eclipse.tml.protocol.feature" version="0.2.0.200906052200">
+      <category name="TmL 0.3 Components"/>
    </feature>
-   <feature url="features/org.eclipse.tml.vnc.viewer.feature_0.5.0.200905152200.jar" id="org.eclipse.tml.vnc.viewer.feature" version="0.5.0.200905152200">
-      <category name="TmL 0.3RC Library"/>
+   <feature url="features/org.eclipse.tml.vnc.viewer.feature_0.5.0.200906052200.jar" id="org.eclipse.tml.vnc.viewer.feature" version="0.5.0.200906052200">
+      <category name="TmL 0.3 Library"/>
    </feature>
-   <feature url="features/org.eclipse.tml.device.examples.feature_0.3.0.200905152200.jar" id="org.eclipse.tml.device.examples.feature" version="0.3.0.200905152200">
-      <category name="TmL 0.3RC Examples"/>
+   <feature url="features/org.eclipse.tml.device.examples.feature_0.3.0.200906052200.jar" id="org.eclipse.tml.device.examples.feature" version="0.3.0.200906052200">
+      <category name="TmL 0.3 Examples"/>
    </feature>
-   <feature url="features/org.eclipse.tml.vnc.protocol.examples.feature_0.2.0.200905152200.jar" id="org.eclipse.tml.vnc.protocol.examples.feature" version="0.2.0.200905152200">
-      <category name="TmL 0.3RC Examples"/>
+   <feature url="features/org.eclipse.tml.vnc.protocol.examples.feature_0.2.0.200906052200.jar" id="org.eclipse.tml.vnc.protocol.examples.feature" version="0.2.0.200906052200">
+      <category name="TmL 0.3 Examples"/>
    </feature>
-   <feature url="features/org.eclipse.tml.device.sdk.feature_0.3.0.200905152200.jar" id="org.eclipse.tml.device.sdk.feature" version="0.3.0.200905152200">
-      <category name="TmL 0.3RC Components"/>
+   <feature url="features/org.eclipse.tml.device.sdk.feature_0.3.0.200906052200.jar" id="org.eclipse.tml.device.sdk.feature" version="0.3.0.200906052200">
+      <category name="TmL 0.3 Components"/>
    </feature>
-   <category-def name="TmL 0.3RC Runtime" label="TmL 0.3RC Runtime"/>
-   <category-def name="TmL 0.3RC SDK" label="TmL 0.3RC SDK"/>
-   <category-def name="TmL 0.3RC /proc Tools" label="TmL 0.3RC /proc Tools"/>
-   <category-def name="TmL 0.3RC Components" label="TmL 0.3RC Components"/>
-   <category-def name="TmL 0.3RC Library" label="TmL 0.3RC Library"/>
-   <category-def name="TmL 0.3RC Examples" label="TmL 0.3RC Examples">
+   <category-def name="TmL 0.3 Runtime" label="TmL 0.3 Runtime"/>
+   <category-def name="TmL 0.3 SDK" label="TmL 0.3 SDK"/>
+   <category-def name="TmL 0.3 /proc Tools" label="TmL 0.3 /proc Tools"/>
+   <category-def name="TmL 0.3 Components" label="TmL 0.3 Components"/>
+   <category-def name="TmL 0.3 Library" label="TmL 0.3 Library"/>
+   <category-def name="TmL 0.3 Examples" label="TmL 0.3 Examples">
       <description>
-         Examples of the 0.3RC release of Tools for mobile Linux (TmL).
+         Examples of the 0.3 release of Tools for mobile Linux (TmL).
       </description>
    </category-def>
 </site>
