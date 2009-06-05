@@ -30,61 +30,22 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+@SuppressWarnings("restriction")
 public class InstallersLabelProvider extends ColumnLabelProvider {
 
+    private static final int IMAGE_DIMENSION = 16;
     private Device device;
     private Map<Object, Image> imageCache;
-    private static final int IMAGE_DIMENSION = 16;
 
     public InstallersLabelProvider(Device device) {
         this.device = device;
     }
 
-    private Image getRepositoryImage(ISDKRepository repository) {
-        ensureImageCache();
-		if (!imageCache.containsKey(repository)) {
-			Image image = null;
-			try {
-				ImageDescriptor imageDescriptor = repository
-						.getIconImageDescriptor();
-				ImageData imageData = imageDescriptor.getImageData();
-				if (imageData != null) {
-					if (imageData.width == IMAGE_DIMENSION
-							&& imageData.height == IMAGE_DIMENSION) {
-						image = imageDescriptor.createImage(device);
-					} else {
-						ImageData scaledImageData = imageData.scaledTo(
-								IMAGE_DIMENSION, IMAGE_DIMENSION);
-						image = new Image(device, scaledImageData);
-					}
-				}
-			} catch (Exception e) {
-				// Do nothing... use default image icon...
-			}
-			if (image == null) {
-				image = PlatformUI.getWorkbench().getSharedImages()
-						.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER)
-						.createImage();
-			}
-			imageCache.put(repository, image);
-		}
-		return imageCache.get(repository);
-    }
-
-    private void ensureImageCache() {
-        if (imageCache == null)
-            imageCache = new HashMap<Object, Image>();
-    }
-
-    private Image getProvUIImage(String key) {
-        ensureImageCache();
-        if (!imageCache.containsKey(key)) {
-            ImageDescriptor imageDescriptor = ProvUIActivator.getDefault()
-                    .getImageRegistry().getDescriptor(key);
-            imageCache.put(key, imageDescriptor.createImage(device));
+    public void dispose() {
+        for (Image image : imageCache.values()) {
+            image.dispose();
         }
-
-        return imageCache.get(key);
+        super.dispose();
     }
 
     @Override
@@ -114,10 +75,50 @@ public class InstallersLabelProvider extends ColumnLabelProvider {
         return null;
     }
 
-    public void dispose() {
-        for (Image image : imageCache.values()) {
-            image.dispose();
+    private void ensureImageCache() {
+        if (imageCache == null)
+            imageCache = new HashMap<Object, Image>();
+    }
+
+    private Image getProvUIImage(String key) {
+        ensureImageCache();
+        if (!imageCache.containsKey(key)) {
+            ImageDescriptor imageDescriptor = ProvUIActivator.getDefault()
+                    .getImageRegistry().getDescriptor(key);
+            imageCache.put(key, imageDescriptor.createImage(device));
         }
-        super.dispose();
+
+        return imageCache.get(key);
+    }
+
+    private Image getRepositoryImage(ISDKRepository repository) {
+        ensureImageCache();
+        if (!imageCache.containsKey(repository)) {
+            Image image = null;
+            try {
+                ImageDescriptor imageDescriptor = repository
+                        .getIconImageDescriptor();
+                ImageData imageData = imageDescriptor.getImageData();
+                if (imageData != null) {
+                    if (imageData.width == IMAGE_DIMENSION
+                            && imageData.height == IMAGE_DIMENSION) {
+                        image = imageDescriptor.createImage(device);
+                    } else {
+                        ImageData scaledImageData = imageData.scaledTo(
+                                IMAGE_DIMENSION, IMAGE_DIMENSION);
+                        image = new Image(device, scaledImageData);
+                    }
+                }
+            } catch (Exception e) {
+                // Do nothing... use default image icon...
+            }
+            if (image == null) {
+                image = PlatformUI.getWorkbench().getSharedImages()
+                        .getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER)
+                        .createImage();
+            }
+            imageCache.put(repository, image);
+        }
+        return imageCache.get(repository);
     }
 }

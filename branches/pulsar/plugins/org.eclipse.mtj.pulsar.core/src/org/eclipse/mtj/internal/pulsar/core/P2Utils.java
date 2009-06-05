@@ -32,58 +32,90 @@ import org.eclipse.mtj.pulsar.core.Activator;
 /**
  * A class of utilities for P2 common operations
  */
+@SuppressWarnings("restriction")
 public class P2Utils {
 
-	public static final String PROP_PULSAR_PROFILE = "org.eclipse.pulsar.profile"; //$NON-NLS-1$
+    public static final String PROP_PULSAR_PROFILE = "org.eclipse.pulsar.profile"; //$NON-NLS-1$
 
-	public static boolean isInstalled(IInstallableUnit iu) {
-		for (IProfile profile : ProvisioningHelper.getProfiles()) {
-			Collector collector = new Collector();
-			profile.available(new InstallableUnitQuery(iu.getId(), iu.getVersion()), collector, null);
-			if (!collector.isEmpty())
-				return true;
-		}
-		return false;
-	}
+    /**
+     * @param iu
+     * @return
+     */
+    public static boolean isInstalled(IInstallableUnit iu) {
+        for (IProfile profile : ProvisioningHelper.getProfiles()) {
+            Collector collector = new Collector();
+            profile.available(new InstallableUnitQuery(iu.getId(), iu
+                    .getVersion()), collector, null);
+            if (!collector.isEmpty())
+                return true;
+        }
+        return false;
+    }
 
-	public static IProfile createProfile(String id, IPath installFolder) throws ProvisionException {
-		IProfileRegistry profileRegistry = 
-			(IProfileRegistry) ServiceHelper.getService(Activator.getContext(), IProfileRegistry.class.getName());
-		Properties properties = new Properties();
-		if (installFolder != null)
-			properties.setProperty(IProfile.PROP_INSTALL_FOLDER, installFolder.toOSString());
-		properties.setProperty(PROP_PULSAR_PROFILE, Boolean.TRUE.toString());
-		return profileRegistry.addProfile(id, properties, null);
-	}
-	
-	
-	public static void deleteProfile(String id) {
-		IProfileRegistry profileRegistry = 
-			(IProfileRegistry) ServiceHelper.getService(Activator.getContext(), IProfileRegistry.class.getName());
-		profileRegistry.removeProfile(id);
-	}
-	
-	public static IProfile createProfileForSDK(ISDK sdk, IPath installFolder) throws ProvisionException {
-		StringBuilder sb = new StringBuilder();
-		sb.append("org.eclipse.pulsar.profile."); //$NON-NLS-1$
-		sb.append(((SDK) sdk).getInstallableUnit().getId());
-		sb.append("."); //$NON-NLS-1$
-		sb.append(System.currentTimeMillis());
-		
-		return createProfile(sb.toString(), installFolder);
-	}
-	
-	public static boolean isSupportedProfile(IProfile profile) {
-		return profile.getProperty(PROP_PULSAR_PROFILE) != null;
-	}
-	
-	public static Collection<IProfile> getProfiles() {
-		Collection<IProfile> profiles = new ArrayList<IProfile>();
-		for (IProfile profile : ProvisioningHelper.getProfiles()) {
-			if (isSupportedProfile(profile))
-				profiles.add(profile);
-		}
-		
-		return profiles;
-	}
+    /**
+     * @param id
+     * @param installFolder
+     * @return
+     * @throws ProvisionException
+     */
+    public static IProfile createProfile(String id, IPath installFolder)
+            throws ProvisionException {
+        IProfileRegistry profileRegistry = (IProfileRegistry) ServiceHelper
+                .getService(Activator.getContext(), IProfileRegistry.class
+                        .getName());
+        Properties properties = new Properties();
+        if (installFolder != null)
+            properties.setProperty(IProfile.PROP_INSTALL_FOLDER, installFolder
+                    .toOSString());
+        properties.setProperty(PROP_PULSAR_PROFILE, Boolean.TRUE.toString());
+        return profileRegistry.addProfile(id, properties, null);
+    }
+
+    /**
+     * @param id
+     */
+    public static void deleteProfile(String id) {
+        IProfileRegistry profileRegistry = (IProfileRegistry) ServiceHelper
+                .getService(Activator.getContext(), IProfileRegistry.class
+                        .getName());
+        profileRegistry.removeProfile(id);
+    }
+
+    /**
+     * @param sdk
+     * @param installFolder
+     * @return
+     * @throws ProvisionException
+     */
+    public static IProfile createProfileForSDK(ISDK sdk, IPath installFolder)
+            throws ProvisionException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("org.eclipse.pulsar.profile."); //$NON-NLS-1$
+        sb.append(((SDK) sdk).getInstallableUnit().getId());
+        sb.append("."); //$NON-NLS-1$
+        sb.append(System.currentTimeMillis());
+
+        return createProfile(sb.toString(), installFolder);
+    }
+
+    /**
+     * @param profile
+     * @return
+     */
+    public static boolean isSupportedProfile(IProfile profile) {
+        return profile.getProperty(PROP_PULSAR_PROFILE) != null;
+    }
+
+    /**
+     * @return
+     */
+    public static Collection<IProfile> getProfiles() {
+        Collection<IProfile> profiles = new ArrayList<IProfile>();
+        for (IProfile profile : ProvisioningHelper.getProfiles()) {
+            if (isSupportedProfile(profile))
+                profiles.add(profile);
+        }
+
+        return profiles;
+    }
 }

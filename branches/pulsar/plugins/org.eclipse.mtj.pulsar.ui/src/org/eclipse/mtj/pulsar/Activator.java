@@ -8,13 +8,12 @@
  *
  * Contributors:
  * 
- * 	David Dubrow
- *  David Marques (Motorola) - Registering service in order to allow
- *                             https password authentication.
+ *  David Dubrow
+ *  David Marques (Motorola)      - Registering service in order to allow
+ *                                  https password authentication.
  *  Henrique Magalhaes(Motorola)/
- *  Euclides Neto (Motorola) - Change super class to ProvSDKUIActivator.
+ *  Euclides Neto (Motorola)      - Change super class to ProvSDKUIActivator.
  */
-
 package org.eclipse.mtj.pulsar;
 
 import org.eclipse.equinox.internal.p2.ui.sdk.ProvSDKUIActivator;
@@ -24,63 +23,64 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
+@SuppressWarnings("restriction")
 public class Activator extends ProvSDKUIActivator {
 
-	/**
-	 * Plugin id 
-	 */
-	public static final String PLUGIN_ID = "org.eclipse.mtj.internal.pulsar.ui";
+    /**
+     * Plugin id
+     */
+    public static final String PLUGIN_ID = "org.eclipse.mtj.internal.pulsar.ui";
 
-	/**
-	 * Quick install view ID
-	 */
-	public static final String QUICKINSTALL_VIEW_ID = "org.eclipse.pulsar.ui.view.SDKInstallView";
+    /**
+     * Quick install view ID
+     */
+    public static final String QUICKINSTALL_VIEW_ID = "org.eclipse.pulsar.ui.view.SDKInstallView";
 
-	// The shared instance
-	private static Activator plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public Activator() {
-		super();
-	}
+    // The shared instance
+    private static Activator plugin;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-	}
+    /**
+     * The constructor
+     */
+    public Activator() {
+        super();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+     */
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        plugin = this;
+    }
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static Activator getDefault() {
-		return plugin;
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+     */
+    public void stop(BundleContext context) throws Exception {
+        plugin = null;
+        super.stop(context);
+    }
 
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
+    /**
+     * Returns the shared instance
+     * 
+     * @return the shared instance
+     */
+    public static Activator getDefault() {
+        return plugin;
+    }
+
+    /**
+     * Returns an image descriptor for the image file at the given
+     * plug-in relative path
+     * 
+     * @param path the path
+     * @return the image descriptor
+     */
+    public static ImageDescriptor getImageDescriptor(String path) {
+        return imageDescriptorFromPlugin(PLUGIN_ID, path);
+    }
 }

@@ -29,77 +29,79 @@ import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
 
+@SuppressWarnings("restriction")
 public class SDKRepository implements ISDKRepository {
 
-	private URI metadataUri;
-	private URI artifactsUri;
-	private String name;
-	private ImageDescriptor imageDescriptor;
-	private IInstallationInfo installationInfo;
+    private URI metadataUri;
+    private URI artifactsUri;
+    private String name;
+    private ImageDescriptor imageDescriptor;
+    private IInstallationInfo installationInfo;
 
-	public SDKRepository(String name, URI metadataUri, URI artifactsUri) {
-		this.name = name;
-		this.metadataUri = metadataUri;
-		this.artifactsUri = artifactsUri;
-	}
+    public SDKRepository(String name, URI metadataUri, URI artifactsUri) {
+        this.name = name;
+        this.metadataUri = metadataUri;
+        this.artifactsUri = artifactsUri;
+    }
 
-	@SuppressWarnings("unchecked")
-	public Collection<ISDK> getSDKs(IProgressMonitor monitor) {
-		Collection<ISDK> sdks = new ArrayList<ISDK>();
-		Collector installableUnits = 
-			ProvisioningHelper.getInstallableUnits(getMetadataURI(), getSDKQuery(), monitor);
-		for (IInstallableUnit iu : (Collection<IInstallableUnit>) installableUnits.toCollection()) {
-			sdks.add(new SDK(this, iu));
-		}
-		return sdks;
-	}
+    @SuppressWarnings("unchecked")
+    public Collection<ISDK> getSDKs(IProgressMonitor monitor) {
+        Collection<ISDK> sdks = new ArrayList<ISDK>();
+        Collector installableUnits = ProvisioningHelper.getInstallableUnits(
+                getMetadataURI(), getSDKQuery(), monitor);
+        for (IInstallableUnit iu : (Collection<IInstallableUnit>) installableUnits
+                .toCollection()) {
+            sdks.add(new SDK(this, iu));
+        }
+        return sdks;
+    }
 
-	private Query getSDKQuery() {
-		return new MatchQuery() {
-			@Override
-			public boolean isMatch(Object candidate) {
-				if (candidate instanceof IInstallableUnit) {
-					IInstallableUnit iu = (IInstallableUnit) candidate;
-					return iu.getProperty(SDK.PROP_TYPE) != null;
-				}
-				return false;
-			}
-		};
-	}
+    private Query getSDKQuery() {
+        return new MatchQuery() {
+            @Override
+            public boolean isMatch(Object candidate) {
+                if (candidate instanceof IInstallableUnit) {
+                    IInstallableUnit iu = (IInstallableUnit) candidate;
+                    return iu.getProperty(SDK.PROP_TYPE) != null;
+                }
+                return false;
+            }
+        };
+    }
 
-	public URI getMetadataURI() {
-		return metadataUri;
-	}
+    public URI getMetadataURI() {
+        return metadataUri;
+    }
 
-	public URI getArtifactsURI() {
-		return artifactsUri;
-	}
-	
-	public String getName() {
-		return name;
-	}
+    public URI getArtifactsURI() {
+        return artifactsUri;
+    }
 
-	public ImageDescriptor getIconImageDescriptor() {
-		return imageDescriptor;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setImageDescriptorURL(URL imageUrl) {
-		this.imageDescriptor = ImageDescriptor.createFromURL(imageUrl);
-	}
+    public ImageDescriptor getIconImageDescriptor() {
+        return imageDescriptor;
+    }
 
-	/**
-	 * Sets the {@link IInstallationInfo} for this repository.
-	 * 
-	 * @param info
-	 */
-	public void setInstallationInfo(IInstallationInfo info) {
-		this.installationInfo = info;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvider#getInstallationInfo()
-	 */
-	public IInstallationInfo getInstallationInfo() {
-		return this.installationInfo;
-	}
+    public void setImageDescriptorURL(URL imageUrl) {
+        this.imageDescriptor = ImageDescriptor.createFromURL(imageUrl);
+    }
+
+    /**
+     * Sets the {@link IInstallationInfo} for this repository.
+     * 
+     * @param info
+     */
+    public void setInstallationInfo(IInstallationInfo info) {
+        this.installationInfo = info;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvider#getInstallationInfo()
+     */
+    public IInstallationInfo getInstallationInfo() {
+        return this.installationInfo;
+    }
 }

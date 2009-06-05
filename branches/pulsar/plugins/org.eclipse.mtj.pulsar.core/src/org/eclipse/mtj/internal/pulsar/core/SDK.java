@@ -31,131 +31,136 @@ import org.eclipse.mtj.internal.provisional.pulsar.core.IUInstallationEnvironmen
 import org.eclipse.mtj.pulsar.core.Activator;
 import org.osgi.framework.Version;
 
+@SuppressWarnings("restriction")
 public class SDK extends PlatformObject implements ISDK {
 
-	public static final String PROP_TYPE = "org.eclipse.pulsar.type"; //$NON-NLS-1$
-	public static final String ZIPARCHIVE_TYPE = "ziparchive"; //$NON-NLS-1$
-	public static final String EXECUTABLE_TYPE = "executable"; //$NON-NLS-1$
-	public static final String OSGI_BUNDLE_TYPE = "osgi-bundle"; //$NON-NLS-1$
-	public static final String PROP_CATEGORY = "org.eclipse.pulsar.category.name"; //$NON-NLS-1$
-	public static final String PROP_DOC_URL = "org.eclipse.pulsar.documentation.url"; //$NON-NLS-1$
-	public static final String PROP_DESCRIPTION = "org.eclipse.equinox.p2.description"; //$NON-NLS-1$
-	
-	private SDKRepository sdkRepository;
-	private IInstallableUnit iu;
-	private IInstallationInfo info;
+    public static final String PROP_TYPE = "org.eclipse.pulsar.type"; //$NON-NLS-1$
+    public static final String ZIPARCHIVE_TYPE = "ziparchive"; //$NON-NLS-1$
+    public static final String EXECUTABLE_TYPE = "executable"; //$NON-NLS-1$
+    public static final String OSGI_BUNDLE_TYPE = "osgi-bundle"; //$NON-NLS-1$
+    public static final String PROP_CATEGORY = "org.eclipse.pulsar.category.name"; //$NON-NLS-1$
+    public static final String PROP_DOC_URL = "org.eclipse.pulsar.documentation.url"; //$NON-NLS-1$
+    public static final String PROP_DESCRIPTION = "org.eclipse.equinox.p2.description"; //$NON-NLS-1$
 
-	public SDK(SDKRepository sdkRepository, IInstallableUnit iu) {
-		this.sdkRepository = sdkRepository;
-		this.iu = iu;
-	}
+    private SDKRepository sdkRepository;
+    private IInstallableUnit iu;
+    private IInstallationInfo info;
 
-	public String getName() {
-		return iu.getProperty(IInstallableUnit.PROP_NAME);
-	}
+    public SDK(SDKRepository sdkRepository, IInstallableUnit iu) {
+        this.sdkRepository = sdkRepository;
+        this.iu = iu;
+    }
 
-	public EState getState() {
-		return P2Utils.isInstalled(iu) ? EState.INSTALLED : EState.UNINSTALLED;
-	}
+    public String getName() {
+        return iu.getProperty(IInstallableUnit.PROP_NAME);
+    }
 
-	public Version getVersion() {
-		return org.eclipse.equinox.internal.provisional.p2.core.Version.toOSGiVersion(iu.getVersion());
-	}
+    public EState getState() {
+        return P2Utils.isInstalled(iu) ? EState.INSTALLED : EState.UNINSTALLED;
+    }
 
-	public EType getType() {
-		String value = iu.getProperty(PROP_TYPE);
-		if (value.equals(ZIPARCHIVE_TYPE))
-			return EType.ZIP_ARCHIVE;
-		else if (value.equals(EXECUTABLE_TYPE))
-			return EType.EXECUTABLE;
-		else if (value.equals(OSGI_BUNDLE_TYPE))
-			return EType.OSGI_BUNDLE;
-		return EType.UNKNOWN;
-	}
-	
-	public String getCategory() {
-		return iu.getProperty(PROP_CATEGORY);
-	}
+    public Version getVersion() {
+        return org.eclipse.equinox.internal.provisional.p2.core.Version
+                .toOSGiVersion(iu.getVersion());
+    }
 
-	public URL getDocumentationURL() {
-		String value = iu.getProperty(PROP_DOC_URL);
-		if (value != null) {
-			try {
-				return new URL(value);
-			} catch (MalformedURLException e) {
-				Activator.logError(Messages.SDK_DocumentationURLError, e);
-			}
-		}
-		return null;
-	}
+    public EType getType() {
+        String value = iu.getProperty(PROP_TYPE);
+        if (value.equals(ZIPARCHIVE_TYPE))
+            return EType.ZIP_ARCHIVE;
+        else if (value.equals(EXECUTABLE_TYPE))
+            return EType.EXECUTABLE;
+        else if (value.equals(OSGI_BUNDLE_TYPE))
+            return EType.OSGI_BUNDLE;
+        return EType.UNKNOWN;
+    }
 
-	public IInstallableUnit getInstallableUnit() {
-		return iu;
-	}
-	
-	public SDKRepository getRepository() {
-		return sdkRepository;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvider#getInstallationInfo()
-	 */
-	public IInstallationInfo getInstallationInfo() {
-		if (this.info == null) {
-			this.info = new SDKInfo(this);
-		}
-		return this.info;
-	}
-	
-	private class SDKInfo implements IInstallationInfo {
+    public String getCategory() {
+        return iu.getProperty(PROP_CATEGORY);
+    }
 
-		private SDK sdk;
-		
-		public SDKInfo(SDK sdk) {
-			if (sdk == null) {
-				throw new IllegalArgumentException(Messages.SDK_InvalidSDKInstanceError);
-			}
-			this.sdk = sdk;
-		}
-		
-		public StringBuffer getDescription() {
-			StringBuffer result = null;
-			IInstallableUnit unit = sdk.getInstallableUnit();
-			if (unit != null) {
-				String description = unit.getProperty(PROP_DESCRIPTION);
-				if (description != null) {
-					result = new StringBuffer(description);
-				}
-			}
-			return result;
-		}
+    public URL getDocumentationURL() {
+        String value = iu.getProperty(PROP_DOC_URL);
+        if (value != null) {
+            try {
+                return new URL(value);
+            } catch (MalformedURLException e) {
+                Activator.logError(Messages.SDK_DocumentationURLError, e);
+            }
+        }
+        return null;
+    }
 
-		public ImageDescriptor getImageDescriptor() {
-			ImageDescriptor result = null;
-			IInstallationInfo info = this.sdk.getRepository().getInstallationInfo();
-			if (info != null) {
-				result = info.getImageDescriptor();
-			}
-			return result;
-		}
+    public IInstallableUnit getInstallableUnit() {
+        return iu;
+    }
 
-		public URI getWebSiteURI() {
-			URI result = null;
-			try {
-				URL url = sdk.getDocumentationURL();
-				if (url != null) {					
-					result = url.toURI();
-				}
-			} catch (URISyntaxException e) {}
-			return result;
-		}
+    public SDKRepository getRepository() {
+        return sdkRepository;
+    }
 
-		public IInstallationEnvironment getTargetEnvironment() {
-			IInstallableUnit iu = sdk.getInstallableUnit();
-			if (iu != null) {
-				return new IUInstallationEnvironment(iu.getFilter());
-			}
-			return null;
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvider#getInstallationInfo()
+     */
+    public IInstallationInfo getInstallationInfo() {
+        if (this.info == null) {
+            this.info = new SDKInfo(this);
+        }
+        return this.info;
+    }
+
+    private class SDKInfo implements IInstallationInfo {
+
+        private SDK sdk;
+
+        public SDKInfo(SDK sdk) {
+            if (sdk == null) {
+                throw new IllegalArgumentException(
+                        Messages.SDK_InvalidSDKInstanceError);
+            }
+            this.sdk = sdk;
+        }
+
+        public StringBuffer getDescription() {
+            StringBuffer result = null;
+            IInstallableUnit unit = sdk.getInstallableUnit();
+            if (unit != null) {
+                String description = unit.getProperty(PROP_DESCRIPTION);
+                if (description != null) {
+                    result = new StringBuffer(description);
+                }
+            }
+            return result;
+        }
+
+        public ImageDescriptor getImageDescriptor() {
+            ImageDescriptor result = null;
+            IInstallationInfo info = this.sdk.getRepository()
+                    .getInstallationInfo();
+            if (info != null) {
+                result = info.getImageDescriptor();
+            }
+            return result;
+        }
+
+        public URI getWebSiteURI() {
+            URI result = null;
+            try {
+                URL url = sdk.getDocumentationURL();
+                if (url != null) {
+                    result = url.toURI();
+                }
+            } catch (URISyntaxException e) {
+            }
+            return result;
+        }
+
+        public IInstallationEnvironment getTargetEnvironment() {
+            IInstallableUnit iu = sdk.getInstallableUnit();
+            if (iu != null) {
+                return new IUInstallationEnvironment(iu.getFilter());
+            }
+            return null;
+        }
+    }
 }
