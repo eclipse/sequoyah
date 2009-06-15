@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Localization: plugin
 Bundle-SymbolicName: org.eclipse.tml.vncviewer.vncviews;singleton:=true
-Bundle-Version: 0.5.0
+Bundle-Version: 0.5.0.qualifier
 Bundle-Activator: org.eclipse.tml.vncviewer.vncviews.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
