@@ -10,8 +10,8 @@
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" width="80%">
-		<p><b><font class=indextop>Build Notes for TmL 0.3 (200906152200)</font></b><br>
-		15 June 2009 </p>
+		<p><b><font class=indextop>Build Notes for TmL 0.4 (200906252200)</font></b><br>
+		25 June 2009 </p>
 		</td>
 	</tr>
 </table>
