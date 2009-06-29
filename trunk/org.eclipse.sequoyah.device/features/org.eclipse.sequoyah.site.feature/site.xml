@@ -7,7 +7,7 @@
    <feature url="features/org.eclipse.tml.feature_0.4.0.200906292200.jar" id="org.eclipse.tml.feature" version="0.3.0.200906292200">
       <category name="TmL 0.4 Runtime"/>
    </feature>
-   <feature url="features/org.eclipse.tml.sdk.feature_0.4.0.200906292200.jar" id="org.eclipse.tml.sdk.feature" version="0.3.0.2009060152200">
+   <feature url="features/org.eclipse.tml.sdk.feature_0.4.0.200906292200.jar" id="org.eclipse.tml.sdk.feature" version="0.3.0.200906292200">
       <category name="TmL 0.4 SDK"/>
    </feature>
    <feature url="features/org.eclipse.tml.linuxtools.feature_0.1.0.200906292200.jar" id="org.eclipse.tml.linuxtools.feature" version="0.1.0.200906292200">
