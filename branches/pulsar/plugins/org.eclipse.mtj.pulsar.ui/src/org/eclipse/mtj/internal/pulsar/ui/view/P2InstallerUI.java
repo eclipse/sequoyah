@@ -12,11 +12,13 @@
  *  Euclides Neto (Motorola) - Fixed Install and added uninstall. 
  *  David Marques (Motorola) - Adding support for feature installation.
  *  Euclides Neto (Motorola) - Keeping SDK repository on p2.
+ *  Henrique Magalhaes(Motorola) - Create method to remove all SDK repositories.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
 
 import java.net.URI;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -51,6 +53,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallerUI;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
+import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.mtj.internal.pulsar.core.SDK;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -171,6 +174,13 @@ public class P2InstallerUI implements IInstallerUI {
         });
     }
 
+    public void removeSDKRepositories(Collection<ISDKRepository> repositories) {
+        for (ISDKRepository repository : repositories) {
+            ProvisioningHelper.removeArtifactRepository(repository.getArtifactsURI());
+            ProvisioningHelper.removeMetadataRepository(repository.getMetadataURI());
+        }
+    }
+    
     private ProfileChangeRequest getProfileChangeRequest(
             IInstallableUnit[] ius, String targetProfileId, MultiStatus status,
             IProgressMonitor monitor) {

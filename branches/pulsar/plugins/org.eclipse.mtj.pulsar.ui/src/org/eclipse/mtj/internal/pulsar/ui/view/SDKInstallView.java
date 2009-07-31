@@ -15,6 +15,7 @@
  *  Euclides Neto (Motorola) - Added details functionality.
  *  Henrique Magalhaes(Motorola)/
  *  Euclides Neto (Motorola) - Added uninstall action.
+ *  Henrique Magalhaes (Motorola) - Fixing update repository problem.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -261,6 +262,7 @@ public class SDKInstallView extends ViewPart {
         Job job = new Job(Messages.SDKInstallView_UpdatingInstallersJobTitle) {
             @Override
             public IStatus run(IProgressMonitor monitor) {
+                removeSDKRepositories();
                 final TreeNode[] treeNodes = createTreeNodes(monitor);
                 Display.getDefault().asyncExec(new Runnable() {
                     public void run() {
@@ -274,6 +276,14 @@ public class SDKInstallView extends ViewPart {
             }
         };
         job.schedule();
+    }
+    
+    /**
+     * Removes all sdk repositories.
+     */
+    private void removeSDKRepositories() {
+        P2InstallerUI installer = (P2InstallerUI) P2InstallerUI.getInstance();
+        installer.removeSDKRepositories(QuickInstallCore.getInstance().getSDKRepositories());
     }
 
     /**
