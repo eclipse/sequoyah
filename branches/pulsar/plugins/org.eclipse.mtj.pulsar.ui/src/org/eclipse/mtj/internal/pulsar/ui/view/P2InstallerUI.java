@@ -13,6 +13,7 @@
  *  David Marques (Motorola) - Adding support for feature installation.
  *  Euclides Neto (Motorola) - Keeping SDK repository on p2.
  *  Henrique Magalhaes(Motorola) - Create method to remove all SDK repositories.
+ *  Euclides Neto (Motorola) - Changed the method to refresh instead of remove SDK repositories.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -48,6 +49,7 @@ import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.PreselectedIUInsta
 import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.ProvisioningWizardDialog;
 import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.UninstallWizard;
 import org.eclipse.equinox.internal.provisional.p2.ui.operations.PlannerResolutionOperation;
+import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
 import org.eclipse.equinox.internal.provisional.p2.ui.policy.Policy;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -174,13 +176,39 @@ public class P2InstallerUI implements IInstallerUI {
         });
     }
 
-    public void removeSDKRepositories(Collection<ISDKRepository> repositories) {
+    public void refreshSDKRepositories(Collection<ISDKRepository> repositories) {
+        URI[] artifactsURIs = new URI[repositories.size()];
+        URI[] metadataURIs = new URI[repositories.size()];
+
+        /*
+         * Iterate over repositories in order to get the artifacts and metadata
+         * URLs
+         */
+        int i = 0;
         for (ISDKRepository repository : repositories) {
-            ProvisioningHelper.removeArtifactRepository(repository.getArtifactsURI());
-            ProvisioningHelper.removeMetadataRepository(repository.getMetadataURI());
+            metadataURIs[i] = repository.getMetadataURI();
+            artifactsURIs[i] = repository.getArtifactsURI();
+            i++;
+        }
+
+        /*
+         * The call to ProvisioningUtil.refreshMetadataRepositories() and
+         * refreshArtifactRepositories() discards any cached state held by the
+         * repository manager and reloads the repository contents.
+         */
+        try {
+            ProvisioningUtil.refreshMetadataRepositories(metadataURIs,
+                    new NullProgressMonitor());
+            ProvisioningUtil.refreshArtifactRepositories(artifactsURIs,
+                    new NullProgressMonitor());
+        } catch (ProvisionException e) {
+            /*
+             * do nothing - the repository can have its URL changed or unknown
+             * (first call)
+             */
         }
     }
-    
+
     private ProfileChangeRequest getProfileChangeRequest(
             IInstallableUnit[] ius, String targetProfileId, MultiStatus status,
             IProgressMonitor monitor) {
