@@ -10,6 +10,7 @@
  * Chad Peckham
  * Henrique Magalhaes (Motorola) - Added description field
  * David Marques (Motorola) - Implementing environment filtering.
+ * Euclides Neto (Motorola) - Adding Category description support.
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.engine;
@@ -39,6 +40,7 @@ public class IUDescription implements IIUDescription {
     private ICopyright unitCopyright;
     private boolean isCategory; // whether this is a category IU
     private String categoryName; // category name
+    private String categoryDescription; // category description
     private String artefactDescription; // artefact description
     private IPath executablePath; // installer path for unzip&execute
     private String os;
@@ -185,6 +187,20 @@ public class IUDescription implements IIUDescription {
      */
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription#getCategoryName()
+     */
+    public String getCategoryDescription() {
+        return this.categoryDescription;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.mtj.internal.pulsar.metadata.generator.engine.IIUDescription#setCategoryName(java.lang.String)
+     */
+    public void setCategoryDescription(String categoryDescription) {
+        this.categoryDescription = categoryDescription;
     }
 
     /* (non-Javadoc)

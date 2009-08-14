@@ -10,6 +10,7 @@
  * Chad Peckham
  * Henrique Magalhaes (Motorola) - Added description field
  * David Marques (Motorola) - Implementing environment filtering.
+ * Euclides Neto (Motorola) - Adding Category description support.
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.engine;
@@ -132,11 +133,21 @@ public interface IIUDescription {
      * @param categoryName the categoryName to set
      */
     public void setCategoryName(String categoryName);
+    
+    /**
+     * @param categoryDescription the categoryDescription to set
+     */
+    public void setCategoryDescription(String categoryDescription);
 
     /**
      * @return the categoryName
      */
     public String getCategoryName();
+    
+    /**
+     * @return the categoryDescription
+     */
+    public String getCategoryDescription();
 
     /**
      * @param categoryName the artefactDescription to set

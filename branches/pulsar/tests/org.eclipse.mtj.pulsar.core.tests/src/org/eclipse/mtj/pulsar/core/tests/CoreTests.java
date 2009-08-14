@@ -9,6 +9,7 @@
  * Contributors:
  * 	David Dubrow
  *  David Marques (Motorola) - Renaming getImageDescriptor method.
+ *  Euclides Neto (Motorola) - Adding ISDKCategory support.
  *
  */
 
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
+import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKCategory;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepositoryProvider;
 import org.eclipse.mtj.internal.provisional.pulsar.core.QuickInstallCore;
@@ -91,16 +93,16 @@ public class CoreTests extends TestCase {
 			String sdkName = sdk.getName();
 			assertNotNull(sdkName);
 			assertTrue(sdk.getVersion().compareTo(Version.parseVersion("0")) > 0);
-			String category = sdk.getCategory();
-			if (sdkName.endsWith("exe"))
-				assertNotNull(category);
+			ISDKCategory category = sdk.getCategory();
+			if (sdkName.endsWith("ZIP/Bin"))
+			    assertNull(category);
 			else
-				assertNull(category);
+			    assertNotNull(category);
 			URL url = sdk.getDocumentationURL();
-			if (sdkName.endsWith("zip"))
-				assertNotNull(url);
+			if (sdkName.endsWith("Bin"))
+			    assertNull(url);
 			else
-				assertNull(url);
+			    assertNotNull(url);
 		}
 	}
 
@@ -108,7 +110,7 @@ public class CoreTests extends TestCase {
 		Collection<ISDKRepository> repositories = QuickInstallCore.getInstance().getSDKRepositories();
 		ISDKRepository repository = null;
 		for (ISDKRepository r : repositories) {
-			if (r.getMetadataURI().toString().endsWith("test")) {
+			if (r.getMetadataURI().toString().endsWith("test") || r.getMetadataURI().toString().endsWith("test/")) {
 				repository = r;
 			}
 		}

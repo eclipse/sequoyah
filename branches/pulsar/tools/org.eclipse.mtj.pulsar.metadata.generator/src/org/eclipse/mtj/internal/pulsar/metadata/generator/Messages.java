@@ -8,6 +8,7 @@
  * 
  * Contributors:
  *     Henrique Magalhaes (Motorola) - Initial version
+ *     Euclides Neto (Motorola) - Adding Category description support.
  */
 package org.eclipse.mtj.internal.pulsar.metadata.generator;
 
@@ -48,6 +49,7 @@ public class Messages extends NLS{
 	public static String NewUnitDialog_IDLabel;
 	public static String NewUnitDialog_VersionLabel;
 	public static String NewUnitDialog_CategoryNameLabel;
+	public static String NewUnitDialog_CategoryDescriptionLabel;
 	public static String NewUnitDialog_DescriptionLabel;
 	public static String NewUnitDialog_LicenseURLLabel;
 	public static String NewUnitDialog_LicenseURLToolTip;

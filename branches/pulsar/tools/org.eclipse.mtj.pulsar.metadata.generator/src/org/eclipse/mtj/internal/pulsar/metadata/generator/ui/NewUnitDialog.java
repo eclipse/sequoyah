@@ -10,6 +10,7 @@
  * 	David Dubrow
  *  Henrique Magalhaes (Motorola) - Internalization of messages
  *  David Marques (Motorola) - Implementing environment filtering.
+ *  Euclides Neto (Motorola) - Adding Category description support.
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.ui;
@@ -73,6 +74,7 @@ public class NewUnitDialog extends StatusDialog {
     private Text idText;
     private Text versionText;
     private Text categoryText;
+    private Text categoryDescriptionText;
     private Text descriptionText;
     private Text locationText;
     private Button browseButton;
@@ -248,6 +250,9 @@ public class NewUnitDialog extends StatusDialog {
 
         createLabel(contents, Messages.NewUnitDialog_CategoryNameLabel);
         categoryText = createText(contents);
+        
+        createLabel(contents, Messages.NewUnitDialog_CategoryDescriptionLabel);
+        categoryDescriptionText = createText(contents);
 
         createLabel(contents, Messages.NewUnitDialog_DescriptionLabel);
         descriptionText = createMultiText(contents);
@@ -528,6 +533,9 @@ public class NewUnitDialog extends StatusDialog {
         String category = categoryText.getText();
         if (category.length() > 0)
             unit.setCategoryName(category);
+        String categoryDescription = categoryDescriptionText.getText();
+        if (categoryDescription.length() > 0)
+            unit.setCategoryDescription(categoryDescription);
         String artefactDescription = descriptionText.getText();
         if (artefactDescription.length() > 0)
             unit.setArtifactDescription(artefactDescription);

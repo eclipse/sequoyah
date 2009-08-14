@@ -6,6 +6,7 @@
       <properties size='3'>
 		<property name='org.eclipse.equinox.p2.name' value='Pulsar Test SDK Zip'/>
 		<property name='org.eclipse.pulsar.category.name' value='Pulsar SDKs'/>
+		<property name='org.eclipse.pulsar.category.description' value='Pulsar SDKs Category Description'/>
 		<property name='org.eclipse.pulsar.documentation.url' value='http://www.eclipse.org/pulsar/'/>
 		<property name='org.eclipse.pulsar.type' value='ziparchive'/>
 		<property name='org.eclipse.equinox.p2.description' value='This SDK description is just an example...'/>

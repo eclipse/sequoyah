@@ -12,6 +12,7 @@
  * David Marques (Motorola) - Implementing environment filtering.
  * Henrique Magalhaes(Motorola)/
  * Euclides Neto (Motorola) - Fixed environment filtering.
+ * Euclides Neto (Motorola) - Adding Category description support.
  */
 
 package org.eclipse.mtj.internal.pulsar.metadata.generator.engine;
@@ -146,6 +147,9 @@ public class GeneratorEngine implements RepositoryConstants {
             if (iu.getProperty(SDK.PROP_CATEGORY) != null) {
                 iuDesc.setCategoryName(iu.getProperty(SDK.PROP_CATEGORY));
             }
+            if (iu.getProperty(SDK.PROP_CATEGORY_DESC) != null) {
+                iuDesc.setCategoryName(iu.getProperty(SDK.PROP_CATEGORY_DESC));
+            }
             if (iu.getProperty(SDK.PROP_DOC_URL) != null) {
                 iuDesc.setUnitDocumentationURL(new URL(iu
                         .getProperty(SDK.PROP_DOC_URL)));
@@ -194,7 +198,6 @@ public class GeneratorEngine implements RepositoryConstants {
     }
 
     /**
-     * 
      * @param location the root folder where the repositories exist - created if
      *            folder does not exist
      * @param desc the description to save
@@ -269,6 +272,12 @@ public class GeneratorEngine implements RepositoryConstants {
                 if (newIuDesc.getCategoryName() != null) {
                     p2IuDesc.setProperty(SDK.PROP_CATEGORY, newIuDesc
                             .getCategoryName());
+                }
+                
+                // Category description
+                if (newIuDesc.getCategoryDescription() != null) {
+                    p2IuDesc.setProperty(SDK.PROP_CATEGORY_DESC, newIuDesc
+                            .getCategoryDescription());
                 }
 
                 if (newIuDesc.getArtifactDescription() != null) {
