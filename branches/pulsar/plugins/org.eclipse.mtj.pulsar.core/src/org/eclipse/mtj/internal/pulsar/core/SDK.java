@@ -12,6 +12,7 @@
  *  Euclides Neto (Motorola) - Externalize strings.
  *  David Marques (Motorola) - Adding installation environment support.
  *  David Marques (Motorola) - Adding support for feature installation.
+ *  Euclides Neto (Motorola) - Adding SDK Category description support.
  */
 
 package org.eclipse.mtj.internal.pulsar.core;
@@ -27,6 +28,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationEnvironment;
 import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfo;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
+import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKCategory;
 import org.eclipse.mtj.internal.provisional.pulsar.core.IUInstallationEnvironment;
 import org.eclipse.mtj.pulsar.core.Activator;
 import org.osgi.framework.Version;
@@ -39,6 +41,7 @@ public class SDK extends PlatformObject implements ISDK {
     public static final String EXECUTABLE_TYPE = "executable"; //$NON-NLS-1$
     public static final String OSGI_BUNDLE_TYPE = "osgi-bundle"; //$NON-NLS-1$
     public static final String PROP_CATEGORY = "org.eclipse.pulsar.category.name"; //$NON-NLS-1$
+    public static final String PROP_CATEGORY_DESC = "org.eclipse.pulsar.category.description"; //$NON-NLS-1$
     public static final String PROP_DOC_URL = "org.eclipse.pulsar.documentation.url"; //$NON-NLS-1$
     public static final String PROP_DESCRIPTION = "org.eclipse.equinox.p2.description"; //$NON-NLS-1$
 
@@ -75,8 +78,28 @@ public class SDK extends PlatformObject implements ISDK {
         return EType.UNKNOWN;
     }
 
-    public String getCategory() {
-        return iu.getProperty(PROP_CATEGORY);
+    public ISDKCategory getCategory() {
+        String name = iu.getProperty(PROP_CATEGORY);
+
+        // If category name is null, ISDKCategory must be null as well
+        if (name != null) {
+            String description = iu.getProperty(PROP_CATEGORY_DESC);
+            // If description is not set, try to get the description of
+            // repository (keep compatibility with previous implementation.
+            if (description == null) {
+                if (getRepository() != null
+                        && getRepository().getInstallationInfo() != null
+                        && getRepository().getInstallationInfo()
+                                .getDescription() != null) {
+                    description = getRepository().getInstallationInfo()
+                            .getDescription().toString();
+                }
+            }
+            return new SDKCategory(name, description, this.getRepository()
+                    .getInstallationInfo());
+        } else {
+            return null;
+        }
     }
 
     public URL getDocumentationURL() {

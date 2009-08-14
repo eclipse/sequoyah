@@ -13,6 +13,7 @@
  *     David Marques (Motorola) - Adding getInstallableUnit and getRepository
  *                                methods.
  *     David Marques (Motorola) - Adding support for feature installation.
+ *     Euclides Neto (Motorola) - Adding SDK Category description support.
  */
 package org.eclipse.mtj.internal.provisional.pulsar.core;
 
@@ -67,9 +68,9 @@ public interface ISDK extends IAdaptable, IInstallationInfoProvider {
     /**
      * Return an optional category name for this SDK (or null).
      * 
-     * @return String
+     * @return ISDKCategory
      */
-    public String getCategory();
+    public ISDKCategory getCategory();
 
     /**
      * Return an optional URL to documentation about this SDK (or null).

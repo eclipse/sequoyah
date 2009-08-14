@@ -17,6 +17,7 @@
  *  Euclides Neto (Motorola) - Added uninstall action.
  *  Henrique Magalhaes (Motorola) - Fixing update repository problem.
  *  Euclides Neto (Motorola) - Changed the method to refresh instead of remove SDK repositories.
+ *  Euclides Neto (Motorola) - Adding SDK Category description support.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -56,6 +57,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.mtj.internal.provisional.pulsar.core.IInstallationInfoProvider;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
+import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKCategory;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.mtj.internal.provisional.pulsar.core.QuickInstallCore;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK.EState;
@@ -278,13 +280,14 @@ public class SDKInstallView extends ViewPart {
         };
         job.schedule();
     }
-    
+
     /**
      * Removes all sdk repositories.
      */
     private void refreshSDKRepositories() {
         P2InstallerUI installer = (P2InstallerUI) P2InstallerUI.getInstance();
-        installer.refreshSDKRepositories(QuickInstallCore.getInstance().getSDKRepositories());
+        installer.refreshSDKRepositories(QuickInstallCore.getInstance()
+                .getSDKRepositories());
     }
 
     /**
@@ -318,9 +321,9 @@ public class SDKInstallView extends ViewPart {
     }
 
     /**
-     * Gets an {@link ISDKInstallItemLabelProvider} instance for
-     * the specified {@link Object} in order to display it into
-     * the {@link SDKInstallItemViewer}.
+     * Gets an {@link ISDKInstallItemLabelProvider} instance for the specified
+     * {@link Object} in order to display it into the
+     * {@link SDKInstallItemViewer}.
      * 
      * @param item target object.
      * @return an {@link ISDKInstallItemLabelProvider} instance.
@@ -351,13 +354,13 @@ public class SDKInstallView extends ViewPart {
         // create a new repository node
         TreeNode repositoryNode = new TreeNode(repository);
         // a map of categories to sdks in that category
-        Map<String, Collection<ISDK>> categoryToSDKListMap = new LinkedHashMap<String, Collection<ISDK>>();
+        Map<ISDKCategory, Collection<ISDK>> categoryToSDKListMap = new LinkedHashMap<ISDKCategory, Collection<ISDK>>();
         // the current child list for the repository node
         Collection<TreeNode> childList = new ArrayList<TreeNode>();
         // pass through sdks, adding uncategorized sdk and category lists
         Collection<ISDK> sdks = repository.getSDKs(monitor);
         for (ISDK sdk : sdks) {
-            String category = sdk.getCategory();
+            ISDKCategory category = sdk.getCategory();
             if (category != null) {
                 if (!categoryToSDKListMap.containsKey(category))
                     categoryToSDKListMap.put(category, new ArrayList<ISDK>());
@@ -367,7 +370,7 @@ public class SDKInstallView extends ViewPart {
             }
         }
         // pass through category lists, adding categorized sdks
-        for (String category : categoryToSDKListMap.keySet()) {
+        for (ISDKCategory category : categoryToSDKListMap.keySet()) {
             TreeNode categoryNode = addNewTreeNode(childList, repositoryNode,
                     category);
             Collection<ISDK> childSdks = categoryToSDKListMap.get(category);
@@ -397,10 +400,13 @@ public class SDKInstallView extends ViewPart {
 
     private String getTreeNodeDisplayName(Object treeNode) {
         Object element = ((TreeNode) treeNode).getValue();
-        if (element instanceof ISDK)
+        if (element instanceof ISDKCategory) {
+            return ((ISDKCategory) element).getName();
+        } else if (element instanceof ISDK) {
             return ((ISDK) element).getName();
-        else if (element instanceof String)
+        } else if (element instanceof String) {
             return (String) element;
+        }
 
         return ""; //$NON-NLS-1$
     }
@@ -455,8 +461,7 @@ public class SDKInstallView extends ViewPart {
     /**
      * Gets the selected item {@link Object}.
      * 
-     * @return selected object or null if selection
-     *         is empty.
+     * @return selected object or null if selection is empty.
      */
     private Object getSelectedItem() {
         Object result = null;

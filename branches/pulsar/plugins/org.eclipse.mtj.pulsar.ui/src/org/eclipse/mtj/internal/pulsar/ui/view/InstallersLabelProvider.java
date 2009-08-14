@@ -10,6 +10,7 @@
  * 	David Dubrow
  *  David Marques (Motorola) - Renaming getImageDescriptor method.
  *  David Marques (Motorola) - Handling exceptions when loading icons.
+ *  Euclides Neto (Motorola) - Adding SDK Category description support.
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -23,6 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDK;
+import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKCategory;
 import org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepository;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -55,7 +57,9 @@ public class InstallersLabelProvider extends ColumnLabelProvider {
             return getRepositoryImage((ISDKRepository) object);
         } else if (object instanceof ISDK) {
             return getProvUIImage(ProvUIImages.IMG_IU);
-        } else if (object instanceof String) { // category
+        } else if (object instanceof ISDKCategory) {
+            return getProvUIImage(ProvUIImages.IMG_CATEGORY);
+        } else if (object instanceof String) { // old category
             return getProvUIImage(ProvUIImages.IMG_CATEGORY);
         }
         return null;
@@ -68,6 +72,8 @@ public class InstallersLabelProvider extends ColumnLabelProvider {
             return ((ISDK) object).getName();
         } else if (object instanceof ISDKRepository) {
             return ((ISDKRepository) object).getName();
+        } else if (object instanceof ISDKCategory) {
+            return ((ISDKCategory) object).getName();
         } else if (object instanceof String) {
             return (String) object;
         }
