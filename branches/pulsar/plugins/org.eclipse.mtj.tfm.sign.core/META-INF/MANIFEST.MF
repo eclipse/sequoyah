@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Signing Framework Core Plug-in
-Bundle-SymbolicName: org.eclipse.mtj.tfm.sign.core
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: org.eclipse.mtj.tfm.sign.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.mtj.tfm.sign.core.SignCore
-Bundle-Vendor: DSDP - Eclipse.org
+Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
