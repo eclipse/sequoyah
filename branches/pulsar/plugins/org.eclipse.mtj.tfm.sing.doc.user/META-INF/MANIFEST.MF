@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sign Framework User Documentation
+Bundle-SymbolicName: org.eclipse.mtj.tfm.sing.doc.user; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: DSDP - Eclipse.org
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
