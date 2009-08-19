@@ -12,6 +12,8 @@
 package org.eclipse.mtj.tfm.sign.core;
 
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.mtj.tfm.internal.sign.core.extension.SignExtensionManager;
+import org.eclipse.mtj.tfm.sign.core.extension.ISignExtensionManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -24,6 +26,22 @@ public class SignCore extends Plugin {
 
 	// The shared instance
 	private static SignCore plugin;
+	
+	/**
+	 * Returns the shared instance
+	 *
+	 * @return the shared instance
+	 */
+	public static SignCore getDefault() {
+		return plugin;
+	}
+
+	/**
+	 * @return
+	 */
+	public static ISignExtensionManager getSignExtensionManager(){
+	    return new SignExtensionManager();
+	}
 	
 	/**
 	 * The constructor
@@ -47,15 +65,6 @@ public class SignCore extends Plugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
-	}
-
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static SignCore getDefault() {
-		return plugin;
 	}
 
 }
