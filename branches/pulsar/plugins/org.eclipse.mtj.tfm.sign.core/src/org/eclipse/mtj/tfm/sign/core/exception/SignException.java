@@ -14,19 +14,15 @@ package org.eclipse.mtj.tfm.sign.core.exception;
 /**
  * @author Diego Sandin
  * @since 1.0
- * @model
  */
 public class SignException extends Exception {
 
     /**
-     * @model
      */
     private static final long serialVersionUID = 869810851382398797L;
 
     /**
      * Creates a new instance of SignException.
-     * 
-     * @model
      */
     public SignException() {
     }
@@ -35,7 +31,6 @@ public class SignException extends Exception {
      * Creates a new instance of SignException.
      * 
      * @param message
-     * @model
      */
     public SignException(String message) {
         super(message);
@@ -45,7 +40,6 @@ public class SignException extends Exception {
      * Creates a new instance of SignException.
      * 
      * @param cause
-     * @model
      */
     public SignException(Throwable cause) {
         super(cause);
@@ -56,7 +50,6 @@ public class SignException extends Exception {
      * 
      * @param message
      * @param cause
-     * @model
      */
     public SignException(String message, Throwable cause) {
         super(message, cause);

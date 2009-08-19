@@ -19,6 +19,8 @@ import org.eclipse.mtj.tfm.sign.core.signing.ISigningCertificate;
 /**
  * The Signing Provider provides the interface to sign a project's deployment
  * package. <br>
+ * 
+ * @model
  */
 public interface ISigningProvider extends ISignExtension {
 
@@ -29,6 +31,7 @@ public interface ISigningProvider extends ISignExtension {
      * @return true if root certificate management features are available, false
      *         otherwise
      * @throws SignException
+     * @model
      */
     public boolean isRootCertToolAvailable() throws SignException;
 
@@ -41,6 +44,7 @@ public interface ISigningProvider extends ISignExtension {
      * @param alias
      * @param password
      * @throws SignException
+     * @model
      */
     public void importToRootCert(String rootcert, String keystore,
             String alias, String password) throws SignException;
@@ -51,6 +55,7 @@ public interface ISigningProvider extends ISignExtension {
      * @param rootcert
      * @return
      * @throws SignException
+     * @model
      */
     public String[] listrootcert(String rootcert) throws SignException;
 
@@ -61,6 +66,7 @@ public interface ISigningProvider extends ISignExtension {
      * @param rootcert
      * @param removeindex
      * @throws SignException
+     * @model
      */
     public void removeCertFromRoot(String rootcert, int removeindex)
             throws SignException;
@@ -74,6 +80,7 @@ public interface ISigningProvider extends ISignExtension {
      * @param monitor
      * @return
      * @throws SignException
+     * @model
      */
     public boolean sign(IProject project, IFolder targetFolder,
             ISigningCertificate certificates, IProgressMonitor monitor)
@@ -87,6 +94,7 @@ public interface ISigningProvider extends ISignExtension {
      * @param monitor
      * @return
      * @throws SignException
+     * @model
      */
     public boolean unsign(IProject mtjProject, IFolder targetFolder,
             IProgressMonitor monitor) throws SignException;
@@ -99,6 +107,7 @@ public interface ISigningProvider extends ISignExtension {
      * @param monitor
      * @return
      * @throws SignException
+     * @model
      */
     public boolean isSigned(IProject mtjProject, IFolder targetFolder,
             IProgressMonitor monitor) throws SignException;
@@ -111,6 +120,7 @@ public interface ISigningProvider extends ISignExtension {
      * @param monitor
      * @return
      * @throws SignException
+     * @model
      */
     public String getToolLocation(IProgressMonitor monitor)
             throws SignException;
@@ -123,6 +133,7 @@ public interface ISigningProvider extends ISignExtension {
      * @param loc
      * @param monitor
      * @throws SignException
+     * @model
      */
     public void storeToolLocation(String loc, IProgressMonitor monitor)
             throws SignException;

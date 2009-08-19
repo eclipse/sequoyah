@@ -15,6 +15,7 @@ import org.eclipse.mtj.tfm.sign.core.exception.SignException;
 
 /**
  * The Security Management Provider provides the interface to interact with Key Stores.
+ * @model
  */
 public interface ISecurityManagement extends ISignExtension {
 	
@@ -28,6 +29,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * @param monitor
 	 * @return String[]
 	 * @throws SignException
+	 * @model
 	 */
 	public String [] openKeyStore( String keyStore, String storePass, IProgressMonitor monitor) throws SignException;		
 	
@@ -35,6 +37,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * Returns the keystore type used by keystore.
 	 * @return String
 	 * @throws SignException
+	 * @model
 	 */
 	public String getStoreType() throws SignException;
 
@@ -43,6 +46,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * Calling classes will set this value based on user selection from the keystore.
 	 * @return key alias that is currently being used.
 	 * @throws SignException
+	 * @model
 	 */
 	public String getAliaskey() throws SignException;
 
@@ -50,6 +54,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * Returns the current keystore password.
 	 * @return
 	 * @throws SignException
+	 * @model
 	 */
 	public String getPassWrd() throws SignException;
 
@@ -57,6 +62,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * Returns the location of the current keystore.
 	 * @return
 	 * @throws SignException
+	 * @model
 	 */
 	public String getKeyStoreNameLoc() throws SignException; 
 
@@ -64,6 +70,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * Returns the validity of the current key pair.
 	 * @return
 	 * @throws SignException
+	 * @model
 	 */
 	public String getValidity() throws SignException;
 	
@@ -71,6 +78,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * Sets the type of keystore to generate.
 	 * @param storeType
 	 * @throws SignException
+	 * @model
 	 */
 	public void setStoreType(String storeType) throws SignException;
 
@@ -78,6 +86,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * Sets the alias for the current key pair.
 	 * @param aliasKey
 	 * @throws SignException
+	 * @model
 	 */
 	public void setAliaskey(String aliasKey) throws SignException;
 
@@ -85,6 +94,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * Sets the password for the current keystore.
 	 * @param passWrd
 	 * @throws SignException
+	 * @model
 	 */
 	public void setPassWrd(String passWrd) throws SignException;
 
@@ -92,6 +102,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * Sets the Key Store name location.
 	 * @param keyStoreNameLoc
 	 * @throws SignException
+	 * @model
 	 */
 	public void setKeyStoreNameLoc(String keyStoreNameLoc) throws SignException; 
 
@@ -99,6 +110,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * Sets the validity period for the certificate.
 	 * @param validity
 	 * @throws SignException
+	 * @model
 	 */
 	public void setValidity(String validity) throws SignException;
 	
@@ -110,18 +122,21 @@ public interface ISecurityManagement extends ISignExtension {
 	 * @param psswd
 	 * @param strtype
 	 * @throws SignException
+	 * @model
 	 */
 	public void setValues (String loc, String alias, String psswd,String strtype) throws SignException;
 		
 	/**
 	 * Resets all values including keystore, password, alias key, etc
 	 * @throws SignException
+	 * @model
 	 */
 	public void resetValues () throws SignException;	  
 	
 	/**
 	 * Return true if the keystore name and location were set during this session.
 	 * @return true if a keystore name and location were set during this session, false otherwise.
+	 * @model
 	 */
 	public boolean isKeyStoreSelected () throws SignException;
 	
@@ -131,6 +146,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * @param monitor
 	 * @return - True if success, otherwise false.
 	 * @throws SignException
+	 * @model
 	 */
 	public boolean generateCSR( String certFile, IProgressMonitor monitor) throws SignException;
 	
@@ -141,6 +157,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * @param monitor
 	 * @return - True if success, otherwise false.
 	 * @throws SignException
+	 * @model
 	 */
 	public boolean importSignedCert( String certFile, IProgressMonitor monitor) throws SignException;
 
@@ -150,6 +167,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * @param monitor
 	 * @return - True if success, otherwise false.
 	 * @throws SignException
+	 * @model
 	 */
 	public boolean deleteKey(IProgressMonitor monitor ) throws SignException;
 	
@@ -161,6 +179,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * @param monitor
 	 * @return - True if success, otherwise false. 
 	 * @throws SignException
+	 * @model
 	 */
 	public boolean changeStorePassword(String newStorePass, String storePass, IProgressMonitor monitor) throws SignException;
 	
@@ -177,6 +196,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * @param monitor - Progress monitor. 
 	 * @return - true is success, otherwise false.
 	 * @throws SignException
+	 * @model
 	 */
 	public boolean createNewKey(String alias, String commonName, String orgUnit, String orgName, String localityName, String stateName, String country, IProgressMonitor monitor) throws SignException;
 
@@ -185,6 +205,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * @param monitor
 	 * @return
 	 * @throws SignException
+	 * @model
 	 */
 	public String getCertificateInfo(IProgressMonitor monitor) throws SignException;
 	
@@ -195,6 +216,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * @param monitor
 	 * @return - Tool location.
 	 * @throws SignException
+	 * @model
 	 */
 	public String getToolLocation(IProgressMonitor monitor) throws SignException;
 	
@@ -205,6 +227,7 @@ public interface ISecurityManagement extends ISignExtension {
 	 * @param loc - Directory where tool resides.
 	 * @param monitor 
 	 * @throws SignException
+	 * @model
 	 */
 	public void storeToolLocation(String loc, IProgressMonitor monitor) throws SignException;
 }
