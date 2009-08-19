@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension-point id="securityManagement"         name="%extension-point.securityManagement"         schema="schema/org_eclipse_mtj_tfm_sign_core_security_management.exsd"/>
+   <extension-point id="signingProvider"            name="%extension-point.name.signingProvider"            schema="schema/org_eclipse_mtj_tfm_sign_core_signing_provider.exsd"/>
+
+</plugin>
