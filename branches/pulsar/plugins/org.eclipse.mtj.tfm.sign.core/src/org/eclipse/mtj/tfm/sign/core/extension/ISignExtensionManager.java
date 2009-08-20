@@ -24,14 +24,11 @@ import org.eclipse.mtj.tfm.sign.core.exception.SignException;
 public interface ISignExtensionManager {
 
     /**
-     * 
      * CamelCase identifiers! Capitalize an identifier - i.e. Convert something
      * like "Device_Management" to "deviceManagement" or "DEVICE_MANAGEMENT" to
      * "deviceManagement"
      * 
-     * capitalizeIdentifier
-     * 
-     * @param value - The identifier to capitalize - e.g. "DEVICE_MANAGEMENT".
+     * @param value The identifier to capitalize - e.g. "DEVICE_MANAGEMENT".
      * @return The capitalized identifier - e.g. "deviceManagement".
      */
     public abstract String capitalizeIdentifier(String _value);
@@ -62,10 +59,24 @@ public interface ISignExtensionManager {
     public abstract List<ISignExtension> getImplementations(
             ExtensionType extensionType, String version, String vendor);
 
+    /**
+     * @param extensionType
+     * @param version
+     * @param vendor
+     * @param onlyActive
+     * @return
+     */
     public abstract List<ISignExtension> getImplementations(
             ExtensionType extensionType, String version, String vendor,
             boolean onlyActive);
 
+    /**
+     * @param extensionType
+     * @param version
+     * @param vendor
+     * @param project
+     * @return
+     */
     public abstract List<ISignExtension> getImplementations(
             ExtensionType extensionType, String version, String vendor,
             String project);
@@ -104,9 +115,18 @@ public interface ISignExtensionManager {
     public abstract boolean isActive(String id, ExtensionType type,
             String project);
 
+    /**
+     * @param extensionName
+     * @return
+     */
     public abstract ArrayList<ISignExtension> loadExtensions(
             String extensionName);
 
+    /**
+     * @param plugin_id
+     * @param extensionType
+     * @return
+     */
     public abstract ArrayList<ISignExtension> loadExtensions(String plugin_id,
             ExtensionType extensionType);
 

@@ -12,26 +12,49 @@
  */
 package org.eclipse.mtj.tfm.sign.core.signing;
 
-
 /**
  * @since 1.0
  */
 public interface ISigningCertificate {
 
+    /**
+     * @return
+     */
     String getKeystore();
 
+    /**
+     * @param value
+     */
     void setKeystore(String value);
 
+    /**
+     * @return
+     */
     String getAliasName();
 
+    /**
+     * @param value
+     */
     void setAliasName(String value);
 
+    /**
+     * @return
+     */
     String getKeystorePassword();
 
+    /**
+     * @param value
+     */
     void setKeystorePassword(String value);
 
+    /**
+     * @return
+     */
     String getCertificatePassword();
 
+    /**
+     * @param value
+     */
     void setCertificatePassword(String value);
 
 }
