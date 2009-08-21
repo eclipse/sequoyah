@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Core
+Bundle-SymbolicName: org.eclipse.mtj.tfm.sign.test.core
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.hyades.test.tools.core,
+ org.junit,
+ org.eclipse.mtj.tfm.sign.core;bundle-version="1.0.0",
+ org.eclipse.mtj.tfm.sign.smgmt.ibm;bundle-version="1.0.0",
+ org.eclipse.mtj.tfm.sign.smgmt.j9;bundle-version="1.0.0",
+ org.eclipse.mtj.tfm.sign.smgmt.sun;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
