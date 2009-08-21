@@ -13,34 +13,71 @@
 package org.eclipse.mtj.tfm.sign.core.extension;
 
 import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
+import org.osgi.framework.Version;
 
 /**
  * 
  */
 public interface ISignExtension {
 
+    /**
+     * @return
+     */
     String getId();
 
+    /**
+     * @param value
+     */
     void setId(String value);
 
+    /**
+     * @return
+     */
     String getVendor();
 
+    /**
+     * @param value
+     */
     void setVendor(String value);
 
-    String getVersion();
+    /**
+     * @return
+     */
+    Version getVersion();
 
-    void setVersion(String value);
+    /**
+     * @param value
+     */
+    void setVersion(Version value);
 
+    /**
+     * @return
+     */
     String getDescription();
 
+    /**
+     * @param value
+     */
     void setDescription(String value);
 
+    /**
+     * @return
+     */
     ExtensionType getType();
 
+    /**
+     * @param value
+     */
     void setType(ExtensionType value);
 
+    /**
+     * @return
+     */
     boolean isActive();
 
+    /**
+     * @param value
+     */
     void setActive(boolean value);
 
 }

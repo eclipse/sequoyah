@@ -12,7 +12,9 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.emf.common.util,
  org.eclipse.emf.ecore
-Export-Package: org.eclipse.mtj.tfm.sign.core,
+Export-Package: org.eclipse.mtj.tfm.internal.sign.core;x-friends:="org.eclipse.mtj.tfm.sign.core,org.eclipse.mtj.tfm.sign.smgmt.ibm,org.eclipse.mtj.tfm.sign.ui",
+ org.eclipse.mtj.tfm.internal.sign.core.extension;x-friends:="org.eclipse.mtj.tfm.sign.core,org.eclipse.mtj.tfm.sign.smgmt.ibm,org.eclipse.mtj.tfm.sign.ui",
+ org.eclipse.mtj.tfm.sign.core,
  org.eclipse.mtj.tfm.sign.core.enumerations,
  org.eclipse.mtj.tfm.sign.core.exception,
  org.eclipse.mtj.tfm.sign.core.extension,
