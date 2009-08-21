@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.mtj.tfm.sign.core.securityManagement">
+      <security_Management
+            class="org.eclipse.mtj.tfm.sign.smgmt.j9.impl.J9SecurityManager"
+            id="org.eclipse.mtj.tfm.sign.smgmt.j9.impl.J9SecurityManager"
+            name="org.eclipse.mtj.tfm.sign.smgmt.j9.impl.J9SecurityManager"/>
+   </extension>
+      <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.mtj.tfm.sign.smgmt.j9.impl.J9SecurityManagerPrefInitilizer"/>
+   </extension>
+
+</plugin>
