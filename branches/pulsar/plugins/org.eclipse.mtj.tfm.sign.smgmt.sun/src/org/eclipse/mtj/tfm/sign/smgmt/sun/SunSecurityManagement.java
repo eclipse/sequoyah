@@ -38,6 +38,11 @@ import org.osgi.framework.Version;
 public class SunSecurityManagement extends SignExtensionImpl implements
         ISecurityManagement {
 
+    /**
+     * Return the line to be used to configure Console Encoding.
+     * 
+     * @return The character encoding for the console.
+     */
     private static String getConsoleEncoding() {
         return "-J-Dconsole.encoding=" + System.getProperty("file.encoding"); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -45,6 +50,12 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     private String aliaskey = null;
     private String keyStoreNameLoc = ""; //$NON-NLS-1$
     private String passwrd = null;
+
+    /**
+     * Preference store for this SecurityManagement plug-in. This preference
+     * store is used to hold persistent settings for this plug-in in the context
+     * of a workbench.
+     */
     private IPreferenceStore securityProviderPrefStore;
 
     // private variables
@@ -233,23 +244,18 @@ public class SunSecurityManagement extends SignExtensionImpl implements
             String orgName, String localityName, String stateName,
             String country) {
         String Dname = SunSmgmtConstants.QUOTE
-                + SunSmgmtConstants.COMMON_NAME_PREFIX
-                + commonName
+                + SunSmgmtConstants.COMMON_NAME_PREFIX + commonName
                 + SunSmgmtConstants.COMMA_AND_SPACE
-                + SunSmgmtConstants.ORGANIZATION_UNIT_PREFIX
-                + orgUnit
+                + SunSmgmtConstants.ORGANIZATION_UNIT_PREFIX + orgUnit
                 + SunSmgmtConstants.COMMA_AND_SPACE
-                + SunSmgmtConstants.ORGANIZATION_NAME_PREFIX
-                + orgName
+                + SunSmgmtConstants.ORGANIZATION_NAME_PREFIX + orgName
                 + SunSmgmtConstants.COMMA_AND_SPACE
-                + SunSmgmtConstants.LOCALITY_NAME_PREFIX
-                + localityName
+                + SunSmgmtConstants.LOCALITY_NAME_PREFIX + localityName
                 + SunSmgmtConstants.COMMA_AND_SPACE
-                + SunSmgmtConstants.STATE_NAME_PREFIX
-                + stateName
+                + SunSmgmtConstants.STATE_NAME_PREFIX + stateName
                 + SunSmgmtConstants.COMMA_AND_SPACE
-                + SunSmgmtConstants.COUNTRY_PREFIX
-                + country + SunSmgmtConstants.QUOTE;
+                + SunSmgmtConstants.COUNTRY_PREFIX + country
+                + SunSmgmtConstants.QUOTE;
         return Dname;
     }
 
@@ -503,10 +509,8 @@ public class SunSecurityManagement extends SignExtensionImpl implements
      */
     public void storeToolLocation(String loc, IProgressMonitor monitor)
             throws SignException {
-        securityProviderPrefStore
-                .setValue(
-                        SunSmgmtConstants.SECURITY_TOOL_LOCATION,
-                        loc);
+        securityProviderPrefStore.setValue(
+                SunSmgmtConstants.SECURITY_TOOL_LOCATION, loc);
 
     }
 
@@ -517,13 +521,10 @@ public class SunSecurityManagement extends SignExtensionImpl implements
             String storePasswd) throws SignException {
 
         String[] changeStorePasswordCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SunSmgmtConstants.CHANGE_STORE_PASSWD,
-                SunSmgmtConstants.NEWSTOREPASS,
-                newStorePass,
+                getConsoleEncoding(), SunSmgmtConstants.CHANGE_STORE_PASSWD,
+                SunSmgmtConstants.NEWSTOREPASS, newStorePass,
                 SunSmgmtConstants.STORETYPE, storeType,
-                SunSmgmtConstants.KEYSTORE,
-                keyStoreNameLoc,
+                SunSmgmtConstants.KEYSTORE, keyStoreNameLoc,
                 SunSmgmtConstants.STOREPASS, storePasswd };
 
         return changeStorePasswordCmdArgs;
@@ -536,12 +537,9 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     private String[] generateDeleteKeyCmd() throws SignException {
 
         String[] deleteKeyCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SunSmgmtConstants.DELETE_KEY,
-                SunSmgmtConstants.ALIAS, aliaskey,
-                SunSmgmtConstants.STORETYPE, storeType,
-                SunSmgmtConstants.KEYSTORE,
-                keyStoreNameLoc,
+                getConsoleEncoding(), SunSmgmtConstants.DELETE_KEY,
+                SunSmgmtConstants.ALIAS, aliaskey, SunSmgmtConstants.STORETYPE,
+                storeType, SunSmgmtConstants.KEYSTORE, keyStoreNameLoc,
                 SunSmgmtConstants.STOREPASS, passwrd };
 
         return deleteKeyCmdArgs;
@@ -560,12 +558,9 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     private String[] generateDisplayCertifcates() throws SignException {
 
         String[] listCertificateCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SunSmgmtConstants.LIST,
-                SunSmgmtConstants.ALIAS, aliaskey,
-                SunSmgmtConstants.STORETYPE, storeType,
-                SunSmgmtConstants.KEYSTORE,
-                keyStoreNameLoc,
+                getConsoleEncoding(), SunSmgmtConstants.LIST,
+                SunSmgmtConstants.ALIAS, aliaskey, SunSmgmtConstants.STORETYPE,
+                storeType, SunSmgmtConstants.KEYSTORE, keyStoreNameLoc,
                 SunSmgmtConstants.STOREPASS, passwrd };
 
         return listCertificateCmdArgs;
@@ -579,13 +574,10 @@ public class SunSecurityManagement extends SignExtensionImpl implements
             throws SignException {
 
         String[] generateCSRCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SunSmgmtConstants.GENERATE_CSR,
-                SunSmgmtConstants.ALIAS, aliaskey,
-                SunSmgmtConstants.FILE, certFile,
-                SunSmgmtConstants.STORETYPE, storeType,
-                SunSmgmtConstants.KEYSTORE,
-                keyStoreNameLoc,
+                getConsoleEncoding(), SunSmgmtConstants.GENERATE_CSR,
+                SunSmgmtConstants.ALIAS, aliaskey, SunSmgmtConstants.FILE,
+                certFile, SunSmgmtConstants.STORETYPE, storeType,
+                SunSmgmtConstants.KEYSTORE, keyStoreNameLoc,
                 SunSmgmtConstants.STOREPASS, passwrd };
 
         return generateCSRCmdArgs;
@@ -599,15 +591,11 @@ public class SunSecurityManagement extends SignExtensionImpl implements
             throws SignException {
 
         String[] importSignedCertCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SunSmgmtConstants.IMPORT_CERT,
-                SunSmgmtConstants.NOPROMPT,
-                SunSmgmtConstants.ALIAS, aliaskey,
-                SunSmgmtConstants.KEYPASS, passwrd,
-                SunSmgmtConstants.FILE, certFile,
-                SunSmgmtConstants.STORETYPE, storeType,
-                SunSmgmtConstants.KEYSTORE,
-                keyStoreNameLoc,
+                getConsoleEncoding(), SunSmgmtConstants.IMPORT_CERT,
+                SunSmgmtConstants.NOPROMPT, SunSmgmtConstants.ALIAS, aliaskey,
+                SunSmgmtConstants.KEYPASS, passwrd, SunSmgmtConstants.FILE,
+                certFile, SunSmgmtConstants.STORETYPE, storeType,
+                SunSmgmtConstants.KEYSTORE, keyStoreNameLoc,
                 SunSmgmtConstants.STOREPASS, passwrd };
 
         return importSignedCertCmdArgs;
@@ -621,16 +609,12 @@ public class SunSecurityManagement extends SignExtensionImpl implements
             String keyAlg, String sigAlg) throws SignException {
 
         String[] newKeyCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SunSmgmtConstants.GENERATE_KEY,
-                SunSmgmtConstants.ALIAS, alias,
-                SunSmgmtConstants.DNAME, dname,
+                getConsoleEncoding(), SunSmgmtConstants.GENERATE_KEY,
+                SunSmgmtConstants.ALIAS, alias, SunSmgmtConstants.DNAME, dname,
                 SunSmgmtConstants.KEYPASS, passwrd,
                 SunSmgmtConstants.STORETYPE, storeType,
-                SunSmgmtConstants.KEYALG, keyAlg,
-                SunSmgmtConstants.SIGALG, sigAlg,
-                SunSmgmtConstants.KEYSTORE,
-                keyStoreNameLoc,
+                SunSmgmtConstants.KEYALG, keyAlg, SunSmgmtConstants.SIGALG,
+                sigAlg, SunSmgmtConstants.KEYSTORE, keyStoreNameLoc,
                 SunSmgmtConstants.STOREPASS, passwrd,
                 SunSmgmtConstants.VALIDITY, validity };
 
@@ -645,8 +629,7 @@ public class SunSecurityManagement extends SignExtensionImpl implements
             throws SignException {
 
         String[] openKeyStoreCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SunSmgmtConstants.LIST,
+                getConsoleEncoding(), SunSmgmtConstants.LIST,
                 SunSmgmtConstants.STORETYPE, storeType,
                 SunSmgmtConstants.KEYSTORE, keyStore,
                 SunSmgmtConstants.STOREPASS, storePasswd };
