@@ -26,10 +26,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
      */
     public void initializeDefaultPreferences() {
         IPreferenceStore store = SunSmgmtCore.getDefault().getPreferenceStore();
-        store
-                .setDefault(
-                        SunSmgmtConstants.SECURITY_TOOL_LOCATION,
-                        Messages.PreferenceInitializer_0);
+        store.setDefault(SunSmgmtConstants.SECURITY_TOOL_LOCATION,
+                Messages.PreferenceInitializer_set_location_message);
     }
 
 }

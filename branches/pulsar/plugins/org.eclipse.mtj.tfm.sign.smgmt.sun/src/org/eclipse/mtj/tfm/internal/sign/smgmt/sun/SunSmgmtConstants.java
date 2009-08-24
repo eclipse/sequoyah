@@ -12,10 +12,14 @@
  */
 package org.eclipse.mtj.tfm.internal.sign.smgmt.sun;
 
+/**
+ * @since 1.0
+ */
 public interface SunSmgmtConstants {
 
 	public static String SECURITY_TOOL_LOCATION = "SecurityToolLocationPreference"; //$NON-NLS-1$
-//	 constants
+    
+	// constants
 	public static final String COMMA_AND_SPACE	= ", "; //$NON-NLS-1$
 	public static final String QUOTE 			= "\""; //$NON-NLS-1$
 
@@ -43,7 +47,7 @@ public interface SunSmgmtConstants {
 	public static final String KEYSIZE 			= "-keysize"; //$NON-NLS-1$
 	public static final String NOPROMPT 		= "-noprompt"; //$NON-NLS-1$
 
-//	 Dname prefix options
+    // Dname prefix options
 	public static final String COMMON_NAME_PREFIX 		= "CN="; //$NON-NLS-1$
 	public static final String ORGANIZATION_UNIT_PREFIX = "OU="; //$NON-NLS-1$
 	public static final String ORGANIZATION_NAME_PREFIX = "O="; //$NON-NLS-1$
