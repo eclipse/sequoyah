@@ -10,11 +10,11 @@
  *     IBM Corporation         - initial API and implementation
  *     Diego Sandin (Motorola) - Porting code to TFM Sign Framework [Bug 286387]
  */
-package org.eclipse.mtj.tfm.sign.smgmt.ibm.impl;
+package org.eclipse.mtj.tfm.internal.sign.smgmt.sun;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.mtj.tfm.sign.smgmt.ibm.IBMSmgmtCore;
+import org.eclipse.mtj.tfm.sign.smgmt.sun.SunSmgmtCore;
 
 /**
  * Class used to initialize default preference values.
@@ -25,10 +25,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
      * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
      */
     public void initializeDefaultPreferences() {
-        IPreferenceStore store = IBMSmgmtCore.getDefault().getPreferenceStore();
-        store.setDefault(
-                SecurityManagementImplConstants.SECURITY_TOOL_LOCATION,
-                Messages.PreferenceInitializer_0);
+        IPreferenceStore store = SunSmgmtCore.getDefault().getPreferenceStore();
+        store
+                .setDefault(
+                        SunSmgmtConstants.SECURITY_TOOL_LOCATION,
+                        Messages.PreferenceInitializer_0);
     }
 
 }

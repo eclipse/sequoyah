@@ -10,9 +10,9 @@
  *     IBM Corporation         - initial API and implementation
  *     Diego Sandin (Motorola) - Porting code to TFM Sign Framework [Bug 286387]
  */
-package org.eclipse.mtj.tfm.sign.smgmt.sun.impl;
+package org.eclipse.mtj.tfm.internal.sign.smgmt.sun;
 
-public interface SecurityManagementImpementationConstants {
+public interface SunSmgmtConstants {
 
 	public static String SECURITY_TOOL_LOCATION = "SecurityToolLocationPreference"; //$NON-NLS-1$
 //	 constants

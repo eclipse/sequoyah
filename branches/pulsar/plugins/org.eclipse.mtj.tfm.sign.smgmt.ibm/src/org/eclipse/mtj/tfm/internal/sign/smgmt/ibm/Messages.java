@@ -10,13 +10,13 @@
  *     IBM Corporation         - initial API and implementation
  *     Diego Sandin (Motorola) - Porting code to TFM Sign Framework [Bug 286387]
  */
-package org.eclipse.mtj.tfm.sign.smgmt.ibm.impl;
+package org.eclipse.mtj.tfm.internal.sign.smgmt.ibm;
 
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
 
-    private static final String BUNDLE_NAME = "org.eclipse.mtj.tfm.sign.smgmt.ibm.impl.messages";//$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.eclipse.mtj.tfm.internal.sign.smgmt.ibm.messages";//$NON-NLS-1$
 
     private Messages() {
         // Do not instantiate

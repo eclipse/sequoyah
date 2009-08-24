@@ -9,10 +9,9 @@
  * Contributors:
  *     Diego Sandin (Motorola) - Initial Version
  */
-package org.eclipse.mtj.tfm.internal.sign.core.extension;
+package org.eclipse.mtj.tfm.sign.core.extension;
 
 import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
-import org.eclipse.mtj.tfm.sign.core.extension.ISignExtension;
 import org.osgi.framework.Version;
 
 /**

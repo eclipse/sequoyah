@@ -17,7 +17,6 @@ import org.osgi.framework.BundleContext;
 /**
  * @author Diego Sandin
  * @since 1.0
- * 
  */
 public class SunSmgmtCore extends AbstractUIPlugin {
 

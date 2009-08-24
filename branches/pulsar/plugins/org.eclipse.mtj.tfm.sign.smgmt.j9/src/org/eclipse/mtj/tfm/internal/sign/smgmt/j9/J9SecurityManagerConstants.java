@@ -11,7 +11,7 @@
  *     Rodrigo Pastrana        - Replace State name with ST to match spec. 
  *     Diego Sandin (Motorola) - Porting code to TFM Sign Framework [Bug 286387]
  */
-package org.eclipse.mtj.tfm.sign.smgmt.j9.impl;
+package org.eclipse.mtj.tfm.internal.sign.smgmt.j9;
 
 public abstract class J9SecurityManagerConstants {
 

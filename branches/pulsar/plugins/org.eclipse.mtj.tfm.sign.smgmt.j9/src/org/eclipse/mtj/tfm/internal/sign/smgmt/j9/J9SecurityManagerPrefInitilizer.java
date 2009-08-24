@@ -10,7 +10,7 @@
  *     IBM Corporation         - initial API and implementation
  *     Diego Sandin (Motorola) - Porting code to TFM Sign Framework [Bug 286387]
  */
-package org.eclipse.mtj.tfm.sign.smgmt.j9.impl;
+package org.eclipse.mtj.tfm.internal.sign.smgmt.j9;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;

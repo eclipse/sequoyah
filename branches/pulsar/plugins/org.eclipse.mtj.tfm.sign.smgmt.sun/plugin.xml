@@ -4,13 +4,13 @@
    <extension
          point="org.eclipse.mtj.tfm.sign.core.securityManagement">
       <security_Management
-            class="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.SecurityManagementImplementation"
+            class="org.eclipse.mtj.tfm.sign.smgmt.sun.SunSecurityManagement"
             id="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.SecurityManagement"
             name="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.SecurityManagement"/>
    </extension>
       <extension
          point="org.eclipse.core.runtime.preferences">
-      <initializer class="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.PreferenceInitializer"/>
+      <initializer class="org.eclipse.mtj.tfm.internal.sign.smgmt.sun.PreferenceInitializer"/>
    </extension>
 
 </plugin>

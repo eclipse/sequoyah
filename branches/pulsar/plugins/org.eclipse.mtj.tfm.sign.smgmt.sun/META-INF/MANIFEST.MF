@@ -10,3 +10,5 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.eclipse.mtj.tfm.internal.sign.smgmt.sun;x-internal:=true,
+ org.eclipse.mtj.tfm.sign.smgmt.sun
