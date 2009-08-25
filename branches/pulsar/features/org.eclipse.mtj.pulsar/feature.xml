@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.mtj.pulsar"
       label="Eclipse Pulsar"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="Eclipse.org - Pulsar">
    <install-handler/>
 
