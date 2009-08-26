@@ -21,7 +21,7 @@ import org.eclipse.mtj.tfm.sign.core.exception.SignException;
 /**
  * @since 1.0
  */
-public interface ISignExtensionManager {
+public interface IExtensionManager {
 
     /**
      * CamelCase identifiers! Capitalize an identifier - i.e. Convert something
@@ -38,13 +38,13 @@ public interface ISignExtensionManager {
      * 
      * @return
      */
-    public abstract ISignExtension[] getAllImplementations();
+    public abstract IExtension[] getAllImplementations();
 
     /**
      * @param project
      * @return
      */
-    public abstract ISignExtension[] getAllImplementations(String project);
+    public abstract IExtension[] getAllImplementations(String project);
 
     /**
      * Method returns all active Mtj Extensions that are the defined extension
@@ -56,7 +56,7 @@ public interface ISignExtensionManager {
      * @param vendor
      * @return
      */
-    public abstract List<ISignExtension> getImplementations(
+    public abstract List<IExtension> getImplementations(
             ExtensionType extensionType, String version, String vendor);
 
     /**
@@ -66,7 +66,7 @@ public interface ISignExtensionManager {
      * @param onlyActive
      * @return
      */
-    public abstract List<ISignExtension> getImplementations(
+    public abstract List<IExtension> getImplementations(
             ExtensionType extensionType, String version, String vendor,
             boolean onlyActive);
 
@@ -77,7 +77,7 @@ public interface ISignExtensionManager {
      * @param project
      * @return
      */
-    public abstract List<ISignExtension> getImplementations(
+    public abstract List<IExtension> getImplementations(
             ExtensionType extensionType, String version, String vendor,
             String project);
 
@@ -89,7 +89,7 @@ public interface ISignExtensionManager {
      * @param onlyActive
      * @return
      */
-    public abstract List<ISignExtension> getImplementations(
+    public abstract List<IExtension> getImplementations(
             ExtensionType extensionType, String version, String vendor,
             String project, boolean onlyActive);
 
@@ -119,7 +119,7 @@ public interface ISignExtensionManager {
      * @param extensionName
      * @return
      */
-    public abstract ArrayList<ISignExtension> loadExtensions(
+    public abstract ArrayList<IExtension> loadExtensions(
             String extensionName);
 
     /**
@@ -127,7 +127,7 @@ public interface ISignExtensionManager {
      * @param extensionType
      * @return
      */
-    public abstract ArrayList<ISignExtension> loadExtensions(String plugin_id,
+    public abstract ArrayList<IExtension> loadExtensions(String plugin_id,
             ExtensionType extensionType);
 
     /**

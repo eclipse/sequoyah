@@ -27,7 +27,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     public void initializeDefaultPreferences() {
         IPreferenceStore store = IBMSmgmtCore.getDefault().getPreferenceStore();
         store.setDefault(
-                SecurityManagementImplConstants.SECURITY_TOOL_LOCATION,
+                IBMSmgmtConstants.SECURITY_TOOL_LOCATION,
                 Messages.PreferenceInitializer_0);
     }
 

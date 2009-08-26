@@ -18,7 +18,7 @@ import org.osgi.framework.Version;
  * @author Diego Sandin
  * @since 1.0
  */
-public class SignExtensionImpl implements ISignExtension {
+public class ExtensionImpl implements IExtension {
 
     protected String id = "DefaulSignExtensionId";
     protected String vendor = "DSDP - Eclipse.org";
@@ -28,91 +28,91 @@ public class SignExtensionImpl implements ISignExtension {
     protected boolean active = false;
 
     /**
-     * Creates a new instance of SignExtensionImpl.
+     * Creates a new instance of ExtensionImpl.
      */
-    public SignExtensionImpl() {
+    public ExtensionImpl() {
 
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#getDescription()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#getDescription()
      */
     public String getDescription() {
         return description;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#getId()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#getId()
      */
     public String getId() {
         return id;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#getType()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#getType()
      */
     public ExtensionType getType() {
         return type;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#getVendor()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#getVendor()
      */
     public String getVendor() {
         return vendor;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#getVersion()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#getVersion()
      */
     public Version getVersion() {
         return version;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#isActive()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#isActive()
      */
     public boolean isActive() {
         return active;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#setActive(boolean)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#setActive(boolean)
      */
     public void setActive(boolean value) {
         active = value;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#setDescription(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#setDescription(java.lang.String)
      */
     public void setDescription(String value) {
         description = value;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#setId(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#setId(java.lang.String)
      */
     public void setId(String value) {
         id = value;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#setType(org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#setType(org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType)
      */
     public void setType(ExtensionType value) {
         type = value;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#setVendor(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#setVendor(java.lang.String)
      */
     public void setVendor(String value) {
         vendor = value;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISignExtension#setVersion(org.osgi.framework.Version)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#setVersion(org.osgi.framework.Version)
      */
     public void setVersion(Version value) {
         version = value;

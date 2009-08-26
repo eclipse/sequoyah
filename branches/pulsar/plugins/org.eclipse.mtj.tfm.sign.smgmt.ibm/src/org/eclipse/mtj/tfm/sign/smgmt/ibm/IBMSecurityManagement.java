@@ -24,35 +24,60 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.mtj.tfm.internal.sign.smgmt.ibm.Messages;
-import org.eclipse.mtj.tfm.internal.sign.smgmt.ibm.SecurityManagementImplConstants;
+import org.eclipse.mtj.tfm.internal.sign.smgmt.ibm.IBMSmgmtConstants;
 import org.eclipse.mtj.tfm.sign.core.SignErrors;
 import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
-import org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement;
-import org.eclipse.mtj.tfm.sign.core.extension.SignExtensionImpl;
+import org.eclipse.mtj.tfm.sign.core.extension.ExtensionImpl;
+import org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement;
+import org.eclipse.mtj.tfm.sign.core.extension.security.X500DName;
 import org.osgi.framework.Version;
 
-public class IBMSecurityManagement extends SignExtensionImpl implements
+/**
+ * @since 1.0
+ */
+public class IBMSecurityManagement extends ExtensionImpl implements
         ISecurityManagement {
 
     /**
-     * @return
+     * Return the line to be used to configure Console Encoding.
+     * 
+     * @return The character encoding for the console.
      */
     private static String getConsoleEncoding() {
         return "-J-Dconsole.encoding=" + System.getProperty("file.encoding"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private String aliaskey = null;
-    private String keyStoreNameLoc = ""; //$NON-NLS-1$
-    private String passwrd = null;
+    
+    /** The certificate will be valid for 365 days. */
+    private String ksCertfValidity = "365"; //$NON-NLS-1$
+    
+    /** The keystore location in the file system. */
+    private String ksLocation = ""; //$NON-NLS-1$
+    
+    /** Keystore Password */
+    private String ksPasswrd = null;
+
+    /** Java KeyStore (JKS) */
+    private String ksType = "JKS"; //$NON-NLS-1$
+    
+    /**
+     * Preference store for this SecurityManagement plug-in. This preference
+     * store is used to hold persistent settings for this plug-in in the context
+     * of a workbench.
+     */
     private IPreferenceStore securityProviderPrefStore;
 
-    // private variables
-    private String storeType = "JKS"; //$NON-NLS-1$
-    private String validity = "365"; //$NON-NLS-1$
-
     /**
-     * Creates a new instance of IBMSecurityManagement.
+     * Creates a new instance of IBMSecurityManagement.<br>
+     * <br>
+     * <b>ID</b>: <i>org.eclipse.mtj.tfm.sign.smgmt.ibm</i><br>
+     * <b>Vendor</b>: <i>Eclipse.org - DSDP</i><br>
+     * <b>Version</b>: <i>1.0.0</i><br>
+     * <b>Description</b>: <i>Security Manager for IBM's JRE (v.5.0.0) Keytool.</i><br>
+     * <b>Type</b>: <i>{@link ExtensionType#SECURITY_MANAGEMENT
+     * SECURITY_MANAGEMENT}</i><br>
      */
     public IBMSecurityManagement() {
         super();
@@ -66,7 +91,7 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#changeStorePassword(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#changeStorePassword(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public boolean changeStorePassword(String newStorePass, String storePass,
             IProgressMonitor monitor) throws SignException {
@@ -98,9 +123,6 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
         return cmdSuccessful;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#createNewKey(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-     */
     public boolean createNewKey(String alias, String commonName,
             String orgUnit, String orgName, String localityName,
             String stateName, String country, IProgressMonitor monitor)
@@ -109,8 +131,8 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
                 100);
 
         boolean cmdSuccessful = true;
-        String Dname = generateDname(commonName, orgUnit, orgName,
-                localityName, stateName, country);
+        String Dname = new X500DName(commonName, orgUnit, orgName,
+                localityName, stateName, country).toString();
         String[] cmdArgs = generateNewKeyCmd(alias, Dname, "RSA", "SHA1withRSA"); //$NON-NLS-1$ //$NON-NLS-2$
         Process p = runSecurityCmd(cmdArgs);
         monitor.worked(30);
@@ -151,7 +173,7 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#deleteKey(org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#deleteKey(org.eclipse.core.runtime.IProgressMonitor)
      */
     public boolean deleteKey(IProgressMonitor monitor) throws SignException {
 
@@ -184,7 +206,7 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#generateCSR(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#generateCSR(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public boolean generateCSR(String certFile, IProgressMonitor monitor)
             throws SignException {
@@ -216,47 +238,15 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
 
     }
 
-    /**
-     * Generating the Distinguished Name (dname) string using the given user
-     * input.
-     * 
-     * @param commonName
-     * @param orgUnit
-     * @param orgName
-     * @param localityName
-     * @param stateName
-     * @param country
-     * @return
-     */
-    public String generateDname(String commonName, String orgUnit,
-            String orgName, String localityName, String stateName,
-            String country) {
-        String Dname = SecurityManagementImplConstants.QUOTE
-                + SecurityManagementImplConstants.COMMON_NAME_PREFIX
-                + commonName + SecurityManagementImplConstants.COMMA_AND_SPACE
-                + SecurityManagementImplConstants.ORGANIZATION_UNIT_PREFIX
-                + orgUnit + SecurityManagementImplConstants.COMMA_AND_SPACE
-                + SecurityManagementImplConstants.ORGANIZATION_NAME_PREFIX
-                + orgName + SecurityManagementImplConstants.COMMA_AND_SPACE
-                + SecurityManagementImplConstants.LOCALITY_NAME_PREFIX
-                + localityName
-                + SecurityManagementImplConstants.COMMA_AND_SPACE
-                + SecurityManagementImplConstants.STATE_NAME_PREFIX + stateName
-                + SecurityManagementImplConstants.COMMA_AND_SPACE
-                + SecurityManagementImplConstants.COUNTRY_PREFIX + country
-                + SecurityManagementImplConstants.QUOTE;
-        return Dname;
-    }
-
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getAliaskey()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getAliaskey()
      */
     public String getAliaskey() throws SignException {
         return aliaskey;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getCertificateInfo(org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getCertificateInfo(org.eclipse.core.runtime.IProgressMonitor)
      */
     public String getCertificateInfo(IProgressMonitor monitor)
             throws SignException {
@@ -303,44 +293,44 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getKeyStoreNameLoc()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getKeyStoreNameLoc()
      */
     public String getKeyStoreNameLoc() throws SignException {
-        return keyStoreNameLoc;
+        return ksLocation;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getPassWrd()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getPassWrd()
      */
     public String getPassWrd() throws SignException {
-        return passwrd;
+        return ksPasswrd;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getStoreType()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getStoreType()
      */
     public String getStoreType() throws SignException {
-        return storeType;
+        return ksType;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getToolLocation(org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getToolLocation(org.eclipse.core.runtime.IProgressMonitor)
      */
     public String getToolLocation(IProgressMonitor monitor)
             throws SignException {
         return securityProviderPrefStore
-                .getString(SecurityManagementImplConstants.SECURITY_TOOL_LOCATION);
+                .getString(IBMSmgmtConstants.SECURITY_TOOL_LOCATION);
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getValidity()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getValidity()
      */
     public String getValidity() throws SignException {
-        return validity;
+        return ksCertfValidity;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#importSignedCert(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#importSignedCert(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public boolean importSignedCert(String certFile, IProgressMonitor monitor)
             throws SignException {
@@ -379,7 +369,7 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
      */
     public boolean isKeyStoreSelected() throws SignException {
 
-        if ((keyStoreNameLoc == null) || (keyStoreNameLoc.length() <= 0)) {
+        if ((ksLocation == null) || (ksLocation.length() <= 0)) {
             return false;
         }
 
@@ -387,7 +377,7 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#openKeyStore(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#openKeyStore(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public String[] openKeyStore(String keyStore, String storePass,
             IProgressMonitor monitor) throws SignException {
@@ -458,67 +448,67 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#resetValues()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#resetValues()
      */
     public void resetValues() {
 
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setAliaskey(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setAliaskey(java.lang.String)
      */
     public void setAliaskey(String aliasKey) throws SignException {
         aliaskey = aliasKey;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setKeyStoreNameLoc(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setKeyStoreNameLoc(java.lang.String)
      */
     public void setKeyStoreNameLoc(String keyStoreNameLoc) throws SignException {
-        this.keyStoreNameLoc = keyStoreNameLoc;
+        this.ksLocation = keyStoreNameLoc;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setPassWrd(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setPassWrd(java.lang.String)
      */
     public void setPassWrd(String passWrd) throws SignException {
-        passwrd = passWrd;
+        ksPasswrd = passWrd;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setStoreType(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setStoreType(java.lang.String)
      */
     public void setStoreType(String storeType) throws SignException {
-        this.storeType = storeType;
+        this.ksType = storeType;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setValidity(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setValidity(java.lang.String)
      */
     public void setValidity(String validity) throws SignException {
-        this.validity = validity;
+        this.ksCertfValidity = validity;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setValues(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setValues(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     public void setValues(String loc, String alias, String psswd, String strtype)
             throws SignException {
 
-        storeType = strtype;
+        ksType = strtype;
         aliaskey = alias;
-        passwrd = psswd;
-        keyStoreNameLoc = loc;
+        ksPasswrd = psswd;
+        ksLocation = loc;
 
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#storeToolLocation(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#storeToolLocation(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public void storeToolLocation(String loc, IProgressMonitor monitor)
             throws SignException {
         securityProviderPrefStore.setValue(
-                SecurityManagementImplConstants.SECURITY_TOOL_LOCATION, loc);
+                IBMSmgmtConstants.SECURITY_TOOL_LOCATION, loc);
 
     }
 
@@ -534,12 +524,11 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
             String storePasswd) throws SignException {
 
         String[] changeStorePasswordCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SecurityManagementImplConstants.CHANGE_STORE_PASSWD,
-                SecurityManagementImplConstants.NEWSTOREPASS, newStorePass,
-                SecurityManagementImplConstants.STORETYPE, storeType,
-                SecurityManagementImplConstants.KEYSTORE, keyStoreNameLoc,
-                SecurityManagementImplConstants.STOREPASS, storePasswd };
+                getConsoleEncoding(), IBMSmgmtConstants.CHANGE_STORE_PASSWD,
+                IBMSmgmtConstants.NEWSTOREPASS, newStorePass,
+                IBMSmgmtConstants.STORETYPE, ksType,
+                IBMSmgmtConstants.KEYSTORE, ksLocation,
+                IBMSmgmtConstants.STOREPASS, storePasswd };
 
         return changeStorePasswordCmdArgs;
     }
@@ -551,12 +540,10 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
     private String[] generateDeleteKeyCmd() throws SignException {
 
         String[] deleteKeyCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SecurityManagementImplConstants.DELETE_KEY,
-                SecurityManagementImplConstants.ALIAS, aliaskey,
-                SecurityManagementImplConstants.STORETYPE, storeType,
-                SecurityManagementImplConstants.KEYSTORE, keyStoreNameLoc,
-                SecurityManagementImplConstants.STOREPASS, passwrd };
+                getConsoleEncoding(), IBMSmgmtConstants.DELETE_KEY,
+                IBMSmgmtConstants.ALIAS, aliaskey, IBMSmgmtConstants.STORETYPE,
+                ksType, IBMSmgmtConstants.KEYSTORE, ksLocation,
+                IBMSmgmtConstants.STOREPASS, ksPasswrd };
 
         return deleteKeyCmdArgs;
     }
@@ -574,11 +561,10 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
     private String[] generateDisplayCertifcates() throws SignException {
 
         String[] listCertificateCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), SecurityManagementImplConstants.LIST,
-                SecurityManagementImplConstants.ALIAS, aliaskey,
-                SecurityManagementImplConstants.STORETYPE, storeType,
-                SecurityManagementImplConstants.KEYSTORE, keyStoreNameLoc,
-                SecurityManagementImplConstants.STOREPASS, passwrd };
+                getConsoleEncoding(), IBMSmgmtConstants.LIST,
+                IBMSmgmtConstants.ALIAS, aliaskey, IBMSmgmtConstants.STORETYPE,
+                ksType, IBMSmgmtConstants.KEYSTORE, ksLocation,
+                IBMSmgmtConstants.STOREPASS, ksPasswrd };
 
         return listCertificateCmdArgs;
     }
@@ -592,13 +578,11 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
             throws SignException {
 
         String[] generateCSRCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SecurityManagementImplConstants.GENERATE_CSR,
-                SecurityManagementImplConstants.ALIAS, aliaskey,
-                SecurityManagementImplConstants.FILE, certFile,
-                SecurityManagementImplConstants.STORETYPE, storeType,
-                SecurityManagementImplConstants.KEYSTORE, keyStoreNameLoc,
-                SecurityManagementImplConstants.STOREPASS, passwrd };
+                getConsoleEncoding(), IBMSmgmtConstants.GENERATE_CSR,
+                IBMSmgmtConstants.ALIAS, aliaskey, IBMSmgmtConstants.FILE,
+                certFile, IBMSmgmtConstants.STORETYPE, ksType,
+                IBMSmgmtConstants.KEYSTORE, ksLocation,
+                IBMSmgmtConstants.STOREPASS, ksPasswrd };
 
         return generateCSRCmdArgs;
     }
@@ -612,15 +596,12 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
             throws SignException {
 
         String[] importSignedCertCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SecurityManagementImplConstants.IMPORT_CERT,
-                SecurityManagementImplConstants.NOPROMPT,
-                SecurityManagementImplConstants.ALIAS, aliaskey,
-                SecurityManagementImplConstants.KEYPASS, passwrd,
-                SecurityManagementImplConstants.FILE, certFile,
-                SecurityManagementImplConstants.STORETYPE, storeType,
-                SecurityManagementImplConstants.KEYSTORE, keyStoreNameLoc,
-                SecurityManagementImplConstants.STOREPASS, passwrd };
+                getConsoleEncoding(), IBMSmgmtConstants.IMPORT_CERT,
+                IBMSmgmtConstants.NOPROMPT, IBMSmgmtConstants.ALIAS, aliaskey,
+                IBMSmgmtConstants.KEYPASS, ksPasswrd, IBMSmgmtConstants.FILE,
+                certFile, IBMSmgmtConstants.STORETYPE, ksType,
+                IBMSmgmtConstants.KEYSTORE, ksLocation,
+                IBMSmgmtConstants.STOREPASS, ksPasswrd };
 
         return importSignedCertCmdArgs;
     }
@@ -637,17 +618,14 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
             String keyAlg, String sigAlg) throws SignException {
 
         String[] newKeyCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(),
-                SecurityManagementImplConstants.GENERATE_KEY,
-                SecurityManagementImplConstants.ALIAS, alias,
-                SecurityManagementImplConstants.DNAME, dname,
-                SecurityManagementImplConstants.KEYPASS, passwrd,
-                SecurityManagementImplConstants.STORETYPE, storeType,
-                SecurityManagementImplConstants.KEYALG, keyAlg,
-                SecurityManagementImplConstants.SIGALG, sigAlg,
-                SecurityManagementImplConstants.KEYSTORE, keyStoreNameLoc,
-                SecurityManagementImplConstants.STOREPASS, passwrd,
-                SecurityManagementImplConstants.VALIDITY, validity };
+                getConsoleEncoding(), IBMSmgmtConstants.GENERATE_KEY,
+                IBMSmgmtConstants.ALIAS, alias, IBMSmgmtConstants.DNAME, dname,
+                IBMSmgmtConstants.KEYPASS, ksPasswrd,
+                IBMSmgmtConstants.STORETYPE, ksType,
+                IBMSmgmtConstants.KEYALG, keyAlg, IBMSmgmtConstants.SIGALG,
+                sigAlg, IBMSmgmtConstants.KEYSTORE, ksLocation,
+                IBMSmgmtConstants.STOREPASS, ksPasswrd,
+                IBMSmgmtConstants.VALIDITY, ksCertfValidity };
 
         return newKeyCmdArgs;
     }
@@ -664,10 +642,10 @@ public class IBMSecurityManagement extends SignExtensionImpl implements
             throws SignException {
 
         String[] openKeyStoreCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), SecurityManagementImplConstants.LIST,
-                SecurityManagementImplConstants.STORETYPE, storeType,
-                SecurityManagementImplConstants.KEYSTORE, keyStore,
-                SecurityManagementImplConstants.STOREPASS, storePasswd };
+                getConsoleEncoding(), IBMSmgmtConstants.LIST,
+                IBMSmgmtConstants.STORETYPE, ksType,
+                IBMSmgmtConstants.KEYSTORE, keyStore,
+                IBMSmgmtConstants.STOREPASS, storePasswd };
         return openKeyStoreCmdArgs;
     }
 

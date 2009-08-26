@@ -29,5 +29,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(SunSmgmtConstants.SECURITY_TOOL_LOCATION,
                 Messages.PreferenceInitializer_set_location_message);
     }
+    
 
 }

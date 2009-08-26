@@ -34,24 +34,24 @@ import org.eclipse.mtj.tfm.internal.sign.core.Messages;
 import org.eclipse.mtj.tfm.sign.core.SignCore;
 import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
-import org.eclipse.mtj.tfm.sign.core.extension.ISignExtension;
-import org.eclipse.mtj.tfm.sign.core.extension.ISignExtensionManager;
+import org.eclipse.mtj.tfm.sign.core.extension.IExtension;
+import org.eclipse.mtj.tfm.sign.core.extension.IExtensionManager;
 
 /**
  * The extensibility functionalities are accessible by SignExtensionManager.
  * 
  * @since 1.0
  */
-public class SignExtensionManager implements ISignExtensionManager {
+public class SignExtensionManager implements IExtensionManager {
 
-    private static ISignExtensionManager instance;
+    private static IExtensionManager instance;
 
     /**
      * Method is used to get reference to the SignExtensionManager -object.
      * 
      * @return
      */
-    public static ISignExtensionManager getInstance() {
+    public static IExtensionManager getInstance() {
         if (instance == null) {
             instance = new SignExtensionManager();
         }
@@ -93,18 +93,18 @@ public class SignExtensionManager implements ISignExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getAllImplementations()
      */
-    public ISignExtension[] getAllImplementations() {
+    public IExtension[] getAllImplementations() {
         return getAllImplementations(null);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getAllImplementations(java.lang.String)
      */
-    public ISignExtension[] getAllImplementations(String project) {
-        ArrayList<ISignExtension> l = loadExtensions(SignCore.PLUGIN_ID, null);
-        ISignExtension[] ret = new ISignExtension[l.size()];
+    public IExtension[] getAllImplementations(String project) {
+        ArrayList<IExtension> l = loadExtensions(SignCore.PLUGIN_ID, null);
+        IExtension[] ret = new IExtension[l.size()];
         for (int i = 0; i < l.size(); i++) {
-            ret[i] = (ISignExtension) l.get(i);
+            ret[i] = (IExtension) l.get(i);
             ret[i]
                     .setActive(isActive(ret[i].getId(), ret[i].getType(),
                             project));
@@ -116,7 +116,7 @@ public class SignExtensionManager implements ISignExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getImplementations(org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, java.lang.String, java.lang.String)
      */
-    public List<ISignExtension> getImplementations(ExtensionType extensionType,
+    public List<IExtension> getImplementations(ExtensionType extensionType,
             String version, String vendor) {
         return getImplementations(extensionType, version, vendor, true);
     }
@@ -124,7 +124,7 @@ public class SignExtensionManager implements ISignExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getImplementations(org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, java.lang.String, java.lang.String, boolean)
      */
-    public List<ISignExtension> getImplementations(ExtensionType extensionType,
+    public List<IExtension> getImplementations(ExtensionType extensionType,
             String version, String vendor, boolean onlyActive) {
         return getImplementations(extensionType, version, vendor, null,
                 onlyActive);
@@ -133,7 +133,7 @@ public class SignExtensionManager implements ISignExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getImplementations(org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, java.lang.String, java.lang.String, java.lang.String)
      */
-    public List<ISignExtension> getImplementations(ExtensionType extensionType,
+    public List<IExtension> getImplementations(ExtensionType extensionType,
             String version, String vendor, String project) {
         return getImplementations(extensionType, version, vendor, project, true);
     }
@@ -141,15 +141,15 @@ public class SignExtensionManager implements ISignExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getImplementations(org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, java.lang.String, java.lang.String, java.lang.String, boolean)
      */
-    public List<ISignExtension> getImplementations(ExtensionType extensionType,
+    public List<IExtension> getImplementations(ExtensionType extensionType,
             String version, String vendor, String project, boolean onlyActive) {
 
-        ArrayList<ISignExtension> l = loadExtensions(SignCore.PLUGIN_ID,
+        ArrayList<IExtension> l = loadExtensions(SignCore.PLUGIN_ID,
                 extensionType);
 
-        ArrayList<ISignExtension> r = new ArrayList<ISignExtension>();
+        ArrayList<IExtension> r = new ArrayList<IExtension>();
         for (int i = 0; i < l.size(); i++) {
-            ISignExtension ex = (ISignExtension) l.get(i);
+            IExtension ex = (IExtension) l.get(i);
 
             boolean active = isActive(ex.getId(), extensionType, project);
 
@@ -176,10 +176,10 @@ public class SignExtensionManager implements ISignExtensionManager {
             }
         }
 
-        // Create an ISignExtension array from the ArrayList
-        List<ISignExtension> ret = new ArrayList<ISignExtension>(r.size());
+        // Create an IExtension array from the ArrayList
+        List<IExtension> ret = new ArrayList<IExtension>(r.size());
         for (int i = 0; i < r.size(); i++) {
-            ret.add((ISignExtension) r.get(i));
+            ret.add((IExtension) r.get(i));
         }
 
         return ret;
@@ -216,11 +216,11 @@ public class SignExtensionManager implements ISignExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#loadExtensions(java.lang.String)
      */
-    public ArrayList<ISignExtension> loadExtensions(String extensionName) {
+    public ArrayList<IExtension> loadExtensions(String extensionName) {
         IExtensionRegistry r = Platform.getExtensionRegistry();
 
         IExtensionPoint[] ps = r.getExtensionPoints(SignCore.PLUGIN_ID);
-        ArrayList<ISignExtension> l = new ArrayList<ISignExtension>();
+        ArrayList<IExtension> l = new ArrayList<IExtension>();
         for (IExtensionPoint p : ps) {
             if ((p.getSimpleIdentifier() != null)
                     && (p.getSimpleIdentifier().equalsIgnoreCase(extensionName))) {
@@ -228,7 +228,7 @@ public class SignExtensionManager implements ISignExtensionManager {
                 if (c != null) {
                     for (IConfigurationElement element : c) {
                         try {
-                            ISignExtension o = (ISignExtension) element
+                            IExtension o = (IExtension) element
                                     .createExecutableExtension("class"); //$NON-NLS-1$
                             if (o != null) {
                                 l.add(o);
@@ -246,13 +246,13 @@ public class SignExtensionManager implements ISignExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#loadExtensions(java.lang.String, org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType)
      */
-    public ArrayList<ISignExtension> loadExtensions(String plugin_id,
+    public ArrayList<IExtension> loadExtensions(String plugin_id,
             ExtensionType extensionType) {
         IExtensionRegistry r = Platform.getExtensionRegistry();
         // Testing
 
         IExtensionPoint[] ps = r.getExtensionPoints(plugin_id);
-        ArrayList<ISignExtension> l = new ArrayList<ISignExtension>();
+        ArrayList<IExtension> l = new ArrayList<IExtension>();
         for (IExtensionPoint p : ps) {
             if ((p.getSimpleIdentifier() != null)
                     && ((extensionType == null) || p.getSimpleIdentifier()
@@ -263,11 +263,11 @@ public class SignExtensionManager implements ISignExtensionManager {
                 if (c != null) {
                     for (IConfigurationElement element : c) {
                         try {
-                            ISignExtension o = (ISignExtension) element
+                            IExtension o = (IExtension) element
                                     .createExecutableExtension("class"); //$NON-NLS-1$
                             if (o != null) {
                                 // Testing
-                                if (o instanceof ISignExtension) {
+                                if (o instanceof IExtension) {
                                     // System.out.println(o.toString());
                                     l.add(o);
                                 }

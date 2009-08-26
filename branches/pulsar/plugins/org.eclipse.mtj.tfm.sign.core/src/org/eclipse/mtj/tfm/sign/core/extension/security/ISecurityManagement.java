@@ -11,10 +11,11 @@
  *     Kevin Horowitz (IBM Corp) - Update javadoc
  *     Diego Sandin (Motorola)   - Porting code to TFM Sign Framework [Bug 286387]
  */
-package org.eclipse.mtj.tfm.sign.core.extension;
+package org.eclipse.mtj.tfm.sign.core.extension.security;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
+import org.eclipse.mtj.tfm.sign.core.extension.IExtension;
 
 /**
  * The Security Management Provider provides the interface to interact with Key
@@ -22,7 +23,7 @@ import org.eclipse.mtj.tfm.sign.core.exception.SignException;
  * 
  * @since 1.0
  */
-public interface ISecurityManagement extends ISignExtension {
+public interface ISecurityManagement extends IExtension {
 
     /**
      * Accesses an existing keystore, opens the keystore and returns a string

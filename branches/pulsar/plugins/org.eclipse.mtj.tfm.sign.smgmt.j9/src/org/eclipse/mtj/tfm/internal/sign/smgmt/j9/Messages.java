@@ -16,24 +16,29 @@ import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.mtj.tfm.internal.sign.smgmt.j9.messages";//$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.eclipse.mtj.tfm.internal.sign.smgmt.j9.messages";//$NON-NLS-1$
 
-	private Messages() {
-		// Do not instantiate
-	}
+    public static String J9SecurityManager_Could_not_execute;
+    public static String J9SecurityManager_Creating_key_alias;
+    public static String J9SecurityManager_Description;
+    public static String J9SecurityManager_getSecurityManagerException;
+    public static String J9SecurityManager_Opening_keystore;
+    public static String J9SecurityManager_PluginVendor;
+    public static String J9SecurityManager_PluginVersion;
+    public static String J9SecurityManager_Specify_directory_here;
+    public static String J9SecurityManager_Tool_not_configured_correctly;
+    public static String J9SecurityManager_Using_Security_management_features;
+    
+    public static String PreferenceInitializer_set_location_message;
 
-	public static String J9SecurityManager_Could_not_execute;
-	public static String J9SecurityManager_Creating_key_alias;
-	public static String J9SecurityManager_Description;
-	public static String J9SecurityManager_getSecurityManagerException;
-	public static String J9SecurityManager_Opening_keystore;
-	public static String J9SecurityManager_PluginVendor;
-	public static String J9SecurityManager_PluginVersion;
-	public static String J9SecurityManager_Specify_directory_here;
-	public static String J9SecurityManager_Tool_not_configured_correctly;
-	public static String J9SecurityManager_Using_Security_management_features;
-	public static String J9SecurityManagerPrefInitilizer_0;
-	static {
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
+    static {
+        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+    }
+    
+    /**
+     * Creates a new instance of Messages.
+     */
+    private Messages() {
+        // Do not instantiate
+    }
 }

@@ -18,7 +18,7 @@ import org.osgi.framework.Version;
 /**
  * 
  */
-public interface ISignExtension {
+public interface IExtension {
 
     /**
      * @return

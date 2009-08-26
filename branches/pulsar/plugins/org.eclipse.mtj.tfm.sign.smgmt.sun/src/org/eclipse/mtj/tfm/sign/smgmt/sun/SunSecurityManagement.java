@@ -28,15 +28,16 @@ import org.eclipse.mtj.tfm.internal.sign.smgmt.sun.SunSmgmtConstants;
 import org.eclipse.mtj.tfm.sign.core.SignErrors;
 import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
-import org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement;
-import org.eclipse.mtj.tfm.sign.core.extension.SignExtensionImpl;
+import org.eclipse.mtj.tfm.sign.core.extension.ExtensionImpl;
+import org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement;
+import org.eclipse.mtj.tfm.sign.core.extension.security.X500DName;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Version;
 
 /**
  * @since 1.0
  */
-public class SunSecurityManagement extends SignExtensionImpl implements
+public class SunSecurityManagement extends ExtensionImpl implements
         ISecurityManagement {
 
     /**
@@ -51,7 +52,7 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     private String aliaskey = null;
 
     /** The certificate will be valid for 365 days. */
-    private String ksCertfvalidity = "365"; //$NON-NLS-1$
+    private String ksCertfValidity = "365"; //$NON-NLS-1$
 
     /** The keystore location in the file system. */
     private String ksLocation = ""; //$NON-NLS-1$
@@ -91,7 +92,7 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#changeStorePassword(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#changeStorePassword(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public boolean changeStorePassword(String newStorePass, String storePass,
             IProgressMonitor monitor) throws SignException {
@@ -128,7 +129,10 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#createNewKey(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#createNewKey(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    /* (non-Javadoc)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#createNewKey(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public boolean createNewKey(String alias, String commonName,
             String orgUnit, String orgName, String localityName,
@@ -140,8 +144,8 @@ public class SunSecurityManagement extends SignExtensionImpl implements
 
         boolean cmdSuccessful = true;
 
-        String Dname = generateDname(commonName, orgUnit, orgName,
-                localityName, stateName, country);
+        String Dname = new X500DName(commonName, orgUnit, orgName,
+                localityName, stateName, country).toString();
 
         String[] cmdArgs = generateNewKeyCmd(alias, Dname, "RSA", "SHA1withRSA"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -193,7 +197,7 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#deleteKey(org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#deleteKey(org.eclipse.core.runtime.IProgressMonitor)
      */
     public boolean deleteKey(IProgressMonitor monitor) throws SignException {
 
@@ -229,7 +233,7 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#generateCSR(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#generateCSR(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public boolean generateCSR(String certFile, IProgressMonitor monitor)
             throws SignException {
@@ -264,54 +268,15 @@ public class SunSecurityManagement extends SignExtensionImpl implements
 
     }
 
-    /**
-     * Generating the <b>X.500 Distinguished Name</b> string using the given
-     * user input.<br>
-     * <b>Note:</b> If a distinguished name string value contains a comma, the
-     * comma must be escaped by a "\" character.
-     * 
-     * @param commonName common name of a person, e.g., "Susan Jones"
-     * @param organizationUnit small organization (e.g, department or division)
-     *            name, e.g., "Purchasing"
-     * @param orgName large organization name, e.g., "ABCSystems, Inc."
-     * @param localityName locality (city) name, e.g., "Palo Alto"
-     * @param stateName state or province name, e.g., "California"
-     * @param country state or province name, e.g., "California"
-     * @return the generated string in the following format:
-     * 
-     * <pre>
-     * "CN=<b><i>commonName</i></b>, OU=<b><i>organizationUnit</i></b>, O=<b><i>orgName</i></b>, L=<b><i>localityName</i></b>, S=<b><i>stateName</i></b>, C=<b><i>country</i></b>" 
-     * </pre>
-     * 
-     */
-    public String generateDname(String commonName, String organizationUnit,
-            String orgName, String localityName, String stateName,
-            String country) {
-        String Dname = SunSmgmtConstants.QUOTE
-                + SunSmgmtConstants.COMMON_NAME_PREFIX + commonName
-                + SunSmgmtConstants.COMMA_AND_SPACE
-                + SunSmgmtConstants.ORGANIZATION_UNIT_PREFIX + organizationUnit
-                + SunSmgmtConstants.COMMA_AND_SPACE
-                + SunSmgmtConstants.ORGANIZATION_NAME_PREFIX + orgName
-                + SunSmgmtConstants.COMMA_AND_SPACE
-                + SunSmgmtConstants.LOCALITY_NAME_PREFIX + localityName
-                + SunSmgmtConstants.COMMA_AND_SPACE
-                + SunSmgmtConstants.STATE_NAME_PREFIX + stateName
-                + SunSmgmtConstants.COMMA_AND_SPACE
-                + SunSmgmtConstants.COUNTRY_PREFIX + country
-                + SunSmgmtConstants.QUOTE;
-        return Dname;
-    }
-
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getAliaskey()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getAliaskey()
      */
     public String getAliaskey() throws SignException {
         return aliaskey;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getCertificateInfo(org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getCertificateInfo(org.eclipse.core.runtime.IProgressMonitor)
      */
     public String getCertificateInfo(IProgressMonitor monitor)
             throws SignException {
@@ -357,28 +322,28 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getKeyStoreNameLoc()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getKeyStoreNameLoc()
      */
     public String getKeyStoreNameLoc() throws SignException {
         return ksLocation;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getPassWrd()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getPassWrd()
      */
     public String getPassWrd() throws SignException {
         return ksPasswrd;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getStoreType()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getStoreType()
      */
     public String getStoreType() throws SignException {
         return ksType;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getToolLocation(org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getToolLocation(org.eclipse.core.runtime.IProgressMonitor)
      */
     public String getToolLocation(IProgressMonitor monitor)
             throws SignException {
@@ -387,14 +352,14 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#getValidity()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getValidity()
      */
     public String getValidity() throws SignException {
-        return ksCertfvalidity;
+        return ksCertfValidity;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#importSignedCert(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#importSignedCert(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public boolean importSignedCert(String certFile, IProgressMonitor monitor)
             throws SignException {
@@ -430,7 +395,7 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#isKeyStoreSelected()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#isKeyStoreSelected()
      */
     public boolean isKeyStoreSelected() throws SignException {
 
@@ -442,7 +407,7 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#openKeyStore(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#openKeyStore(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public String[] openKeyStore(String keyStore, String storePass,
             IProgressMonitor monitor) throws SignException {
@@ -512,48 +477,48 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#resetValues()
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#resetValues()
      */
     public void resetValues() {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setAliaskey(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setAliaskey(java.lang.String)
      */
     public void setAliaskey(String aliasKey) throws SignException {
         aliaskey = aliasKey;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setKeyStoreNameLoc(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setKeyStoreNameLoc(java.lang.String)
      */
     public void setKeyStoreNameLoc(String keyStoreNameLoc) throws SignException {
         this.ksLocation = keyStoreNameLoc;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setPassWrd(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setPassWrd(java.lang.String)
      */
     public void setPassWrd(String passWrd) throws SignException {
         ksPasswrd = passWrd;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setStoreType(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setStoreType(java.lang.String)
      */
     public void setStoreType(String storeType) throws SignException {
         this.ksType = storeType;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setValidity(java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setValidity(java.lang.String)
      */
     public void setValidity(String validity) throws SignException {
-        this.ksCertfvalidity = validity;
+        this.ksCertfValidity = validity;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#setValues(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setValues(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     public void setValues(String loc, String alias, String psswd, String strtype)
             throws SignException {
@@ -566,7 +531,7 @@ public class SunSecurityManagement extends SignExtensionImpl implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.ISecurityManagement#storeToolLocation(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#storeToolLocation(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
     public void storeToolLocation(String loc, IProgressMonitor monitor)
             throws SignException {
@@ -611,7 +576,7 @@ public class SunSecurityManagement extends SignExtensionImpl implements
      *         <code>
      *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
      *         -delete -alias {@link #aliaskey} -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
-     *        <b>storePasswd</b></code>
+     *        {@link #ksPasswrd}</code>
      * @throws SignException in case fails to get the Security Management tool
      *             location in the file system.
      */
@@ -633,8 +598,9 @@ public class SunSecurityManagement extends SignExtensionImpl implements
      * @return the generated command line string in the following format: <br>
      *         <code>
      *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
-     *         -list -alias {@link #aliaskey} -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
-     *        <b>storePasswd</b></code>
+     *         -list -alias {@link #aliaskey} -storetype {@link #ksType} 
+     *         -keystore {@link #ksLocation} -storepass
+     *        {@link #ksPasswrd}</code>
      * @throws SignException in case fails to get the Security Management tool
      *             location in the file system.
      */
@@ -658,8 +624,9 @@ public class SunSecurityManagement extends SignExtensionImpl implements
      * @return the generated command line string in the following format: <br>
      *         <code>
      *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
-     *         -export -alias {@link #aliaskey} -file <b>certFile</b> -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
-     *        <b>storePasswd</b></code>
+     *         -export -alias {@link #aliaskey} -file <b>certFile</b> 
+     *         -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
+     *         {@link #ksPasswrd}</code>
      * @throws SignException in case fails to get the Security Management tool
      *             location in the file system.
      */
@@ -684,8 +651,9 @@ public class SunSecurityManagement extends SignExtensionImpl implements
      * @return the generated command line string in the following format: <br>
      *         <code>
      *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
-     *         -import -noprompt -alias {@link #aliaskey} -keypass {@link #ksPasswrd} -file <b>certFile</b> -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
-     *        <b>storePasswd</b></code>
+     *         -import -noprompt -alias {@link #aliaskey} -keypass {@link #ksPasswrd} 
+     *         -file <b>certFile</b> -storetype {@link #ksType} -keystore {@link #ksLocation} 
+     *         -storepass {@link #ksPasswrd}</code>
      * @throws SignException in case fails to get the Security Management tool
      *             location in the file system.
      */
@@ -718,10 +686,11 @@ public class SunSecurityManagement extends SignExtensionImpl implements
      *            with keyalg.
      * @return the generated command line string in the following format: <br>
      *         <code>
-     *         &lt;keytool Path&gt; -genkey -alias <b>alias</b> -dname <b>dname</b>
+     *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
+     *         -genkey -alias <b>alias</b> -dname <b>dname</b>
      *         -keypass {@link #ksPasswrd} -storetype {@link #ksType} -keyalg
      *         <b>keyAlg</b> -keystore {@link #ksLocation} -storepass
-     *         {@link #ksPasswrd} -validity {@link #ksCertfvalidity}</code>
+     *         {@link #ksPasswrd} -validity {@link #ksCertfValidity}</code>
      * @throws SignException in case fails to get the Security Management tool
      *             location in the file system.
      */
@@ -736,7 +705,7 @@ public class SunSecurityManagement extends SignExtensionImpl implements
                 keyAlg, SunSmgmtConstants.SIGALG, sigAlg,
                 SunSmgmtConstants.KEYSTORE, ksLocation,
                 SunSmgmtConstants.STOREPASS, ksPasswrd,
-                SunSmgmtConstants.VALIDITY, ksCertfvalidity };
+                SunSmgmtConstants.VALIDITY, ksCertfValidity };
 
         return newKeyCmdArgs;
     }

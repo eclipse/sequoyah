@@ -16,19 +16,15 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.mtj.tfm.sign.smgmt.j9.J9SmgmtCore;
 
-public class J9SecurityManagerPrefInitilizer extends
-        AbstractPreferenceInitializer {
+public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-    @Override
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
      */
     public void initializeDefaultPreferences() {
         IPreferenceStore store = J9SmgmtCore.getDefault().getPreferenceStore();
-        store.setDefault(J9SecurityManagerConstants.SECURITY_TOOL_LOCATION,
-                Messages.J9SecurityManagerPrefInitilizer_0);
+        store.setDefault(J9SmgmtConstants.SECURITY_TOOL_LOCATION,
+                Messages.PreferenceInitializer_set_location_message);
     }
 
 }

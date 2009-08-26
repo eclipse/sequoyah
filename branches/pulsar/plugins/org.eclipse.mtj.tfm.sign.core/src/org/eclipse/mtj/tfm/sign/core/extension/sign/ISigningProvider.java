@@ -11,12 +11,13 @@
  *     Kevin Horowitz (IBM Corp) - Update javadoc
  *     Diego Sandin (Motorola)   - Porting code to TFM Sign Framework [Bug 286387]
  */
-package org.eclipse.mtj.tfm.sign.core.extension;
+package org.eclipse.mtj.tfm.sign.core.extension.sign;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
+import org.eclipse.mtj.tfm.sign.core.extension.IExtension;
 import org.eclipse.mtj.tfm.sign.core.signing.ISigningCertificate;
 
 /**
@@ -24,7 +25,7 @@ import org.eclipse.mtj.tfm.sign.core.signing.ISigningCertificate;
  * package. <br>
  * 
  */
-public interface ISigningProvider extends ISignExtension {
+public interface ISigningProvider extends IExtension {
 
     /**
      * Returns whether the SingingProvider plug-in can provide root certificate

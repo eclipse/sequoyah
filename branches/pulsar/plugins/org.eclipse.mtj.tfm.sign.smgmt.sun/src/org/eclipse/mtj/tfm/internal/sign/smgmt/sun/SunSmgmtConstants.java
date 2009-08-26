@@ -18,17 +18,13 @@ package org.eclipse.mtj.tfm.internal.sign.smgmt.sun;
 public interface SunSmgmtConstants {
 
 	public static String SECURITY_TOOL_LOCATION = "SecurityToolLocationPreference"; //$NON-NLS-1$
-    
-	// constants
-	public static final String COMMA_AND_SPACE	= ", "; //$NON-NLS-1$
-	public static final String QUOTE 			= "\""; //$NON-NLS-1$
 
 	// keytool primary command options
-	public static final String GENERATE_KEY 	= "-genkey"; //$NON-NLS-1$
-	public static final String DELETE_KEY 		= "-delete"; //$NON-NLS-1$
-	public static final String IMPORT_CERT 		= "-import"; //$NON-NLS-1$
-	public static final String GENERATE_CSR 	= "-export"; //$NON-NLS-1$
-	public static final String LIST 			= "-list"; //$NON-NLS-1$
+	public static final String GENERATE_KEY 	   = "-genkey"; //$NON-NLS-1$
+	public static final String DELETE_KEY 		   = "-delete"; //$NON-NLS-1$
+	public static final String IMPORT_CERT 		   = "-import"; //$NON-NLS-1$
+	public static final String GENERATE_CSR 	   = "-export"; //$NON-NLS-1$
+	public static final String LIST 			   = "-list"; //$NON-NLS-1$
 	public static final String CHANGE_STORE_PASSWD = "-storepasswd"; //$NON-NLS-1$
 	
 	// keytool secondary command options
@@ -48,10 +44,5 @@ public interface SunSmgmtConstants {
 	public static final String NOPROMPT 		= "-noprompt"; //$NON-NLS-1$
 
     // Dname prefix options
-	public static final String COMMON_NAME_PREFIX 		= "CN="; //$NON-NLS-1$
-	public static final String ORGANIZATION_UNIT_PREFIX = "OU="; //$NON-NLS-1$
-	public static final String ORGANIZATION_NAME_PREFIX = "O="; //$NON-NLS-1$
-	public static final String LOCALITY_NAME_PREFIX 	= "L="; //$NON-NLS-1$
-	public static final String STATE_NAME_PREFIX 		= "S="; //$NON-NLS-1$
-	public static final String COUNTRY_PREFIX 			= "C="; //$NON-NLS-1$
+
 }

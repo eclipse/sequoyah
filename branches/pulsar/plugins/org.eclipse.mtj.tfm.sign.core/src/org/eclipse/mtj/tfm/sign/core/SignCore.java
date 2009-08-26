@@ -13,7 +13,7 @@ package org.eclipse.mtj.tfm.sign.core;
 
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.mtj.tfm.internal.sign.core.extension.SignExtensionManager;
-import org.eclipse.mtj.tfm.sign.core.extension.ISignExtensionManager;
+import org.eclipse.mtj.tfm.sign.core.extension.IExtensionManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -39,7 +39,7 @@ public class SignCore extends Plugin {
 	/**
 	 * @return
 	 */
-	public static ISignExtensionManager getSignExtensionManager(){
+	public static IExtensionManager getSignExtensionManager(){
 	    return new SignExtensionManager();
 	}
 	
