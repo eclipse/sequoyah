@@ -14,7 +14,7 @@ package org.eclipse.mtj.tfm.sign.test.core;
 import junit.framework.TestCase;
 
 import org.eclipse.mtj.tfm.internal.sign.core.extension.SignExtensionManager;
-import org.eclipse.mtj.tfm.sign.core.extension.ISignExtensionManager;
+import org.eclipse.mtj.tfm.sign.core.extension.IExtensionManager;
 
 /**
  * @author Diego Sandin
@@ -30,14 +30,14 @@ public class SignExtensionManagerTest extends TestCase {
      */
     public final void testGetInstance() {
         
-        ISignExtensionManager extensionManager1 = SignExtensionManager
+        IExtensionManager extensionManager1 = SignExtensionManager
                 .getInstance();
 
         assertNotNull(
                 "[Error 1] No Instance was returned by SignExtensionManager#getInstance()",
                 extensionManager1);
 
-        ISignExtensionManager extensionManager2 = SignExtensionManager
+        IExtensionManager extensionManager2 = SignExtensionManager
                 .getInstance();
 
         assertNotNull(
