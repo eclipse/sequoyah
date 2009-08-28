@@ -9,4 +9,8 @@
         id="signingProvider"
         name="%extension-point.name.signingProvider"
         schema="schema/org_eclipse_mtj_tfm_sign_core_signing_provider.exsd" />
+    <extension-point
+        id="securitypermission"
+        name="Security Permission"
+        schema="schema/org_eclipse_mtj_tfm_sign_core_security_permission.exsd" />
 </plugin>

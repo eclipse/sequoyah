@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="security_Management" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="security_Management" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -49,11 +49,17 @@
 
    <element name="security_Management">
       <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="platform" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -72,6 +78,30 @@
                   <meta.attribute kind="java" basedOn="org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement:"/>
                </appinfo>
             </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="platform">
+      <complexType>
+         <attribute name="name" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="JAVAME">
+                  </enumeration>
+                  <enumeration value="ANDROID">
+                  </enumeration>
+                  <enumeration value="SYMBIAN">
+                  </enumeration>
+                  <enumeration value="ERCP">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>
