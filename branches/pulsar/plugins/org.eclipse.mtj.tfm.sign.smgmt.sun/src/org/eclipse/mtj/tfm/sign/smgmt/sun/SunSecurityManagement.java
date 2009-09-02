@@ -21,8 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.mtj.tfm.internal.sign.smgmt.sun.Messages;
 import org.eclipse.mtj.tfm.internal.sign.smgmt.sun.SunSmgmtConstants;
 import org.eclipse.mtj.tfm.sign.core.SignErrors;
@@ -30,6 +34,7 @@ import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
 import org.eclipse.mtj.tfm.sign.core.extension.ExtensionImpl;
 import org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement;
+import org.eclipse.mtj.tfm.sign.core.extension.security.Keytool;
 import org.eclipse.mtj.tfm.sign.core.extension.security.X500DName;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Version;
@@ -46,8 +51,11 @@ public class SunSecurityManagement extends ExtensionImpl implements
      * @return The character encoding for the console.
      */
     private static String getConsoleEncoding() {
-        return "-J-Dconsole.encoding=" + System.getProperty("file.encoding"); //$NON-NLS-1$ //$NON-NLS-2$
+        return Keytool.S_JAVAOPTION
+                + "-Dconsole.encoding=" + System.getProperty("file.encoding"); //$NON-NLS-1$ //$NON-NLS-2$
     }
+
+    private Keytool keytool;
 
     private String aliaskey = null;
 
@@ -55,7 +63,7 @@ public class SunSecurityManagement extends ExtensionImpl implements
     private String ksCertfValidity = "365"; //$NON-NLS-1$
 
     /** The keystore location in the file system. */
-    private String ksLocation = ""; //$NON-NLS-1$
+    private IPath ksLocation = Path.EMPTY;
 
     /** Keystore Password */
     private String ksPasswrd = null;
@@ -89,6 +97,26 @@ public class SunSecurityManagement extends ExtensionImpl implements
         setType(ExtensionType.SECURITY_MANAGEMENT);
         securityProviderPrefStore = SunSmgmtCore.getDefault()
                 .getPreferenceStore();
+
+        securityProviderPrefStore
+                .addPropertyChangeListener(new IPropertyChangeListener() {
+
+                    public void propertyChange(PropertyChangeEvent event) {
+                        if (event.getProperty().equals(
+                                SunSmgmtConstants.SECURITY_TOOL_LOCATION)) {
+                            if (keytool != null) {
+                                keytool.setLocation(new Path((String) event
+                                        .getNewValue()));
+                            } else {
+                                try {
+                                    initializeKeytool();
+                                } catch (SignException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                });
     }
 
     /* (non-Javadoc)
@@ -98,10 +126,12 @@ public class SunSecurityManagement extends ExtensionImpl implements
             IProgressMonitor monitor) throws SignException {
 
         boolean cmdSuccessful = true;
+        initializeKeytool();
 
-        String[] cmdArgs = generateChangeStorePasswordCmd(newStorePass,
-                storePass);
-        Process p = runSecurityCmd(cmdArgs);
+        String[] cmdArgs = keytool.generateChangeStorePasswordCmd(newStorePass,
+                ksType, ksLocation, storePass, getConsoleEncoding());
+
+        Process p = keytool.execute(cmdArgs);
 
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
@@ -131,9 +161,6 @@ public class SunSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#createNewKey(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
-    /* (non-Javadoc)
-     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#createNewKey(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-     */
     public boolean createNewKey(String alias, String commonName,
             String orgUnit, String orgName, String localityName,
             String stateName, String country, IProgressMonitor monitor)
@@ -143,13 +170,17 @@ public class SunSecurityManagement extends ExtensionImpl implements
                 100);
 
         boolean cmdSuccessful = true;
+        initializeKeytool();
 
-        String Dname = new X500DName(commonName, orgUnit, orgName,
-                localityName, stateName, country).toString();
+        X500DName dName = new X500DName(commonName, orgUnit, orgName,
+                localityName, stateName, country);
 
-        String[] cmdArgs = generateNewKeyCmd(alias, Dname, "RSA", "SHA1withRSA"); //$NON-NLS-1$ //$NON-NLS-2$
+        String[] cmdArgs = keytool
+                .generateNewKeyCmd(
+                        dName,
+                        "RSA", "SHA1withRSA", ksCertfValidity, alias, ksPasswrd, ksType, ksLocation, ksPasswrd, getConsoleEncoding()); //$NON-NLS-1$ //$NON-NLS-2$
 
-        Process p = runSecurityCmd(cmdArgs);
+        Process p = keytool.execute(cmdArgs);
         monitor.worked(30);
 
         BufferedReader cmdOutputStream = new BufferedReader(
@@ -172,7 +203,7 @@ public class SunSecurityManagement extends ExtensionImpl implements
                                                 new String[] {
                                                         SignErrors
                                                                 .getErrorMessage(SignErrors.SECURITY_ALIAS_DUPLICATE),
-                                                        cmdOutput })); //$NON-NLS-1$
+                                                        cmdOutput }));
                     } else {
                         throw new SignException(
                                 NLS
@@ -181,7 +212,7 @@ public class SunSecurityManagement extends ExtensionImpl implements
                                                 new String[] {
                                                         SignErrors
                                                                 .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR),
-                                                        cmdOutput })); //$NON-NLS-1$
+                                                        cmdOutput }));
                     }
                 }
             }
@@ -202,8 +233,13 @@ public class SunSecurityManagement extends ExtensionImpl implements
     public boolean deleteKey(IProgressMonitor monitor) throws SignException {
 
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateDeleteKeyCmd();
-        Process p = runSecurityCmd(cmdArgs);
+
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateDeleteKeyCmd(aliaskey, ksType,
+                ksLocation, ksPasswrd, getConsoleEncoding());
+
+        Process p = keytool.execute(cmdArgs);
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
 
@@ -212,8 +248,7 @@ public class SunSecurityManagement extends ExtensionImpl implements
             while ((cmdOutput = cmdOutputStream.readLine()) != null) {
 
                 if (cmdOutput.toLowerCase().indexOf("error") >= 0) { //$NON-NLS-1$
-                    //MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", cmdOutput); //$NON-NLS-1$
-                    // cmdSuccessful = false;
+                    cmdSuccessful = false;
                     throw new SignException(
                             NLS
                                     .bind(
@@ -221,7 +256,7 @@ public class SunSecurityManagement extends ExtensionImpl implements
                                             new String[] {
                                                     SignErrors
                                                             .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR),
-                                                    cmdOutput })); //$NON-NLS-1$
+                                                    cmdOutput }));
                 }
             }
         } catch (IOException ee) {
@@ -239,8 +274,12 @@ public class SunSecurityManagement extends ExtensionImpl implements
             throws SignException {
 
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateGenerateCSRCmd(certFile);
-        Process p = runSecurityCmd(cmdArgs);
+
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateGenerateCSRCmd(certFile, aliaskey,
+                ksType, ksLocation, ksPasswrd, getConsoleEncoding());
+        Process p = keytool.execute(cmdArgs);
 
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
@@ -257,7 +296,7 @@ public class SunSecurityManagement extends ExtensionImpl implements
                                             new String[] {
                                                     SignErrors
                                                             .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR),
-                                                    cmdOutput })); //$NON-NLS-1$
+                                                    cmdOutput }));
                 }
             }
         } catch (IOException ee) {
@@ -286,8 +325,11 @@ public class SunSecurityManagement extends ExtensionImpl implements
         if ((aliaskey != null) && (aliaskey.length() > 0)) {
 
             try {
-                String[] cmdArgs = generateDisplayCertifcates();
-                Process p = runSecurityCmd(cmdArgs);
+                initializeKeytool();
+
+                String[] cmdArgs = keytool.generateDisplayCertifcates(aliaskey,
+                        ksType, ksLocation, ksPasswrd, getConsoleEncoding());
+                Process p = keytool.execute(cmdArgs);
 
                 BufferedReader cmdOutputStream = new BufferedReader(
                         new InputStreamReader(p.getInputStream()));
@@ -324,7 +366,7 @@ public class SunSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getKeyStoreNameLoc()
      */
-    public String getKeyStoreNameLoc() throws SignException {
+    public IPath getKeyStoreNameLoc() throws SignException {
         return ksLocation;
     }
 
@@ -345,10 +387,11 @@ public class SunSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getToolLocation(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public String getToolLocation(IProgressMonitor monitor)
-            throws SignException {
-        return securityProviderPrefStore
-                .getString(SunSmgmtConstants.SECURITY_TOOL_LOCATION);
+    public IPath getToolLocation(IProgressMonitor monitor) throws SignException {
+
+        IPath path = new Path(securityProviderPrefStore
+                .getString(SunSmgmtConstants.SECURITY_TOOL_LOCATION));
+        return path;
     }
 
     /* (non-Javadoc)
@@ -365,8 +408,12 @@ public class SunSecurityManagement extends ExtensionImpl implements
             throws SignException {
 
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateImportSignedCertCmd(certFile);
-        Process p = runSecurityCmd(cmdArgs);
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateImportSignedCertCmd(certFile,
+                aliaskey, ksPasswrd, ksType, ksLocation, ksPasswrd,
+                getConsoleEncoding());
+        Process p = keytool.execute(cmdArgs);
 
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
@@ -399,7 +446,7 @@ public class SunSecurityManagement extends ExtensionImpl implements
      */
     public boolean isKeyStoreSelected() throws SignException {
 
-        if ((ksLocation == null) || (ksLocation.length() <= 0)) {
+        if ((ksLocation == null) || (ksLocation.isEmpty())) {
             return false;
         }
 
@@ -409,15 +456,18 @@ public class SunSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#openKeyStore(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public String[] openKeyStore(String keyStore, String storePass,
+    public String[] openKeyStore(IPath keyStore, String storePass,
             IProgressMonitor monitor) throws SignException {
         monitor
                 .beginTask(Messages.SunSecurityManagement_Opening_key_store,
                         100);
         monitor.worked(10);
 
-        String[] cmdArgs = generateOpenKeyStoreCmd(keyStore, storePass);
-        Process p = runSecurityCmd(cmdArgs);
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateOpenKeyStoreCmd(ksType, keyStore,
+                storePass, getConsoleEncoding());
+        Process p = keytool.execute(cmdArgs);
 
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
@@ -451,7 +501,7 @@ public class SunSecurityManagement extends ExtensionImpl implements
                                                 new String[] {
                                                         SignErrors
                                                                 .getErrorMessage(SignErrors.SECURITY_BAD_KEYSTORE_OR_PASSWORD),
-                                                        cmdOutput })); //$NON-NLS-1$
+                                                        cmdOutput }));
                     } else {
                         throw new SignException(
                                 NLS
@@ -460,7 +510,7 @@ public class SunSecurityManagement extends ExtensionImpl implements
                                                 new String[] {
                                                         SignErrors
                                                                 .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR),
-                                                        cmdOutput })); //$NON-NLS-1$
+                                                        cmdOutput }));
                     }
 
                 } else if (cmdOutput.indexOf(",") >= 0) { //$NON-NLS-1$
@@ -492,8 +542,8 @@ public class SunSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setKeyStoreNameLoc(java.lang.String)
      */
-    public void setKeyStoreNameLoc(String keyStoreNameLoc) throws SignException {
-        this.ksLocation = keyStoreNameLoc;
+    public void setKeyStoreNameLoc(IPath keyStoreNameLoc) throws SignException {
+        ksLocation = keyStoreNameLoc;
     }
 
     /* (non-Javadoc)
@@ -507,20 +557,20 @@ public class SunSecurityManagement extends ExtensionImpl implements
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setStoreType(java.lang.String)
      */
     public void setStoreType(String storeType) throws SignException {
-        this.ksType = storeType;
+        ksType = storeType;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setValidity(java.lang.String)
      */
     public void setValidity(String validity) throws SignException {
-        this.ksCertfValidity = validity;
+        ksCertfValidity = validity;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setValues(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public void setValues(String loc, String alias, String psswd, String strtype)
+    public void setValues(IPath loc, String alias, String psswd, String strtype)
             throws SignException {
 
         ksType = strtype;
@@ -533,206 +583,11 @@ public class SunSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#storeToolLocation(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void storeToolLocation(String loc, IProgressMonitor monitor)
+    public void storeToolLocation(IPath loc, IProgressMonitor monitor)
             throws SignException {
         securityProviderPrefStore.setValue(
-                SunSmgmtConstants.SECURITY_TOOL_LOCATION, loc);
+                SunSmgmtConstants.SECURITY_TOOL_LOCATION, loc.toString());
 
-    }
-
-    /**
-     * Create the command line to change the password used to protect the
-     * integrity of the keystore contents.
-     * 
-     * @param newStorePass the new keystore password. <b>Restriction:</b>The
-     *            password must be at least 6 characters long.
-     * @param storePasswd the current keystore password
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
-     *         -storepasswd -new <b>newStorePass</b> -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
-     *        <b>storePasswd</b></code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateChangeStorePasswordCmd(String newStorePass,
-            String storePasswd) throws SignException {
-
-        String[] changeStorePasswordCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), SunSmgmtConstants.CHANGE_STORE_PASSWD,
-                SunSmgmtConstants.NEWSTOREPASS, newStorePass,
-                SunSmgmtConstants.STORETYPE, ksType,
-                SunSmgmtConstants.KEYSTORE, ksLocation,
-                SunSmgmtConstants.STOREPASS, storePasswd };
-
-        return changeStorePasswordCmdArgs;
-    }
-
-    /**
-     * Create the command line to delete from the keystore the entry identified
-     * by {@link #aliaskey}.
-     * 
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
-     *         -delete -alias {@link #aliaskey} -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
-     *        {@link #ksPasswrd}</code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateDeleteKeyCmd() throws SignException {
-
-        String[] deleteKeyCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), SunSmgmtConstants.DELETE_KEY,
-                SunSmgmtConstants.ALIAS, aliaskey, SunSmgmtConstants.STORETYPE,
-                ksType, SunSmgmtConstants.KEYSTORE, ksLocation,
-                SunSmgmtConstants.STOREPASS, ksPasswrd };
-
-        return deleteKeyCmdArgs;
-    }
-
-    /**
-     * Create the command line to display the contents of the keystore entry
-     * identified by {@link #aliaskey}.
-     * 
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
-     *         -list -alias {@link #aliaskey} -storetype {@link #ksType} 
-     *         -keystore {@link #ksLocation} -storepass
-     *        {@link #ksPasswrd}</code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateDisplayCertifcates() throws SignException {
-
-        String[] listCertificateCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), SunSmgmtConstants.LIST,
-                SunSmgmtConstants.ALIAS, aliaskey, SunSmgmtConstants.STORETYPE,
-                ksType, SunSmgmtConstants.KEYSTORE, ksLocation,
-                SunSmgmtConstants.STOREPASS, ksPasswrd };
-
-        return listCertificateCmdArgs;
-    }
-
-    /**
-     * Create the command line to read from the keystore the certificate
-     * associated with {@link #aliaskey}, and stores it in the file certFile.
-     * 
-     * @param certFile where to store the certificate associated with
-     *            {@link #aliaskey}.
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
-     *         -export -alias {@link #aliaskey} -file <b>certFile</b> 
-     *         -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
-     *         {@link #ksPasswrd}</code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateGenerateCSRCmd(String certFile)
-            throws SignException {
-
-        String[] generateCSRCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), SunSmgmtConstants.GENERATE_CSR,
-                SunSmgmtConstants.ALIAS, aliaskey, SunSmgmtConstants.FILE,
-                certFile, SunSmgmtConstants.STORETYPE, ksType,
-                SunSmgmtConstants.KEYSTORE, ksLocation,
-                SunSmgmtConstants.STOREPASS, ksPasswrd };
-
-        return generateCSRCmdArgs;
-    }
-
-    /**
-     * Create the command line to read the certificate from the file certFile,
-     * and stores it in the keystore entry identified by {@link #aliaskey}.
-     * 
-     * @param certFile the file where the certificate is stored.
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
-     *         -import -noprompt -alias {@link #aliaskey} -keypass {@link #ksPasswrd} 
-     *         -file <b>certFile</b> -storetype {@link #ksType} -keystore {@link #ksLocation} 
-     *         -storepass {@link #ksPasswrd}</code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateImportSignedCertCmd(String certFile)
-            throws SignException {
-
-        String[] importSignedCertCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), SunSmgmtConstants.IMPORT_CERT,
-                SunSmgmtConstants.NOPROMPT, SunSmgmtConstants.ALIAS, aliaskey,
-                SunSmgmtConstants.KEYPASS, ksPasswrd, SunSmgmtConstants.FILE,
-                certFile, SunSmgmtConstants.STORETYPE, ksType,
-                SunSmgmtConstants.KEYSTORE, ksLocation,
-                SunSmgmtConstants.STOREPASS, ksPasswrd };
-
-        return importSignedCertCmdArgs;
-    }
-
-    /**
-     * Create the command line to generate a key pair (a public key and
-     * associated private key).
-     * 
-     * @param alias keypair alias
-     * @param dname specifies the X.500 Distinguished Name to be associated with
-     *            alias, and is used as the issuer and subject fields in the
-     *            self-signed certificate.
-     * @param keyAlg specifies the algorithm to be used to generate the key
-     *            pair.
-     * @param sigAlg specifies the algorithm that should be used to sign the
-     *            self-signed certificate; this algorithm must be compatible
-     *            with keyalg.
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
-     *         -genkey -alias <b>alias</b> -dname <b>dname</b>
-     *         -keypass {@link #ksPasswrd} -storetype {@link #ksType} -keyalg
-     *         <b>keyAlg</b> -keystore {@link #ksLocation} -storepass
-     *         {@link #ksPasswrd} -validity {@link #ksCertfValidity}</code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateNewKeyCmd(String alias, String dname,
-            String keyAlg, String sigAlg) throws SignException {
-
-        String[] newKeyCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), SunSmgmtConstants.GENERATE_KEY,
-                SunSmgmtConstants.ALIAS, alias, SunSmgmtConstants.DNAME, dname,
-                SunSmgmtConstants.KEYPASS, ksPasswrd,
-                SunSmgmtConstants.STORETYPE, ksType, SunSmgmtConstants.KEYALG,
-                keyAlg, SunSmgmtConstants.SIGALG, sigAlg,
-                SunSmgmtConstants.KEYSTORE, ksLocation,
-                SunSmgmtConstants.STOREPASS, ksPasswrd,
-                SunSmgmtConstants.VALIDITY, ksCertfValidity };
-
-        return newKeyCmdArgs;
-    }
-
-    /**
-     * Create the command line to open a Key Store and display its contents.
-     * 
-     * @param keyStore the keystore location.
-     * @param storePasswd the password which is used to protect the integrity of
-     *            the keystore.
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt; -J-Dconsole.encoding=&lt;console character encoding&gt; 
-     *         -list -storetype {@link #ksType} -keystore <b>keyStore</b> -storepass
-     *        <b>storePasswd</b></code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateOpenKeyStoreCmd(String keyStore, String storePasswd)
-            throws SignException {
-
-        String[] openKeyStoreCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), SunSmgmtConstants.LIST,
-                SunSmgmtConstants.STORETYPE, ksType,
-                SunSmgmtConstants.KEYSTORE, keyStore,
-                SunSmgmtConstants.STOREPASS, storePasswd };
-        return openKeyStoreCmdArgs;
     }
 
     /**
@@ -743,13 +598,10 @@ public class SunSecurityManagement extends ExtensionImpl implements
      * @throws SignException when the JRE home directory is not configured
      *             correctly.
      */
-    private final String getSecurityManagementTool() throws SignException {
-        String securityToolLocation = getToolLocation(null);
+    private final IPath getSecurityManagementTool() throws SignException {
+        IPath securityToolLocation = getToolLocation(null);
 
-        if ((securityToolLocation == null)
-                || (securityToolLocation.length() <= 0)
-                || securityToolLocation
-                        .equals(Messages.PreferenceInitializer_set_location_message)) {
+        if ((securityToolLocation == null) || (securityToolLocation.isEmpty())) {
             String message = MessageFormat
                     .format(
                             Messages.SunSecurityManagement_defaultErrorMessage2,
@@ -763,47 +615,18 @@ public class SunSecurityManagement extends ExtensionImpl implements
                             + "\n" + //$NON-NLS-1$
                             message);
         }
-
-        StringBuffer buffer = new StringBuffer("\"");//$NON-NLS-1$
-        buffer.append(securityToolLocation).append(File.separator)
-                .append("bin") //$NON-NLS-1$						
-                .append(File.separator).append("keytool") //$NON-NLS-1$
-                .append("\""); //$NON-NLS-1$
-
-        return buffer.toString();
+        securityToolLocation = securityToolLocation.append("bin"
+                + File.separator + "keytool");
+        return securityToolLocation;
     }
 
     /**
-     * Executes the specified command and arguments in a separate process.
-     * 
-     * @param cmd array containing the command to call and its arguments.
-     * @return A new Process object for managing the subprocess
-     * @throws SignException if fails to create the new process.
+     * @throws SignException when the JRE home directory is not configured
+     *             correctly.
      */
-    private Process runSecurityCmd(String[] cmd) throws SignException {
-
-        Process p = null;
-
-        try {
-            p = Runtime.getRuntime().exec(cmd);
-        } catch (Exception e) {
-            throw new SignException(SignErrors
-                    .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR), e);
+    private final void initializeKeytool() throws SignException {
+        if (keytool == null) {
+            keytool = new Keytool(getSecurityManagementTool());
         }
-
-        if (p == null) {
-            StringBuffer str = new StringBuffer(""); //$NON-NLS-1$
-
-            for (String element : cmd) {
-                str.append(" " + element); //$NON-NLS-1$
-            }
-
-            throw new SignException(SignErrors
-                    .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR)
-                    + Messages.SunSecurityManagement_Could_not_execute
-                    + " [" + str + " ]"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-
-        return p;
     }
 }

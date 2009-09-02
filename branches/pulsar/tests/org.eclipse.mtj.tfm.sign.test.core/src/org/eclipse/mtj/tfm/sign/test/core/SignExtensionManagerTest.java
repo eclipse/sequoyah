@@ -11,15 +11,20 @@
  */
 package org.eclipse.mtj.tfm.sign.test.core;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.eclipse.mtj.tfm.internal.sign.core.extension.SignExtensionManager;
+import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
+import org.eclipse.mtj.tfm.sign.core.exception.SignException;
+import org.eclipse.mtj.tfm.sign.core.extension.IExtension;
 import org.eclipse.mtj.tfm.sign.core.extension.IExtensionManager;
+import org.osgi.framework.Version;
 
 /**
  * @author Diego Sandin
  * @since 1.0
- * 
  */
 public class SignExtensionManagerTest extends TestCase {
 
@@ -29,7 +34,7 @@ public class SignExtensionManagerTest extends TestCase {
      * .
      */
     public final void testGetInstance() {
-        
+
         IExtensionManager extensionManager1 = SignExtensionManager
                 .getInstance();
 
@@ -56,7 +61,15 @@ public class SignExtensionManagerTest extends TestCase {
      * .
      */
     public final void testCapitalizeIdentifier() {
-        fail("Not yet implemented");
+        IExtensionManager extensionManager = SignExtensionManager.getInstance();
+
+        String cap1 = extensionManager
+                .capitalizeIdentifier("Device_Management");
+        assertEquals("deviceManagement", cap1);
+
+        String cap2 = extensionManager
+                .capitalizeIdentifier("DEVICE_MANAGEMENT");
+        assertEquals("deviceManagement", cap2);
     }
 
     /**
@@ -65,7 +78,12 @@ public class SignExtensionManagerTest extends TestCase {
      * .
      */
     public final void testGetAllImplementations() {
-        fail("Not yet implemented");
+        final int totalImpls = 3;
+        IExtensionManager extensionManager = SignExtensionManager.getInstance();
+
+        IExtension[] extension = extensionManager.getAllImplementations();
+
+        assertEquals(totalImpls, extension.length);
     }
 
     /**
@@ -74,7 +92,42 @@ public class SignExtensionManagerTest extends TestCase {
      * .
      */
     public final void testGetAllImplementationsString() {
-        fail("Not yet implemented");
+
+        IExtensionManager extensionManager = SignExtensionManager.getInstance();
+
+        try {
+            extensionManager.setActive("org.eclipse.mtj.tfm.sign.smgmt.sun",
+                    ExtensionType.SECURITY_MANAGEMENT, "testProject", true);
+            extensionManager.setActive("org.eclipse.mtj.tfm.sign.smgmt.ibm",
+                    ExtensionType.SECURITY_MANAGEMENT, "testProject2", true);
+        } catch (SignException e) {
+            e.printStackTrace();
+        }
+        IExtension[] extension = extensionManager
+                .getAllImplementations("testProject");
+
+        for (IExtension ex : extension) {
+            if (ex.getId().equals("org.eclipse.mtj.tfm.sign.smgmt.sun")) {
+                assertTrue(ex.isActive());
+            } else {
+                assertFalse(
+                        "The \"org.eclipse.mtj.tfm.sign.smgmt.sun\" should be enabled for testProject",
+                        ex.isActive());
+            }
+        }
+
+        IExtension[] extension2 = extensionManager
+                .getAllImplementations("testProject2");
+
+        for (IExtension ex : extension2) {
+            if (ex.getId().equals("org.eclipse.mtj.tfm.sign.smgmt.ibm")) {
+                assertTrue(ex.isActive());
+            } else {
+                assertFalse(
+                        "The \"org.eclipse.mtj.tfm.sign.smgmt.ibm\" should be enabled for testProject2",
+                        ex.isActive());
+            }
+        }
     }
 
     /**
@@ -83,7 +136,17 @@ public class SignExtensionManagerTest extends TestCase {
      * .
      */
     public final void testGetImplementationsExtensionTypeStringString() {
-        fail("Not yet implemented");
+        IExtensionManager extensionManager = SignExtensionManager.getInstance();
+
+        List<IExtension> extension = extensionManager.getImplementations(
+                ExtensionType.SECURITY_MANAGEMENT, Version.emptyVersion
+                        .toString(), "Foo");
+
+        assertTrue(extension.isEmpty());
+
+        extension = extensionManager.getImplementations(
+                ExtensionType.SECURITY_MANAGEMENT, "1.0.0", "Foo");
+
     }
 
     /**

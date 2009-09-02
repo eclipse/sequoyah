@@ -100,7 +100,7 @@ public class Keytool {
      * @return A new Process object for managing the subprocess
      * @throws SignException if fails to create the new process.
      */
-    public Process execute(String[] args) throws SignException {
+    public synchronized Process execute(String[] args) throws SignException {
 
         Process p = null;
 
@@ -484,7 +484,7 @@ public class Keytool {
      * 
      * @return the Keytool location in the file system.
      */
-    public IPath getLocation() {
+    public synchronized IPath getLocation() {
         return location;
     }
 
@@ -493,7 +493,7 @@ public class Keytool {
      * 
      * @param location the Keytool location in the file system.
      */
-    public void setLocation(IPath location) {
+    public synchronized void setLocation(IPath location) {
         this.location = location;
     }
 }

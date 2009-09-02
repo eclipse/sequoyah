@@ -203,11 +203,7 @@ public class SignExtensionManager implements IExtensionManager {
 
         String val = (String) props.get(getPropertyName(id, type, project));
         if (val == null) {
-            if (project != null) {
-                return isActive(id, type, null);
-            } else {
-                return true;
-            }
+            return false;
         }
 
         return (new Boolean(val)).booleanValue();
@@ -356,7 +352,7 @@ public class SignExtensionManager implements IExtensionManager {
         }
 
         sb.append(url);
-        sb.append("mtj.properties"); //$NON-NLS-1$
+        sb.append("sign.properties"); //$NON-NLS-1$
 
         return sb.toString();
     }

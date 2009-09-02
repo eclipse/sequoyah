@@ -119,8 +119,7 @@ public interface IExtensionManager {
      * @param extensionName
      * @return
      */
-    public abstract ArrayList<IExtension> loadExtensions(
-            String extensionName);
+    public abstract ArrayList<IExtension> loadExtensions(String extensionName);
 
     /**
      * @param plugin_id

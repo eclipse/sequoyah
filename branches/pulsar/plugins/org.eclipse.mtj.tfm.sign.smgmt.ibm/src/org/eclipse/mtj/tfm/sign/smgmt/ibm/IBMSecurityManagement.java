@@ -21,15 +21,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.mtj.tfm.internal.sign.smgmt.ibm.Messages;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.mtj.tfm.internal.sign.smgmt.ibm.IBMSmgmtConstants;
+import org.eclipse.mtj.tfm.internal.sign.smgmt.ibm.Messages;
 import org.eclipse.mtj.tfm.sign.core.SignErrors;
 import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
 import org.eclipse.mtj.tfm.sign.core.extension.ExtensionImpl;
 import org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement;
+import org.eclipse.mtj.tfm.sign.core.extension.security.Keytool;
 import org.eclipse.mtj.tfm.sign.core.extension.security.X500DName;
 import org.osgi.framework.Version;
 
@@ -45,23 +50,26 @@ public class IBMSecurityManagement extends ExtensionImpl implements
      * @return The character encoding for the console.
      */
     private static String getConsoleEncoding() {
-        return "-J-Dconsole.encoding=" + System.getProperty("file.encoding"); //$NON-NLS-1$ //$NON-NLS-2$
+        return Keytool.S_JAVAOPTION
+                + "-Dconsole.encoding=" + System.getProperty("file.encoding"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    private Keytool keytool;
+
     private String aliaskey = null;
-    
+
     /** The certificate will be valid for 365 days. */
     private String ksCertfValidity = "365"; //$NON-NLS-1$
-    
+
     /** The keystore location in the file system. */
-    private String ksLocation = ""; //$NON-NLS-1$
-    
+    private IPath ksLocation = Path.EMPTY; //$NON-NLS-1$
+
     /** Keystore Password */
     private String ksPasswrd = null;
 
     /** Java KeyStore (JKS) */
     private String ksType = "JKS"; //$NON-NLS-1$
-    
+
     /**
      * Preference store for this SecurityManagement plug-in. This preference
      * store is used to hold persistent settings for this plug-in in the context
@@ -75,7 +83,8 @@ public class IBMSecurityManagement extends ExtensionImpl implements
      * <b>ID</b>: <i>org.eclipse.mtj.tfm.sign.smgmt.ibm</i><br>
      * <b>Vendor</b>: <i>Eclipse.org - DSDP</i><br>
      * <b>Version</b>: <i>1.0.0</i><br>
-     * <b>Description</b>: <i>Security Manager for IBM's JRE (v.5.0.0) Keytool.</i><br>
+     * <b>Description</b>: <i>Security Manager for IBM's JRE (v.5.0.0)
+     * Keytool.</i><br>
      * <b>Type</b>: <i>{@link ExtensionType#SECURITY_MANAGEMENT
      * SECURITY_MANAGEMENT}</i><br>
      */
@@ -88,6 +97,26 @@ public class IBMSecurityManagement extends ExtensionImpl implements
         setType(ExtensionType.SECURITY_MANAGEMENT);
         securityProviderPrefStore = IBMSmgmtCore.getDefault()
                 .getPreferenceStore();
+
+        securityProviderPrefStore
+                .addPropertyChangeListener(new IPropertyChangeListener() {
+
+                    public void propertyChange(PropertyChangeEvent event) {
+                        if (event.getProperty().equals(
+                                IBMSmgmtConstants.SECURITY_TOOL_LOCATION)) {
+                            if (keytool != null) {
+                                keytool.setLocation(new Path((String) event
+                                        .getNewValue()));
+                            } else {
+                                try {
+                                    initializeKeytool();
+                                } catch (SignException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                });
     }
 
     /* (non-Javadoc)
@@ -97,9 +126,11 @@ public class IBMSecurityManagement extends ExtensionImpl implements
             IProgressMonitor monitor) throws SignException {
 
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateChangeStorePasswordCmd(newStorePass,
-                storePass);
-        Process p = runSecurityCmd(cmdArgs);
+
+        String[] cmdArgs = keytool.generateChangeStorePasswordCmd(newStorePass,
+                ksType, ksLocation, storePass, getConsoleEncoding());
+
+        Process p = keytool.execute(cmdArgs);
 
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
@@ -123,6 +154,9 @@ public class IBMSecurityManagement extends ExtensionImpl implements
         return cmdSuccessful;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#createNewKey(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+     */
     public boolean createNewKey(String alias, String commonName,
             String orgUnit, String orgName, String localityName,
             String stateName, String country, IProgressMonitor monitor)
@@ -131,10 +165,18 @@ public class IBMSecurityManagement extends ExtensionImpl implements
                 100);
 
         boolean cmdSuccessful = true;
-        String Dname = new X500DName(commonName, orgUnit, orgName,
-                localityName, stateName, country).toString();
-        String[] cmdArgs = generateNewKeyCmd(alias, Dname, "RSA", "SHA1withRSA"); //$NON-NLS-1$ //$NON-NLS-2$
-        Process p = runSecurityCmd(cmdArgs);
+
+        initializeKeytool();
+
+        X500DName dName = new X500DName(commonName, orgUnit, orgName,
+                localityName, stateName, country);
+
+        String[] cmdArgs = keytool
+                .generateNewKeyCmd(
+                        dName,
+                        "RSA", "SHA1withRSA", ksCertfValidity, alias, ksPasswrd, ksType, ksLocation, ksPasswrd, getConsoleEncoding()); //$NON-NLS-1$ //$NON-NLS-2$
+
+        Process p = keytool.execute(cmdArgs);
         monitor.worked(30);
 
         BufferedReader cmdOutputStream = new BufferedReader(
@@ -178,9 +220,13 @@ public class IBMSecurityManagement extends ExtensionImpl implements
     public boolean deleteKey(IProgressMonitor monitor) throws SignException {
 
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateDeleteKeyCmd();
-        Process p = runSecurityCmd(cmdArgs);
 
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateDeleteKeyCmd(aliaskey, ksType,
+                ksLocation, ksPasswrd, getConsoleEncoding());
+
+        Process p = keytool.execute(cmdArgs);
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
 
@@ -212,8 +258,12 @@ public class IBMSecurityManagement extends ExtensionImpl implements
             throws SignException {
 
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateGenerateCSRCmd(certFile);
-        Process p = runSecurityCmd(cmdArgs);
+
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateGenerateCSRCmd(certFile, aliaskey,
+                ksType, ksLocation, ksPasswrd, getConsoleEncoding());
+        Process p = keytool.execute(cmdArgs);
 
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
@@ -256,8 +306,11 @@ public class IBMSecurityManagement extends ExtensionImpl implements
         if ((aliaskey != null) && (aliaskey.length() > 0)) {
 
             try {
-                String[] cmdArgs = generateDisplayCertifcates();
-                Process p = runSecurityCmd(cmdArgs);
+                initializeKeytool();
+
+                String[] cmdArgs = keytool.generateDisplayCertifcates(aliaskey,
+                        ksType, ksLocation, ksPasswrd, getConsoleEncoding());
+                Process p = keytool.execute(cmdArgs);
                 BufferedReader cmdOutputStream = new BufferedReader(
                         new InputStreamReader(p.getInputStream()));
                 monitor.worked(20);
@@ -267,8 +320,6 @@ public class IBMSecurityManagement extends ExtensionImpl implements
                 while ((cmdOutput = cmdOutputStream.readLine()) != null) {
 
                     if (cmdOutput.toLowerCase().indexOf("error") >= 0) { //$NON-NLS-1$
-                        //MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", cmdOutput);  //$NON-NLS-1$
-                        //return ""; //$NON-NLS-1$
                         throw new SignException(
                                 SignErrors
                                         .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR)
@@ -295,7 +346,7 @@ public class IBMSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getKeyStoreNameLoc()
      */
-    public String getKeyStoreNameLoc() throws SignException {
+    public IPath getKeyStoreNameLoc() throws SignException {
         return ksLocation;
     }
 
@@ -316,10 +367,10 @@ public class IBMSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getToolLocation(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public String getToolLocation(IProgressMonitor monitor)
-            throws SignException {
-        return securityProviderPrefStore
-                .getString(IBMSmgmtConstants.SECURITY_TOOL_LOCATION);
+    public IPath getToolLocation(IProgressMonitor monitor) throws SignException {
+        IPath path = new Path(securityProviderPrefStore
+                .getString(IBMSmgmtConstants.SECURITY_TOOL_LOCATION));
+        return path;
     }
 
     /* (non-Javadoc)
@@ -336,8 +387,10 @@ public class IBMSecurityManagement extends ExtensionImpl implements
             throws SignException {
 
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateImportSignedCertCmd(certFile);
-        Process p = runSecurityCmd(cmdArgs);
+        String[] cmdArgs = keytool.generateImportSignedCertCmd(certFile,
+                aliaskey, ksPasswrd, ksType, ksLocation, ksPasswrd,
+                getConsoleEncoding());
+        Process p = keytool.execute(cmdArgs);
 
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
@@ -361,15 +414,12 @@ public class IBMSecurityManagement extends ExtensionImpl implements
         return cmdSuccessful;
     }
 
-    /**
-     * isKeyStoreSelected - user of this class will specify the keystore
-     * name/location to manage.
-     * 
-     * @return true if a keystore name and location was set during this session.
+    /* (non-Javadoc)
+     * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#isKeyStoreSelected()
      */
     public boolean isKeyStoreSelected() throws SignException {
 
-        if ((ksLocation == null) || (ksLocation.length() <= 0)) {
+        if ((ksLocation == null) || (ksLocation.isEmpty())) {
             return false;
         }
 
@@ -379,14 +429,17 @@ public class IBMSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#openKeyStore(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public String[] openKeyStore(String keyStore, String storePass,
+    public String[] openKeyStore(IPath keyStore, String storePass,
             IProgressMonitor monitor) throws SignException {
         monitor.beginTask(Messages.SecurityManagementImpl_Opening_key_store,
                 100);
         monitor.worked(10);
         BufferedReader cmdOutputStream;
-        String[] cmdArgs = generateOpenKeyStoreCmd(keyStore, storePass);
-        Process p = runSecurityCmd(cmdArgs);
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateOpenKeyStoreCmd(ksType, keyStore,
+                storePass, getConsoleEncoding());
+        Process p = keytool.execute(cmdArgs);
         if (p != null) {
             cmdOutputStream = new BufferedReader(new InputStreamReader(p
                     .getInputStream()));
@@ -464,7 +517,7 @@ public class IBMSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setKeyStoreNameLoc(java.lang.String)
      */
-    public void setKeyStoreNameLoc(String keyStoreNameLoc) throws SignException {
+    public void setKeyStoreNameLoc(IPath keyStoreNameLoc) throws SignException {
         this.ksLocation = keyStoreNameLoc;
     }
 
@@ -492,7 +545,7 @@ public class IBMSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setValues(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public void setValues(String loc, String alias, String psswd, String strtype)
+    public void setValues(IPath loc, String alias, String psswd, String strtype)
             throws SignException {
 
         ksType = strtype;
@@ -505,164 +558,22 @@ public class IBMSecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#storeToolLocation(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void storeToolLocation(String loc, IProgressMonitor monitor)
+    public void storeToolLocation(IPath loc, IProgressMonitor monitor)
             throws SignException {
         securityProviderPrefStore.setValue(
-                IBMSmgmtConstants.SECURITY_TOOL_LOCATION, loc);
-
-    }
-
-    /**
-     * Generating the command to change the key store password.
-     * 
-     * @param newStorePass
-     * @param storePasswd
-     * @return
-     * @throws SignException
-     */
-    private String[] generateChangeStorePasswordCmd(String newStorePass,
-            String storePasswd) throws SignException {
-
-        String[] changeStorePasswordCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), IBMSmgmtConstants.CHANGE_STORE_PASSWD,
-                IBMSmgmtConstants.NEWSTOREPASS, newStorePass,
-                IBMSmgmtConstants.STORETYPE, ksType,
-                IBMSmgmtConstants.KEYSTORE, ksLocation,
-                IBMSmgmtConstants.STOREPASS, storePasswd };
-
-        return changeStorePasswordCmdArgs;
-    }
-
-    /**
-     * @return
-     * @throws SignException
-     */
-    private String[] generateDeleteKeyCmd() throws SignException {
-
-        String[] deleteKeyCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), IBMSmgmtConstants.DELETE_KEY,
-                IBMSmgmtConstants.ALIAS, aliaskey, IBMSmgmtConstants.STORETYPE,
-                ksType, IBMSmgmtConstants.KEYSTORE, ksLocation,
-                IBMSmgmtConstants.STOREPASS, ksPasswrd };
-
-        return deleteKeyCmdArgs;
-    }
-
-    /**
-     * generateDisplayCertifcates - Command to display all certificates for a
-     * given key (alias)
-     * 
-     * @param alias - alias key for which the certificate info is being
-     *            requested.
-     * @param storePasswd - password used to open keystore
-     * @return
-     * @throws SignException
-     */
-    private String[] generateDisplayCertifcates() throws SignException {
-
-        String[] listCertificateCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), IBMSmgmtConstants.LIST,
-                IBMSmgmtConstants.ALIAS, aliaskey, IBMSmgmtConstants.STORETYPE,
-                ksType, IBMSmgmtConstants.KEYSTORE, ksLocation,
-                IBMSmgmtConstants.STOREPASS, ksPasswrd };
-
-        return listCertificateCmdArgs;
-    }
-
-    /**
-     * @param certFile
-     * @return
-     * @throws SignException
-     */
-    private String[] generateGenerateCSRCmd(String certFile)
-            throws SignException {
-
-        String[] generateCSRCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), IBMSmgmtConstants.GENERATE_CSR,
-                IBMSmgmtConstants.ALIAS, aliaskey, IBMSmgmtConstants.FILE,
-                certFile, IBMSmgmtConstants.STORETYPE, ksType,
-                IBMSmgmtConstants.KEYSTORE, ksLocation,
-                IBMSmgmtConstants.STOREPASS, ksPasswrd };
-
-        return generateCSRCmdArgs;
-    }
-
-    /**
-     * @param certFile
-     * @return
-     * @throws SignException
-     */
-    private String[] generateImportSignedCertCmd(String certFile)
-            throws SignException {
-
-        String[] importSignedCertCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), IBMSmgmtConstants.IMPORT_CERT,
-                IBMSmgmtConstants.NOPROMPT, IBMSmgmtConstants.ALIAS, aliaskey,
-                IBMSmgmtConstants.KEYPASS, ksPasswrd, IBMSmgmtConstants.FILE,
-                certFile, IBMSmgmtConstants.STORETYPE, ksType,
-                IBMSmgmtConstants.KEYSTORE, ksLocation,
-                IBMSmgmtConstants.STOREPASS, ksPasswrd };
-
-        return importSignedCertCmdArgs;
-    }
-
-    /**
-     * @param alias
-     * @param dname
-     * @param keyAlg
-     * @param sigAlg
-     * @return
-     * @throws SignException
-     */
-    private String[] generateNewKeyCmd(String alias, String dname,
-            String keyAlg, String sigAlg) throws SignException {
-
-        String[] newKeyCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), IBMSmgmtConstants.GENERATE_KEY,
-                IBMSmgmtConstants.ALIAS, alias, IBMSmgmtConstants.DNAME, dname,
-                IBMSmgmtConstants.KEYPASS, ksPasswrd,
-                IBMSmgmtConstants.STORETYPE, ksType,
-                IBMSmgmtConstants.KEYALG, keyAlg, IBMSmgmtConstants.SIGALG,
-                sigAlg, IBMSmgmtConstants.KEYSTORE, ksLocation,
-                IBMSmgmtConstants.STOREPASS, ksPasswrd,
-                IBMSmgmtConstants.VALIDITY, ksCertfValidity };
-
-        return newKeyCmdArgs;
-    }
-
-    /**
-     * Generating the command to Open a Key Store and display its contents.
-     * 
-     * @param keyStore
-     * @param storePasswd
-     * @return
-     * @throws SignException
-     */
-    private String[] generateOpenKeyStoreCmd(String keyStore, String storePasswd)
-            throws SignException {
-
-        String[] openKeyStoreCmdArgs = { getSecurityManagementTool(),
-                getConsoleEncoding(), IBMSmgmtConstants.LIST,
-                IBMSmgmtConstants.STORETYPE, ksType,
-                IBMSmgmtConstants.KEYSTORE, keyStore,
-                IBMSmgmtConstants.STOREPASS, storePasswd };
-        return openKeyStoreCmdArgs;
+                IBMSmgmtConstants.SECURITY_TOOL_LOCATION, loc.toString());
     }
 
     /**
      * Get the Security Management tool from pref store location.
      * 
-     * 
      * @return
      * @throws SignException
      */
-    private final String getSecurityManagementTool() throws SignException {
-        String securityToolLocation = getToolLocation(null);
+    private final IPath getSecurityManagementTool() throws SignException {
+        IPath securityToolLocation = getToolLocation(null);
 
-        if ((securityToolLocation == null)
-                || (securityToolLocation.length() <= 0)
-                || securityToolLocation
-                        .equals(Messages.SecurityManagementImpl_Specify_home_directory)) {
+        if ((securityToolLocation == null) || (securityToolLocation.isEmpty())) {
             String message = MessageFormat
                     .format(
                             Messages.SecurityManagementImpl_GetSecurityManagmentException,
@@ -675,45 +586,19 @@ public class IBMSecurityManagement extends ExtensionImpl implements
                             .getErrorMessage(SignErrors.SECURITY_MANAGER_NOT_CONFIGURED)
                             + "\n" + message); //$NON-NLS-1$
         }
-
-        StringBuffer buffer = new StringBuffer("\"");//$NON-NLS-1$
-        buffer.append(securityToolLocation).append(File.separator)
-                .append("bin") //$NON-NLS-1$						
-                .append(File.separator).append("keytool.exe") //$NON-NLS-1$
-                .append("\"");//$NON-NLS-1$
-
-        return buffer.toString();
+        securityToolLocation = securityToolLocation.append("bin"
+                + File.separator + "keytool");
+        return securityToolLocation;
     }
 
     /**
-     * @param cmd
-     * @return
-     * @throws SignException
+     * @throws SignException when the JRE home directory is not configured
+     *             correctly.
      */
-    private Process runSecurityCmd(String[] cmd) throws SignException {
-
-        Process p = null;
-
-        try {
-            p = Runtime.getRuntime().exec(cmd);
-        } catch (IOException e) {
-            throw new SignException(SignErrors
-                    .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR));
+    private final void initializeKeytool() throws SignException {
+        if (keytool == null) {
+            keytool = new Keytool(getSecurityManagementTool());
         }
-
-        if (p == null) {
-            StringBuffer str = new StringBuffer(""); //$NON-NLS-1$
-
-            for (String element : cmd) {
-                str.append(" " + element); //$NON-NLS-1$
-            }
-
-            throw new SignException(SignErrors
-                    .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR)
-                    + Messages.SecurityManagementImpl_Could_not_execute
-                    + " [" + str + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-
-        return p;
     }
+
 }

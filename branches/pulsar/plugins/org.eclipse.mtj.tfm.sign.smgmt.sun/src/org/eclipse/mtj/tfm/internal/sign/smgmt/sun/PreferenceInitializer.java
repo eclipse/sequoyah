@@ -12,6 +12,7 @@
  */
 package org.eclipse.mtj.tfm.internal.sign.smgmt.sun;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.mtj.tfm.sign.smgmt.sun.SunSmgmtCore;
@@ -26,9 +27,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
      */
     public void initializeDefaultPreferences() {
         IPreferenceStore store = SunSmgmtCore.getDefault().getPreferenceStore();
-        store.setDefault(SunSmgmtConstants.SECURITY_TOOL_LOCATION,
-                Messages.PreferenceInitializer_set_location_message);
+        store.setDefault(SunSmgmtConstants.SECURITY_TOOL_LOCATION, Path.EMPTY
+                .toString());
     }
-    
 
 }

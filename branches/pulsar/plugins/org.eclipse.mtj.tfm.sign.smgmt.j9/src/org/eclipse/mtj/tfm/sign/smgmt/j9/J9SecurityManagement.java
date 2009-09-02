@@ -22,8 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.mtj.tfm.internal.sign.smgmt.j9.J9SmgmtConstants;
 import org.eclipse.mtj.tfm.internal.sign.smgmt.j9.Messages;
 import org.eclipse.mtj.tfm.sign.core.SignErrors;
@@ -31,6 +35,7 @@ import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
 import org.eclipse.mtj.tfm.sign.core.extension.ExtensionImpl;
 import org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement;
+import org.eclipse.mtj.tfm.sign.core.extension.security.Keytool;
 import org.eclipse.mtj.tfm.sign.core.extension.security.X500DName;
 import org.osgi.framework.Version;
 
@@ -47,13 +52,15 @@ public class J9SecurityManagement extends ExtensionImpl implements
     private String ksCertfValidity = "365"; //$NON-NLS-1$
 
     /** The keystore location in the file system. */
-    private String ksLocation = ""; //$NON-NLS-1$
+    private IPath ksLocation = Path.EMPTY; //$NON-NLS-1$
 
     /** Keystore Password */
     private String ksPasswrd = null;
 
     /** Java KeyStore (JKS) */
     private String ksType = "JKS"; //$NON-NLS-1$
+
+    private Keytool keytool;
 
     /**
      * Preference store for this SecurityManagement plug-in. This preference
@@ -83,6 +90,25 @@ public class J9SecurityManagement extends ExtensionImpl implements
         setType(ExtensionType.SECURITY_MANAGEMENT);
         securityProviderPrefStore = J9SmgmtCore.getDefault()
                 .getPreferenceStore();
+        securityProviderPrefStore
+                .addPropertyChangeListener(new IPropertyChangeListener() {
+
+                    public void propertyChange(PropertyChangeEvent event) {
+                        if (event.getProperty().equals(
+                                J9SmgmtConstants.SECURITY_TOOL_LOCATION)) {
+                            if (keytool != null) {
+                                keytool.setLocation(new Path((String) event
+                                        .getNewValue()));
+                            } else {
+                                try {
+                                    initializeKeytool();
+                                } catch (SignException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                });
 
     }
 
@@ -93,9 +119,14 @@ public class J9SecurityManagement extends ExtensionImpl implements
             IProgressMonitor monitor) throws SignException {
 
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateChangeStorePasswordCmd(newStorePass,
-                storePass);
-        Process p = runSecurityCmd(cmdArgs);
+
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateChangeStorePasswordCmd(newStorePass,
+                ksType, ksLocation, storePass);
+
+        Process p = keytool.execute(cmdArgs);
+        ;
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
 
@@ -127,12 +158,16 @@ public class J9SecurityManagement extends ExtensionImpl implements
         monitor.beginTask(Messages.J9SecurityManager_Creating_key_alias, 100);
 
         boolean cmdSuccessful = true;
-        String Dname = new X500DName(commonName, orgUnit, orgName,
-                localityName, stateName, country).toString();
+        initializeKeytool();
+        X500DName dName = new X500DName(commonName, orgUnit, orgName,
+                localityName, stateName, country);
 
-        String[] cmdArgs = generateNewKeyCmd(alias, Dname, "RSA", "SHA1withRSA"); //$NON-NLS-1$ //$NON-NLS-2$
-        Process p = runSecurityCmd(cmdArgs);
+        String[] cmdArgs = keytool
+                .generateNewKeyCmd(
+                        dName,
+                        "RSA", "SHA1withRSA", ksCertfValidity, alias, ksPasswrd, ksType, ksLocation, ksPasswrd); //$NON-NLS-1$ //$NON-NLS-2$
 
+        Process p = keytool.execute(cmdArgs);
         monitor.worked(10);
 
         BufferedReader cmdOutputStream = new BufferedReader(
@@ -168,9 +203,12 @@ public class J9SecurityManagement extends ExtensionImpl implements
     public boolean deleteKey(IProgressMonitor monitor) throws SignException {
 
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateDeleteKeyCmd();
-        Process p = runSecurityCmd(cmdArgs);
+        initializeKeytool();
 
+        String[] cmdArgs = keytool.generateDeleteKeyCmd(aliaskey, ksType,
+                ksLocation, ksPasswrd);
+
+        Process p = keytool.execute(cmdArgs);
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
 
@@ -198,8 +236,11 @@ public class J9SecurityManagement extends ExtensionImpl implements
     public boolean generateCSR(String certFile, IProgressMonitor monitor)
             throws SignException {
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateGenerateCSRCmd(certFile);
-        Process p = runSecurityCmd(cmdArgs);
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateGenerateCSRCmd(certFile, aliaskey,
+                ksType, ksLocation, ksPasswrd);
+        Process p = keytool.execute(cmdArgs);
 
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
@@ -241,8 +282,12 @@ public class J9SecurityManagement extends ExtensionImpl implements
         if ((aliaskey != null) && (aliaskey.length() > 0)) {
 
             try {
-                String[] cmdArgs = generateDisplayCertifcates();
-                Process p = runSecurityCmd(cmdArgs);
+                initializeKeytool();
+
+                String[] cmdArgs = keytool.generateDisplayCertifcates(aliaskey,
+                        ksType, ksLocation, ksPasswrd);
+                Process p = keytool.execute(cmdArgs);
+
                 BufferedReader cmdOutputStream = new BufferedReader(
                         new InputStreamReader(p.getInputStream()));
 
@@ -277,7 +322,7 @@ public class J9SecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getKeyStoreNameLoc()
      */
-    public String getKeyStoreNameLoc() throws SignException {
+    public IPath getKeyStoreNameLoc() throws SignException {
         return ksLocation;
     }
 
@@ -298,10 +343,11 @@ public class J9SecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#getToolLocation(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public String getToolLocation(IProgressMonitor monitor)
-            throws SignException {
-        return securityProviderPrefStore
-                .getString(J9SmgmtConstants.SECURITY_TOOL_LOCATION);
+    public IPath getToolLocation(IProgressMonitor monitor) throws SignException {
+
+        IPath path = new Path(securityProviderPrefStore
+                .getString(J9SmgmtConstants.SECURITY_TOOL_LOCATION));
+        return path;
     }
 
     /* (non-Javadoc)
@@ -317,8 +363,11 @@ public class J9SecurityManagement extends ExtensionImpl implements
     public boolean importSignedCert(String certFile, IProgressMonitor monitor)
             throws SignException {
         boolean cmdSuccessful = true;
-        String[] cmdArgs = generateImportSignedCertCmd(certFile);
-        Process p = runSecurityCmd(cmdArgs);
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateImportSignedCertCmd(certFile,
+                aliaskey, ksPasswrd, ksType, ksLocation, ksPasswrd);
+        Process p = keytool.execute(cmdArgs);
 
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
@@ -345,7 +394,7 @@ public class J9SecurityManagement extends ExtensionImpl implements
      */
     public boolean isKeyStoreSelected() throws SignException {
 
-        if ((ksLocation == null) || (ksLocation.length() <= 0))
+        if ((ksLocation == null) || (ksLocation.isEmpty()))
             return false;
 
         return true;
@@ -354,12 +403,15 @@ public class J9SecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#openKeyStore(java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public String[] openKeyStore(String keyStore, String storePass,
+    public String[] openKeyStore(IPath keyStore, String storePass,
             IProgressMonitor monitor) throws SignException {
         monitor.beginTask(Messages.J9SecurityManager_Opening_keystore, 100);
 
-        String[] cmdArgs = generateOpenKeyStoreCmd(keyStore, storePass);
-        Process p = runSecurityCmd(cmdArgs);
+        initializeKeytool();
+
+        String[] cmdArgs = keytool.generateOpenKeyStoreCmd(ksType, keyStore,
+                storePass);
+        Process p = keytool.execute(cmdArgs);
 
         BufferedReader cmdOutputStream = new BufferedReader(
                 new InputStreamReader(p.getInputStream()));
@@ -426,7 +478,7 @@ public class J9SecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setKeyStoreNameLoc(java.lang.String)
      */
-    public void setKeyStoreNameLoc(String keyStoreNameLoc) throws SignException {
+    public void setKeyStoreNameLoc(IPath keyStoreNameLoc) throws SignException {
         this.ksLocation = keyStoreNameLoc;
     }
 
@@ -454,7 +506,7 @@ public class J9SecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#setValues(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public void setValues(String loc, String alias, String psswd, String strtype)
+    public void setValues(IPath loc, String alias, String psswd, String strtype)
             throws SignException {
 
         ksType = strtype;
@@ -467,197 +519,10 @@ public class J9SecurityManagement extends ExtensionImpl implements
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement#storeToolLocation(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void storeToolLocation(String loc, IProgressMonitor monitor)
+    public void storeToolLocation(IPath loc, IProgressMonitor monitor)
             throws SignException {
         securityProviderPrefStore.setValue(
-                J9SmgmtConstants.SECURITY_TOOL_LOCATION, loc);
-    }
-
-    /**
-     * Create the command line to change the password used to protect the
-     * integrity of the keystore contents.
-     * 
-     * @param newStorePass the new keystore password. <b>Restriction:</b>The
-     *            password must be at least 6 characters long.
-     * @param storePasswd the current keystore password
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt; 
-     *         -storepasswd -new <b>newStorePass</b> -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
-     *        <b>storePasswd</b></code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateChangeStorePasswordCmd(String newStorePass,
-            String storePasswd) throws SignException {
-
-        String[] changeStorePasswordCmdArgs = { getSecurityManagementTool(),
-                J9SmgmtConstants.CHANGE_STORE_PASSWD,
-                J9SmgmtConstants.NEWSTOREPASS, newStorePass,
-                J9SmgmtConstants.STORETYPE, ksType, J9SmgmtConstants.KEYSTORE,
-                ksLocation, J9SmgmtConstants.STOREPASS, storePasswd };
-
-        return changeStorePasswordCmdArgs;
-    }
-
-    /**
-     * Create the command line to delete from the keystore the entry identified
-     * by {@link #aliaskey}.
-     * 
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt;  
-     *         -delete -alias {@link #aliaskey} -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
-     *        {@link #ksPasswrd}</code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateDeleteKeyCmd() throws SignException {
-
-        String[] deleteKeyCmdArgs = { getSecurityManagementTool(),
-                J9SmgmtConstants.DELETE_KEY, J9SmgmtConstants.ALIAS, aliaskey,
-                J9SmgmtConstants.STORETYPE, ksType, J9SmgmtConstants.KEYSTORE,
-                ksLocation, J9SmgmtConstants.STOREPASS, ksPasswrd };
-
-        return deleteKeyCmdArgs;
-    }
-
-    /**
-     * Create the command line to display the contents of the keystore entry
-     * identified by {@link #aliaskey}.
-     * 
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt;
-     *         -list -alias {@link #aliaskey} -storetype {@link #ksType} 
-     *         -keystore {@link #ksLocation} -storepass
-     *        {@link #ksPasswrd}</code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateDisplayCertifcates() throws SignException {
-
-        String[] listCertificateCmdArgs = { getSecurityManagementTool(),
-                J9SmgmtConstants.LIST, J9SmgmtConstants.ALIAS, aliaskey,
-                J9SmgmtConstants.STORETYPE, ksType, J9SmgmtConstants.KEYSTORE,
-                ksLocation, J9SmgmtConstants.STOREPASS, ksPasswrd };
-
-        return listCertificateCmdArgs;
-    }
-
-    /**
-     * Create the command line to read from the keystore the certificate
-     * associated with {@link #aliaskey}, and stores it in the file certFile.
-     * 
-     * @param certFile where to store the certificate associated with
-     *            {@link #aliaskey}.
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt;
-     *         -export -alias {@link #aliaskey} -file <b>certFile</b> 
-     *         -storetype {@link #ksType} -keystore {@link #ksLocation} -storepass
-     *         {@link #ksPasswrd}</code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateGenerateCSRCmd(String certFile)
-            throws SignException {
-
-        String[] generateCSRCmdArgs = { getSecurityManagementTool(),
-                J9SmgmtConstants.GENERATE_CSR, J9SmgmtConstants.ALIAS,
-                aliaskey, J9SmgmtConstants.FILE, certFile,
-                J9SmgmtConstants.STORETYPE, ksType, J9SmgmtConstants.KEYSTORE,
-                ksLocation, J9SmgmtConstants.STOREPASS, ksPasswrd };
-
-        return generateCSRCmdArgs;
-    }
-
-    /**
-     * Create the command line to read the certificate from the file certFile,
-     * and stores it in the keystore entry identified by {@link #aliaskey}.
-     * 
-     * @param certFile the file where the certificate is stored.
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt; 
-     *         -import -noprompt -alias {@link #aliaskey} -keypass {@link #ksPasswrd} 
-     *         -file <b>certFile</b> -storetype {@link #ksType} -keystore {@link #ksLocation} 
-     *         -storepass {@link #ksPasswrd}</code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateImportSignedCertCmd(String certFile)
-            throws SignException {
-
-        String[] importSignedCertCmdArgs = { getSecurityManagementTool(),
-                J9SmgmtConstants.IMPORT_CERT, J9SmgmtConstants.NOPROMPT,
-                J9SmgmtConstants.ALIAS, aliaskey, J9SmgmtConstants.KEYPASS,
-                ksPasswrd, J9SmgmtConstants.FILE, certFile,
-                J9SmgmtConstants.STORETYPE, ksType, J9SmgmtConstants.KEYSTORE,
-                ksLocation, J9SmgmtConstants.STOREPASS, ksPasswrd };
-
-        return importSignedCertCmdArgs;
-    }
-
-    /**
-     * Create the command line to generate a key pair (a public key and
-     * associated private key).
-     * 
-     * @param alias keypair alias
-     * @param dname specifies the X.500 Distinguished Name to be associated with
-     *            alias, and is used as the issuer and subject fields in the
-     *            self-signed certificate.
-     * @param keyAlg specifies the algorithm to be used to generate the key
-     *            pair.
-     * @param sigAlg specifies the algorithm that should be used to sign the
-     *            self-signed certificate; this algorithm must be compatible
-     *            with keyalg.
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt; -genkey -alias <b>alias</b> -dname <b>dname</b>
-     *         -keypass {@link #ksPasswrd} -storetype {@link #ksType} -keyalg
-     *         <b>keyAlg</b> -keystore {@link #ksLocation} -storepass
-     *         {@link #ksPasswrd} -validity {@link #ksCertfValidity}</code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateNewKeyCmd(String alias, String dname,
-            String keyAlg, String sigAlg) throws SignException {
-
-        String[] newKeyCmdArgs = { getSecurityManagementTool(),
-                J9SmgmtConstants.GENERATE_KEY, J9SmgmtConstants.ALIAS, alias,
-                J9SmgmtConstants.DNAME, dname, J9SmgmtConstants.KEYPASS,
-                ksPasswrd, J9SmgmtConstants.STORETYPE, ksType,
-                J9SmgmtConstants.KEYALG, keyAlg, J9SmgmtConstants.SIGALG,
-                sigAlg, J9SmgmtConstants.KEYSTORE, ksLocation,
-                J9SmgmtConstants.STOREPASS, ksPasswrd,
-                J9SmgmtConstants.VALIDITY, ksCertfValidity };
-
-        return newKeyCmdArgs;
-    }
-
-    /**
-     * Create the command line to open a Key Store and display its contents.
-     * 
-     * @param keyStore the keystore location.
-     * @param storePasswd the password which is used to protect the integrity of
-     *            the keystore.
-     * @return the generated command line string in the following format: <br>
-     *         <code>
-     *         &lt;keytool Path&gt;
-     *         -list -storetype {@link #ksType} -keystore <b>keyStore</b> -storepass
-     *        <b>storePasswd</b></code>
-     * @throws SignException in case fails to get the Security Management tool
-     *             location in the file system.
-     */
-    private String[] generateOpenKeyStoreCmd(String keyStore, String storePasswd)
-            throws SignException {
-
-        String[] openKeyStoreCmdArgs = { getSecurityManagementTool(),
-                J9SmgmtConstants.LIST, J9SmgmtConstants.STORETYPE, ksType,
-                J9SmgmtConstants.KEYSTORE, keyStore,
-                J9SmgmtConstants.STOREPASS, storePasswd };
-        return openKeyStoreCmdArgs;
+                J9SmgmtConstants.SECURITY_TOOL_LOCATION, loc.toString());
     }
 
     /**
@@ -668,13 +533,10 @@ public class J9SecurityManagement extends ExtensionImpl implements
      * @throws SignException when the JRE home directory is not configured
      *             correctly.
      */
-    private final String getSecurityManagementTool() throws SignException {
-        String securityToolLocation = getToolLocation(null);
+    private final IPath getSecurityManagementTool() throws SignException {
+        IPath securityToolLocation = getToolLocation(null);
 
-        if (securityToolLocation == null
-                || securityToolLocation.length() <= 0
-                || securityToolLocation
-                        .equals(Messages.J9SecurityManager_Specify_directory_here)) {
+        if ((securityToolLocation == null) || (securityToolLocation.isEmpty())) {
             String message = MessageFormat
                     .format(
                             Messages.J9SecurityManager_getSecurityManagerException,
@@ -689,47 +551,18 @@ public class J9SecurityManagement extends ExtensionImpl implements
                             message);
         }
 
-        StringBuffer buffer = new StringBuffer("\"");
-        buffer.append(securityToolLocation).append(File.separator)
-                .append("bin") //$NON-NLS-1$						
-                .append(File.separator).append("keytool") //$NON-NLS-1$
-                .append("\"");
-
-        return buffer.toString();
+        securityToolLocation = securityToolLocation.append("bin"
+                + File.separator + "keytool");
+        return securityToolLocation;
     }
 
     /**
-     * Executes the specified command and arguments in a separate process.
-     * 
-     * @param cmd array containing the command to call and its arguments.
-     * @return A new Process object for managing the subprocess
-     * @throws SignException if fails to create the new process.
+     * @throws SignException when the JRE home directory is not configured
+     *             correctly.
      */
-    private Process runSecurityCmd(String[] cmd) throws SignException {
-
-        Process p = null;
-
-        try {
-            p = Runtime.getRuntime().exec(cmd);
-        } catch (Exception e) {
-            throw new SignException(SignErrors
-                    .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR));
+    private final void initializeKeytool() throws SignException {
+        if (keytool == null) {
+            keytool = new Keytool(getSecurityManagementTool());
         }
-
-        if (p == null) {
-            StringBuffer str = new StringBuffer(""); //$NON-NLS-1$
-
-            for (int i = 0; i < cmd.length; i++) {
-                str.append(" " + cmd[i]); //$NON-NLS-1$
-            }
-
-            throw new SignException(SignErrors
-                    .getErrorMessage(SignErrors.GENERIC_SECURITY_ERROR)
-                    + Messages.J9SecurityManager_Could_not_execute
-                    + " [" + str + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-
-        return p;
     }
-
 }

@@ -6,7 +6,14 @@
       <security_Management
             class="org.eclipse.mtj.tfm.sign.smgmt.sun.SunSecurityManagement"
             id="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.SecurityManagement"
-            name="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.SecurityManagement"/>
+            name="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.SecurityManagement">
+         <platform
+               name="JAVAME">
+         </platform>
+         <platform
+               name="ANDROID">
+         </platform>
+      </security_Management>
    </extension>
       <extension
          point="org.eclipse.core.runtime.preferences">

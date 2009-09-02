@@ -6,7 +6,11 @@
       <security_Management
             class="org.eclipse.mtj.tfm.sign.smgmt.ibm.IBMSecurityManagement"
             id="org.eclipse.mtj.tfm.sign.smgmt.ibm.impl.securityManagement"
-            name="org.eclipse.mtj.tfm.sign.smgmt.ibm.impl.securityManagement"/>
+            name="org.eclipse.mtj.tfm.sign.smgmt.ibm.impl.securityManagement">
+         <platform
+               name="JAVAME">
+         </platform>
+      </security_Management>
    </extension>
       <extension
          point="org.eclipse.core.runtime.preferences">

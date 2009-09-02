@@ -13,6 +13,7 @@
  */
 package org.eclipse.mtj.tfm.sign.core.extension.security;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
 import org.eclipse.mtj.tfm.sign.core.extension.IExtension;
@@ -35,7 +36,7 @@ public interface ISecurityManagement extends IExtension {
      * @return String[]
      * @throws SignException
      */
-    public String[] openKeyStore(String keyStore, String storePass,
+    public String[] openKeyStore(IPath keyStore, String storePass,
             IProgressMonitor monitor) throws SignException;
 
     /**
@@ -69,7 +70,7 @@ public interface ISecurityManagement extends IExtension {
      * @return
      * @throws SignException
      */
-    public String getKeyStoreNameLoc() throws SignException;
+    public IPath getKeyStoreNameLoc() throws SignException;
 
     /**
      * Returns the validity of the current key pair.
@@ -109,7 +110,7 @@ public interface ISecurityManagement extends IExtension {
      * @param keyStoreNameLoc
      * @throws SignException
      */
-    public void setKeyStoreNameLoc(String keyStoreNameLoc) throws SignException;
+    public void setKeyStoreNameLoc(IPath keyStoreNameLoc) throws SignException;
 
     /**
      * Sets the validity period for the certificate.
@@ -128,7 +129,7 @@ public interface ISecurityManagement extends IExtension {
      * @param strtype
      * @throws SignException
      */
-    public void setValues(String loc, String alias, String psswd, String strtype)
+    public void setValues(IPath loc, String alias, String psswd, String strtype)
             throws SignException;
 
     /**
@@ -229,8 +230,7 @@ public interface ISecurityManagement extends IExtension {
      * @return - Tool location.
      * @throws SignException
      */
-    public String getToolLocation(IProgressMonitor monitor)
-            throws SignException;
+    public IPath getToolLocation(IProgressMonitor monitor) throws SignException;
 
     /**
      * Implementations that rely on an external security tool, are responsible
@@ -241,6 +241,6 @@ public interface ISecurityManagement extends IExtension {
      * @param monitor
      * @throws SignException
      */
-    public void storeToolLocation(String loc, IProgressMonitor monitor)
+    public void storeToolLocation(IPath loc, IProgressMonitor monitor)
             throws SignException;
 }
