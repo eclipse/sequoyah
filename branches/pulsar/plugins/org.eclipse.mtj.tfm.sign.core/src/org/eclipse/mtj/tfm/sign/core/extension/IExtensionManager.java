@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
+import org.osgi.framework.Version;
 
 /**
  * @since 1.0
@@ -31,7 +32,7 @@ public interface IExtensionManager {
      * @param value The identifier to capitalize - e.g. "DEVICE_MANAGEMENT".
      * @return The capitalized identifier - e.g. "deviceManagement".
      */
-    public abstract String capitalizeIdentifier(String _value);
+    public String capitalizeIdentifier(String _value);
 
     /**
      * Method returns all existing Sign Extensions.
@@ -57,7 +58,7 @@ public interface IExtensionManager {
      * @return
      */
     public abstract List<IExtension> getImplementations(
-            ExtensionType extensionType, String version, String vendor);
+            ExtensionType extensionType, Version version, String vendor);
 
     /**
      * @param extensionType
@@ -67,7 +68,7 @@ public interface IExtensionManager {
      * @return
      */
     public abstract List<IExtension> getImplementations(
-            ExtensionType extensionType, String version, String vendor,
+            ExtensionType extensionType, Version version, String vendor,
             boolean onlyActive);
 
     /**
@@ -78,7 +79,7 @@ public interface IExtensionManager {
      * @return
      */
     public abstract List<IExtension> getImplementations(
-            ExtensionType extensionType, String version, String vendor,
+            ExtensionType extensionType, Version version, String vendor,
             String project);
 
     /**
@@ -90,7 +91,7 @@ public interface IExtensionManager {
      * @return
      */
     public abstract List<IExtension> getImplementations(
-            ExtensionType extensionType, String version, String vendor,
+            ExtensionType extensionType, Version version, String vendor,
             String project, boolean onlyActive);
 
     /**

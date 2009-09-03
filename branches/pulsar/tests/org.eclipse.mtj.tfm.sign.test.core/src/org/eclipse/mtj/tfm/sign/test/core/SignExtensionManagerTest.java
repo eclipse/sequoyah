@@ -28,6 +28,26 @@ import org.osgi.framework.Version;
  */
 public class SignExtensionManagerTest extends TestCase {
 
+    /* (non-Javadoc)
+     * @see junit.framework.TestCase#tearDown()
+     */
+    @Override
+    protected synchronized void tearDown() throws Exception {
+
+        IExtensionManager extensionManager = SignExtensionManager.getInstance();
+
+        try {
+            extensionManager.setActive("org.eclipse.mtj.tfm.sign.smgmt.sun",
+                    ExtensionType.SECURITY_MANAGEMENT, false);
+            extensionManager.setActive("org.eclipse.mtj.tfm.sign.smgmt.ibm",
+                    ExtensionType.SECURITY_MANAGEMENT, false);
+            extensionManager.setActive("org.eclipse.mtj.tfm.sign.smgmt.j9",
+                    ExtensionType.SECURITY_MANAGEMENT, false);
+        } catch (SignException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Test method for
      * {@link org.eclipse.mtj.tfm.internal.sign.core.extension.SignExtensionManager#getInstance()}
@@ -136,16 +156,37 @@ public class SignExtensionManagerTest extends TestCase {
      * .
      */
     public final void testGetImplementationsExtensionTypeStringString() {
+        final int totalImpls = 3;
+
         IExtensionManager extensionManager = SignExtensionManager.getInstance();
 
         List<IExtension> extension = extensionManager.getImplementations(
-                ExtensionType.SECURITY_MANAGEMENT, Version.emptyVersion
-                        .toString(), "Foo");
+                ExtensionType.SECURITY_MANAGEMENT, Version.emptyVersion, "Foo");
 
         assertTrue(extension.isEmpty());
 
         extension = extensionManager.getImplementations(
-                ExtensionType.SECURITY_MANAGEMENT, "1.0.0", "Foo");
+                ExtensionType.SECURITY_MANAGEMENT, new Version("1.0.0"),
+                "Eclipse.org - DSDP");
+
+        assertTrue(extension.isEmpty());
+
+        try {
+            extensionManager.setActive("org.eclipse.mtj.tfm.sign.smgmt.sun",
+                    ExtensionType.SECURITY_MANAGEMENT, true);
+            extensionManager.setActive("org.eclipse.mtj.tfm.sign.smgmt.ibm",
+                    ExtensionType.SECURITY_MANAGEMENT, true);
+            extensionManager.setActive("org.eclipse.mtj.tfm.sign.smgmt.j9",
+                    ExtensionType.SECURITY_MANAGEMENT, true);
+        } catch (SignException e) {
+            fail("Could not enable security managers");
+        }
+
+        extension = extensionManager.getImplementations(
+                ExtensionType.SECURITY_MANAGEMENT, new Version("1.0.0"),
+                "Eclipse.org - DSDP");
+
+        assertEquals(totalImpls, extension.size());
 
     }
 
@@ -155,7 +196,34 @@ public class SignExtensionManagerTest extends TestCase {
      * .
      */
     public final void testGetImplementationsExtensionTypeStringStringBoolean() {
-        fail("Not yet implemented");
+        final int totalImpls = 3;
+
+        IExtensionManager extensionManager = SignExtensionManager.getInstance();
+
+        List<IExtension> extension = extensionManager.getImplementations(
+                ExtensionType.SECURITY_MANAGEMENT, Version.emptyVersion, "Foo",
+                true);
+
+        assertTrue(extension.isEmpty());
+
+        extension = extensionManager.getImplementations(
+                ExtensionType.SECURITY_MANAGEMENT, Version.emptyVersion, "Foo",
+                false);
+
+        assertTrue(extension.isEmpty());
+
+        extension = extensionManager.getImplementations(
+                ExtensionType.SECURITY_MANAGEMENT, new Version("1.0.0"),
+                "Eclipse.org - DSDP", true);
+
+        assertTrue(extension.isEmpty());
+
+        extension = extensionManager.getImplementations(
+                ExtensionType.SECURITY_MANAGEMENT, new Version("1.0.0"),
+                "Eclipse.org - DSDP", false);
+
+        assertEquals(totalImpls, extension.size());
+
     }
 
     /**
@@ -164,7 +232,24 @@ public class SignExtensionManagerTest extends TestCase {
      * .
      */
     public final void testGetImplementationsExtensionTypeStringStringString() {
-        fail("Not yet implemented");
+        
+        IExtensionManager extensionManager = SignExtensionManager.getInstance();
+        
+        try {
+            extensionManager.setActive("org.eclipse.mtj.tfm.sign.smgmt.sun",
+                    ExtensionType.SECURITY_MANAGEMENT, "testProject", true);
+        } catch (SignException e) {
+            e.printStackTrace();
+        }
+        List<IExtension> extension = extensionManager.getImplementations(
+                ExtensionType.SECURITY_MANAGEMENT, Version.emptyVersion, "Foo",
+                "testProject");
+
+        assertTrue(extension.isEmpty());
+
+        extension = extensionManager.getImplementations(
+                ExtensionType.SECURITY_MANAGEMENT, Version.emptyVersion, "Foo",
+                false);
     }
 
     /**

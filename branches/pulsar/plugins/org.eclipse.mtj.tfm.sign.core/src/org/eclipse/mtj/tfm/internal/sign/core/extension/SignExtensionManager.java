@@ -36,6 +36,7 @@ import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
 import org.eclipse.mtj.tfm.sign.core.exception.SignException;
 import org.eclipse.mtj.tfm.sign.core.extension.IExtension;
 import org.eclipse.mtj.tfm.sign.core.extension.IExtensionManager;
+import org.osgi.framework.Version;
 
 /**
  * The extensibility functionalities are accessible by SignExtensionManager.
@@ -64,7 +65,7 @@ public class SignExtensionManager implements IExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#capitalizeIdentifier(java.lang.String)
      */
-    public String capitalizeIdentifier(String _value) {
+    public synchronized String capitalizeIdentifier(String _value) {
 
         if (_value == null) {
             return null;
@@ -93,14 +94,14 @@ public class SignExtensionManager implements IExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getAllImplementations()
      */
-    public IExtension[] getAllImplementations() {
+    public synchronized IExtension[] getAllImplementations() {
         return getAllImplementations(null);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getAllImplementations(java.lang.String)
      */
-    public IExtension[] getAllImplementations(String project) {
+    public synchronized IExtension[] getAllImplementations(String project) {
         ArrayList<IExtension> l = loadExtensions(SignCore.PLUGIN_ID, null);
         IExtension[] ret = new IExtension[l.size()];
         for (int i = 0; i < l.size(); i++) {
@@ -116,16 +117,17 @@ public class SignExtensionManager implements IExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getImplementations(org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, java.lang.String, java.lang.String)
      */
-    public List<IExtension> getImplementations(ExtensionType extensionType,
-            String version, String vendor) {
+    public synchronized List<IExtension> getImplementations(
+            ExtensionType extensionType, Version version, String vendor) {
         return getImplementations(extensionType, version, vendor, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getImplementations(org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, java.lang.String, java.lang.String, boolean)
      */
-    public List<IExtension> getImplementations(ExtensionType extensionType,
-            String version, String vendor, boolean onlyActive) {
+    public synchronized List<IExtension> getImplementations(
+            ExtensionType extensionType, Version version, String vendor,
+            boolean onlyActive) {
         return getImplementations(extensionType, version, vendor, null,
                 onlyActive);
     }
@@ -133,16 +135,18 @@ public class SignExtensionManager implements IExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getImplementations(org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, java.lang.String, java.lang.String, java.lang.String)
      */
-    public List<IExtension> getImplementations(ExtensionType extensionType,
-            String version, String vendor, String project) {
+    public synchronized List<IExtension> getImplementations(
+            ExtensionType extensionType, Version version, String vendor,
+            String project) {
         return getImplementations(extensionType, version, vendor, project, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#getImplementations(org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, java.lang.String, java.lang.String, java.lang.String, boolean)
      */
-    public List<IExtension> getImplementations(ExtensionType extensionType,
-            String version, String vendor, String project, boolean onlyActive) {
+    public synchronized List<IExtension> getImplementations(
+            ExtensionType extensionType, Version version, String vendor,
+            String project, boolean onlyActive) {
 
         ArrayList<IExtension> l = loadExtensions(SignCore.PLUGIN_ID,
                 extensionType);
@@ -188,14 +192,15 @@ public class SignExtensionManager implements IExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#isActive(java.lang.String, org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType)
      */
-    public boolean isActive(String id, ExtensionType type) {
+    public synchronized boolean isActive(String id, ExtensionType type) {
         return isActive(id, type, null);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#isActive(java.lang.String, org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, java.lang.String)
      */
-    public boolean isActive(String id, ExtensionType type, String project) {
+    public synchronized boolean isActive(String id, ExtensionType type,
+            String project) {
         Properties props = getProperties();
         if (props == null) {
             return true;
@@ -212,7 +217,8 @@ public class SignExtensionManager implements IExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#loadExtensions(java.lang.String)
      */
-    public ArrayList<IExtension> loadExtensions(String extensionName) {
+    public synchronized ArrayList<IExtension> loadExtensions(
+            String extensionName) {
         IExtensionRegistry r = Platform.getExtensionRegistry();
 
         IExtensionPoint[] ps = r.getExtensionPoints(SignCore.PLUGIN_ID);
@@ -242,7 +248,7 @@ public class SignExtensionManager implements IExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#loadExtensions(java.lang.String, org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType)
      */
-    public ArrayList<IExtension> loadExtensions(String plugin_id,
+    public synchronized ArrayList<IExtension> loadExtensions(String plugin_id,
             ExtensionType extensionType) {
         IExtensionRegistry r = Platform.getExtensionRegistry();
         // Testing
@@ -282,16 +288,16 @@ public class SignExtensionManager implements IExtensionManager {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#setActive(java.lang.String, org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, boolean)
      */
-    public void setActive(String id, ExtensionType type, boolean isActive)
-            throws SignException {
+    public synchronized void setActive(String id, ExtensionType type,
+            boolean isActive) throws SignException {
         setActive(id, type, null, isActive);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.ISignExtensionService#setActive(java.lang.String, org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType, java.lang.String, boolean)
      */
-    public void setActive(String id, ExtensionType type, String project,
-            boolean isActive) throws SignException {
+    public synchronized void setActive(String id, ExtensionType type,
+            String project, boolean isActive) throws SignException {
         Properties props = getProperties();
         if (props == null) {
             throw new SignException(
@@ -309,7 +315,7 @@ public class SignExtensionManager implements IExtensionManager {
      * @param value The value to capitalize - e.g. "device management".
      * @return The capitalized value - e.g. "Device Management".
      */
-    private String capitalize(String _value) {
+    private synchronized String capitalize(String _value) {
 
         if (_value == null) {
             return null;
@@ -339,7 +345,7 @@ public class SignExtensionManager implements IExtensionManager {
 
     }
 
-    private String getFileName() throws IOException {
+    private synchronized String getFileName() throws IOException {
         StringBuffer sb = new StringBuffer();
 
         IPath path = new Path(""); //$NON-NLS-1$
@@ -357,7 +363,7 @@ public class SignExtensionManager implements IExtensionManager {
         return sb.toString();
     }
 
-    private Properties getProperties() {
+    private synchronized Properties getProperties() {
         if (properties == null) {
             properties = new Properties();
             try {
@@ -373,7 +379,8 @@ public class SignExtensionManager implements IExtensionManager {
         return properties;
     }
 
-    private String getPropertyName(String id, ExtensionType type, String project) {
+    private synchronized String getPropertyName(String id, ExtensionType type,
+            String project) {
         return "plugin." + type.toString() + "_" + id + "." //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 + (project != null ? project : "all") + ".active"; //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -387,8 +394,8 @@ public class SignExtensionManager implements IExtensionManager {
      * @param _replacement
      * @return
      */
-    private String replacePattern(String _original, String _pattern,
-            String _replacement) {
+    private synchronized String replacePattern(String _original,
+            String _pattern, String _replacement) {
         StringTokenizer _strtok = new StringTokenizer(_original, _pattern, true);
         StringBuffer _result = new StringBuffer();
 
@@ -407,7 +414,7 @@ public class SignExtensionManager implements IExtensionManager {
         return _result.toString();
     }
 
-    private void storeProperties() throws SignException {
+    private synchronized void storeProperties() throws SignException {
         if (properties != null) {
             try {
                 properties.store(new FileOutputStream(getFileName()), ""); //$NON-NLS-1$
