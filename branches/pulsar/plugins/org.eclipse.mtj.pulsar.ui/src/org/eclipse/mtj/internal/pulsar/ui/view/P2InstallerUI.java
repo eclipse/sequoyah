@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+  * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
  * All rights reserved.
  * This component and the accompanying materials are made available
  * under the terms of the License "Eclipse Public License v1.0"
@@ -14,6 +14,7 @@
  *  Euclides Neto (Motorola) - Keeping SDK repository on p2.
  *  Henrique Magalhaes(Motorola) - Create method to remove all SDK repositories.
  *  Euclides Neto (Motorola) - Changed the method to refresh instead of remove SDK repositories.
+ *  Euclides Neto (Motorola) - Changed the way to add artifacts and metadata repositories for runInstaller().
  */
 
 package org.eclipse.mtj.internal.pulsar.ui.view;
@@ -87,8 +88,8 @@ public class P2InstallerUI implements IInstallerUI {
         final InstallableUnit[] ius = getInstallableUnits(sdkImpl);
         final URI artifactsUri = sdkImpl.getRepository().getArtifactsURI();
         final URI metadataUri = sdkImpl.getRepository().getMetadataURI();
-        ProvisioningHelper.addArtifactRepository(artifactsUri);
-        ProvisioningHelper.addMetadataRepository(metadataUri);
+        ProvisioningUtil.addArtifactRepository(artifactsUri, true);
+        ProvisioningUtil.addMetadataRepository(metadataUri, true);
         MultiStatus status = getStatus();
         final String id = getProfileID();
         ProfileChangeRequest changeRequest = InstallAction
