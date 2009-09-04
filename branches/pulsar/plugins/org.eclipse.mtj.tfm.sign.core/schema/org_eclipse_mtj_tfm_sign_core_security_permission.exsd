@@ -18,10 +18,7 @@
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
-            <choice minOccurs="1" maxOccurs="unbounded">
-               <element ref="class" minOccurs="0" maxOccurs="unbounded"/>
-               <element ref="permission" minOccurs="0" maxOccurs="unbounded"/>
-            </choice>
+            <element ref="permission_group"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -90,6 +87,32 @@
                   The name of the class requiring security permissions.
                </documentation>
             </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="permission_group">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <choice minOccurs="1" maxOccurs="unbounded">
+               <element ref="class" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="permission" minOccurs="0" maxOccurs="unbounded"/>
+            </choice>
+         </sequence>
+         <attribute name="platform" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="JAVAME">
+                  </enumeration>
+                  <enumeration value="ANDROID">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>
