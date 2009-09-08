@@ -22,10 +22,12 @@ Export-Package: org.eclipse.mtj.tfm.internal.sign.core;
    org.eclipse.mtj.tfm.sign.smgmt.ibm,
    org.eclipse.mtj.tfm.sign.ui,
    org.eclipse.mtj.tfm.sign.test.core",
+ org.eclipse.mtj.tfm.internal.sign.core.extension.permission;x-friends:="org.eclipse.mtj.tfm.sign.core,org.eclipse.mtj.tfm.sign.test.core,org.eclipse.mtj.tfm.sign.ui",
  org.eclipse.mtj.tfm.sign.core,
  org.eclipse.mtj.tfm.sign.core.enumerations,
  org.eclipse.mtj.tfm.sign.core.exception,
  org.eclipse.mtj.tfm.sign.core.extension,
+ org.eclipse.mtj.tfm.sign.core.extension.permission,
  org.eclipse.mtj.tfm.sign.core.extension.security,
  org.eclipse.mtj.tfm.sign.core.extension.sign,
  org.eclipse.mtj.tfm.sign.core.signing

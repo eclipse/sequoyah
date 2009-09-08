@@ -15,6 +15,6 @@ package org.eclipse.mtj.tfm.sign.core.enumerations;
  * @author Diego Sandin
  * @since 1.0
  */
-public enum ExtensionType {
-    SECURITY_MANAGEMENT, SIGNING_PROVIDER, PERMISSION_PROVIDER;
+public enum Platform {
+    JAVAME, ANDROID, SYMBIAN;
 }

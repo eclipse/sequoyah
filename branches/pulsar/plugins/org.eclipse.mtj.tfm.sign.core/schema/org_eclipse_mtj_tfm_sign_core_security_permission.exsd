@@ -17,9 +17,12 @@
          </appinfo>
       </annotation>
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="permission_group"/>
-         </sequence>
+         <choice>
+            <element ref="permission_provider" minOccurs="0" maxOccurs="1"/>
+            <sequence minOccurs="0" maxOccurs="1">
+               <element ref="permission_group" minOccurs="1" maxOccurs="unbounded"/>
+            </sequence>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -113,6 +116,28 @@
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="permission_provider">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvider"/>
+               </appinfo>
+            </annotation>
          </attribute>
       </complexType>
    </element>

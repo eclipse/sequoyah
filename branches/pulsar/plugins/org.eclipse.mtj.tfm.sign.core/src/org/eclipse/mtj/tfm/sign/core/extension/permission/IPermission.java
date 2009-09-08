@@ -9,12 +9,13 @@
  * Contributors:
  *     Diego Sandin (Motorola) - Initial Version
  */
-package org.eclipse.mtj.tfm.sign.core.enumerations;
+package org.eclipse.mtj.tfm.sign.core.extension.permission;
 
 /**
  * @author Diego Sandin
  * @since 1.0
+ *
  */
-public enum ExtensionType {
-    SECURITY_MANAGEMENT, SIGNING_PROVIDER, PERMISSION_PROVIDER;
+public interface IPermission {
+
 }

@@ -13,7 +13,9 @@ package org.eclipse.mtj.tfm.sign.core;
 
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.mtj.tfm.internal.sign.core.extension.SignExtensionManager;
+import org.eclipse.mtj.tfm.internal.sign.core.extension.permission.PermissionsProvider;
 import org.eclipse.mtj.tfm.sign.core.extension.IExtensionManager;
+import org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvider;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -21,50 +23,57 @@ import org.osgi.framework.BundleContext;
  */
 public class SignCore extends Plugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.mtj.tfm.sign.core";
+    // The plug-in ID
+    public static final String PLUGIN_ID = "org.eclipse.mtj.tfm.sign.core";
 
-	// The shared instance
-	private static SignCore plugin;
-	
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static SignCore getDefault() {
-		return plugin;
-	}
+    // The shared instance
+    private static SignCore plugin;
 
-	/**
-	 * @return
-	 */
-	public static IExtensionManager getSignExtensionManager(){
-	    return new SignExtensionManager();
-	}
-	
-	/**
-	 * The constructor
-	 */
-	public SignCore() {
-	}
+    /**
+     * Returns the shared instance
+     * 
+     * @return the shared instance
+     */
+    public static SignCore getDefault() {
+        return plugin;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-	}
+    /**
+     * @return
+     */
+    public static IExtensionManager getSignExtensionManager() {
+        return new SignExtensionManager();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
+    /**
+     * @return
+     */
+    public static IPermissionGroupProvider getPermissionsProvider() {
+        return new PermissionsProvider();
+    }
+
+    /**
+     * The constructor
+     */
+    public SignCore() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
+     */
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        plugin = this;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+     */
+    public void stop(BundleContext context) throws Exception {
+        plugin = null;
+        super.stop(context);
+    }
 
 }
