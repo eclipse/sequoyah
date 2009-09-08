@@ -13,7 +13,7 @@ package org.eclipse.mtj.tfm.sign.core;
 
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.mtj.tfm.internal.sign.core.extension.SignExtensionManager;
-import org.eclipse.mtj.tfm.internal.sign.core.extension.permission.PermissionsProvider;
+import org.eclipse.mtj.tfm.internal.sign.core.extension.permission.PermissionGroupProvider;
 import org.eclipse.mtj.tfm.sign.core.extension.IExtensionManager;
 import org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvider;
 import org.osgi.framework.BundleContext;
@@ -49,7 +49,7 @@ public class SignCore extends Plugin {
      * @return
      */
     public static IPermissionGroupProvider getPermissionsProvider() {
-        return new PermissionsProvider();
+        return new PermissionGroupProvider();
     }
 
     /**

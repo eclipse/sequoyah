@@ -22,13 +22,13 @@ import org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvid
  * @author Diego Sandin
  * @since 1.0
  */
-public class PermissionsProvider extends ExtensionImpl implements
+public class PermissionGroupProvider extends ExtensionImpl implements
         IPermissionGroupProvider {
 
     /**
-     * Creates a new instance of PermissionsProvider.
+     * Creates a new instance of PermissionGroupProvider.
      */
-    public PermissionsProvider() {
+    public PermissionGroupProvider() {
         // TODO Auto-generated constructor stub
     }
 

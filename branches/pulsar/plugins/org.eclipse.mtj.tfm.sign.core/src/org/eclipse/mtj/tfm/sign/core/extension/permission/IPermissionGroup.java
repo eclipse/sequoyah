@@ -22,13 +22,51 @@ import org.eclipse.mtj.tfm.sign.core.enumerations.Platform;
  */
 public interface IPermissionGroup {
 
+    /**
+     * @return
+     */
+    public abstract List<String> getClassList();
+
+    /**
+     * @param permission
+     * @return
+     */
+    public abstract List<String> getClassListByPermission(IPermission permission);
+
+    /**
+     * @return
+     */
+    public abstract int getClassListSize();
+
+    /**
+     * @return
+     */
+    public abstract String getName();
+
+    /**
+     * @param name
+     * @return
+     */
     public abstract IPermission getPermissionByName(String name);
 
-    public abstract List<IPermission> getPermissionListByClass(String className);
-
+    /**
+     * @return
+     */
     public abstract List<IPermission> getPermissionList();
 
+    /**
+     * @param className
+     * @return
+     */
+    public abstract List<IPermission> getPermissionListByClass(String className);
+
+    /**
+     * @return
+     */
     public abstract int getPermissionListSize();
 
+    /**
+     * @return
+     */
     public abstract EnumSet<Platform> getSupportedPlatforms();
 }

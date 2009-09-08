@@ -14,8 +14,10 @@ package org.eclipse.mtj.tfm.sign.core.extension.permission;
 /**
  * @author Diego Sandin
  * @since 1.0
- *
  */
 public interface IPermission {
 
+    public abstract String getName();
+
+    public abstract String getDescription();
 }
