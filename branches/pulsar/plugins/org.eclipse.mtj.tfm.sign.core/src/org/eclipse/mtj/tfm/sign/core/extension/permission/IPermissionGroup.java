@@ -12,7 +12,7 @@
 package org.eclipse.mtj.tfm.sign.core.extension.permission;
 
 import java.util.EnumSet;
-import java.util.List;
+import java.util.TreeSet;
 
 import org.eclipse.mtj.tfm.sign.core.enumerations.Platform;
 
@@ -25,18 +25,18 @@ public interface IPermissionGroup {
     /**
      * @return
      */
-    public abstract List<String> getClassList();
+    public abstract TreeSet<String> getClassSet();
 
     /**
      * @param permission
      * @return
      */
-    public abstract List<String> getClassListByPermission(IPermission permission);
+    public abstract TreeSet<String> getClassSetByPermission(IPermission permission);
 
     /**
      * @return
      */
-    public abstract int getClassListSize();
+    public abstract int getClassSetSize();
 
     /**
      * @return
@@ -50,20 +50,20 @@ public interface IPermissionGroup {
     public abstract IPermission getPermissionByName(String name);
 
     /**
-     * @return
+     * @return an unmodifiable view of the permission list.
      */
-    public abstract List<IPermission> getPermissionList();
+    public abstract TreeSet<IPermission> getPermissionSet();
 
     /**
      * @param className
      * @return
      */
-    public abstract List<IPermission> getPermissionListByClass(String className);
+    public abstract TreeSet<IPermission> getPermissionSetByClass(String className);
 
     /**
      * @return
      */
-    public abstract int getPermissionListSize();
+    public abstract int getPermissionSetSize();
 
     /**
      * @return

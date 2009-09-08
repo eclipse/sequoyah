@@ -12,12 +12,19 @@
 package org.eclipse.mtj.tfm.sign.core.extension.permission;
 
 /**
+ * This Class wraps a named permission defined by an API or function to prevent
+ * it from being used without authorization.
+ * 
  * @author Diego Sandin
  * @since 1.0
  */
-public interface IPermission {
+public interface IPermission extends Comparable<IPermission> {
 
+    /**
+     * Get the permission name. The names of permissions have a hierarchical
+     * organization similar to Java package names and are case sensitive.
+     * 
+     * @return the permission name.
+     */
     public abstract String getName();
-
-    public abstract String getDescription();
 }

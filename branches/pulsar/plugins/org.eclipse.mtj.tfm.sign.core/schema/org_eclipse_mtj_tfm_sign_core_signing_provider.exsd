@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.mtj.tfm.sign.core" id="SIGNING_PROVIDER" name="SIGNING_PROVIDER"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         
       </documentation>
    </annotation>
 
@@ -81,36 +81,22 @@
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         1.0
       </documentation>
    </annotation>
+
+
+
 
    <annotation>
       <appinfo>
-         <meta.section type="examples"/>
+         <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         [Enter extension point usage example here.]
+         Copyright (c) 2006, 2009 Nokia and Others. &lt;br&gt;
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
-
-   <annotation>
-      <appinfo>
-         <meta.section type="apiInfo"/>
-      </appinfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appinfo>
-         <meta.section type="implementation"/>
-      </appinfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
-
 
 </schema>
