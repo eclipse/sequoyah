@@ -33,6 +33,27 @@ public class ExtensionImpl implements IExtension {
     public ExtensionImpl() {
 
     }
+    
+    
+
+    /**
+     * Creates a new instance of ExtensionImpl.
+     * @param id
+     * @param vendor
+     * @param version
+     * @param description
+     * @param type
+     */
+    public ExtensionImpl(String id, String vendor, Version version,
+            String description, ExtensionType type) {
+        this.id = id;
+        this.vendor = vendor;
+        this.version = version;
+        this.description = description;
+        this.type = type;
+    }
+
+
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#getDescription()

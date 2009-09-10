@@ -30,7 +30,7 @@ public class PermissionGroup implements IPermissionGroup {
     /**
      * Mapped Class x Permission
      */
-    private HashMap<String, TreeSet<IPermission>> mappedClassPerm = new HashMap<String, TreeSet<IPermission>>();
+    private HashMap<String, TreeSet<IPermission>> mappedClassPerm;
 
     /**
      * The name of the permission group
@@ -45,12 +45,14 @@ public class PermissionGroup implements IPermissionGroup {
     /**
      * List of permissions not mapped to any Class.
      */
-    private TreeSet<IPermission> unmappedPerm = new TreeSet<IPermission>();
+    private TreeSet<IPermission> unmappedPerm;
 
     /**
      * Creates a new instance of PermissionGroup.
      */
     public PermissionGroup() {
+        mappedClassPerm = new HashMap<String, TreeSet<IPermission>>();
+        unmappedPerm = new TreeSet<IPermission>();
     }
 
     /**
@@ -59,6 +61,7 @@ public class PermissionGroup implements IPermissionGroup {
      * @param name
      */
     public PermissionGroup(String name) {
+        super();
         this.name = name;
     }
 

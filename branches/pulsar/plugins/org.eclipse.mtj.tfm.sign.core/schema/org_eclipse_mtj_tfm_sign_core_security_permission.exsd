@@ -30,7 +30,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -61,13 +61,6 @@
             <annotation>
                <documentation>
                   The name of the permission following the specific name format.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
                </documentation>
             </annotation>
          </attribute>

@@ -11,12 +11,17 @@
  */
 package org.eclipse.mtj.tfm.internal.sign.core.extension.permission;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.mtj.tfm.sign.core.SignCore;
+import org.eclipse.mtj.tfm.sign.core.enumerations.ExtensionType;
 import org.eclipse.mtj.tfm.sign.core.enumerations.Platform;
 import org.eclipse.mtj.tfm.sign.core.extension.ExtensionImpl;
 import org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroup;
 import org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvider;
+import org.osgi.framework.Version;
 
 /**
  * @author Diego Sandin
@@ -25,11 +30,42 @@ import org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvid
 public class PermissionGroupProvider extends ExtensionImpl implements
         IPermissionGroupProvider {
 
+    HashMap<Platform, ArrayList<IPermissionGroup>> permGroupPlatformMapping;
+
     /**
      * Creates a new instance of PermissionGroupProvider.
      */
     public PermissionGroupProvider() {
-        // TODO Auto-generated constructor stub
+        setId(SignCore.getDefault().getBundle().getSymbolicName()
+                + ".PermissionGroupProvider");
+        setVendor("Eclipse.org - DSDP");
+        setVersion(new Version("1.0.0"));
+        setDescription("Default PermissionGroup Provider");
+        setType(ExtensionType.PERMISSION_PROVIDER);
+
+        initializePermissionGroupMapping();
+
+    }
+
+    /**
+     * Creates a new instance of PermissionGroupProvider.
+     * 
+     * @param id
+     * @param vendor
+     * @param version
+     * @param description
+     * @param type
+     */
+    public PermissionGroupProvider(String id, String vendor, Version version,
+            String description) {
+        super(id, vendor, version, description,
+                ExtensionType.PERMISSION_PROVIDER);
+
+        initializePermissionGroupMapping();
+    }
+
+    private void initializePermissionGroupMapping() {
+
     }
 
     /* (non-Javadoc)
