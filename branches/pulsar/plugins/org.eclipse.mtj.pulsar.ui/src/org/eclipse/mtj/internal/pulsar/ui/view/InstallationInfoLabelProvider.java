@@ -50,7 +50,11 @@ public class InstallationInfoLabelProvider implements ISDKInstallItemLabelProvid
 		if (info != null) {
 			ImageDescriptor descriptor = info.getImageDescriptor();
 			if (descriptor != null) {
-				result = descriptor.createImage();
+				try {
+                    result = descriptor.createImage();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 			}
 		}
 		return result;
