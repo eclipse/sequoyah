@@ -53,7 +53,12 @@ public enum SignErrors {
     /**
      * 
      */
-    GENERIC_SECURITY_ERROR;
+    GENERIC_SECURITY_ERROR,
+    
+    /**
+     * 
+     */
+    GENERIC_PERMISSION_ERROR;
 
     private static final String BUNDLE_NAME = "org.eclipse.mtj.tfm.internal.sign.core.errors"; //$NON-NLS-1$
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle

@@ -13,7 +13,9 @@ package org.eclipse.mtj.tfm.sign.core;
 
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.mtj.tfm.internal.sign.core.extension.SignExtensionManager;
+import org.eclipse.mtj.tfm.internal.sign.core.extension.permission.PermissionGroupProviderRegistry;
 import org.eclipse.mtj.tfm.sign.core.extension.IExtensionManager;
+import org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProviderRegistry;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -43,6 +45,12 @@ public class SignCore extends Plugin {
         return new SignExtensionManager();
     }
 
+    /**
+     * @return
+     */
+    public static IPermissionGroupProviderRegistry getPermissionGroupProviderRegistry() {
+        return PermissionGroupProviderRegistry.getInstance();
+    }
 
     /**
      * The constructor
@@ -50,17 +58,15 @@ public class SignCore extends Plugin {
     public SignCore() {
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
     }
 
-    /*
-     * (non-Javadoc)
+    /* (non-Javadoc)
      * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {

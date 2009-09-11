@@ -13,6 +13,7 @@ package org.eclipse.mtj.tfm.internal.sign.core.extension.permission;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -36,6 +37,7 @@ public class PermissionGroupProvider extends ExtensionImpl implements
 
     private ArrayList<IPermissionGroup> permGroupList;
     private HashMap<Platform, ArrayList<IPermissionGroup>> permGroupPlatformMapping;
+    private EnumSet<Platform> platforms;
 
     /**
      * Creates a new instance of PermissionGroupProvider.
@@ -142,11 +144,18 @@ public class PermissionGroupProvider extends ExtensionImpl implements
                                                 permSet
                                                         .add(new Permission(
                                                                 perm));
+                                            } else {
+                                                throw new SignException(
+                                                        "No Permission name Defined");
                                             }
                                         } else if (permElement.getName()
                                                 .equals("class")) {
                                             String className = permElement
                                                     .getAttribute("name");
+                                            if (className == null) {
+                                                throw new SignException(
+                                                        "No Class Name Defined");
+                                            }
                                             IConfigurationElement[] classPermElements = permElement
                                                     .getChildren();
                                             if ((classPermElements != null)
@@ -159,6 +168,9 @@ public class PermissionGroupProvider extends ExtensionImpl implements
                                                         permSet2
                                                                 .add(new Permission(
                                                                         perm));
+                                                    } else {
+                                                        throw new SignException(
+                                                                "No Permission name Defined");
                                                     }
                                                 }
                                                 if (!permSet2.isEmpty()) {
@@ -167,7 +179,9 @@ public class PermissionGroupProvider extends ExtensionImpl implements
                                                                     className,
                                                                     permSet2);
                                                 }
-
+                                            } else {
+                                                throw new SignException(
+                                                        "No Permission Defined");
                                             }
                                         }
                                     }
@@ -175,11 +189,11 @@ public class PermissionGroupProvider extends ExtensionImpl implements
                                         permissionGroup
                                                 .addPermissionSet(permSet);
                                     }
-
                                     permissionGroupList.add(permissionGroup);
-
+                                } else {
+                                    throw new SignException(
+                                            "No Permission Defined");
                                 }
-
                             }
 
                         } else {
@@ -198,11 +212,13 @@ public class PermissionGroupProvider extends ExtensionImpl implements
                     permGroupPlatformMapping.put(Platform.ANDROID,
                             androidPermissionGroups);
                     permGroupList.addAll(androidPermissionGroups);
+                    platforms.add(Platform.ANDROID);
                 }
                 if (!javamePermissionGroups.isEmpty()) {
                     permGroupPlatformMapping.put(Platform.JAVAME,
                             javamePermissionGroups);
                     permGroupList.addAll(javamePermissionGroups);
+                    platforms.add(Platform.JAVAME);
                 }
             } else {
                 throw new SignException(
@@ -246,6 +262,13 @@ public class PermissionGroupProvider extends ExtensionImpl implements
      */
     public int getPermissionGroupListSize() {
         return permGroupList.size();
+    }
+
+    /**
+     * @return the platforms
+     */
+    public synchronized EnumSet<Platform> getPlatforms() {
+        return (EnumSet<Platform>) Collections.unmodifiableSet(platforms);
     }
 
     /* (non-Javadoc)
