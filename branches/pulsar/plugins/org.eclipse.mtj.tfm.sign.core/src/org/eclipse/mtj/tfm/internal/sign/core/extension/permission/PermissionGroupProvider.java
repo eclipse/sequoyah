@@ -12,6 +12,7 @@
 package org.eclipse.mtj.tfm.internal.sign.core.extension.permission;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -33,7 +34,8 @@ import org.osgi.framework.Version;
 public class PermissionGroupProvider extends ExtensionImpl implements
         IPermissionGroupProvider {
 
-    HashMap<Platform, ArrayList<IPermissionGroup>> permGroupPlatformMapping;
+    private ArrayList<IPermissionGroup> permGroupList;
+    private HashMap<Platform, ArrayList<IPermissionGroup>> permGroupPlatformMapping;
 
     /**
      * Creates a new instance of PermissionGroupProvider.
@@ -191,13 +193,16 @@ public class PermissionGroupProvider extends ExtensionImpl implements
                 }
 
                 permGroupPlatformMapping = new HashMap<Platform, ArrayList<IPermissionGroup>>();
+                permGroupList = new ArrayList<IPermissionGroup>();
                 if (!androidPermissionGroups.isEmpty()) {
                     permGroupPlatformMapping.put(Platform.ANDROID,
                             androidPermissionGroups);
+                    permGroupList.addAll(androidPermissionGroups);
                 }
                 if (!javamePermissionGroups.isEmpty()) {
                     permGroupPlatformMapping.put(Platform.JAVAME,
                             javamePermissionGroups);
+                    permGroupList.addAll(javamePermissionGroups);
                 }
             } else {
                 throw new SignException(
@@ -212,7 +217,11 @@ public class PermissionGroupProvider extends ExtensionImpl implements
      * @see org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvider#getPermissionGroupByName(java.lang.String)
      */
     public IPermissionGroup getPermissionGroupByName(String name) {
-        // TODO Auto-generated method stub
+        for (IPermissionGroup group : permGroupList) {
+            if (group.getName().equals(name)) {
+                return group;
+            }
+        }
         return null;
     }
 
@@ -220,8 +229,7 @@ public class PermissionGroupProvider extends ExtensionImpl implements
      * @see org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvider#getPermissionGroupList()
      */
     public List<IPermissionGroup> getPermissionGroupList() {
-        // TODO Auto-generated method stub
-        return null;
+        return Collections.unmodifiableList(permGroupList);
     }
 
     /* (non-Javadoc)
@@ -229,16 +237,15 @@ public class PermissionGroupProvider extends ExtensionImpl implements
      */
     public List<IPermissionGroup> getPermissionGroupListByPlatform(
             Platform platform) {
-        // TODO Auto-generated method stub
-        return null;
+        List<IPermissionGroup> groups = permGroupPlatformMapping.get(platform);
+        return groups != null ? Collections.unmodifiableList(groups) : null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvider#getPermissionGroupListSize()
      */
     public int getPermissionGroupListSize() {
-        // TODO Auto-generated method stub
-        return 0;
+        return permGroupList.size();
     }
 
     /* (non-Javadoc)

@@ -20,12 +20,12 @@ import org.osgi.framework.Version;
  */
 public class ExtensionImpl implements IExtension {
 
+    protected boolean active = false;
+    protected String description = "Defaul Sign Extension Description";
     protected String id = "DefaulSignExtensionId";
+    protected ExtensionType type = ExtensionType.SECURITY_MANAGEMENT;
     protected String vendor = "DSDP - Eclipse.org";
     protected Version version = Version.emptyVersion;
-    protected String description = "Defaul Sign Extension Description";
-    protected ExtensionType type = ExtensionType.SECURITY_MANAGEMENT;
-    protected boolean active = false;
 
     /**
      * Creates a new instance of ExtensionImpl.
@@ -33,8 +33,6 @@ public class ExtensionImpl implements IExtension {
     public ExtensionImpl() {
 
     }
-    
-    
 
     /**
      * Creates a new instance of ExtensionImpl.
@@ -53,7 +51,47 @@ public class ExtensionImpl implements IExtension {
         this.type = type;
     }
 
-
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof ExtensionImpl))
+            return false;
+        ExtensionImpl other = (ExtensionImpl) obj;
+        if (active != other.active)
+            return false;
+        if (description == null) {
+            if (other.description != null)
+                return false;
+        } else if (!description.equals(other.description))
+            return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (type == null) {
+            if (other.type != null)
+                return false;
+        } else if (!type.equals(other.type))
+            return false;
+        if (vendor == null) {
+            if (other.vendor != null)
+                return false;
+        } else if (!vendor.equals(other.vendor))
+            return false;
+        if (version == null) {
+            if (other.version != null)
+                return false;
+        } else if (!version.equals(other.version))
+            return false;
+        return true;
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#getDescription()
@@ -62,12 +100,16 @@ public class ExtensionImpl implements IExtension {
         return description;
     }
 
+
+
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#getId()
      */
     public String getId() {
         return id;
     }
+
+
 
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.IExtension#getType()
@@ -88,6 +130,23 @@ public class ExtensionImpl implements IExtension {
      */
     public Version getVersion() {
         return version;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (active ? 1231 : 1237);
+        result = prime * result
+                + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((vendor == null) ? 0 : vendor.hashCode());
+        result = prime * result + ((version == null) ? 0 : version.hashCode());
+        return result;
     }
 
     /* (non-Javadoc)
@@ -137,6 +196,21 @@ public class ExtensionImpl implements IExtension {
      */
     public void setVersion(Version value) {
         version = value;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "ExtensionImpl [active="
+                + active
+                + ", "
+                + (description != null ? "description=" + description + ", "
+                        : "") + (id != null ? "id=" + id + ", " : "")
+                + (type != null ? "type=" + type + ", " : "")
+                + (vendor != null ? "vendor=" + vendor + ", " : "")
+                + (version != null ? "version=" + version : "") + "]";
     }
 
 }
