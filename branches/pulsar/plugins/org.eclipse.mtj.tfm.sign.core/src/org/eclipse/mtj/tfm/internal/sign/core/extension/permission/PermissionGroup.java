@@ -12,7 +12,6 @@
 package org.eclipse.mtj.tfm.internal.sign.core.extension.permission;
 
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
@@ -40,7 +39,7 @@ public class PermissionGroup implements IPermissionGroup {
     /**
      * The supported platforms.
      */
-    private EnumSet<Platform> platforms;
+    private Platform platform;
 
     /**
      * List of permissions not mapped to any Class.
@@ -61,7 +60,8 @@ public class PermissionGroup implements IPermissionGroup {
      * @param name
      */
     public PermissionGroup(String name) {
-        super();
+        mappedClassPerm = new HashMap<String, TreeSet<IPermission>>();
+        unmappedPerm = new TreeSet<IPermission>();
         this.name = name;
     }
 
@@ -175,8 +175,8 @@ public class PermissionGroup implements IPermissionGroup {
     /* (non-Javadoc)
      * @see org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroup#getSupportedPlatforms()
      */
-    public EnumSet<Platform> getSupportedPlatforms() {
-        return platforms;
+    public Platform getSupportedPlatform() {
+        return platform;
     }
 
     /**
@@ -189,8 +189,8 @@ public class PermissionGroup implements IPermissionGroup {
     /**
      * @param platforms the platforms to set
      */
-    public void setPlatforms(EnumSet<Platform> platforms) {
-        this.platforms = platforms;
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
     }
 
     /* (non-Javadoc)
@@ -199,7 +199,7 @@ public class PermissionGroup implements IPermissionGroup {
     @Override
     public String toString() {
         return "PermissionGroup [mappedClassPerm=" + mappedClassPerm.toString()
-                + ", name=" + name + ", platforms=" + platforms.toString()
+                + ", name=" + name + ", platform=" + platform.toString()
                 + ", unmappedPerm=" + unmappedPerm.toString() + "]";
     }
 

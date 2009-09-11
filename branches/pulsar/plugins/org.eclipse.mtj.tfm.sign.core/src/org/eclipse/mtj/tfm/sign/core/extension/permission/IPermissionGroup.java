@@ -11,7 +11,6 @@
  */
 package org.eclipse.mtj.tfm.sign.core.extension.permission;
 
-import java.util.EnumSet;
 import java.util.TreeSet;
 
 import org.eclipse.mtj.tfm.sign.core.enumerations.Platform;
@@ -68,5 +67,5 @@ public interface IPermissionGroup {
     /**
      * @return
      */
-    public abstract EnumSet<Platform> getSupportedPlatforms();
+    public abstract Platform getSupportedPlatform();
 }

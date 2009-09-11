@@ -18,10 +18,8 @@
       </annotation>
       <complexType>
          <choice>
-            <element ref="permission_provider" minOccurs="0" maxOccurs="1"/>
-            <sequence minOccurs="0" maxOccurs="1">
-               <element ref="permission_group" minOccurs="1" maxOccurs="unbounded"/>
-            </sequence>
+            <element ref="provider"/>
+            <element ref="abstract_provider"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -30,7 +28,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string" use="required">
+         <attribute name="id" type="string">
             <annotation>
                <documentation>
                   
@@ -87,13 +85,11 @@
       </complexType>
    </element>
 
-   <element name="permission_group">
+   <element name="group">
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <choice minOccurs="1" maxOccurs="unbounded">
-               <element ref="class" minOccurs="0" maxOccurs="unbounded"/>
-               <element ref="permission" minOccurs="0" maxOccurs="unbounded"/>
-            </choice>
+         <sequence>
+            <element ref="class" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="permission" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="platform" use="required">
             <annotation>
@@ -120,7 +116,7 @@
       </complexType>
    </element>
 
-   <element name="permission_provider">
+   <element name="provider">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -130,6 +126,70 @@
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvider"/>
                </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="abstract_provider">
+      <complexType>
+         <sequence>
+            <element ref="group" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="version" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Version identifier for the Permission Provider
+
+&lt;p&gt;
+Version identifiers have four components.
+&lt;ol&gt;
+  &lt;li&gt;Major version. A non-negative integer.&lt;/li&gt;
+  &lt;li&gt;Minor version. A non-negative integer.&lt;/li&gt;
+  &lt;li&gt;Micro version. A non-negative integer.&lt;/li&gt;
+  &lt;li&gt;Qualifier.&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+Here is the grammar for version strings.
+&lt;pre&gt;
+  version ::= major(&apos;.&apos;minor(&apos;.&apos;micro(&apos;.&apos;qualifier)?)?)?
+   major ::= digit+
+   minor ::= digit+
+   micro ::= digit+
+   qualifier ::= (alpha|digit|&apos;_&apos;|&apos;-&apos;)+
+   digit ::= [0..9]
+   alpha ::= [a..zA..Z]
+&lt;/pre&gt;
+
+ &lt;b&gt;&lt;i&gt;There must be no whitespace in version.&lt;/i&gt;&lt;/b&gt;
+ &lt;/p&gt;
+ &lt;p&gt;
+ For more information see &lt;code&gt;org.osgi.framework.Version&lt;/code&gt;
+ &lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="vendor" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

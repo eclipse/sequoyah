@@ -3,9 +3,14 @@
 <fragment>
    <extension
          id="org.eclipse.mtj.tfm.sign.core.permission.javame"
-         name="Default Set of Permitions for Java ME"
+         name="Default permission provider for Java ME"
          point="org.eclipse.mtj.tfm.sign.core.securitypermission">
-      <permission_group
+      <abstract_provider
+            id="org.eclipse.mtj.tfm.sign.core.permission.javame"
+            name="Default permission provider for Java ME"
+            vendor="Eclipse.org - DSDP"
+            version="1.0.0">
+ <group
             name="Mobile Information Device Profile 2.0 (JSR 118)"
             platform="JAVAME">
          <class
@@ -68,8 +73,8 @@
                   name="javax.microedition.io.PushRegistry">
             </permission>
          </class>
-      </permission_group>
-      <permission_group
+      </group>
+      <group
             name="Wireless Messaging API (JSR 120)"
             platform="JAVAME">
          <class
@@ -99,8 +104,8 @@
                   name="javax.wireless.messaging.mms.receive">
             </permission>
          </class>
-      </permission_group>
-      <permission_group
+      </group>
+      <group
             name="Java APIs for Bluetooth (JSR 82)"
             platform="JAVAME">
          <class
@@ -136,8 +141,8 @@
                   name="javax.microedition.io.Connector.obex.client.tcp">
             </permission>
          </class>
-      </permission_group>
-      <permission_group
+      </group>
+      <group
             name="Location API for J2ME (JSR 179)"
             platform="JAVAME">
          <class
@@ -155,8 +160,8 @@
                   name="javax.microedition.location.ProximityListener">
             </permission>
          </class>
-      </permission_group>
-      <permission_group
+      </group>
+      <group
             name="Security and Trust Services API for J2ME (JSR 177)"
             platform="JAVAME">
          <class
@@ -174,8 +179,8 @@
                   name="javax.microedition.jcrmi">
             </permission>
          </class>
-      </permission_group>
-      <permission_group
+      </group>
+      <group
             name="SIP API for J2ME (JSR 180)"
             platform="JAVAME">
          <class
@@ -187,8 +192,8 @@
                   name="javax.microedition.io.Connector.sips">
             </permission>
          </class>
-      </permission_group>
-      <permission_group
+      </group>
+      <group
             name="Mobile Sensor API (JSR 256)"
             platform="JAVAME">
          <class
@@ -203,8 +208,8 @@
                   name="javax.microedition.io.Connector.sensor">
             </permission>
          </class>
-      </permission_group>
-      <permission_group
+      </group>
+      <group
             name="PDA Optional Packages for the J2ME Platform (JSR 75)"
             platform="JAVAME">
          <class
@@ -216,8 +221,8 @@
                   name="javax.microedition.io.Connector.file.read">
             </permission>
          </class>
-      </permission_group>
-      <permission_group
+      </group>
+      <group
             name="Mobile Media API (JSR 135)"
             platform="JAVAME">
          <class
@@ -232,13 +237,19 @@
                   name="javax.microedition.media.control.VideoControl.getSnapshot">
             </permission>
          </class>
-      </permission_group>
+      </group>
+      </abstract_provider>
    </extension>
    <extension
          id="org.eclipse.mtj.tfm.sign.core.permission.android"
-         name="Default Set of Permitions for Android"
+         name="Default permission provider for Android"
          point="org.eclipse.mtj.tfm.sign.core.securitypermission">
-      <permission_group
+      <abstract_provider
+            id="org.eclipse.mtj.tfm.sign.core.permission.android"
+            name="Default permission provider for Android"
+            vendor="Eclipse.org - DSDP"
+            version="1.0.0">
+<group
             name="Android Permission Group"
             platform="JAVAME">
         <permission name="android.permission.ACCESS_CHECKIN_PROPERTIES"/>
@@ -344,7 +355,8 @@
 <permission name="android.permission.WRITE_SETTINGS"/>
 <permission name="android.permission.WRITE_SMS"/>
 <permission name="android.permission.WRITE_SYNC_SETTINGS"/>
-      </permission_group>
+      </group>
+      </abstract_provider>
    </extension>
 
 </fragment>
