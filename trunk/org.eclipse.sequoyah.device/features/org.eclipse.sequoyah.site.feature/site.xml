@@ -4,7 +4,7 @@
    <description url="http://download.eclipse.org/dsdp/tml/updates/0.4/">
       This is the Tool for mobile Linux Project 0.4 Update Site.
    </description>
-   <feature url="features/org.eclipse.tml.feature_0.4.0.200911061240.jar" id="org.eclipse.tml.feature" version="0.3.0.200911091009">
+   <feature url="features/org.eclipse.tml.feature_0.4.0.200911091009.jar" id="org.eclipse.tml.feature" version="0.3.0.200911091009">
       <category name="TmL 0.4 Runtime"/>
    </feature>
    <feature url="features/org.eclipse.tml.sdk.feature_0.4.0.200911091009.jar" id="org.eclipse.tml.sdk.feature" version="0.3.0.200911091009">
@@ -37,6 +37,12 @@
    <feature url="features/org.eclipse.tml.device.sdk.feature_0.3.0.200911091009.jar" id="org.eclipse.tml.device.sdk.feature" version="0.3.0.200911091009">
       <category name="TmL 0.4 Components"/>
    </feature>
+      <feature url="features/org.eclipse.tml.localization.tools.feature_0.1.0.200911091009.jar" id="org.eclipse.tml.localization.tools.feature" version="1.0.0.200911091009">
+      <category name="TmL 0.4 Localization"/>
+   </feature>
+   <feature url="features/org.eclipse.tml.localization.android.feature_0.1.0.200911091009.jar" id="org.eclipse.tml.localization.android.feature" version="1.0.0.200911091009">
+      <category name="TmL 0.4 Localization"/>
+   </feature>
    <category-def name="TmL 0.4 Runtime" label="TmL 0.4 Runtime"/>
    <category-def name="TmL 0.4 SDK" label="TmL 0.4 SDK"/>
    <category-def name="TmL 0.4 /proc Tools" label="TmL 0.4 /proc Tools"/>
@@ -47,4 +53,5 @@
          Examples of the 0.4 release of Tools for mobile Linux (TmL).
       </description>
    </category-def>
+   <category-def name="TmL 0.4 Localization" label="TmL 0.4 Localization"/>
 </site>
