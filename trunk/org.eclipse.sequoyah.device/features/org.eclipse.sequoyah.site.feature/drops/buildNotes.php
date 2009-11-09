@@ -10,7 +10,7 @@
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" width="80%">
-		<p><b><font class=indextop>Build Notes for TmL 0.4 (200906292200)</font></b><br>
+		<p><b><font class=indextop>Build Notes for TmL 0.4 (200911091009)</font></b><br>
 		29 June 2009 </p>
 		</td>
 	</tr>
@@ -32,7 +32,7 @@
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2009-06-29&chfield=resolution&cmdtype=doit">
   this query</a> to show the list of bugs fixed.</li>
 <li>For details on committed files, see the
-  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/N-0.4-200906292200/tml-log.csv">
+  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/N-0.4-200911091009/tml-log.csv">
   TmL CVS changelog</a>.</li>
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/index.php/DSDP/TML/TML_FAQ">TmL FAQ</a></li>
