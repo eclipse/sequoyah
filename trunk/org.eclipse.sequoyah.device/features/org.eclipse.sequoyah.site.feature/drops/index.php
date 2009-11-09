@@ -12,7 +12,7 @@
 	<tr>
 		<td align="LEFT" width="80%">
 		<p><b><font class=indextop>TmL Release Candidate: 0.4 (200911091009)</font></b><br>
-		29 June 2009 </p>
+		09 November 2009 </p>
 		<p>These downloads are provided under the
 		<a href="http://www.eclipse.org/legal/epl/notice.php">Eclipse.org Software
 		User Agreement</a>.</p>
