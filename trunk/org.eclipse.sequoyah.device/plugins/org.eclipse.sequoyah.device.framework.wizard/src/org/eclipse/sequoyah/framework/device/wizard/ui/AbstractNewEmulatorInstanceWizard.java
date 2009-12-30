@@ -12,6 +12,7 @@
  * Otavio Ferranti (Motorola) - bug#221733 - Enhancing the device instance wizard
  * Julia Martinez Perdigueiro (Eldorado Research Institute) - [244856] - Instance View usability should be improved
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.wizard.ui;
@@ -26,6 +27,8 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.tml.common.utilities.BasePlugin;
+import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
+import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.framework.device.DeviceUtils;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IDeviceType;
@@ -178,7 +181,6 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
     /**
      * Add a project page
      */
-    @SuppressWarnings("unchecked")
     public void addProjectPage()
     {
         addPage(bean.getProjectPage(), bean.getProjectTitle(), bean.getProjectDescription());
@@ -187,7 +189,6 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
     /**
      * Add a properties page
      */
-    @SuppressWarnings("unchecked")
     public void addPropertiesPage()
     {
         addPage(bean.getPropertyPage(), bean.getPropertyTitle(), bean.getPropertyDescription());
@@ -196,7 +197,6 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
     /**
      * Add other page
      */
-    @SuppressWarnings("unchecked")
     public void addOtherPage()
     {
         if (bean.hasOtherPage())
@@ -248,8 +248,11 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
                 protected void execute(IProgressMonitor monitor)
                 {
                     BasePlugin.logInfo("Instance creation for Wizard:" + getExtensionId()); //$NON-NLS-1$
-                    InstanceManager.getInstance().createProject(getDevice(), projectBuilder,
-                            monitor);
+                    try {
+						InstanceManager.createProject(getDevice(), projectBuilder, monitor);
+					} catch (TmLException e) {
+						ExceptionHandler.showException(e);
+					}
                 }
             };
             getContainer().run(false, true, op);

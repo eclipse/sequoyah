@@ -1,7 +1,5 @@
-
-
 /********************************************************************************
- * Copyright (c) 2007-2008 Motorola Inc and Others. All rights reserverd.
+ * Copyright (c) 2007-2009 Motorola Inc and Others. All rights reserverd.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +17,9 @@
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271180] - Instance persistence mechanism can cause instance duplication.
+ * Mauren Brenner (Eldorado) - [282270] - Additional fix contributed by Fabio Rigo (Eldorado)
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
+ * Fabio Rigo (Eldorado Research Institute) - Bug [287995] - Provide an instance is about to transition event
  ********************************************************************************/
 package org.eclipse.tml.framework.device.ui.view;
 
@@ -163,7 +164,7 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 	private class MenuPropertiesListener implements Listener {
 		public void handleEvent(Event event) {
 		
-			IAdaptable adaptable = InstanceManager.getInstance().getCurrentInstance();
+			IAdaptable adaptable = InstanceManager.getCurrentInstance();
 			
 			Shell shell = new Shell();
 			PreferenceDialog dialog = PreferencesUtil.createPropertyDialogOn(
@@ -254,7 +255,7 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 							String value = labelProvider.getText(domain);
 							toShow.append(value);
 							toShow.append(", "); //$NON-NLS-1$
-							InstanceManager.getInstance().setInstance((IInstance)domain);
+							InstanceManager.setInstance((IInstance)domain);
 							enablePropertiesMenu = true;
 						}
 					}
@@ -262,7 +263,7 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 					if(toShow.length() > 0) {
 						toShow.setLength(toShow.length() - 2);
 					}
-					text.setText(InstanceManager.getInstance().getCurrentInstance().getName());
+					text.setText(InstanceManager.getCurrentInstance().getName());
 				}
 			}
 		});
@@ -297,7 +298,7 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 
 		List<IInstance> selectionList = selection.toList();
 		for (IInstance instance : selectionList) {
-			InstanceManager.getInstance().deleteInstance(instance);
+			InstanceManager.deleteInstance(instance);
 		}
 	}
 	
@@ -328,7 +329,7 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 		           ((MenuItem) items[i]).dispose(); 
 		        }
 		        if (enablePropertiesMenu == true) {
-		        	fillMenuContext(menu,InstanceManager.getInstance().getCurrentInstance());	           
+		        	fillMenuContext(menu,InstanceManager.getCurrentInstance());	           
 		        }
 			}
 		}); 
@@ -388,7 +389,6 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
 	}
 
 	public IInstanceRegistry getInitalInput() {
-		InstanceManager.getInstance();
 		return InstanceRegistry.getInstance();
 	}
 
@@ -421,6 +421,13 @@ public class InstanceView extends ViewPart implements IInstanceListener, IPartLi
         refreshViewer();
     }
 
+	public void instanceTransitioned(InstanceEvent e) {
+		refreshViewer();
+	}
+	
+	public void instanceAboutToTransition(InstanceEvent e) {
+	}
+	
     private void refreshViewer() {
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {

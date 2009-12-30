@@ -6,7 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Yu-Fen Kuo (MontaVista) - initial API and implementation
+ * Yu-Fen Kuo (MontaVista) - initial API and implementation
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [280982] - Add sensitive context help support to InstanceView and New Instance Wizard.
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  *******************************************************************************/
 package org.eclipse.tml.framework.device.ui.wizard;
 
@@ -18,13 +20,13 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
+import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IInstanceBuilder;
-import org.eclipse.tml.framework.device.ui.DeviceUIPlugin;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.progress.IProgressService;
 
 /*
  * new device instance wizard.
@@ -38,6 +40,13 @@ public class NewDeviceWizard extends Wizard implements INewWizard {
 	private DefaultDeviceTypeWizardPage firstPage;
 	private Properties properties;
 
+	
+	public void createPageControls(Composite pageContainer) {
+		super.createPageControls(pageContainer);
+		
+		this.setHelpAvailable(true);
+	}
+	
 	public void addPages() {
 		firstPage = new DefaultDeviceTypeWizardPage(DEFAULT_PAGE_ID);
 		addPage(firstPage);
@@ -50,12 +59,14 @@ public class NewDeviceWizard extends Wizard implements INewWizard {
 		boolean ok = false;
 		try {
 			final IInstanceBuilder projectBuilder = getProjectBuilder();
-			IWorkbench workbench = DeviceUIPlugin.getDefault().getWorkbench();
-			IProgressService progressService = workbench.getProgressService();
 			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					InstanceManager.getInstance().createProject(
-							firstPage.getDeviceType(), projectBuilder, monitor);				
+					try {
+						InstanceManager.createProject(
+								firstPage.getDeviceType(), projectBuilder, monitor);
+					} catch (TmLException e) {
+						ExceptionHandler.showException(e);
+					}				
 				}
 			};
 			getContainer().run(false, true, runnable);

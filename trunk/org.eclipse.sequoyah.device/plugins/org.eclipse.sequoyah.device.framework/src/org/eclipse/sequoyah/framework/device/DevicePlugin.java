@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2008 Motorola Inc and others.
+ * Copyright (c) 2007-2009 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,11 +15,14 @@
  ********************************************************************************/
 package org.eclipse.tml.framework.device;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.IPropertyConstants;

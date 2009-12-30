@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.tml.common.utilities,
  org.eclipse.tml.framework.device,
  org.eclipse.core.resources,
- org.eclipse.ui.ide
+ org.eclipse.ui.ide,
+ org.eclipse.help
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tml.framework.device.ui;
   uses:="org.eclipse.osgi.util,

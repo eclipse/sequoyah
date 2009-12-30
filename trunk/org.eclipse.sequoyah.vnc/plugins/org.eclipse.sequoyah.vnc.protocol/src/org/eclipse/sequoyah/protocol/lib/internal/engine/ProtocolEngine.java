@@ -20,6 +20,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - [257588] - Add support to ServerCutText message
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
+ * Mauren Brenner (Eldorado) - [282431] Guard synchronized block against null variable in consumer
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.engine;
 
@@ -537,21 +538,23 @@ public class ProtocolEngine {
 	                            
 	                            // If it finds a message with the current code,
 	                            // reads the remaining of the message fields.
-	                            synchronized (in) {
-	                                IMessageHandler handler = messageDef.getHandler();
-	                                ProtocolMessage message = MessageReader.readReceivedMessage(in, auxCode, messageDef, 
-	                                        ProtocolEngine.this);
-	                                
-	                                // After the message is entirely read, delegates the handling to the
-	                                // handler defined at the ProtocolMessage extension. The fields
-	                                // description and how to use then can be found at
-	                                // the ProtocolMessage extension point documentation.
+	                        	if (in != null) {
+	                        		synchronized (in) {
+	                        			IMessageHandler handler = messageDef.getHandler();
+	                        			ProtocolMessage message = MessageReader.readReceivedMessage(in, auxCode, messageDef, 
+	                        					ProtocolEngine.this);
 
-	                                ProtocolMessage returnedMessage = handler.handleMessage(handle, message);
-	                                if (returnedMessage != null) {
-	                                    requestSendMessage(returnedMessage);
-	                                }
-	                            }
+	                        			// After the message is entirely read, delegates the handling to the
+	                        			// handler defined at the ProtocolMessage extension. The fields
+	                        			// description and how to use then can be found at
+	                        			// the ProtocolMessage extension point documentation.
+
+	                        			ProtocolMessage returnedMessage = handler.handleMessage(handle, message);
+	                        			if (returnedMessage != null) {
+	                        				requestSendMessage(returnedMessage);
+	                        			}
+	                        		}
+	                        	}
 	                            code = 0;
 	                        }
 	                    }

@@ -13,6 +13,7 @@
  * Fabio Rigo (Eldorado Research Institute) - [246212] - Enhance encapsulation of protocol implementer
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [289650] - cleanStoppedProtocols removing an element from a Map during iteration
  ********************************************************************************/
 package org.eclipse.tml.protocol.lib.internal.model;
 
@@ -192,7 +193,7 @@ public class ClientModel {
 			ProtocolEngine aEng = runningEngines.get(key);
 			if (!aEng.isConnected()) {
 			    aEng.dispose();
-				runningEngines.remove(key);
+				keys.remove(key);
 			}
 		}
 	}

@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view.provider;
@@ -21,7 +22,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
-import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.ui.view.model.ViewerAbstractNode;
@@ -86,7 +86,6 @@ public class InstanceMgtViewContentProvider implements ITreeContentProvider
             	}
             }
             
-            InstanceManager.getInstance(); // TODO ??
             InstanceRegistry instanceRegistry = InstanceRegistry.getInstance();
             for (IInstance instance : instanceRegistry.getInstances())
             {

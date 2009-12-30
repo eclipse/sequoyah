@@ -8,14 +8,10 @@
  * Otavio Ferranti (Motorola)
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.wizard.ui;
-
-import org.eclipse.tml.framework.device.manager.InstanceManager;
-import org.eclipse.tml.framework.device.wizard.DeviceWizardResources;
-import org.eclipse.tml.framework.device.wizard.model.IWizardProjectPage;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -26,6 +22,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.tml.framework.device.factory.InstanceRegistry;
+import org.eclipse.tml.framework.device.wizard.DeviceWizardResources;
+import org.eclipse.tml.framework.device.wizard.model.IWizardProjectPage;
 
 /**
  * Creates a new instance wizard.
@@ -100,7 +99,7 @@ public class WizardNewProjectPage extends WizardPage implements IWizardProjectPa
 	 *   <code>false</code> if at least one is invalid
 	 */
     protected boolean validatePage() {
-    	InstanceManager manager = InstanceManager.getInstance();
+    	InstanceRegistry registry = InstanceRegistry.getInstance();
     	String name = projectNameField.getText();
     	String errorMessage = null;
     	boolean retVal = false;
@@ -108,7 +107,7 @@ public class WizardNewProjectPage extends WizardPage implements IWizardProjectPa
     	if (name != null) {
     		name = name.trim();
     		if (!name.equals("")) { //$NON-NLS-1$
-	        	if (manager.getInstancesByname(name).size() == 0) {
+	        	if (registry.getInstancesByName(name).size() == 0) {
 	        		retVal = true;
 	        	} else {
 	        		errorMessage =

@@ -10,6 +10,7 @@
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  *******************************************************************************/
 package org.eclipse.tml.framework.device.ui.wizard;
 
@@ -38,8 +39,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
+import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.internal.model.MobileDeviceType;
-import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.ui.DeviceUIResources;
@@ -168,7 +169,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 		nameText.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				InstanceManager manager = InstanceManager.getInstance();
+				InstanceRegistry registry = InstanceRegistry.getInstance();
 				String name = nameText.getText();
 				String errorMessage = null;
 
@@ -177,7 +178,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 				if (name != null) {
 					//name = name.trim();
 					if (!name.equals("")) { //$NON-NLS-1$
-						if (! (manager.getInstancesByname(name).size() == 0)) {
+						if (! (registry.getInstancesByName(name).size() == 0)) {
 							errorMessage = DeviceUIResources.TML_Emulator_Wizard_Project_Description_Duplicated_Error;
 						}
 						else if (!AbstractMobileInstance.validName(name)){

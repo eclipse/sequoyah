@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,7 +9,7 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
 package org.eclipse.tml.localization.tools.datamodel;
 
@@ -21,7 +21,7 @@ import org.eclipse.tml.localization.tools.persistence.PersistableAttributes;
 /**
  * This class stores a comment associated to a StringNode.
  * 
- * It's intended to be persisted as part of the extra-info related to a 
+ * It's intended to be persisted as part of the extra-info related to a
  * StringNode object
  */
 public class StringNodeComment implements IPersistentExtraData {
@@ -53,7 +53,8 @@ public class StringNodeComment implements IPersistentExtraData {
 	/**
 	 * Set the StringNode this commented is related to
 	 * 
-	 * @param stringNode the StringNode this commented is related to
+	 * @param stringNode
+	 *            the StringNode this commented is related to
 	 */
 	public void setStringNode(StringNode stringNode) {
 		this.stringNode = stringNode;
@@ -71,7 +72,8 @@ public class StringNodeComment implements IPersistentExtraData {
 	/**
 	 * Set the comment associated to the StringNode
 	 * 
-	 * @param comment the comment associated to the StringNode
+	 * @param comment
+	 *            the comment associated to the StringNode
 	 */
 	public void setComment(String comment) {
 		if (this.comment != comment) {
@@ -94,7 +96,8 @@ public class StringNodeComment implements IPersistentExtraData {
 	/**
 	 * Set when the comment has been added / edited
 	 * 
-	 * @param date Date object stating when the comment has been added / edited
+	 * @param date
+	 *            Date object stating when the comment has been added / edited
 	 */
 	public void setDate(Date date) {
 		this.date = date;

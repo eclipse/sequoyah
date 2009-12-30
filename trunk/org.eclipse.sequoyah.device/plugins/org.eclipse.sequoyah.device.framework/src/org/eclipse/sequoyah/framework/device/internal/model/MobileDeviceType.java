@@ -9,6 +9,7 @@
  *     Yu-Fen Kuo (MontaVista) - initial API and implementation
  *     Daniel Barboza Franco (Eldorado Research Institute) - Bug [259243] - instance management view is showing device type ids instead of names
  *     Daniel Barboza Franco (Eldorado Research Institute) - Bug [271695] - Support to non-persistent instances of devices
+ *     Mauren Brenner (Eldorado) - [281377] Support device types whose instances cannot be created by user
  *******************************************************************************/
 package org.eclipse.tml.framework.device.internal.model;
 
@@ -31,6 +32,7 @@ public class MobileDeviceType implements IDeviceType {
 	private static final String ELEMENT_DEVICE = "deviceType";
 	private static final String ATR_ICON = "icon";
 	private static final String ATR_IS_PERSISTENT = "isPersistent";
+	private static final String ATR_SUPPORTS_USER_INSTANCES = "supportsUserInstances";
 	
 	
 	private static final String PROPERTY_ICON = "icon"; //$NON-NLS-1$
@@ -44,6 +46,7 @@ public class MobileDeviceType implements IDeviceType {
 	private Properties properties = new Properties();
 	private List<IService> services;
 	private boolean isPersistent = true;
+	private boolean supportsUserInstances = true;
 
 	public MobileDeviceType(String id, String label) {
 		this.id = id;
@@ -51,9 +54,13 @@ public class MobileDeviceType implements IDeviceType {
 		
 		IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, id);
 		String isPersistentStr = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_IS_PERSISTENT);
+		String supportsUserInstancesStr = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_SUPPORTS_USER_INSTANCES);
 
 		if (isPersistentStr != null) {
 			isPersistent = Boolean.valueOf(isPersistentStr);
+		}
+		if (supportsUserInstancesStr != null) {
+			supportsUserInstances = Boolean.valueOf(supportsUserInstancesStr);
 		}
 	}
 
@@ -165,4 +172,7 @@ public class MobileDeviceType implements IDeviceType {
 		return isPersistent;
 	}
 
+	public boolean supportsUserInstances() {
+		return supportsUserInstances;
+	}
 }

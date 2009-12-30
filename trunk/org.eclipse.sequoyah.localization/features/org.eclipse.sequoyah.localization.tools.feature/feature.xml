@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tml.localization.tools.feature"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="0.1.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.tml.localization.tools">
 
@@ -23,6 +23,10 @@
       <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3/"/>
    </url>
 
+   <includes
+         id="org.eclipse.tml.common.feature"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
@@ -30,7 +34,6 @@
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.forms"/>
-      <import feature="org.eclipse.tml.common.feature"/>
    </requires>
 
    <plugin

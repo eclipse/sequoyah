@@ -24,13 +24,18 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
  * Pablo Cobucci Leite (Eldorado Research Institute) - Bug [274977] - Instance Management View does not ask user before removing a instance
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [277469] - Device management view blinks when user performs operations
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [280981] - Add suport for selecting instances programatically 
+ * Daniel Barboza Franco (Eldorado Research Institute) - Bug [281425] - Instance Management View does not remove instance listerners properly. 
+ * Mauren Brenner (Eldorado) - [281377] Support device types whose instances cannot be created by user
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
+ * Daniel Barboza Franco - Bug [287996] - Dont show device selection dialog when there is only one device
+ * Eric Cloninger (Motorola) - [287883] Adjust the status column in device management view - Modified relative widths
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -41,7 +46,6 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -93,6 +97,7 @@ import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.ServiceHandlerAction;
 import org.eclipse.tml.framework.device.ui.DeviceUIPlugin;
 import org.eclipse.tml.framework.device.ui.view.model.InstanceMgtViewComparator;
+import org.eclipse.tml.framework.device.ui.view.model.InstanceSelectionChangeListener;
 import org.eclipse.tml.framework.device.ui.view.model.ViewerAbstractNode;
 import org.eclipse.tml.framework.device.ui.view.model.ViewerDeviceNode;
 import org.eclipse.tml.framework.device.ui.view.model.ViewerInstanceNode;
@@ -111,32 +116,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class InstanceStatusComposite extends Composite
 {
-	class InstanceSelectionChangeEvent
-	{
-		private final IInstance instance;
-
-		InstanceSelectionChangeEvent()
-		{
-			this(null);
-		}
-
-		InstanceSelectionChangeEvent(IInstance instance)
-		{
-			this.instance = instance;
-		}
-
-		IInstance getInstance()
-		{
-			return instance;
-		}	
-	}
-
-	interface InstanceSelectionChangeListener
-	{
-		void instanceSelectionChanged(InstanceSelectionChangeEvent event);
-	}
-
-	private static final String PROPERTY_EDITOR_ID = "org.eclipse.tml.framework.device.ui.editors.InstancePropertyEditorDefault"; //$NON-NLS-1$
 	private static final String MENU_DELETE = "Delete"; //$NON-NLS-1$
 	private static final String MENU_PROPERTIES = "Properties"; //$NON-NLS-1$
 	private static final String MENU_NEW = "New...";  //$NON-NLS-1$
@@ -146,7 +125,6 @@ public class InstanceStatusComposite extends Composite
 	private static final String ERROR_NO_WIZARD_MESSAGE = "No wizard found for Device "; //$NON-NLS-1$
 	private static final int DEFAULT_MENU_IMAGE_SIZE = 16;
 
-	private final Set<InstanceSelectionChangeListener> listeners = new LinkedHashSet<InstanceSelectionChangeListener>();
 
 	/**
 	 * The main viewer of the instance view. 
@@ -173,9 +151,13 @@ public class InstanceStatusComposite extends Composite
 	        InstanceStatusComposite.this.instanceUnloaded(e.getInstance());
 	    }
 
-	    public void instanceUpdated(InstanceEvent e)
+	    public void instanceUpdated(InstanceEvent e) {
+	    	InstanceStatusComposite.this.instanceTransitioned(e.getInstance());
+	    }
+	    
+	    public void instanceTransitioned(InstanceEvent e)
 	    {
-	        InstanceStatusComposite.this.instanceUpdated(e.getInstance());
+	        InstanceStatusComposite.this.instanceTransitioned(e.getInstance());
 	    }
 	};
 
@@ -189,33 +171,19 @@ public class InstanceStatusComposite extends Composite
 		eventMgr.addInstanceListener(listener);
 	}
 	
-	@Override
-	public void dispose() {
-		InstanceEventManager eventMgr = InstanceEventManager.getInstance();
-		eventMgr.removeInstanceListener(listener);
-		super.dispose();
+	protected void addInstanceSelectionChangeListener(InstanceSelectionChangeListener listener)	{
+		InstanceMgtView.addInstanceSelectionChangeListener(listener);
 	}
 	
-	protected void addInstanceSelectionChangeListener(InstanceSelectionChangeListener listener)
-	{
-		listeners.add(listener);
+	protected void removeInstanceSelectionChangeListener(InstanceSelectionChangeListener listener) {
+		InstanceMgtView.removeInstanceSelectionChangeListener(listener);
 	}
 	
-	protected void removeInstanceSelectionChangeListener(InstanceSelectionChangeListener listener)
-	{
-		listeners.remove(listener);
-	}
-	
-	private void notifyInstanceSelectionChangeListeners(IInstance instance)
-	{
-	    InstanceSelectionChangeEvent event = new InstanceSelectionChangeEvent(instance);
-		for (InstanceSelectionChangeListener listener : listeners)
-		{
-			listener.instanceSelectionChanged(event);
-		}
+	private void notifyInstanceSelectionChangeListeners(IInstance instance)	{
+		InstanceMgtView.notifyInstanceSelectionChangeListeners(instance);
 	}
 
-	private IInstance getSelectedInstance()
+	protected IInstance getSelectedInstance()
 	{
 		IInstance instance = null;
 		Object lastSelection = getLastSelection();
@@ -227,6 +195,18 @@ public class InstanceStatusComposite extends Composite
 		
 		return instance;
 	}
+	
+	protected IDeviceType getSelectedDevice() {
+		IDeviceType device = null;
+		
+		Object lastSelection = getLastSelection();
+		
+		if (lastSelection instanceof IDeviceType) {
+			device = (IDeviceType) lastSelection;
+		}
+		
+		return device;
+	}
 
 	private void createContents()
 	{
@@ -237,8 +217,8 @@ public class InstanceStatusComposite extends Composite
 		tree.setLayout(layout);
 		tree.setHeaderVisible(true);
 
-		createColumn("Devices", 3); //$NON-NLS-1$
-		createColumn("Status", 1); //$NON-NLS-1$
+		createColumn("Devices", 10); //$NON-NLS-1$
+		createColumn("Status", 9); //$NON-NLS-1$
 
 		InstanceMgtViewLabelProvider labelProvider = new InstanceMgtViewLabelProvider();
 		viewer.setLabelProvider(labelProvider);
@@ -259,6 +239,7 @@ public class InstanceStatusComposite extends Composite
 		fillMenuContext();
 		fillViewMenu();
 		fillViewToolbar();
+		//refreshViewer(InstanceMgtView.getSelectedInstance());
 		refreshViewer(null);
 		viewer.expandAll();
 	}
@@ -267,7 +248,7 @@ public class InstanceStatusComposite extends Composite
     {
         for (final IDeviceType device : DeviceTypeRegistry.getInstance().getDeviceTypes())
         {
-            if (!device.isAbstract()) {
+        	if ((!device.isAbstract()) && (device.supportsUserInstances())) {
 	        	wizardActions.put(device.getLabel(), new Action(device.getLabel())
 	            {
 	                @Override
@@ -343,21 +324,23 @@ public class InstanceStatusComposite extends Composite
                     IDeviceType device = DeviceUtils.getDeviceType(instance);
                     String deviceName = device.getLabel();
                     
-                    // menu item "New..."
-                    newItem = new MenuItem(menu, SWT.PUSH);
-                    newItem.setText(MENU_NEW);
-                    newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
+                    if (device.supportsUserInstances()) {
+                    	// menu item "New..."
+                    	newItem = new MenuItem(menu, SWT.PUSH);
+                    	newItem.setText(MENU_NEW);
+                    	newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
                     
-                    newItem = new MenuItem(menu, SWT.SEPARATOR);
+                    	newItem = new MenuItem(menu, SWT.SEPARATOR);
 
-                    // menu item "Delete"
-                    newItem = new MenuItem(menu, SWT.PUSH);
-                    newItem.setText(MENU_DELETE);
-                    newItem.addListener(SWT.Selection, new MenuDeleteListener(instance));
-                    newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
-                    newItem.setEnabled(status.canDeleteInstance());
+                    	// menu item "Delete"
+                    	newItem = new MenuItem(menu, SWT.PUSH);
+                    	newItem.setText(MENU_DELETE);
+                    	newItem.addListener(SWT.Selection, new MenuDeleteListener(instance));
+                    	newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
+                    	newItem.setEnabled(status.canDeleteInstance());
 
-                    newItem = new MenuItem(menu, SWT.SEPARATOR);
+                    	newItem = new MenuItem(menu, SWT.SEPARATOR);
+                    }
 
                     // menu item "Properties"
                     newItem = new MenuItem(menu, SWT.PUSH);
@@ -398,11 +381,15 @@ public class InstanceStatusComposite extends Composite
             }
             else if (firstSelection instanceof ViewerDeviceNode)
             {
-                // menu item "New..."
-                newItem = new MenuItem(menu, SWT.PUSH);
-                newItem.setText(MENU_NEW);
-                String deviceName = ((ViewerDeviceNode) firstSelection).getDeviceName();
-                newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
+            	IDeviceType device = getSelectedDevice();
+            	
+            	if (device.supportsUserInstances()) {
+            		// menu item "New..."
+            		newItem = new MenuItem(menu, SWT.PUSH);
+            		newItem.setText(MENU_NEW);
+            		String deviceName = ((ViewerDeviceNode) firstSelection).getDeviceName();
+            		newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
+            	}
             }
         }  
     }
@@ -420,10 +407,14 @@ public class InstanceStatusComposite extends Composite
 	
 	private void fillViewToolbar()
 	{
-	    IToolBarManager toolbarManager = viewSite.getActionBars().getToolBarManager();
-	    WizardDropDownAction newWizardAction = new WizardDropDownAction();
-	    newWizardAction.setToolTipText(TOOLBAR_NEW_TOOLTIP);
-        toolbarManager.add(newWizardAction);
+		    IToolBarManager toolbarManager = viewSite.getActionBars().getToolBarManager();
+		    WizardDropDownAction newWizardAction = new WizardDropDownAction();
+		    newWizardAction.setToolTipText(TOOLBAR_NEW_TOOLTIP);
+		    
+			if (wizardActions.size() <= 0) { 
+				newWizardAction.setEnabled(false);
+			}
+	        toolbarManager.add(newWizardAction);
 	}
 	
 	private void createColumn(String columnLabel, int columnWeight)
@@ -455,7 +446,7 @@ public class InstanceStatusComposite extends Composite
 		});
 	}
 
-	private void refreshViewer(IInstance selectedInstance)
+	protected void refreshViewer(IInstance selectedInstance)
 	{
 	    Collection<String> expandedDevices = getExpandedDevices();
 		viewer.refresh();
@@ -595,7 +586,7 @@ public class InstanceStatusComposite extends Composite
 
 		if (instance != null)
 		{
-		    InstanceManager.getInstance().deleteInstance(instance);
+		    InstanceManager.deleteInstance(instance);
 		}
 	}
 	
@@ -623,7 +614,7 @@ public class InstanceStatusComposite extends Composite
             }});
 	}
 	
-	private void instanceUpdated(final IInstance instance)
+	private void instanceTransitioned(final IInstance instance)
 	{
 	    Display.getDefault().asyncExec(new Runnable() {
             public void run() {
@@ -787,19 +778,25 @@ public class InstanceStatusComposite extends Composite
         {
             // this is run when user clicks the toolbar item itself and
             // not the drop down menu on the toolbar item
-           ListDialog dialog = new ListDialog(viewSite.getShell());
-           dialog.setContentProvider(new ArrayContentProvider());
-           dialog.setLabelProvider(new LabelProvider());
-           dialog.setTitle(TOOLBAR_NEW_TOOLTIP);
-           dialog.setMessage(TOOLBAR_DIALOG_MESSAGE);
-           Action[] input = new Action[wizardActions.size()]; 
-           input = wizardActions.values().toArray(input);
-           dialog.setInput(input);
+        	if (wizardActions.size() > 1) {
+        	
+	           ListDialog dialog = new ListDialog(viewSite.getShell());
+	           dialog.setContentProvider(new ArrayContentProvider());
+	           dialog.setLabelProvider(new LabelProvider());
+	           dialog.setTitle(TOOLBAR_NEW_TOOLTIP);
+	           dialog.setMessage(TOOLBAR_DIALOG_MESSAGE);
+	           Action[] input = new Action[wizardActions.size()]; 
+	           input = wizardActions.values().toArray(input);
+	           dialog.setInput(input);
            
-           if (dialog.open() == Window.OK)
-           {
-               ((Action)dialog.getResult()[0]).run();
-           }
+	           if (dialog.open() == Window.OK)
+	           {
+	               ((Action)dialog.getResult()[0]).run();
+	           }
+        	}
+        	else if (wizardActions.size() == 1){
+        		((Action)wizardActions.values().toArray()[0]).run();
+        	}
         }
         
     }
@@ -835,5 +832,18 @@ public class InstanceStatusComposite extends Composite
                 });
             }
 	    }
+	}
+	
+	
+	public void selectInstance(IInstance instance) {
+		
+		ViewerInstanceNode node = getInstanceNode(instance);
+		viewer.setSelection(new StructuredSelection(node));
+		
+	}
+
+	protected void removeListener() {
+		InstanceEventManager eventMgr = InstanceEventManager.getInstance();
+		eventMgr.removeInstanceListener(listener);
 	}
 }

@@ -9,7 +9,7 @@
  * [244951] Implement listener/event mechanism at device framework
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Fabio Rigo (Eldorado Research Institute) - Bug [287995] - Provide an instance is about to transition event
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.events;
@@ -20,5 +20,7 @@ public interface IInstanceListener
     void instanceDeleted(InstanceEvent e);
     void instanceUpdated(InstanceEvent e);
     void instanceLoaded(InstanceEvent e);
-    void instanceUnloaded(InstanceEvent e);    
+    void instanceUnloaded(InstanceEvent e);
+    void instanceTransitioned(InstanceEvent e);
+    void instanceAboutToTransition(InstanceEvent e);
 }

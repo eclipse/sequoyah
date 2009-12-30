@@ -11,25 +11,37 @@
  * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Code cleanup
  * Fabio Rigo (Eldorado Research Institute) - bug 244052 - The dirtyChanged method is being called out of UI thread
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271180] - Instance persistence mechanism can cause instance duplication.
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
+ * Daniel Barboza Franco - Bug [287875] - Save instances information on all updates
  ********************************************************************************/
 package org.eclipse.tml.framework.device.factory;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tml.framework.device.DevicePlugin;
+import org.eclipse.tml.framework.device.events.IInstanceListener;
+import org.eclipse.tml.framework.device.events.InstanceAdapter;
 import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
-import org.eclipse.tml.framework.device.manager.InstanceManager;
+import org.eclipse.tml.framework.device.events.InstanceEvent.InstanceEventType;
+import org.eclipse.tml.framework.device.manager.persistence.DeviceXmlReader;
+import org.eclipse.tml.framework.device.manager.persistence.DeviceXmlWriter;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Stores the device instances and provides basic query methods.
  * @author Fabio Fantato
  */
 public class InstanceRegistry implements IInstanceRegistry {
+	
 	private List<IInstance> instances;
 	private static InstanceRegistry _instance;
 
@@ -38,9 +50,42 @@ public class InstanceRegistry implements IInstanceRegistry {
 	*/
 	private InstanceRegistry(){
 		instances = new ArrayList<IInstance>();
+		Collection<IInstance> loadedInstances = DeviceXmlReader.loadInstances();
+		for (IInstance inst : loadedInstances)
+		{
+			addInstance(inst);
+		}
+		
+		IWorkbench workbench = DevicePlugin.getDefault().getWorkbench();
+	    workbench.addWindowListener(new WindowListener());
+	    
+	    IInstanceListener listener = new InstanceAdapter()	{
+		    public void instanceUpdated(InstanceEvent e) {
+				DeviceXmlWriter.saveInstances();
+		    }
+		};
+	    InstanceEventManager.getInstance().addInstanceListener(listener);
 	}
 
+	private class WindowListener implements IWindowListener {
 
+        public void windowClosed(IWorkbenchWindow window) {
+            DeviceXmlWriter.saveInstances();
+        }
+
+        public void windowOpened(IWorkbenchWindow window) {
+
+        }
+
+        public void windowDeactivated(IWorkbenchWindow window) {
+
+        }
+
+        public void windowActivated(IWorkbenchWindow window) {
+
+        }
+    }
+	
 	/**
 	 * Singleton method.
 	 * @return An InstanceRegistry instance.
@@ -61,8 +106,6 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 * @return A list of instances.
 	 */
 	public List<IInstance> getInstances() {
-		/* If not yet instantiated, loads the instances from the xml file*/
-		InstanceManager.getInstance();
 		return instances;
 	}
 
@@ -79,7 +122,7 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 */
 	public void addInstance(IInstance instance){
 		this.instances.add(instance);
-		InstanceEventManager.getInstance().fireInstanceLoaded(new InstanceEvent(instance));
+		InstanceEventManager.getInstance().notifyListeners(new InstanceEvent(InstanceEventType.INSTANCE_LOADED, instance));
 	}
 
 	/**
@@ -88,7 +131,7 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 */
 	public void removeInstance(IInstance instance){
 		this.instances.remove(instance);
-		InstanceEventManager.getInstance().fireInstanceUnloaded(new InstanceEvent(instance));
+		InstanceEventManager.getInstance().notifyListeners(new InstanceEvent(InstanceEventType.INSTANCE_UNLOADED, instance));
 	}
 
 	/**
@@ -96,5 +139,28 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 */
 	public void clear(){
 		this.instances.clear();
+	}
+	
+	/**
+	 * Retrieves all instances with a specified matching name
+	 * 
+	 * @param name -
+	 *            The instance name to be queried
+	 * @return A list of IInstance objects of name matching instances
+	 */
+	public List<IInstance> getInstancesByName(String name) {
+		InstanceRegistry registry = InstanceRegistry.getInstance();
+
+		List<IInstance> instanceList = registry.getInstances();
+		List<IInstance> returnValue = new ArrayList<IInstance>();
+
+		Iterator<IInstance> it = instanceList.iterator();
+		while (it.hasNext()) {
+			IInstance inst = it.next();
+			if (inst.getName().equals(name)) {
+				returnValue.add(inst);
+			}
+		}
+		return returnValue;
 	}
 }

@@ -22,6 +22,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [244249] - Canvas background repaint
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  * Petr Baranov (Nokia) - Bug [262371] (reopened) - New Connection Dialog improvement
+ * Ed Swartz (Nokia) - Bug [286280] - handle some SWT disposing issues
  *******************************************************************************/
 
 package org.eclipse.tml.vncviewer.vncviews.views;
@@ -37,6 +38,7 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tml.protocol.PluginProtocolActionDelegate;
 import org.eclipse.tml.protocol.lib.ProtocolHandle;
@@ -161,11 +163,14 @@ public class VNCViewerView extends ViewPart {
 
 				log(VNCViewerView.class).error(
 						VIEWER_COULD_NOT_BE_STARTED + e.getMessage());
-
-				GC gc = new GC(swtDisplay.getCanvas());
-				gc.fillRectangle(0, 0, swtDisplay.getScreenWidth(), swtDisplay
-						.getScreenHeight());
-				gc.dispose();
+				
+				Canvas canvas = swtDisplay.getCanvas();
+				if ((canvas != null) && (!canvas.isDisposed())) {
+					GC gc = new GC(swtDisplay.getCanvas());
+					gc.fillRectangle(0, 0, swtDisplay.getScreenWidth(), swtDisplay
+							.getScreenHeight());
+					gc.dispose(); 
+				}
 
 			}
 		}

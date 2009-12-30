@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -8,7 +8,7 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
 package org.eclipse.tml.localization.stringeditor.providers;
 
@@ -31,8 +31,8 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.providers.IOperationProvider#init(org.eclipse
-	 * .core.resources.IProject)
+	 * org.eclipse.tml.localization.stringeditor.providers.IOperationProvider
+	 * #init(org.eclipse .core.resources.IProject)
 	 */
 	public void init(IProject project) throws Exception {
 		// nothing
@@ -42,7 +42,8 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.providers.IOperationProvider#getNewColumn()
+	 * org.eclipse.tml.localization.stringeditor.providers.IOperationProvider
+	 * #getNewColumn()
 	 */
 	public ColumnInfo getNewColumn() {
 		ColumnInfo newColumn = null;
@@ -74,7 +75,8 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.providers.IOperationProvider#getNewRow()
+	 * org.eclipse.tml.localization.stringeditor.providers.IOperationProvider
+	 * #getNewRow()
 	 */
 	public RowInfo getNewRow() {
 		RowInfo newRow = null;

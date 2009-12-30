@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -8,7 +8,7 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
 package org.eclipse.tml.localization.tools.editor;
 
@@ -24,16 +24,15 @@ import org.eclipse.tml.localization.tools.managers.LocalizationManager;
 import org.eclipse.tml.localization.tools.managers.ProjectLocalizationManager;
 
 /**
- * Extends the DefaultOperationProvider in order to provide new,
- * empty localization files (for the editor, a new file is a 
- * new column).
- *
+ * Extends the DefaultOperationProvider in order to provide new, empty
+ * localization files (for the editor, a new file is a new column).
+ * 
  */
 public class NewColumnProvider extends DefaultOperationProvider {
 
 	/*
-	 * The Project Localization Manager used as a source to get all 
-	 * information provided by this class
+	 * The Project Localization Manager used as a source to get all information
+	 * provided by this class
 	 */
 	private static ProjectLocalizationManager projectLocalizationManager = null;
 
@@ -54,13 +53,19 @@ public class NewColumnProvider extends DefaultOperationProvider {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tml.localization.stringeditor.providers.DefaultOperationProvider#getNewColumn()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.tml.localization.stringeditor.providers.DefaultOperationProvider
+	 * #getNewColumn()
 	 */
 	@Override
 	public ColumnInfo getNewColumn() {
 		return projectLocalizationManager.getProjectLocalizationSchema()
-				.promptCollumnName();
+				.promptCollumnName(
+						projectLocalizationManager.getLocalizationProject()
+								.getProject());
 
 	}
 

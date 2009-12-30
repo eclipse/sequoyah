@@ -25,6 +25,7 @@
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  * Daniel Barboza Franco (Eldorado Research Institute) - [271205] - Remove log for mouse, keyboard and screen events
  * Daniel Barboza Franco (Eldorado Research Institute) - [275650] - Canvas rotation
+ * Ed Swartz (Nokia) - Bug [286280] - handle some SWT disposing issues
  ********************************************************************************/
 
 package org.eclipse.tml.vncviewer.graphics.swt;
@@ -260,8 +261,9 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 		
 		refreshTimer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
-				display.syncExec(updateRefresh);
-
+				if (!display.isDisposed()) {
+					display.syncExec(updateRefresh);
+				}
 			}
 		}, firstRefreshDelayMs, refreshDelayPeriodMs);
 
@@ -294,7 +296,11 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 				canvas.getDisplay().asyncExec(new Runnable(){
 					public void run() {
-					
+
+						if (canvas.isDisposed()){
+							return;
+						}
+
 						switch (SWTRemoteDisplay.this.getRotation()) {
 						
 							case ROTATION_0DEG: 
@@ -367,7 +373,9 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 
 		canvas.getDisplay().asyncExec(new Runnable(){
 			public void run() {
-				canvas.setSize(0, 0);
+				if ((canvas != null) && (!canvas.isDisposed())) {
+					canvas.setSize(0, 0);
+				}
 			}
 		});
 		

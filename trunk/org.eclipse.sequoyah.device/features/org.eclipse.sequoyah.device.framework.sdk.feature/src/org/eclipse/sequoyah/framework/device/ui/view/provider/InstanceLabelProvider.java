@@ -28,6 +28,7 @@ import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IInstanceRegistry;
+import org.eclipse.tml.framework.device.ui.DeviceUIPlugin;
 import org.eclipse.tml.framework.status.IStatus;
 import org.eclipse.tml.framework.status.LabelStatus;
 import org.eclipse.tml.framework.status.StatusRegistry;
@@ -55,14 +56,14 @@ public class InstanceLabelProvider extends LabelProvider {
 		if (element instanceof IInstanceRegistry) {
 			descriptor = ((IInstanceRegistry)element).getImage();
 		} else if (element instanceof IInstance) {
-			descriptor = DevicePlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_DEVICE);
+			descriptor = DeviceUIPlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_DEVICE);
 		} else if (element instanceof LabelStatus) {
 			IStatus status = StatusRegistry.getInstance().getStatus(((LabelStatus)element).getStatus());
 			descriptor = status.getImage();
 		} else if (element instanceof IDeviceType) {
 			return ((IDeviceType)element).getImage();
 		}else if (element instanceof String || element instanceof Properties) {
-			descriptor = DevicePlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_PROPERTY);;
+			descriptor = DeviceUIPlugin.getDefault().getImageDescriptor(DevicePlugin.ICON_PROPERTY);;
 		} else {
 			throw unknownElement(element);
 		}

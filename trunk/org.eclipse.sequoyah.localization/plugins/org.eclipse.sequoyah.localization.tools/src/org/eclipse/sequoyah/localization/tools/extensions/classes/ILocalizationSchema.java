@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,7 +9,7 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
 package org.eclipse.tml.localization.tools.extensions.classes;
 
@@ -63,9 +63,11 @@ public abstract class ILocalizationSchema {
 	 * Retrieves a ColumnInfo, which will be use by the editor to add a new
 	 * column
 	 * 
+	 * @param iProject
+	 * 
 	 * @return a ColumnInfo, which will be use by the editor to add a new column
 	 */
-	public abstract ColumnInfo promptCollumnName();
+	public abstract ColumnInfo promptCollumnName(IProject iProject);
 
 	/**
 	 * Check if the value if valid for the locale

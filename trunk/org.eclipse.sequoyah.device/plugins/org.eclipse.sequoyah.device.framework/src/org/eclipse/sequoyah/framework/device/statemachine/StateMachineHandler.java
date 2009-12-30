@@ -10,6 +10,7 @@
  * Contributors:
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
  * Fabio Rigo (Eldorado Research Institute) - Bug [251595] - Proportion of ticks in ServiceHandler class is not adequate
+ * Fabio Rigo (Eldorado Research Institute) - Bug [287995] - Provide an instance is about to transition event
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.statemachine;
@@ -27,6 +28,7 @@ import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.framework.device.DeviceUtils;
 import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
+import org.eclipse.tml.framework.device.events.InstanceEvent.InstanceEventType;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
@@ -74,6 +76,7 @@ public class StateMachineHandler {
             monitor = new NullProgressMonitor();
         }
 
+        InstanceEventManager.getInstance().notifyListeners(new InstanceEvent(InstanceEventType.INSTANCE_ABOUT_TO_TRANSITION, instance, svcHnd.getService().getId()));
         monitor.beginTask(jobName, 1000);
         status = svcHnd.runService(instance, arguments, new SubProgressMonitor(monitor, 950));
         if (status.isOK()) {
@@ -104,7 +107,7 @@ public class StateMachineHandler {
             stmModel.transitionState(transition.getHaltId());
         }
         
-        InstanceEventManager.getInstance().fireInstanceUpdated(new InstanceEvent(instance));
+        InstanceEventManager.getInstance().notifyListeners(new InstanceEvent(InstanceEventType.INSTANCE_TRANSITIONED, instance, svcHnd.getService().getId()));
         monitor.done();
         
         this.setTransitioning(false);
@@ -115,7 +118,7 @@ public class StateMachineHandler {
 	public synchronized void setState(String dest) {
 		stmModel.setState(dest);
 		//TODO: use a specific listener for states
-        InstanceEventManager.getInstance().fireInstanceUpdated(new InstanceEvent(instance));
+		InstanceEventManager.getInstance().notifyListeners(new InstanceEvent(InstanceEventType.INSTANCE_TRANSITIONED, instance));
 	}
 	
 	/**

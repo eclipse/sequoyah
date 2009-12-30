@@ -26,6 +26,7 @@ import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IDeviceTypeRegistry;
 import org.eclipse.tml.framework.device.model.IService;
+import org.eclipse.tml.framework.device.ui.DeviceUIPlugin;
 import org.eclipse.tml.framework.status.IStatusTransition;
 
 public class DeviceLabelProvider extends LabelProvider {
@@ -44,7 +45,7 @@ public class DeviceLabelProvider extends LabelProvider {
 		} else if (element instanceof IService) {
 			descriptor = ((IService) element).getImage();
 		} else if (element instanceof IStatusTransition) {
-			descriptor = DevicePlugin.getDefault().getImageDescriptor(
+			descriptor = DeviceUIPlugin.getDefault().getImageDescriptor(
 					DevicePlugin.ICON_BOOK);
 		} else {
 			throw unknownElement(element);

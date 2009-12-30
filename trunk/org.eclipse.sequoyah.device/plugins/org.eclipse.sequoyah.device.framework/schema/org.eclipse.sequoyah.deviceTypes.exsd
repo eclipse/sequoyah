@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.tml.framework.device" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.tml.framework.device" id="org.eclipse.tml.deviceTypes" name="Device Types Definition"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point allow devices types be defined for other plugins and connects with the TmL framework
       </documentation>
@@ -12,9 +12,9 @@
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -39,9 +39,9 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -85,9 +85,9 @@
                <documentation>
                   handler used by the device type. Must implement org.eclipse.tml.framework.device.model.handler.IDeviceHandler
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.tml.framework.device.model.handler.IDeviceHandler"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="isAbstract" type="string" use="default" value="false">
@@ -109,15 +109,22 @@
                <documentation>
                   A relative path of an icon that will be used together with the name to represent the device as one of the choices in the creation dialog box.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="isPersistent" type="boolean" use="required">
             <annotation>
                <documentation>
                   True if instances of this device should be persisted. This is intented to be used by devices whose instances cannot be created by users.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="supportsUserInstances" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  True if the user can create instances of the device type using a wizard, false if the user cannot create any instances.
                </documentation>
             </annotation>
          </attribute>
@@ -149,45 +156,45 @@
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          0.2 (Incubation)
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter extension point usage example here.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter API information here.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2008 MontaVista Software Inc. and others.
 This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html

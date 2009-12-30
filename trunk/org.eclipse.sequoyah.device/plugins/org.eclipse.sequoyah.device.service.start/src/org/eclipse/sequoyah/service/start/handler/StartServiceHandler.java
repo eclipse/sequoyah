@@ -30,7 +30,7 @@ public class StartServiceHandler extends ServiceHandler {
 
 	public IStatus runService(IInstance instance, Map<Object, Object> arguments, IProgressMonitor monitor) {
 		try {
-			IDeviceLauncher launcher = InstanceManager.getInstance().createLauncher(instance);
+			IDeviceLauncher launcher = InstanceManager.createLauncher(instance);
 			if (launcher!=null){
 				ILaunch launch = DeviceLauncherManager.launch(launcher,instance.getName());
 				instance.setPID(launcher.getPID());

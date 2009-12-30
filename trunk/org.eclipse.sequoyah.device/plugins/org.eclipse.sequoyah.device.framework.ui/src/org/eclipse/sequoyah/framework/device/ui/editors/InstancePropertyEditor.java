@@ -12,6 +12,7 @@
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.editors;
@@ -38,8 +39,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.tml.framework.device.events.InstanceEvent;
 import org.eclipse.tml.framework.device.events.InstanceEventManager;
+import org.eclipse.tml.framework.device.events.InstanceEvent.InstanceEventType;
+import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.internal.model.MobileInstance;
-import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.AbstractMobileInstance;
 import org.eclipse.tml.framework.device.ui.DeviceUIResources;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -90,7 +92,7 @@ public class InstancePropertyEditor extends PropertyPage {
      * @return
      */
     private boolean validateName(String instanceName) {
-    	InstanceManager manager = InstanceManager.getInstance();
+    	InstanceRegistry registry = InstanceRegistry.getInstance();
     	String errorMessage = null;
     	boolean retVal = false;
     	
@@ -98,7 +100,7 @@ public class InstancePropertyEditor extends PropertyPage {
     		//instanceName = instanceName.trim();
     		if (!instanceName.equals("")) { //$NON-NLS-1$
     			
-	        	if (manager.getInstancesByname(instanceName).size() == 0 ||
+	        	if (registry.getInstancesByName(instanceName).size() == 0 ||
 	        		instanceName.equals(initialInstanceName)) {
 	        		retVal = true;
 	        	} else {
@@ -208,7 +210,7 @@ public class InstancePropertyEditor extends PropertyPage {
 			instance.getProperties().setProperty(key, value);
 		}
 		instance.setName(textInstanceName.getText().trim());
-		InstanceEventManager.getInstance().fireInstanceUpdated(new InstanceEvent(instance));
+        InstanceEventManager.getInstance().notifyListeners(new InstanceEvent(InstanceEventType.INSTANCE_UPDATED, instance));
 		return true;
 	}
 }

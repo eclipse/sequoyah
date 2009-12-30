@@ -1,12 +1,14 @@
 /********************************************************************************
- * Copyright (c) 2008 Motorola Inc and others. All rights reserved
+ * Copyright (c) 2008, 2009 Motorola Inc and others. All rights reserved
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
- * Fabio Rigo (Eldorado Research Institute) 
+ * Fabio Rigo (Eldorado Research Institute)
  * [245114] Enhance persistence policies
+ * Mauren Brenner (Eldorado) - Bug [280813] - Support saving instance info outside the workspace
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  ********************************************************************************/
 
 
@@ -14,21 +16,20 @@ package org.eclipse.tml.framework.device.manager.persistence;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
 import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.framework.device.DevicePlugin;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionHandler;
 import org.eclipse.tml.framework.device.exception.DeviceExceptionStatus;
-import org.eclipse.tml.framework.device.factory.InstanceRegistry;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.w3c.dom.Document;
@@ -41,13 +42,14 @@ public class DeviceXmlReader implements IDeviceXmlTags
 {
     /**
      * Performs the load from XML operation during the IDE startup.
+     * 
+     * @return A collection containing all loaded instances
      */
-    public static void loadInstances(InstanceManager manager) {
-
-        IPath stateLocationPath = DevicePlugin.getDefault().getStateLocation();
-        File path = stateLocationPath.toFile();
+    public static Collection<IInstance> loadInstances() {
+        File path = DevicePlugin.getDeviceXmlLocation();
         File file = new File(path, TML_DEVICE_DATAFILE);
-
+        Collection<IInstance> loadedInstances = new ArrayList<IInstance>();
+        
         if (file.exists()) {
             DocumentBuilderFactory factory = DocumentBuilderFactory
                     .newInstance();
@@ -55,9 +57,8 @@ public class DeviceXmlReader implements IDeviceXmlTags
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 Document document = builder.parse(file);
                 Element rootElement = document.getDocumentElement();
-
-                parseDevicesList(rootElement, manager);
-                parseInstancesList(rootElement, manager);
+                
+                loadedInstances.addAll(parseInstancesList(rootElement));
                 
             } catch (IOException ie) {
                 ie.printStackTrace();
@@ -67,58 +68,15 @@ public class DeviceXmlReader implements IDeviceXmlTags
                 e.printStackTrace();
             }
         }
-    };
-    
-    private static void parseDevicesList(Element rootElement, InstanceManager manager)
-    {
-        Map<String, TmLDevice> devices = new HashMap<String, TmLDevice>();
-        manager.setDevicesMap(devices);
         
-     // parse list of devices
-        NodeList devicesNodes = rootElement
-                .getElementsByTagName(TML_XML_DEVICES);
-        if (devicesNodes != null && devicesNodes.getLength() == 1) {
-            Node node = devicesNodes.item(0);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element devicesElement = (Element) node;
-                NodeList deviceNodeList = devicesElement
-                        .getElementsByTagName(TML_XML_DEVICE);
-                for (int i = 0; deviceNodeList != null
-                        && i < deviceNodeList.getLength(); i++) {
-                    Node devicedNode = deviceNodeList.item(i);
-                    if (devicedNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element deviceElement = (Element) devicedNode;
-                        String deviceId = deviceElement
-                                .getAttribute(TML_XML_DEVICE_ID);
-                        String plugin = ""; //$NON-NLS-1$
-                        NodeList devicePluginNodes = deviceElement
-                                .getElementsByTagName(TML_XML_DEVICE_PLUGIN);
-                        if (devicePluginNodes != null
-                                && devicePluginNodes.getLength() >= 1) {
-                            Node devicePluginNode = devicePluginNodes
-                                    .item(0);
-                            Node firstChild = devicePluginNode
-                                    .getFirstChild();
-                            if (firstChild != null
-                                    && firstChild.getNodeType() == Node.TEXT_NODE) {
-                                plugin = firstChild.getNodeValue();
-                            }
-
-                        }
-
-                        TmLDevice device = new TmLDevice(deviceId, plugin);
-                        devices.put(deviceId, device);
-                    }
-                }
-
-            }
-        }
+        return loadedInstances;
     }
     
-    private static void parseInstancesList(Element rootElement, InstanceManager manager)
+    private static Collection<IInstance> parseInstancesList(Element rootElement)
     {
-     // parse list of instances
-        InstanceRegistry registry = InstanceRegistry.getInstance();
+    	Collection<IInstance> loadedInstances = new LinkedHashSet<IInstance>();
+    	
+    	// parse list of instances
         NodeList instancesNodes = rootElement
                 .getElementsByTagName(TML_XML_INSTANCES);
         if (instancesNodes != null && instancesNodes.getLength() == 1) {
@@ -157,27 +115,22 @@ public class DeviceXmlReader implements IDeviceXmlTags
                                 && xml_device_id != null
                                 && !xml_device_id.equals("")) { //$NON-NLS-1$
                             try {
-                                inst = manager.createInstance(instanceName,
+                                inst = InstanceManager.createInstance(instanceName,
                                         xml_device_id,
                                         DevicePlugin.TML_STATUS_OFF,
                                         prop);
-                                registry.addInstance(inst);
+                                loadedInstances.add(inst);
                             } catch (TmLException te) {
                                 ExceptionHandler
                                         .showException(DeviceExceptionHandler
                                                 .exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
                             }
                         }
-
-                        if (manager.getCurrentInstance() == null) {
-                            manager.setInstance(inst);
-                        }
-
                     }
-
                 }
             }
-
         }
+        
+        return loadedInstances;
     }
 }

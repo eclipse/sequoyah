@@ -9,6 +9,7 @@
  *     Yu-Fen Kuo (MontaVista) - initial API and implementation
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  *******************************************************************************/
 package org.eclipse.tml.framework.device.ui.wizard;
 
@@ -19,13 +20,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
+import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IInstanceBuilder;
-import org.eclipse.tml.framework.device.ui.DeviceUIPlugin;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.progress.IProgressService;
 
 /*
  * new device instance wizard.
@@ -51,12 +51,14 @@ public class NewDeviceMenuWizard extends NewDeviceWizard implements INewWizard {
 		boolean ok = false;
 		try {
 			final IInstanceBuilder projectBuilder = getProjectBuilder();
-			IWorkbench workbench = DeviceUIPlugin.getDefault().getWorkbench();
-			IProgressService progressService = workbench.getProgressService();
 			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					InstanceManager.getInstance().createProject(
-							firstPage.getDeviceType(), projectBuilder, monitor);				
+					try {
+						InstanceManager.createProject(
+								firstPage.getDeviceType(), projectBuilder, monitor);
+					} catch (TmLException e) {
+						ExceptionHandler.showException(e);
+					}				
 				}
 			};
 			getContainer().run(false, true, runnable);

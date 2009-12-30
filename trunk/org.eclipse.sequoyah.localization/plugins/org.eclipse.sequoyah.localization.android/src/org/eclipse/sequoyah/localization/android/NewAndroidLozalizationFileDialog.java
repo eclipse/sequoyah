@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc. All rights reserved.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
@@ -8,6 +8,7 @@
  * Matheus Tait Lima (Eldorado)
  *
  * Contributors:
+ * Marcelo Marzola Bossoni (Eldorado) -  Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
 
 package org.eclipse.tml.localization.android;
@@ -148,7 +149,7 @@ public class NewAndroidLozalizationFileDialog extends Dialog {
 
 		layout.marginLeft = left + 5;
 		layout.marginTop = 5;
-		//layout.marginBottom = 15;
+		// layout.marginBottom = 15;
 
 		composite.setLayout(layout);
 
@@ -161,10 +162,12 @@ public class NewAndroidLozalizationFileDialog extends Dialog {
 	}
 
 	/**
-
-	 * Creates the widgets that will be used to manipulate the devices and configuration at the view
-	 *
-	 * @param composite The parent composite of the device widgets
+	 * 
+	 * Creates the widgets that will be used to manipulate the devices and
+	 * configuration at the view
+	 * 
+	 * @param composite
+	 *            The parent composite of the device widgets
 	 */
 	private void createCombo(Composite composite)
 

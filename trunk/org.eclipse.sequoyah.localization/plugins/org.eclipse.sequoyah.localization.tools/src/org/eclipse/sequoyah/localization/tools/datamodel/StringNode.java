@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,19 +9,19 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
 package org.eclipse.tml.localization.tools.datamodel;
 
 /**
  * This class represents an entry in a localization file.
  * 
- * It basically stores a <key>:<value> pair, which contains the key
- * used in the localization process and the associated value in that
- * specific language represented by the given localization file.
+ * It basically stores a <key>:<value> pair, which contains the key used in the
+ * localization process and the associated value in that specific language
+ * represented by the given localization file.
  * 
- * It also stores or refers to any state data or meta-data associated
- * with the <key>:<value> pair that is represented by it.
+ * It also stores or refers to any state data or meta-data associated with the
+ * <key>:<value> pair that is represented by it.
  */
 public class StringNode {
 
@@ -56,22 +56,24 @@ public class StringNode {
 	private String value = null;
 
 	/*
-	 * Whether the value has been generated using the translation process or not 
+	 * Whether the value has been generated using the translation process or not
 	 */
 	private boolean translated;
 
 	/*
-	 * Whether the value has been checked using the grammar checker process or not 
+	 * Whether the value has been checked using the grammar checker process or
+	 * not
 	 */
 	private boolean checked;
 
 	/*
-	 * Whether the value has been edited by the Localization Editor and differs from the value saved in the localizationFile
+	 * Whether the value has been edited by the Localization Editor and differs
+	 * from the value saved in the localizationFile
 	 */
 	private boolean dirty;
 
 	/*
-	 * Whether there are changes in the associated meta-data 
+	 * Whether there are changes in the associated meta-data
 	 */
 	private boolean dirtyMetaData;
 
@@ -103,7 +105,8 @@ public class StringNode {
 	/**
 	 * Set the LocalizationFile which the StringNode belongs to
 	 * 
-	 * @param localizationFile the LocalizationFile which the StringNode belongs to
+	 * @param localizationFile
+	 *            the LocalizationFile which the StringNode belongs to
 	 */
 	public void setLocalizationFile(LocalizationFile localizationFile) {
 		this.localizationFile = localizationFile;
@@ -112,7 +115,8 @@ public class StringNode {
 	/**
 	 * Get the details of the translation process applied to the node, if any
 	 * 
-	 * @return TranslationDetails object with details of the translation process applied to the node
+	 * @return TranslationDetails object with details of the translation process
+	 *         applied to the node
 	 */
 	public TranslationDetails getTranslationDetails() {
 		return translationDetails;
@@ -121,25 +125,32 @@ public class StringNode {
 	/**
 	 * Set the details of the translation process applied to the node, if any
 	 * 
-	 * @param translationDetails TranslationDetails object with details of the translation process applied to the node
+	 * @param translationDetails
+	 *            TranslationDetails object with details of the translation
+	 *            process applied to the node
 	 */
 	public void setTranslationDetails(TranslationDetails translationDetails) {
 		this.translationDetails = translationDetails;
 	}
 
 	/**
-	 * Get the details of the grammar checker process applied to the node, if any
+	 * Get the details of the grammar checker process applied to the node, if
+	 * any
 	 * 
-	 * @return GrammarCheckerDetails object with details of the grammar checker process applied to the node
+	 * @return GrammarCheckerDetails object with details of the grammar checker
+	 *         process applied to the node
 	 */
 	public GrammarCheckerDetails getGrammarCheckerDetails() {
 		return grammarCheckerDetails;
 	}
 
 	/**
-	 * Set the details of the grammar checker process applied to the node, if any
+	 * Set the details of the grammar checker process applied to the node, if
+	 * any
 	 * 
-	 * @param grammarCheckerDetails GrammarCheckerDetails object with details of the grammar checker process applied to the node
+	 * @param grammarCheckerDetails
+	 *            GrammarCheckerDetails object with details of the grammar
+	 *            checker process applied to the node
 	 */
 	public void setGrammarCheckerDetails(
 			GrammarCheckerDetails grammarCheckerDetails) {
@@ -158,7 +169,8 @@ public class StringNode {
 	/**
 	 * Set the comment associated to the node
 	 * 
-	 * @param stringNodeComment comment to be associated to the node
+	 * @param stringNodeComment
+	 *            comment to be associated to the node
 	 */
 	public void setStringNodeComment(StringNodeComment stringNodeComment) {
 		this.stringNodeComment = stringNodeComment;
@@ -179,14 +191,16 @@ public class StringNode {
 	/**
 	 * Set the key used in the localization process
 	 * 
-	 * @param key key used in the localization process
+	 * @param key
+	 *            key used in the localization process
 	 */
 	public void setKey(String key) {
 		this.key = key;
 	}
 
 	/**
-	 * Get the value associated to the key for the language represented by the localizationFile
+	 * Get the value associated to the key for the language represented by the
+	 * localizationFile
 	 * 
 	 * @return value associated to the key
 	 */
@@ -195,9 +209,11 @@ public class StringNode {
 	}
 
 	/**
-	 * Set the value associated to the key for the language represented by the localizationFile
+	 * Set the value associated to the key for the language represented by the
+	 * localizationFile
 	 * 
-	 * @param value value associated to the key
+	 * @param value
+	 *            value associated to the key
 	 */
 	public void setValue(String value) {
 		if ((this.value != null) && (!this.value.equals(value))) {
@@ -207,54 +223,71 @@ public class StringNode {
 	}
 
 	/**
-	 * Check whether the value has been generated using the translation process or not 
+	 * Check whether the value has been generated using the translation process
+	 * or not
 	 * 
-	 * @return true if the value has been generated using the translation process, false otherwise
+	 * @return true if the value has been generated using the translation
+	 *         process, false otherwise
 	 */
 	public boolean isTranslated() {
 		return translated;
 	}
 
 	/**
-	 * Set whether the value has been generated using the translation process or not 
+	 * Set whether the value has been generated using the translation process or
+	 * not
 	 * 
-	 * @param translated true if the value has been generated using the translation process, false otherwise
+	 * @param translated
+	 *            true if the value has been generated using the translation
+	 *            process, false otherwise
 	 */
 	public void setTranslated(boolean translated) {
 		this.translated = translated;
 	}
 
 	/**
-	 * Check whether the value has been checked using the grammar checker process or not 
+	 * Check whether the value has been checked using the grammar checker
+	 * process or not
 	 * 
-	 * @return true if the value has been checked using the grammar checker process, false otherwise
+	 * @return true if the value has been checked using the grammar checker
+	 *         process, false otherwise
 	 */
 	public boolean isChecked() {
 		return checked;
 	}
 
 	/**
-	 * Set whether the value has been checked using the grammar checker process or not 
+	 * Set whether the value has been checked using the grammar checker process
+	 * or not
 	 * 
-	 * @param checked true if the value has been checked using the grammar checker process, false otherwise
+	 * @param checked
+	 *            true if the value has been checked using the grammar checker
+	 *            process, false otherwise
 	 */
 	public void setChecked(boolean checked) {
 		this.checked = checked;
 	}
 
 	/**
-	 * Check whether the value has been edited by the Localization Editor and differs from the value saved in the localizationFile
+	 * Check whether the value has been edited by the Localization Editor and
+	 * differs from the value saved in the localizationFile
 	 * 
-	 * @return true if he value has been edited by the Localization Editor and differs from the value saved in the localizationFile, false otherwise
+	 * @return true if he value has been edited by the Localization Editor and
+	 *         differs from the value saved in the localizationFile, false
+	 *         otherwise
 	 */
 	public boolean isDirty() {
 		return dirty;
 	}
 
 	/**
-	 * Set whether the value has been edited by the Localization Editor and differs from the value saved in the localizationFile
+	 * Set whether the value has been edited by the Localization Editor and
+	 * differs from the value saved in the localizationFile
 	 * 
-	 * @param dirty true if he value has been edited by the Localization Editor and differs from the value saved in the localizationFile, false otherwise
+	 * @param dirty
+	 *            true if he value has been edited by the Localization Editor
+	 *            and differs from the value saved in the localizationFile,
+	 *            false otherwise
 	 */
 	public void setDirty(boolean dirty) {
 		// propagate the state if dirty = true
@@ -265,18 +298,21 @@ public class StringNode {
 	}
 
 	/**
-	 * Check whether there are changes in the associated meta-data 
+	 * Check whether there are changes in the associated meta-data
 	 * 
-	 * @return true if there are changes in the associated meta-data, false otherwise
+	 * @return true if there are changes in the associated meta-data, false
+	 *         otherwise
 	 */
 	public boolean isDirtyMetaData() {
 		return dirtyMetaData;
 	}
 
 	/**
-	 * Set whether there are changes in the associated meta-data 
+	 * Set whether there are changes in the associated meta-data
 	 * 
-	 * @param dirtyMetaData true if there are changes in the associated meta-data, false otherwise
+	 * @param dirtyMetaData
+	 *            true if there are changes in the associated meta-data, false
+	 *            otherwise
 	 */
 	public void setDirtyMetaData(boolean dirtyMetaData) {
 		this.dirtyMetaData = dirtyMetaData;
@@ -285,7 +321,8 @@ public class StringNode {
 	/**
 	 * Check whether there are changes in the associated extra-info
 	 * 
-	 * @return true if there are changes in the associated extra-info, false otherwise
+	 * @return true if there are changes in the associated extra-info, false
+	 *         otherwise
 	 */
 	public boolean isDirtyExtraInfo() {
 		return dirtyExtraInfo;
@@ -294,18 +331,18 @@ public class StringNode {
 	/**
 	 * Set whether there are changes in the associated extra-info
 	 * 
-	 * @param dirtyExtraInfo true if there are changes in the associated extra-info, false otherwise
+	 * @param dirtyExtraInfo
+	 *            true if there are changes in the associated extra-info, false
+	 *            otherwise
 	 */
 	public void setDirtyExtraInfo(boolean dirtyExtraInfo) {
 		this.dirtyExtraInfo = dirtyExtraInfo;
 	}
 
 	/**
-	 * Delete this StringNode. 
-	 * - Remove it from the model 
-	 * - Remove its comment, if any
-	 * - Remove all meta-data associated 
-	 * - Remove all extra-info associated
+	 * Delete this StringNode. - Remove it from the model - Remove its comment,
+	 * if any - Remove all meta-data associated - Remove all extra-info
+	 * associated
 	 */
 	public void delete() {
 		// TODO: implement delete
@@ -314,7 +351,8 @@ public class StringNode {
 	/**
 	 * Check if the StringNode has any meta-data associated
 	 * 
-	 * @return true if the StringNode has any meta-data associated, false otherwise
+	 * @return true if the StringNode has any meta-data associated, false
+	 *         otherwise
 	 */
 	public boolean hasMetaData() {
 		// TODO: implement hasMetadata
@@ -324,7 +362,8 @@ public class StringNode {
 	/**
 	 * Check if the StringNode has any extra-info associated
 	 * 
-	 * @return true if the StringNode has any extra-info associated, false otherwise
+	 * @return true if the StringNode has any extra-info associated, false
+	 *         otherwise
 	 */
 	public boolean hasExtraInfo() {
 		// TODO: implement hasExtraInfo

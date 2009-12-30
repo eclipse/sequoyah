@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -8,7 +8,7 @@
  * Vinicius Hernandes (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
 package org.eclipse.tml.localization.tools.datamodel;
 
@@ -18,9 +18,8 @@ import org.eclipse.tml.localization.tools.persistence.IPersistentMetaData;
 import org.eclipse.tml.localization.tools.persistence.PersistableAttributes;
 
 /**
- * This class stores meta-info about the grammar checker process and
- * is intended to be persisted as part of the meta-data related to a 
- * StringNode object
+ * This class stores meta-info about the grammar checker process and is intended
+ * to be persisted as part of the meta-data related to a StringNode object
  */
 public class GrammarCheckerDetails implements IPersistentMetaData {
 
@@ -65,7 +64,8 @@ public class GrammarCheckerDetails implements IPersistentMetaData {
 	/**
 	 * Set the StringNode this info is related to
 	 * 
-	 * @param stringNode the StringNode this info is related to
+	 * @param stringNode
+	 *            the StringNode this info is related to
 	 */
 	public void setStringNode(StringNode stringNode) {
 		this.stringNode = stringNode;
@@ -83,7 +83,8 @@ public class GrammarCheckerDetails implements IPersistentMetaData {
 	/**
 	 * Set the name of the Grammar Checker used in the process
 	 * 
-	 * @param grammarChecker the name of the Grammar Checker used in the process
+	 * @param grammarChecker
+	 *            the name of the Grammar Checker used in the process
 	 */
 	public void setGrammarChecker(String grammarChecker) {
 		this.grammarChecker = grammarChecker;
@@ -101,14 +102,15 @@ public class GrammarCheckerDetails implements IPersistentMetaData {
 	/**
 	 * Set when the grammar checker process took place
 	 * 
-	 * @param date when the grammar checker process took place
+	 * @param date
+	 *            when the grammar checker process took place
 	 */
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
 	/**
-	 * Check whether the grammar checker process succeeded or not 
+	 * Check whether the grammar checker process succeeded or not
 	 * 
 	 * @return true if the grammar checker process succeeded, false otherwise
 	 */
@@ -117,9 +119,10 @@ public class GrammarCheckerDetails implements IPersistentMetaData {
 	}
 
 	/**
-	 * Set whether the grammar checker process succeeded or not 
+	 * Set whether the grammar checker process succeeded or not
 	 * 
-	 * @param success true if the grammar checker process succeeded, false otherwise
+	 * @param success
+	 *            true if the grammar checker process succeeded, false otherwise
 	 */
 	public void setSuccess(boolean success) {
 		this.success = success;

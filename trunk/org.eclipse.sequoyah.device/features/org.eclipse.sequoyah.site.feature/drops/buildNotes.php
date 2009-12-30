@@ -3,15 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="http://www.eclipse.org/default_style.css" type="text/css">
-<title>Build Notes for TmL 0.4 (200911091009)</title>
+<title>Build Notes for TmL 0.4 (200912021449)</title>
 </head>
 
 <body>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" width="80%">
-		<p><b><font class=indextop>Build Notes for TmL 0.4 (200911091009)</font></b><br>
-		29 June 2009 </p>
+		<p><b><font class=indextop>Build Notes for TmL 0.4 (200912021449)</font></b><br>
+		02 December 2009 </p>
 		</td>
 	</tr>
 </table>
@@ -29,10 +29,10 @@
 </li>
 <li>This is the fourth release of TmL, please help us to keep it growing up. Report bugs and send us your suggestions.</li>
 <li>Use
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2009-06-29&chfield=resolution&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=TmL&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2009-09-11&chfield=resolution&cmdtype=doit">
   this query</a> to show the list of bugs fixed.</li>
 <li>For details on committed files, see the
-  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/N-0.4-200911091009/tml-log.csv">
+  <a href="http://download.eclipse.org/dsdp/tml/downloads/drops/R-0.4-200912021449/tml-log.csv">
   TmL CVS changelog</a>.</li>
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/index.php/DSDP/TML/TML_FAQ">TmL FAQ</a></li>
@@ -60,18 +60,7 @@ connection setup and other tasks.</p>
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>As per the TmL
-<a href="http://www.eclipse.org/dsdp/tml/development/plan.php">plan</a>,
-we will have small API changes from 0.2 release in January 2009.</p>
-<p>All such API changes will be voted on
-by committers on the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tml-dev">
-dsdp-tml-dev</a> developer mailing list, and documented in a migration guide
-for future releases.</p>
-If you want to start programming against TmL APIs now, best let us know
-about your endeavours and keep yourself up-to-date. Stay in contact with
-the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tml-dev">
-dsdp-tml-dev</a> developer mailing list, and give feedback to make the
-APIs better.
+<p>This build contains the new localization tools.</p>
 </td></tr></tbody></table>
 -->
 

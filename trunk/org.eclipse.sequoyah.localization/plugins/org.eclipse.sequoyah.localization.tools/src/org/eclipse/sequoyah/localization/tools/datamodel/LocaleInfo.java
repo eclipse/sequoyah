@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,15 +9,14 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
 package org.eclipse.tml.localization.tools.datamodel;
 
 import java.util.List;
 
 /**
- * This class represents a specific locale and has all details
- * about it
+ * This class represents a specific locale and has all details about it
  */
 public class LocaleInfo {
 
@@ -38,13 +37,16 @@ public class LocaleInfo {
 	/**
 	 * Set the attributes which represent the locale
 	 * 
-	 * @param languageAttributes the attributes which represent the locale
+	 * @param languageAttributes
+	 *            the attributes which represent the locale
 	 */
 	public void setLocaleAttributes(List<LocaleAttribute> localeAttributes) {
 		this.localeAttributes = localeAttributes;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
