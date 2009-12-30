@@ -10,6 +10,7 @@
  * Contributors:
  * Daniel Barboza Franco - Bug [239970] - Invisible Services
  * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
+ * Mauren Brenner (Eldorado) - Bug [289577] - Replaced deprecated methods to get image
  ********************************************************************************/
 package org.eclipse.tml.framework.device.factory;
 
@@ -20,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.tml.common.utilities.BasePlugin;
 import org.eclipse.tml.common.utilities.PluginUtils;
 import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
 import org.eclipse.tml.common.utilities.exception.TmLException;
@@ -32,6 +32,7 @@ import org.eclipse.tml.framework.device.model.IService;
 import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
 import org.eclipse.tml.framework.status.IStatusTransition;
 import org.eclipse.tml.framework.status.MobileStatusTransition;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class ServiceFactory {
 	private static final String ELEMENT_SERVICE = "service"; //$NON-NLS-1$
@@ -49,8 +50,6 @@ public class ServiceFactory {
 	private static final String ATR_HANDLER = "handler"; //$NON-NLS-1$
 	private static final String ATR_VISIBLE = "visible"; //$NON-NLS-1$
 	
-	
-	@SuppressWarnings("deprecation")
 	public static IService createService(IExtension originalPlugin,String serviceId,IServiceHandler handler) throws TmLException {
 		IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.SERVICE_ID, serviceId);		
 		List<IStatusTransition> statusList = new ArrayList<IStatusTransition>();
@@ -62,7 +61,7 @@ public class ServiceFactory {
 		String iconName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_SERVICE, ATR_ICON);		
 		ImageDescriptor image = null;
 			try {
-			image = BasePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), iconName);
+			image = AbstractUIPlugin.imageDescriptorFromPlugin(fromPlugin.getContributor().getName(), iconName);
 		} catch (Throwable t) {
 			ExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
 		}

@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -8,7 +8,8 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug (289236) - Editor Permitting create 2 columns with same id
+ *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
 package org.eclipse.tml.localization.stringeditor.i18n;
 
@@ -47,6 +48,13 @@ public class Messages extends NLS {
 	public static String StringEditorPart_TranslateActionName;
 	public static String StringEditorPart_FilterByKeyLabel;
 	public static String StringEditorPart_EditorTitle;
+	public static String StringEditorPart_ColumnAlreadyExistTitle;
+	public static String StringEditorPart_ColumnAlreadyExistMessage;
+	public static String StringEditorPart_FileChangedTitle;
+	public static String StringEditorPart_FileChangedDescription;
+	public static String StringEditorPart_UpdateConflictTitle;
+	public static String StringEditorPart_UpdateConflictDescription;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

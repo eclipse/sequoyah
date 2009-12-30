@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,7 +9,7 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
 package org.eclipse.tml.localization.stringeditor.editor.operations;
 
@@ -29,6 +29,8 @@ public class RemoveColumnOperation extends EditorOperation {
 	private final ColumnInfo column;
 
 	private final int columnIndex, columnWidth;
+
+	boolean changedColumn = false;
 
 	/**
 	 * Creates a RemoveColumnOperation.
@@ -69,6 +71,7 @@ public class RemoveColumnOperation extends EditorOperation {
 			throws ExecutionException {
 
 		getEditor().removeColumn(column.getId());
+		changedColumn = getEditor().unmarkColumnAsChanged(column.getId());
 		return Status.OK_STATUS;
 	}
 
@@ -84,6 +87,9 @@ public class RemoveColumnOperation extends EditorOperation {
 			throws ExecutionException {
 
 		getEditor().addColumn(column, columnIndex).setWidth(columnWidth);
+		if (changedColumn) {
+			getEditor().markColumnAsChanged(column.getId());
+		}
 		return Status.OK_STATUS;
 	}
 

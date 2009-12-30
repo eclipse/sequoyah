@@ -9,6 +9,7 @@
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271695] - Support to non-persistent instances of devices
+ * Mauren Brenner (Eldorado) - [281377] Support device types whose instances cannot be created by user
  *******************************************************************************/
 
 package org.eclipse.tml.framework.device.model;
@@ -32,6 +33,8 @@ public interface IDeviceType {
 	public boolean isAbstract();
 
 	public boolean isPersistent();
+	
+	public boolean supportsUserInstances();
 	
 	public void setAbstract(boolean isAbstract);
 

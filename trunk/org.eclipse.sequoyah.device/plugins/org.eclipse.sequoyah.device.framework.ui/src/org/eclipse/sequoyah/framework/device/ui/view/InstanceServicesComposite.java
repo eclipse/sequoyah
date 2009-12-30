@@ -17,6 +17,8 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247179] - Choice of service buttons orientation on Instance Mgt View should be persisted
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [272544] - Default values for filter and orientation choices not being set.
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
+ * Mauren Brenner (Eldorado) - Bug [282271] - Applying solution contributed by Vinicius Hernandes (Eldorado)
+ * Mauren Brenner (Eldorado) - Bug [289577] - Add condition to handle case where button image is not defined
  ********************************************************************************/
 
 package org.eclipse.tml.framework.device.ui.view;
@@ -32,6 +34,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
@@ -41,6 +45,7 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
@@ -99,6 +104,14 @@ public class InstanceServicesComposite extends Composite {
 		}		
 	}
 	
+	private Listener createServicesAreaListener =  new Listener(){
+        
+        public void handleEvent(Event event) {
+            createServicesArea();
+        }
+        
+    };
+	
 	private class ServicesOrientationAction extends Action
 	{
 	    public ServicesOrientationAction()
@@ -140,6 +153,16 @@ public class InstanceServicesComposite extends Composite {
 		super(parent, SWT.NONE);
 
 		createContents();
+		addDisposeListener(new DisposeListener(){
+
+            public void widgetDisposed(DisposeEvent e)
+            {
+                label.dispose();
+                label = null;
+                toolBar.dispose();
+                toolBar = null;
+            }
+		});
 	}
 
 	public void setSelectedInstance(IInstance instance)
@@ -179,6 +202,13 @@ public class InstanceServicesComposite extends Composite {
 
 	private void createServicesArea()
 	{
+	    Control oldContent = viewForm.getContent();
+	    viewForm.setContent(null);
+	    if (oldContent != null){
+	        oldContent.dispose();
+	        oldContent = null;
+	    }
+	    
 		ScrolledComposite scrollComposite = new ScrolledComposite(viewForm, SWT.V_SCROLL | SWT.H_SCROLL);
 		
 		Composite servicesComposite = new Composite(scrollComposite,SWT.NONE);
@@ -218,13 +248,19 @@ public class InstanceServicesComposite extends Composite {
 						serviceButton.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
 						
 						// Set button enabled to false when performing an operation
-						serviceButton.addListener(SWT.Selection,  new Listener(){
-							
-							public void handleEvent(Event event) {
-								createServicesArea();
-							}
-							
-						} );
+						serviceButton.addListener(SWT.Selection, createServicesAreaListener);
+						
+						serviceButton.addDisposeListener(new DisposeListener(){
+
+                            public void widgetDisposed(DisposeEvent e)
+                            {
+                               Listener[] selectionListeners = e.widget.getListeners(SWT.Selection);
+                               for(Listener selectionListener : selectionListeners){
+                                   e.widget.removeListener(SWT.Selection, selectionListener);
+                               }
+                            }
+                           
+						});
 						
 						RowData data = new RowData();
 						data.width = DEFAULT_BUTTONS_WIDTH;
@@ -242,10 +278,11 @@ public class InstanceServicesComposite extends Composite {
 						serviceButton.setText(serviceName);
 						
 						// set the button image to 16x16 image
-						ImageData serviceImageData = service.getImage().getImageData().scaledTo(DEFAULT_BUTTON_IMAGE_SIZE, DEFAULT_BUTTON_IMAGE_SIZE);
-						Image serviceImage = new Image(serviceButton.getDisplay(), serviceImageData);
-						serviceButton.setImage(serviceImage);
-
+						if (service.getImage() != null) {
+							ImageData serviceImageData = service.getImage().getImageData().scaledTo(DEFAULT_BUTTON_IMAGE_SIZE, DEFAULT_BUTTON_IMAGE_SIZE);
+							Image serviceImage = new Image(serviceButton.getDisplay(), serviceImageData);
+							serviceButton.setImage(serviceImage);
+						}
 					}
 				}
 			}

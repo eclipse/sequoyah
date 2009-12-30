@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -8,15 +8,18 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
+ *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
 package org.eclipse.tml.localization.stringeditor.editor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -149,6 +152,7 @@ public class StringEditorViewerModel {
 				rowsMap.put(key, row);
 			}
 			row.addCell(info.getId(), info.getCells().get(key));
+			validateRow(row);
 		}
 		notifyListeners();
 	}
@@ -170,6 +174,7 @@ public class StringEditorViewerModel {
 			}
 			columnInfo.addCell(info.getKey(), cells.get(column));
 		}
+		validateRow(info);
 		notifyListeners();
 	}
 
@@ -264,6 +269,20 @@ public class StringEditorViewerModel {
 		return changed;
 	}
 
+	public List<ColumnInfo> getColumnsChanged() {
+		Set<ColumnInfo> changed = new HashSet<ColumnInfo>();
+		for (RowInfo info : rowsMap.values()) {
+			for (Map.Entry<String, CellInfo> cellEntry : info.getCells()
+					.entrySet()) {
+				CellInfo cell = cellEntry.getValue();
+				if (cell != null && cell.isDirty()) {
+					changed.add(columnsMap.get(cellEntry.getKey()));
+				}
+			}
+		}
+		return (new ArrayList<ColumnInfo>(changed));
+	}
+
 	/**
 	 * Validate all cells of this row, even if it has null value
 	 * 
@@ -272,11 +291,15 @@ public class StringEditorViewerModel {
 	 */
 	public void validateRow(String key) {
 		RowInfo row = rowsMap.get(key);
+		validateRow(row);
+	}
+
+	public void validateRow(RowInfo row) {
 		row.cleanStatus();
 		for (ColumnInfo column : columns) {
 			CellInfo cell = row.getCells().get(column.getId());
-			IStatus cellStatus = validator.isCellValid(column.getId(), key,
-					cell != null ? cell.getValue() : null);
+			IStatus cellStatus = validator.isCellValid(column.getId(), row
+					.getKey(), cell != null ? cell.getValue() : null);
 			if (!cellStatus.isOK()) {
 				row.addStatus(cellStatus);
 			}

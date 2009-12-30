@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -8,7 +8,7 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
 package org.eclipse.tml.localization.stringeditor.editor.operations;
 
@@ -28,6 +28,8 @@ public class RevertColumnToSavedStateOperation extends EditorOperation {
 	private final ColumnInfo actualState;
 
 	private ColumnInfo savedState = null;
+
+	boolean changedColumn = false;
 
 	public RevertColumnToSavedStateOperation(String label,
 			StringEditorPart editor, ColumnInfo actual) {
@@ -55,6 +57,7 @@ public class RevertColumnToSavedStateOperation extends EditorOperation {
 			throws ExecutionException {
 		getModel().removeColumn(actualState.getId());
 		getModel().addColumn(savedState);
+		changedColumn = getEditor().unmarkColumnAsChanged(actualState.getId());
 		getEditor().getEditorViewer().refresh();
 		return Status.OK_STATUS;
 	}
@@ -64,6 +67,9 @@ public class RevertColumnToSavedStateOperation extends EditorOperation {
 			throws ExecutionException {
 		getModel().removeColumn(savedState.getId());
 		getModel().addColumn(actualState);
+		if (changedColumn) {
+			getEditor().markColumnAsChanged(actualState.getId());
+		}
 		getEditor().getEditorViewer().refresh();
 		return Status.OK_STATUS;
 	}

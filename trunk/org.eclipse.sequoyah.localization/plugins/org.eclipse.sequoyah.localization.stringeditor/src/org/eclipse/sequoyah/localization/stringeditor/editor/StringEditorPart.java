@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -8,14 +8,21 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
+ * Marcelo Marzola Bossoni (Eldorado) - Bug (289236) - Editor Permitting create 2 columns with same id
+ * Marcelo Marzola Bossoni (Eldorado) - Bug (289282) - NullPointer adding keyNullPointer adding key
+ * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Daniel Barboza Franco (Eldorado) - Bug [290058] - fixing NullPointerException's while listening changes made from outside Eclipse
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted
  ********************************************************************************/
 package org.eclipse.tml.localization.stringeditor.editor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -50,13 +57,17 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.ToolTip;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -79,6 +90,7 @@ import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
 import org.eclipse.tml.localization.stringeditor.datatype.IModelChangedListener;
 import org.eclipse.tml.localization.stringeditor.datatype.RowInfo;
 import org.eclipse.tml.localization.stringeditor.editor.EditorSession.PROPERTY;
+import org.eclipse.tml.localization.stringeditor.editor.input.IInputChangeListener;
 import org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput;
 import org.eclipse.tml.localization.stringeditor.editor.operations.AddColumnOperation;
 import org.eclipse.tml.localization.stringeditor.editor.operations.AddKeyOperation;
@@ -125,7 +137,6 @@ public class StringEditorPart extends EditorPart {
 		public void modifyText(ModifyEvent e) {
 			StringEditorPart.this.filterByKeyString = ((Text) e.widget)
 					.getText();
-			getEditorViewer().refresh();
 		}
 	}
 
@@ -205,8 +216,8 @@ public class StringEditorPart extends EditorPart {
 		@Override
 		protected Object getValue(Object element) {
 			CellInfo info = ((RowInfo) element).getCells().get(columnID);
-			return (info != null && info.getValue() != null) ? info.getValue()
-					: ""; //$NON-NLS-1$
+			return ((info != null) && (info.getValue() != null)) ? info
+					.getValue() : ""; //$NON-NLS-1$
 		}
 
 		/*
@@ -234,7 +245,7 @@ public class StringEditorPart extends EditorPart {
 					/*
 					 * Our old cell is different from our new one
 					 */
-					if ((oldCell.getValue() != null && !oldCell.getValue()
+					if (((oldCell.getValue() != null) && !oldCell.getValue()
 							.equals(value.toString()))
 							|| (oldCell.getValue() == null)) {
 						newCell = new CellInfo(value.toString(), oldCell
@@ -288,12 +299,10 @@ public class StringEditorPart extends EditorPart {
 
 		@Override
 		public void run() {
+			String column = viewer.getTable().getColumn(activeColumn).getText();
 			RevertColumnToSavedStateOperation operation = new RevertColumnToSavedStateOperation(
 					Messages.StringEditorPart_RevertColumnActionOperationName,
-					StringEditorPart.this, getModel()
-							.getColumn(
-									viewer.getTable().getColumn(activeColumn)
-											.getText()));
+					StringEditorPart.this, getModel().getColumn(column));
 			executeOperation(operation);
 		}
 	}
@@ -360,11 +369,24 @@ public class StringEditorPart extends EditorPart {
 		public void run() {
 			ColumnInfo info = getContentProvider().getOperationProvider()
 					.getNewColumn();
+
 			if (info != null) {
-				AddColumnOperation operation = new AddColumnOperation(
-						Messages.StringEditorPart_AddColumnOperationName,
-						StringEditorPart.this, info);
-				executeOperation(operation);
+				if (getColumnByID(info.getId()) == null) {
+					AddColumnOperation operation = new AddColumnOperation(
+							Messages.StringEditorPart_AddColumnOperationName,
+							StringEditorPart.this, info);
+					executeOperation(operation);
+
+				} else {
+					MessageDialog
+							.openInformation(
+									getEditorSite().getShell(),
+									Messages.StringEditorPart_ColumnAlreadyExistTitle,
+									NLS
+											.bind(
+													Messages.StringEditorPart_ColumnAlreadyExistMessage,
+													info.getId()));
+				}
 			}
 		}
 	}
@@ -379,8 +401,8 @@ public class StringEditorPart extends EditorPart {
 			String activeColumnID = getEditorViewer().getTable().getColumn(
 					activeColumn).getText();
 			this
-					.setEnabled(activeColumn != 0
-							|| (getModel().getColumn(activeColumnID) != null && getModel()
+					.setEnabled((activeColumn != 0)
+							&& ((getModel().getColumn(activeColumnID) != null) && getModel()
 									.getColumn(activeColumnID).canRemove()));
 		}
 
@@ -454,7 +476,7 @@ public class StringEditorPart extends EditorPart {
 		public void run() {
 			ISelection sel = viewer.getSelection();
 			List<RowInfo> toBeDeleted = new ArrayList<RowInfo>();
-			if (sel != null && sel instanceof IStructuredSelection) {
+			if ((sel != null) && (sel instanceof IStructuredSelection)) {
 				IStructuredSelection selection = (IStructuredSelection) sel;
 				for (Object o : selection.toArray()) {
 					if (o instanceof RowInfo) {
@@ -480,6 +502,29 @@ public class StringEditorPart extends EditorPart {
 	 * This editor history
 	 */
 	private final IOperationHistory operationHistory;
+
+	/*
+	 * List of columns changed in the file system
+	 */
+	private Set<String> changedColumns = new HashSet<String>();
+
+	private boolean needToPromptFileSystemChange = false;
+
+	private final IInputChangeListener inputChangeListener = new IInputChangeListener() {
+		public void columnChanged(String columnID) {
+			markColumnAsChanged(columnID);
+		}
+
+		public void projectRemoved() {
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+				public void run() {
+					StringEditorPart.this.getEditorSite().getPage()
+							.closeEditor(StringEditorPart.this, false);
+				}
+			});
+		}
+	};
 
 	/*
 	 * the viewer
@@ -566,6 +611,11 @@ public class StringEditorPart extends EditorPart {
 	 */
 	private String filterByKeyString = ""; //$NON-NLS-1$
 
+	/*
+	 * Filter by key apply button
+	 */
+	private Button applyFilterButton = null;
+
 	private Form editorComposite;
 
 	private Image errorImage;
@@ -635,6 +685,9 @@ public class StringEditorPart extends EditorPart {
 				setSite(site);
 				setInput(stringEditorInput);
 				setPartName(stringEditorInput.getTitle());
+
+				stringEditorInput.addInputChangeListener(inputChangeListener);
+
 			} else {
 				throw new Exception(
 						"An input provider for the given file was not found: " //$NON-NLS-1$
@@ -654,12 +707,13 @@ public class StringEditorPart extends EditorPart {
 							"icons/obj16_ok.png").getImageData());
 
 		} catch (Exception e) {
-			handleInitFailure(e, input);
+			handleInitFailure(e, input, site);
 		}
 
 	}
 
-	private void handleInitFailure(Exception e, IEditorInput input) {
+	private void handleInitFailure(Exception e, IEditorInput input,
+			IEditorSite site) {
 		MessageDialog.openError(new Shell(),
 				"Error loading editor. Some available editor will be opened", e //$NON-NLS-1$
 						.getMessage());
@@ -672,20 +726,20 @@ public class StringEditorPart extends EditorPart {
 		if (editors.length > 0) {
 			int i = 0;
 			IEditorDescriptor editor = null;
-			while (i < editors.length && editor == null) {
-				if (!editors[i].getId().equals(this.getEditorSite().getId())) {
+			while ((i < editors.length) && (editor == null)) {
+				if (!editors[i].getId().equals(site.getId())) {
 					editor = editors[i];
 				}
 				i++;
 			}
 			if (editor != null) {
 				try {
-					getSite().getPage().openEditor(input, editor.getId());
+					site.getPage().openEditor(input, editor.getId());
 				} catch (PartInitException e1) {
 					// do nothing
 				}
 			}
-			getSite().getPage().closeEditor(this, false);
+			site.getPage().closeEditor(this, false);
 		}
 
 	}
@@ -703,7 +757,7 @@ public class StringEditorPart extends EditorPart {
 	private void createOptionsSection(FormToolkit toolkit, final Form parent) {
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 4,
 				1);
-		GridLayout layout = new GridLayout(4, false);
+		GridLayout layout = new GridLayout(5, false);
 		ExpandableComposite expandableComposite = toolkit
 				.createExpandableComposite(parent.getBody(),
 						ExpandableComposite.TWISTIE);
@@ -716,14 +770,13 @@ public class StringEditorPart extends EditorPart {
 			}
 		});
 
-		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 4, 1);
+		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 5, 1);
 		Composite optionsComposite = toolkit
 				.createComposite(expandableComposite);
 		optionsComposite.setLayoutData(layoutData);
 		optionsComposite.setLayout(layout);
 		expandableComposite.setClient(optionsComposite);
 
-		layoutData = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
 		highlightChangesButton = toolkit.createButton(optionsComposite,
 				Messages.StringEditorPart_HighlightChangesLabel, SWT.CHECK);
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
@@ -749,7 +802,7 @@ public class StringEditorPart extends EditorPart {
 		search.setLayoutData(layoutData);
 
 		searchText = toolkit.createText(optionsComposite, "", SWT.BORDER);
-		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		searchText.setLayoutData(layoutData);
 		searchText.addModifyListener(new SearchTextModifyListener());
 
@@ -779,6 +832,25 @@ public class StringEditorPart extends EditorPart {
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		filterByKeyText.setLayoutData(layoutData);
 		filterByKeyText.addModifyListener(new FilterByKeyTextModifyListener());
+		filterByKeyText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.CR) {
+					getEditorViewer().refresh();
+				}
+			}
+		});
+
+		applyFilterButton = toolkit.createButton(optionsComposite, "Apply",
+				SWT.PUSH);
+		layoutData = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		applyFilterButton.setLayoutData(layoutData);
+		applyFilterButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				getEditorViewer().refresh();
+			}
+		});
 	}
 
 	/*
@@ -797,8 +869,8 @@ public class StringEditorPart extends EditorPart {
 
 		editorComposite = toolkit.createForm(parent);
 		editorComposite
-				.setText(stringEditorInput.getName() != null
-						&& stringEditorInput.getName().trim().length() > 0 ? stringEditorInput
+				.setText((stringEditorInput.getName() != null)
+						&& (stringEditorInput.getName().trim().length() > 0) ? stringEditorInput
 						.getName()
 						: Messages.StringEditorPart_EditorTitle);
 
@@ -896,11 +968,11 @@ public class StringEditorPart extends EditorPart {
 					ColumnViewerEditorActivationEvent event) {
 				boolean activate = false;
 				if (event.stateMask == 0) {
-					if (event.character >= 32 && event.character <= 127) {
+					if ((event.character >= 32) && (event.character <= 127)) {
 						activate = true;
-					} else if (event.keyCode == SWT.CR
-							|| event.keyCode == SWT.DEL
-							|| event.keyCode == SWT.KEYPAD_CR) {
+					} else if ((event.keyCode == SWT.CR)
+							|| (event.keyCode == SWT.DEL)
+							|| (event.keyCode == SWT.KEYPAD_CR)) {
 						activate = true;
 					} else {
 						activate = super.isEditorActivationEvent(event);
@@ -1100,7 +1172,7 @@ public class StringEditorPart extends EditorPart {
 		/*
 		 * Try to restore the sort by. If no sort saved, use the key column
 		 */
-		if (sortBy != null && sortBy.length() > 0) {
+		if ((sortBy != null) && (sortBy.length() > 0)) {
 			for (TableColumn c : viewer.getTable().getColumns()) {
 				if (c.getText().equals(sortBy)) {
 					viewer.getTable().setSortColumn(c);
@@ -1139,7 +1211,7 @@ public class StringEditorPart extends EditorPart {
 		column.getColumn().setWidth(
 				SIZE_HINT * (column.getColumn().getText().length() + 1));
 		column.getColumn().setResizable(true);
-		column.getColumn().setMoveable(true);
+		column.getColumn().setMoveable(false);
 		column.getColumn().addSelectionListener(listener);
 		return column;
 	}
@@ -1234,10 +1306,13 @@ public class StringEditorPart extends EditorPart {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		getEditorInput().save();
-		List<RowInfo> changed = getModel().save();
-		updateViewer(changed);
-		fireDirtyPropertyChanged();
+		if (promptUpdateConflicts()) {
+			getEditorInput().save();
+			List<RowInfo> changed = getModel().save();
+			updateViewer(changed);
+			fireDirtyPropertyChanged();
+			setEditorStatus(getEditorInput().validate());
+		}
 	}
 
 	public void updateViewer(List<RowInfo> rows) {
@@ -1312,6 +1387,100 @@ public class StringEditorPart extends EditorPart {
 								.getWorkbenchWindow()));
 
 		viewer.getTable().setFocus();
+
+		promptFileSystemChanges();
+
+	}
+
+	public void markColumnAsChanged(String columnID) {
+		changedColumns.add(columnID);
+		needToPromptFileSystemChange = true;
+	}
+
+	public boolean unmarkColumnAsChanged(String columnID) {
+		return changedColumns.remove(columnID);
+	}
+
+	private void clearColumnsMarkedAsChanged() {
+		changedColumns.clear();
+	}
+
+	/**
+	 * 
+	 */
+	private void promptFileSystemChanges() {
+
+		if ((changedColumns.size() > 0) && (needToPromptFileSystemChange)) {
+
+			String columnNames = getChangedColumnNamesString();
+
+			boolean replace = MessageDialog.openQuestion(StringEditorPart.this
+					.getEditorSite().getShell(),
+					Messages.StringEditorPart_FileChangedTitle, NLS.bind(
+							Messages.StringEditorPart_FileChangedDescription,
+							columnNames));
+
+			needToPromptFileSystemChange = false;
+
+			/*
+			 * If the user chooses to replace
+			 */
+			if (replace) {
+				Set<String> revertColumnNames = new HashSet<String>(
+						changedColumns);
+				for (String columnName : revertColumnNames) {
+					RevertColumnToSavedStateOperation operation = new RevertColumnToSavedStateOperation(
+							Messages.StringEditorPart_RevertColumnActionOperationName,
+							StringEditorPart.this, getModel().getColumn(
+									columnName));
+					executeOperation(operation);
+				}
+			}
+
+		}
+
+	}
+
+	private boolean promptUpdateConflicts() {
+
+		boolean result = true;
+
+		if (changedColumns.size() > 0) {
+
+			String columnNames = getChangedColumnNamesString();
+
+			boolean overwrite = MessageDialog
+					.openQuestion(
+							StringEditorPart.this.getEditorSite().getShell(),
+							Messages.StringEditorPart_UpdateConflictTitle,
+							NLS
+									.bind(
+											Messages.StringEditorPart_UpdateConflictDescription,
+											columnNames));
+
+			if (!overwrite) {
+				result = false;
+			} else {
+				clearColumnsMarkedAsChanged();
+			}
+
+		}
+
+		return result;
+
+	}
+
+	private String getChangedColumnNamesString() {
+
+		String result = "\n";
+
+		int i = 1;
+		for (String columnName : changedColumns) {
+			result += i++ + ") " + columnName + "\n";
+		}
+
+		return result;
+
 	}
 
 	public ContentProvider getContentProvider() {
@@ -1381,8 +1550,8 @@ public class StringEditorPart extends EditorPart {
 	 * @param info
 	 */
 	public void addRow(RowInfo info) {
-		getModel().addRow(info);
 		getEditorInput().addRow(info);
+		getModel().addRow(info);
 		fireDirtyPropertyChanged();
 	}
 
@@ -1413,6 +1582,7 @@ public class StringEditorPart extends EditorPart {
 	 */
 	@Override
 	public void dispose() {
+		getEditorInput().removeInputChangeListener(inputChangeListener);
 		getEditorInput().dispose();
 		super.dispose();
 	}
@@ -1479,7 +1649,7 @@ public class StringEditorPart extends EditorPart {
 	public void setEditorStatus(IStatus status) {
 		StringBuilder builder = new StringBuilder();
 		int messageType = 0;
-		if (status != null && !status.isOK()) {
+		if ((status != null) && !status.isOK()) {
 			if (status.isMultiStatus()) {
 				for (IStatus child : status.getChildren()) {
 					builder.append(child.getMessage());
@@ -1503,6 +1673,22 @@ public class StringEditorPart extends EditorPart {
 			editorComposite.setMessage(null);
 		}
 
+	}
+
+	/**
+	 * Get a column by their header text
+	 * 
+	 * @param columnID
+	 * @return the column or null if not found
+	 */
+	public TableColumn getColumnByID(String columnID) {
+		TableColumn theColumn = null;
+		for (TableColumn column : getEditorViewer().getTable().getColumns()) {
+			if (column.getText().equals(columnID)) {
+				theColumn = column;
+			}
+		}
+		return theColumn;
 	}
 
 	public Image getErrorImage() {

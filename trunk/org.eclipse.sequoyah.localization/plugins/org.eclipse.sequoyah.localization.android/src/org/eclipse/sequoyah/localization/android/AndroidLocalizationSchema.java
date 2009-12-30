@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,7 +9,10 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) -  Bug [289146] - Performance and Usability Issues
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289236] - Editor Permitting create 2 columns with same id
+ * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted 
  ********************************************************************************/
 package org.eclipse.tml.localization.android;
 
@@ -20,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -41,6 +45,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -48,6 +53,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.tml.common.utilities.exception.TmLException;
 import org.eclipse.tml.localization.android.i18n.Messages;
 import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
@@ -56,8 +62,8 @@ import org.eclipse.tml.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.tml.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.tml.localization.tools.datamodel.StringNode;
 import org.eclipse.tml.localization.tools.datamodel.StringNodeComment;
-import org.eclipse.tml.localization.tools.editor.StringEditorInput;
 import org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema;
+import org.eclipse.tml.localization.tools.managers.LocalizationManager;
 import org.eclipse.tml.localization.tools.managers.ProjectLocalizationManager;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Comment;
@@ -147,17 +153,16 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * #promptCollumnName()
 	 */
 	@Override
-	public ColumnInfo promptCollumnName() {
+	public ColumnInfo promptCollumnName(final IProject project) {
 		ColumnInfo newColumn = null;
 
 		// Ask user for the ID
 		InputDialog dialog = new InputDialog(PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell(), NEW_COLUMN_TITLE,
-				NEW_COLUMN_DESCRIPTION, NEW_COLUMN_TEXT, //$NON-NLS-2$
-				new IInputValidator() {
+				NEW_COLUMN_DESCRIPTION, NEW_COLUMN_TEXT, new IInputValidator() {
 
 					public String isValid(String newText) {
-						return isValid2(newText);
+						return isValid2(newText, project);
 					};
 				});
 
@@ -176,23 +181,31 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 *            the new column name
 	 * @return true if it is a valid column name
 	 */
-	private String isValid2(String value) {
+	private String isValid2(String value, IProject project) {
+
 		String result = null;
-		AndroidLocalizationSchema schema = new AndroidLocalizationSchema();
-		String id = value.replace(LOCALIZATION_FILES_FOLDER, ""); //$NON-NLS-1$
-		LocaleInfo info = schema.getLocaleInfoFromID(id);
-		ProjectLocalizationManager manager = StringEditorInput
-				.getProjectLocalizationManager();
 
-		if ((info.getLocaleAttributes().size() > 0)
-				|| (value
-						.equalsIgnoreCase(AndroidLocalizationSchema.LOCALIZATION_FILES_FOLDER))) {
-			LocalizationFile file = manager.getLocalizationProject()
-					.getLocalizationFile(info);
-			if (file != null) {
-				result = Messages.AndroidNewColumnProvider_Dialog_FileAlreadyExists;
+		if (value.startsWith(LOCALIZATION_FILES_FOLDER)) {
 
+			AndroidLocalizationSchema schema = new AndroidLocalizationSchema();
+			String id = value.replace(LOCALIZATION_FILES_FOLDER, ""); //$NON-NLS-1$
+			LocaleInfo info = schema.getLocaleInfoFromID(id);
+			ProjectLocalizationManager manager = LocalizationManager
+					.getInstance()
+					.getProjectLocalizationManager(project, false);
+
+			if ((info.getLocaleAttributes().size() > 0)
+					|| (value
+							.equalsIgnoreCase(AndroidLocalizationSchema.LOCALIZATION_FILES_FOLDER))) {
+				LocalizationFile file = manager.getLocalizationProject()
+						.getLocalizationFile(info);
+				if ((file != null) && !file.isToBeDeleted()) {
+					result = Messages.AndroidNewColumnProvider_Dialog_FileAlreadyExists;
+				}
+			} else {
+				result = NEW_COLUMN_INVALID_ID;
 			}
+
 		} else {
 			result = NEW_COLUMN_INVALID_ID;
 		}
@@ -230,20 +243,39 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			String filePath = localizationFile.getFile().getFullPath()
 					.toOSString();
 
+			IProject project = localizationFile.getLocalizationProject()
+					.getProject();
+
+			IPath temp = new Path(filePath);
+
+			while (temp.segment(0).equals(project.getName())) {
+				temp = temp.removeFirstSegments(1);
+			}
+
+			filePath = File.separator + temp.toOSString();
+
 			if (!localizationFile.getFile().exists()) {
 				localizationFile.getFile().getLocation();
-				IPath fileToSave = new Path(localizationFile
-						.getLocalizationProject().getProject().getLocation()
-						+ filePath);
+				IPath fileToSave = null;
+				if (localizationFile.getLocalizationProject() != null) {
+					fileToSave = new Path(localizationFile
+							.getLocalizationProject().getProject()
+							.getLocation()
+							+ filePath);
+				} else {
+					fileToSave = localizationFile.getFile().getLocation();
+				}
 
 				fileToSave.removeLastSegments(1).toFile().mkdirs();
 				fileToSave.toFile().createNewFile();
 				ResourcesPlugin.getWorkspace().getRoot().refreshLocal(
 						IResource.DEPTH_INFINITE, new NullProgressMonitor());
 
-				IFile iFile = localizationFile.getLocalizationProject()
-						.getProject().getFile(new Path(filePath));
-				localizationFile.setFile(iFile);
+				if (localizationFile.getLocalizationProject() != null) {
+					IFile iFile = localizationFile.getLocalizationProject()
+							.getProject().getFile(new Path(filePath));
+					localizationFile.setFile(iFile);
+				}
 			}
 
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -399,7 +431,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	public Map<LocaleInfo, IFile> getLocalizationFiles(IProject project) {
 
 		Map<LocaleInfo, IFile> localizationFiles = new LinkedHashMap<LocaleInfo, IFile>();
-
+		boolean hasDefault = false;
 		try {
 
 			IResource resourcesFolder = project.findMember(RESOURCES_FOLDER);
@@ -423,11 +455,58 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 											getLocaleInfoFromPath(file
 													.getProjectRelativePath()),
 											(IFile) file);
+									if (folder.getName().equals(
+											LOCALIZATION_FILES_FOLDER)) {
+										hasDefault = true;
+									}
 								}
 							}
 						}
-
 					}
+				}
+			}
+			// if a default file (typically values/strings.xml does not exists,
+			// create it
+			if (!hasDefault) {
+				if (resourcesFolder instanceof IFolder) {
+					IFolder folder = (IFolder) resourcesFolder;
+					final IFolder valuesFolder = folder
+							.getFolder(LOCALIZATION_FILES_FOLDER);
+					try {
+						if (!valuesFolder.exists()) {
+
+							// try to create the folder
+							PlatformUI.getWorkbench().getProgressService().run(
+									false, false, new IRunnableWithProgress() {
+
+										public void run(IProgressMonitor monitor)
+												throws InvocationTargetException,
+												InterruptedException {
+											try {
+												valuesFolder.create(true, true,
+														monitor);
+											} catch (CoreException e) {
+												// do nothing
+											}
+
+										}
+									});
+						}
+						// check if folder was created
+						// create the default file
+						if (valuesFolder.exists()) {
+							IFile valuesFile = valuesFolder
+									.getFile(LOCALIZATION_FILE_NAME);
+							localizationFiles.put(
+									getLocaleInfoFromPath(valuesFile
+											.getProjectRelativePath()),
+									valuesFile);
+						}
+
+					} catch (Exception e) {
+						// do nothing, just exit
+					}
+
 				}
 			}
 		} catch (CoreException e) {
@@ -494,6 +573,16 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		LocaleInfo localeInfo = getLocaleInfoFromPath(file.getFullPath());
 		List<StringNode> stringNodes = new ArrayList<StringNode>();
 
+		if (!file.exists()) {
+			LocalizationFile tempFile = new LocalizationFile(file, localeInfo,
+					stringNodes);
+			try {
+				createFile(tempFile);
+			} catch (TmLException e) {
+				// do nothing
+			}
+		}
+
 		try {
 
 			DocumentBuilderFactory factory = DocumentBuilderFactory
@@ -518,7 +607,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				if (stringNode.hasChildNodes()) {
 					NodeList childs = stringNode.getChildNodes();
 					for (int j = 0; j < childs.getLength(); j++) {
-						Node childN = (Node) childs.item(j);
+						Node childN = childs.item(j);
 						if (childN.getNodeType() == COMMENT_NODE) {
 							comment = childN.getNodeValue();
 						}

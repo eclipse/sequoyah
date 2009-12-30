@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -8,7 +8,7 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted
  ********************************************************************************/
 package org.eclipse.tml.localization.stringeditor.editor;
 
@@ -45,7 +45,7 @@ public class EditorSession {
 					.getPersistentProperties();
 			Map<QualifiedName, String> editorProperties = new HashMap<QualifiedName, String>();
 			for (QualifiedName name : persistentProperties.keySet()) {
-				if (name.getQualifier() != null
+				if ((name.getQualifier() != null)
 						&& name.getQualifier().contains(PROPERTY_GROUP)) {
 					editorProperties.put(name, persistentProperties.get(name));
 				}
@@ -94,12 +94,14 @@ public class EditorSession {
 	}
 
 	public void save() {
-		for (QualifiedName key : session.keySet()) {
-			try {
-				project.setPersistentProperty(key, session.get(key));
-			} catch (CoreException e) {
-				BasePlugin.logError("Error saving preferences to project: "
-						+ project.getName(), e);
+		if (project.exists()) {
+			for (QualifiedName key : session.keySet()) {
+				try {
+					project.setPersistentProperty(key, session.get(key));
+				} catch (CoreException e) {
+					BasePlugin.logError("Error saving preferences to project: "
+							+ project.getName(), e);
+				}
 			}
 		}
 	}
@@ -108,14 +110,17 @@ public class EditorSession {
 	 * Clean all editor properties from the project
 	 */
 	public void clean() {
-		for (QualifiedName key : session.keySet()) {
-			try {
-				project.setPersistentProperty(key, null);
-			} catch (CoreException e) {
-				BasePlugin.logError("Error cleaning preferences of project: "
-						+ project.getName(), e);
+		if (project.exists()) {
+			for (QualifiedName key : session.keySet()) {
+				try {
+					project.setPersistentProperty(key, null);
+				} catch (CoreException e) {
+					BasePlugin.logError(
+							"Error cleaning preferences of project: "
+									+ project.getName(), e);
+				}
 			}
+			session.clear();
 		}
-		session.clear();
 	}
 }
