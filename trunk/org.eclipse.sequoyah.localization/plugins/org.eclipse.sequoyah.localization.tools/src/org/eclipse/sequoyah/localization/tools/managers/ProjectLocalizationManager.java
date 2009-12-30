@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,7 +9,10 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
+ * Marcelo Marzola Bossoni (Eldorado) - Bug (289236) - Editor Permitting create 2 columns with same id
+ * Marcelo Marzola Bossoni (Eldorado) - Bug (289282) - NullPointer adding keyNullPointer adding key
+ *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
 package org.eclipse.tml.localization.tools.managers;
 
@@ -17,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,9 +42,11 @@ import org.eclipse.tml.localization.tools.persistence.ProjectPersistenceManager;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * This manager is instantiated on demand and is responsible for one specific Project
+ * This manager is instantiated on demand and is responsible for one specific
+ * Project
  * 
- * It provides methods to make operations related with the localization files of that Project
+ * It provides methods to make operations related with the localization files of
+ * that Project
  */
 public class ProjectLocalizationManager {
 
@@ -60,10 +66,14 @@ public class ProjectLocalizationManager {
 	private ProjectPreferencesManager projectPreferencesManager;
 
 	/*
-	 * The localization schema related to the project, 
-	 * based on its nature
+	 * The localization schema related to the project, based on its nature
 	 */
 	private ILocalizationSchema projectLocalizationSchema;
+
+	/*
+	 * The project being managed by this manager
+	 */
+	private IProject project;
 
 	/**
 	 * Constructor
@@ -82,12 +92,68 @@ public class ProjectLocalizationManager {
 					.loadAllFiles(project).values());
 			this.localizationProject = new LocalizationProject(project,
 					localizationFiles);
+			this.project = project;
+			syncDefaultColumn();
 
 		} catch (IOException e) {
 			BasePlugin.logError("Could not load the localization manager: "
 					+ e.getMessage());
 		}
 
+	}
+
+	public void reload() {
+		List<LocalizationFile> localizationFiles = new ArrayList<LocalizationFile>();
+		List<LocalizationFile> notPersisted = new ArrayList<LocalizationFile>();
+		Map<IFile, LocalizationFile> localizationFilesMap = new HashMap<IFile, LocalizationFile>();
+
+		notPersisted = getLocalizationProject().getLocalizationFiles();
+
+		try {
+			localizationFiles.addAll(this.projectLocalizationSchema
+					.loadAllFiles(project).values());
+			for (LocalizationFile file : localizationFiles) {
+				localizationFilesMap.put(file.getFile(), file);
+			}
+
+			for (LocalizationFile file : notPersisted) {
+				if (localizationFilesMap.get(file.getFile()) == null) {
+					localizationFiles.add(file);
+				}
+			}
+
+			this.localizationProject.getLocalizationFiles().clear();
+			for (LocalizationFile file : localizationFiles) {
+				localizationProject.addLocalizationFile(file);
+			}
+			syncDefaultColumn();
+		} catch (IOException e) {
+
+		}
+
+	}
+
+	// add missing string nodes from source to destination
+	private void syncNodes(LocalizationFile destination, LocalizationFile source) {
+		for (StringNode node : source.getStringNodes()) {
+			destination.getStringNodeByKey(node.getKey());
+		}
+	}
+
+	// ensure that all keys exists within the default columns
+	private void syncDefaultColumn() {
+		LocalizationFile mainFile = localizationProject
+				.getLocalizationFile(getProjectLocalizationSchema()
+						.getLocaleInfoFromID(
+								getProjectLocalizationSchema().getDefaultID()));
+		if (mainFile != null) {
+			for (LocalizationFile locFile : localizationProject
+					.getLocalizationFiles()) {
+				if (locFile != mainFile) {
+					syncNodes(mainFile, locFile);
+				}
+			}
+		}
 	}
 
 	/**
@@ -109,11 +175,12 @@ public class ProjectLocalizationManager {
 	}
 
 	/**
-	 * Create a new localization file containing the string nodes passed as a parameter
+	 * Create a new localization file containing the string nodes passed as a
+	 * parameter
 	 * 
 	 * The new localization file refers to a locale also passed as a parameter
 	 * 
-	 * @param localeInfo 
+	 * @param localeInfo
 	 * @param stringNodes
 	 */
 	public boolean createOrUpdateFile(LocaleInfo localeInfo,
@@ -132,11 +199,11 @@ public class ProjectLocalizationManager {
 	}
 
 	/**
-	 * Persist all changes in the localization files, as well as any meta or extra-data
-	 * associated with any localization files inside this project
+	 * Persist all changes in the localization files, as well as any meta or
+	 * extra-data associated with any localization files inside this project
 	 */
 	public boolean saveProject() {
-
+		syncDefaultColumn();
 		List<LocalizationFile> localizationFiles = localizationProject
 				.getLocalizationFiles();
 
@@ -167,7 +234,7 @@ public class ProjectLocalizationManager {
 					// delete the file on file system
 					localizationFile.getFile().delete(true, null);
 
-					//If the parent folder is empty, also delete the folder
+					// If the parent folder is empty, also delete the folder
 
 					if (localizationFile.getFile().getLocation() != null) {
 						File tempFile = new File(localizationFile.getFile()
@@ -205,18 +272,21 @@ public class ProjectLocalizationManager {
 						public void run(IProgressMonitor monitor)
 								throws InvocationTargetException,
 								InterruptedException {
+
 							try {
 								localizationProject.getProject().refreshLocal(
 										IResource.DEPTH_INFINITE, monitor);
 							} catch (CoreException e) {
 								// Do nothing
 							}
+
 						}
+
 					}, null);
 		} catch (InvocationTargetException e) {
 			// Do nothing
 		} catch (InterruptedException e) {
-			// Do nothing			
+			// Do nothing
 		}
 
 		localizationProject.setDirty(false);
@@ -276,7 +346,8 @@ public class ProjectLocalizationManager {
 	/**
 	 * Mark the file to be deleted
 	 * 
-	 * @param localizationFile the localization file that shall be deleted
+	 * @param localizationFile
+	 *            the localization file that shall be deleted
 	 */
 	public void markFileForDeletion(LocalizationFile localizationFile) {
 		localizationFile.setToBeDeleted(true);
@@ -285,10 +356,10 @@ public class ProjectLocalizationManager {
 	/**
 	 * Delete all file related information
 	 * 
-	 * @param file 
+	 * @param file
 	 */
 	public void deleteFileMetaExtraData(IFile file) {
-		//projectPersistenceManager.clearDataForFile(file);
+		// projectPersistenceManager.clearDataForFile(file);
 	}
 
 	/**
@@ -303,7 +374,7 @@ public class ProjectLocalizationManager {
 	/**
 	 * Get the Project Persistence Manager for this project
 	 * 
-	 * @return Project Persistence Manager for this project 
+	 * @return Project Persistence Manager for this project
 	 */
 	public ProjectPersistenceManager getProjectPersistenceManager() {
 		return projectPersistenceManager;
@@ -316,6 +387,29 @@ public class ProjectLocalizationManager {
 	 */
 	public ProjectPreferencesManager getProjectPreferencesManager() {
 		return projectPreferencesManager;
+	}
+
+	/**
+	 * Get the locale information for a especific file
+	 * 
+	 * @param file
+	 *            IFile to be analysed
+	 * @return the LocaleInfo for the file passed as a parameter
+	 */
+	public LocaleInfo getLocaleInfoForFile(IFile file) {
+
+		LocaleInfo localeInfo = null;
+
+		List<LocalizationFile> localizationFiles = localizationProject
+				.getLocalizationFiles();
+		for (LocalizationFile localizationFile : localizationFiles) {
+			if (localizationFile.getFile().equals(file)) {
+				localeInfo = localizationFile.getLocaleInfo();
+			}
+		}
+
+		return localeInfo;
+
 	}
 
 }

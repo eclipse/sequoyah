@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,13 +9,15 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
+ *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
 package org.eclipse.tml.localization.tools.datamodel;
 
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -34,7 +36,8 @@ public class LocalizationProject {
 	private List<LocalizationFile> localizationFiles;
 
 	/*
-	 * Whether the data in the model has been modified and differs from the values saved or not
+	 * Whether the data in the model has been modified and differs from the
+	 * values saved or not
 	 */
 	private boolean dirty;
 
@@ -56,18 +59,19 @@ public class LocalizationProject {
 	}
 
 	/**
-	 * Get the project that is being represented 
+	 * Get the project that is being represented
 	 * 
-	 * @return the project that is being represented 
+	 * @return the project that is being represented
 	 */
 	public IProject getProject() {
 		return project;
 	}
 
 	/**
-	 * Set the project that is being represented 
-	 *  
-	 * @param project the project that is being represented 
+	 * Set the project that is being represented
+	 * 
+	 * @param project
+	 *            the project that is being represented
 	 */
 	public void setProject(IProject project) {
 		this.project = project;
@@ -85,43 +89,54 @@ public class LocalizationProject {
 	/**
 	 * Set the list of LocalizationFiles which belong to the project
 	 * 
-	 * @param localizationFiles the list of LocalizationFiles which belong to the project
+	 * @param localizationFiles
+	 *            the list of LocalizationFiles which belong to the project
 	 */
 	public void setLocalizationFiles(List<LocalizationFile> localizationFiles) {
 		this.localizationFiles = localizationFiles;
 	}
 
 	/**
-	 * Check whether the data in the model has been modified and differs from the values saved or not
+	 * Check whether the data in the model has been modified and differs from
+	 * the values saved or not
 	 * 
-	 * @return true if the data in the model has been modified and differs from the values saved, false otherwise
+	 * @return true if the data in the model has been modified and differs from
+	 *         the values saved, false otherwise
 	 */
 	public boolean isDirty() {
 		return dirty;
 	}
 
 	/**
-	 * Set whether the data in the model has been modified and differs from the values saved or not
+	 * Set whether the data in the model has been modified and differs from the
+	 * values saved or not
 	 * 
-	 * @param dirty true if the data in the model has been modified and differs from the values saved, false otherwise
+	 * @param dirty
+	 *            true if the data in the model has been modified and differs
+	 *            from the values saved, false otherwise
 	 */
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}
 
 	/**
-	 * Check whether there are changes in the associated meta-data / extra-info or not
+	 * Check whether there are changes in the associated meta-data / extra-info
+	 * or not
 	 * 
-	 * @return true if there are changes in the associated meta-data / extra-info, false otherwise
+	 * @return true if there are changes in the associated meta-data /
+	 *         extra-info, false otherwise
 	 */
 	public boolean isDirtyMetaExtraData() {
 		return dirtyMetaExtraData;
 	}
 
 	/**
-	 * Set whether there are changes in the associated meta-data / extra-info or not
+	 * Set whether there are changes in the associated meta-data / extra-info or
+	 * not
 	 * 
-	 * @param dirtyMetaExtraData true if there are changes in the associated meta-data / extra-info, false otherwise
+	 * @param dirtyMetaExtraData
+	 *            true if there are changes in the associated meta-data /
+	 *            extra-info, false otherwise
 	 */
 	public void setDirtyMetaExtraData(boolean dirtyMetaExtraData) {
 		this.dirtyMetaExtraData = dirtyMetaExtraData;
@@ -130,10 +145,12 @@ public class LocalizationProject {
 	/**
 	 * Get the localization file for a specific locale
 	 * 
-	 * @param localeInfo the LocaleInfo object that represents the locale
+	 * @param localeInfo
+	 *            the LocaleInfo object that represents the locale
 	 * @return the localization file for the given locale
 	 */
 	public LocalizationFile getLocalizationFile(LocaleInfo localeInfo) {
+
 		LocalizationFile localizationFile = null;
 
 		boolean found = false;
@@ -151,8 +168,34 @@ public class LocalizationProject {
 	}
 
 	/**
+	 * Get the localization file for a specific IFile
+	 * 
+	 * @param file
+	 * @return the localization file for the given file
+	 */
+	public LocalizationFile getLocalizationFile(IFile file) {
+
+		LocalizationFile localizationFile = null;
+
+		boolean found = false;
+		Iterator<LocalizationFile> iterator = localizationFiles.iterator();
+		while (iterator.hasNext() && !found) {
+			LocalizationFile locFile = iterator.next();
+
+			if (locFile.getFile().equals(file)) {
+				localizationFile = locFile;
+				found = true;
+			}
+		}
+
+		return localizationFile;
+	}
+
+	/**
+	 * Add a new localization file
+	 * 
 	 * @param localizationFile
-	 * @return
+	 * @return true if the file has been successfully added, false otherwise
 	 */
 	public boolean addLocalizationFile(LocalizationFile localizationFile) {
 		localizationFile.setLocalizationProject(this);
@@ -160,8 +203,10 @@ public class LocalizationProject {
 	}
 
 	/**
+	 * Remove a localization file
+	 * 
 	 * @param localizationFile
-	 * @return
+	 * @return true if the file has been successfully removed, false otherwise
 	 */
 	public boolean removeLocalizationFile(LocalizationFile localizationFile) {
 		return localizationFiles.remove(localizationFile);

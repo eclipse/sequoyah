@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,7 +9,10 @@
  * Vinicius Hernandes (Motorola)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
+ * Marcelo Marzola Bossoni (Eldorado) - Bug (289282) - NullPointer adding keyNullPointer adding key
+ * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted
  ********************************************************************************/
 package org.eclipse.tml.localization.tools.editor;
 
@@ -43,6 +46,7 @@ import org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
 import org.eclipse.tml.localization.tools.i18n.Messages;
 import org.eclipse.tml.localization.tools.managers.LocalizationManager;
 import org.eclipse.tml.localization.tools.managers.ProjectLocalizationManager;
+import org.eclipse.tml.localization.tools.managers.LocalizationManager.IFileChangeListener;
 import org.eclipse.ui.IPersistableElement;
 
 /***
@@ -52,14 +56,16 @@ import org.eclipse.ui.IPersistableElement;
  * localization files.
  * 
  */
-public class StringEditorInput implements IStringEditorInput {
+public class StringEditorInput extends IStringEditorInput {
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#getTitle()
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #getTitle()
 	 */
+	@Override
 	public String getTitle() {
 		return projectLocalizationManager.getLocalizationProject().getProject()
 				.getName();
@@ -69,7 +75,23 @@ public class StringEditorInput implements IStringEditorInput {
 	 * The Project Localization Manager used as a source to get all information
 	 * provided by this class
 	 */
-	private static ProjectLocalizationManager projectLocalizationManager = null;
+	private ProjectLocalizationManager projectLocalizationManager = null;
+
+	private final IFileChangeListener fileChangeListener = new IFileChangeListener() {
+
+		public IProject getProject() {
+			return projectLocalizationManager.getLocalizationProject()
+					.getProject();
+		}
+
+		public void fileChanged(IFile file) {
+			notifyInputChange(getColumnID(file));
+		}
+
+		public void projectRemoved() {
+			notifyProjectRemoved();
+		}
+	};
 
 	/*
 	 * Localization icon
@@ -80,9 +102,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#addRow(org
-	 * .eclipse.tml.stringeditor.datatype.RowInfo)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #addRow(org .eclipse.tml.stringeditor.datatype.RowInfo)
 	 */
+	@Override
 	public void addRow(RowInfo row) {
 
 		String key = row.getKey();
@@ -92,14 +115,25 @@ public class StringEditorInput implements IStringEditorInput {
 		ILocalizationSchema schema = projectLocalizationManager
 				.getProjectLocalizationSchema();
 
+		// add at least to the default column
+		if (columns.size() == 0) {
+			LocaleInfo locale = schema.getLocaleInfoFromID(schema
+					.getDefaultID());
+			if (locale != null) {
+				LocalizationFile mainFile = projectLocalizationManager
+						.getLocalizationProject().getLocalizationFile(locale);
+				mainFile.getStringNodeByKey(row.getKey());
+			}
+		}
+
 		for (Iterator<String> iterator = columns.iterator(); iterator.hasNext();) {
 			String column = iterator.next();
 
 			LocaleInfo info = schema.getLocaleInfoFromID(column);
 			LocalizationFile file = projectLocalizationManager
 					.getLocalizationProject().getLocalizationFile(info);
-			String value = ((CellInfo) cells.get(column)).getValue();
-			String comment = ((CellInfo) cells.get(column)).getComment();
+			String value = (cells.get(column)).getValue();
+			String comment = (cells.get(column)).getComment();
 			StringNode newNode = new StringNode(key, value);
 			StringNodeComment commentNode = new StringNodeComment();
 			commentNode.setComment(comment);
@@ -114,7 +148,7 @@ public class StringEditorInput implements IStringEditorInput {
 	 * 
 	 * @return the project localization manager
 	 */
-	public static ProjectLocalizationManager getProjectLocalizationManager() {
+	public ProjectLocalizationManager getProjectLocalizationManager() {
 		return projectLocalizationManager;
 	}
 
@@ -122,9 +156,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#removeRow
-	 * (java.lang.String)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #removeRow (java.lang.String)
 	 */
+	@Override
 	public void removeRow(String key) {
 		List<LocalizationFile> files = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFiles();
@@ -144,9 +179,14 @@ public class StringEditorInput implements IStringEditorInput {
 	 * 
 	 * @see org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#init(org.eclipse.core.resources.IProject)
 	 */
-	public void init(IProject project) throws TmLException {
+	@Override
+	public void init(final IProject project) throws TmLException {
 		projectLocalizationManager = LocalizationManager.getInstance()
 				.getProjectLocalizationManager(project, true);
+
+		LocalizationManager.getInstance().addFileChangeListener(
+				fileChangeListener);
+
 		if (projectLocalizationManager == null) {
 
 			Status status = new Status(Status.ERROR,
@@ -156,12 +196,18 @@ public class StringEditorInput implements IStringEditorInput {
 		}
 	}
 
+	private String getColumnID(IFile file) {
+		return file.getFullPath().removeLastSegments(1).lastSegment();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#getColumns()
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #getColumns()
 	 */
+	@Override
 	public List<ColumnInfo> getColumns() {
 		List<LocalizationFile> files = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFiles();
@@ -169,13 +215,13 @@ public class StringEditorInput implements IStringEditorInput {
 
 		ILocalizationSchema schema = projectLocalizationManager
 				.getProjectLocalizationSchema();
-
+		String defaultID = projectLocalizationManager
+				.getProjectLocalizationSchema().getDefaultID();
 		for (Iterator<LocalizationFile> iterator = files.iterator(); iterator
 				.hasNext();) {
 			LocalizationFile localizationFile = iterator.next();
 
-			String columnID = localizationFile.getFile().getFullPath()
-					.removeLastSegments(1).lastSegment();
+			String columnID = getColumnID(localizationFile.getFile());
 			String toolTip = schema.getLocaleToolTip(localizationFile.getFile()
 					.getFullPath());
 
@@ -192,7 +238,8 @@ public class StringEditorInput implements IStringEditorInput {
 				cells.put(stringNode.getKey(), info);
 			}
 
-			columns.add(new ColumnInfo(columnID, toolTip, cells, true));
+			columns.add(new ColumnInfo(columnID, toolTip, cells, columnID
+					.equals(defaultID) ? false : true));
 
 		}
 
@@ -203,9 +250,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#translate
-	 * (java.lang.String, java.lang.String)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #translate (java.lang.String, java.lang.String)
 	 */
+	@Override
 	public boolean translate(String srcColumnID, String destColumnID) {
 		// Not automatically translating yet, for this first implementation
 		destColumnID = srcColumnID;
@@ -216,9 +264,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#addColumn
-	 * (java.lang.String)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #addColumn (java.lang.String)
 	 */
+	@Override
 	public void addColumn(String ID) {
 
 		ILocalizationSchema schema = projectLocalizationManager
@@ -234,7 +283,7 @@ public class StringEditorInput implements IStringEditorInput {
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(
 					new Path(path));
 			LocalizationFile newFile = new LocalizationFile(file, info,
-					(List<StringNode>) new ArrayList<StringNode>());
+					new ArrayList<StringNode>());
 			newFile.setLocalizationProject(projectLocalizationManager
 					.getLocalizationProject());
 			newFile.setDirty(true);
@@ -250,9 +299,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#removeColumn
-	 * (java.lang.String)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #removeColumn (java.lang.String)
 	 */
+	@Override
 	public void removeColumn(String columnID) {
 		LocaleInfo locale = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
@@ -266,9 +316,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#setValue
-	 * (java.lang.String, java.lang.String, java.lang.String)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #setValue (java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void setValue(String columnID, String key, String value)
 			throws TmLException {
 
@@ -289,9 +340,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#getValue
-	 * (java.lang.String, java.lang.String)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #getValue (java.lang.String, java.lang.String)
 	 */
+	@Override
 	public CellInfo getValue(String columnID, String key) {
 		LocaleInfo localeInfo = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
@@ -306,9 +358,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#getValues
-	 * (java.lang.String)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #getValues (java.lang.String)
 	 */
+	@Override
 	public Map<String, CellInfo> getValues(String columnID) {
 		LocaleInfo localeInfo = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
@@ -333,6 +386,7 @@ public class StringEditorInput implements IStringEditorInput {
 	 * @seeorg.eclipse.tml.stringeditor.editor.input.IStringEditorInput#
 	 * getAvailableKeysForColumn(java.lang.String)
 	 */
+	@Override
 	public List<CellInfo> getAvailableKeysForColumn(String columnID) {
 		LocaleInfo localeInfo = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
@@ -354,8 +408,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#canSave()
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #canSave()
 	 */
+	@Override
 	public boolean canSave() {
 		return true;
 	}
@@ -363,8 +419,11 @@ public class StringEditorInput implements IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#save()
+	 * @see
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #save()
 	 */
+	@Override
 	public boolean save() {
 		return projectLocalizationManager.saveProject();
 	}
@@ -373,8 +432,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#isDirty()
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		boolean returnValue = false;
 		if (projectLocalizationManager != null) {
@@ -448,6 +509,7 @@ public class StringEditorInput implements IStringEditorInput {
 	 * @seeorg.eclipse.tml.stringeditor.editor.input.IStringEditorInput#
 	 * canRevertByColumn()
 	 */
+	@Override
 	public boolean canRevertByColumn() {
 		return true;
 	}
@@ -456,8 +518,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#revert()
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #revert()
 	 */
+	@Override
 	public boolean revert() {
 		LocalizationManager.getInstance().unloadProjectLocalizationManager(
 				projectLocalizationManager.getLocalizationProject()
@@ -472,9 +536,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#revert(java
-	 * .lang.String)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #revert(java .lang.String)
 	 */
+	@Override
 	public boolean revert(String columnID) throws IOException {
 
 		boolean found = false;
@@ -516,15 +581,18 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#dispose()
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (projectLocalizationManager != null) {
+			LocalizationManager.getInstance().removeFileChangeListener(
+					fileChangeListener);
 			LocalizationManager.getInstance().unloadProjectLocalizationManager(
 					projectLocalizationManager.getLocalizationProject()
 							.getProject());
 			projectLocalizationManager = null;
-			System.gc();
 		}
 	}
 
@@ -532,25 +600,39 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#removeCell
-	 * (java.lang.String, java.lang.String)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #removeCell (java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void removeCell(String key, String columnID) {
-		LocaleInfo locale = projectLocalizationManager
-				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
+		ILocalizationSchema schema = projectLocalizationManager
+				.getProjectLocalizationSchema();
+		LocaleInfo locale = schema.getLocaleInfoFromID(columnID);
 		LocalizationFile file = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(locale);
 
-		file.removeStringNode(file.getStringNodeByKey(key));
+		// avoid total key deletion
+		if ((schema.getDefaultID() != null)
+				&& schema.getDefaultID().equals(columnID)) {
+			try {
+				setValue(columnID, key, "");
+			} catch (TmLException e) {
+				// do nothing
+			}
+		} else {
+			file.removeStringNode(file.getStringNodeByKey(key));
+		}
+
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#setCellTooltip
-	 * (java.lang.String, java.lang.String, java.lang.String)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #setCellTooltip (java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void setCellTooltip(String columnID, String key, String tooltip)
 			throws TmLException {
 		if (projectLocalizationManager == null) {
@@ -579,8 +661,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#validate()
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #validate()
 	 */
+	@Override
 	public IStatus validate() {
 		IStatus result = new Status(Status.OK,
 				LocalizationToolsPlugin.PLUGIN_ID, "");
@@ -615,9 +699,10 @@ public class StringEditorInput implements IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#canHandle
-	 * (org.eclipse.core.resources.IFile)
+	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * #canHandle (org.eclipse.core.resources.IFile)
 	 */
+	@Override
 	public boolean canHandle(IFile file) {
 		boolean canHandle = false;
 		ILocalizationSchema localizationSchema = LocalizationManager
@@ -627,4 +712,5 @@ public class StringEditorInput implements IStringEditorInput {
 		}
 		return canHandle;
 	}
+
 }

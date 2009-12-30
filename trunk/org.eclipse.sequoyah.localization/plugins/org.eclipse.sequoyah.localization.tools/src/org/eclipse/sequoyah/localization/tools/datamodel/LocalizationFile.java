@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009 Motorola Inc.
- * This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,7 +9,8 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
+ *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
 package org.eclipse.tml.localization.tools.datamodel;
 
@@ -24,8 +25,8 @@ import org.eclipse.tml.localization.tools.persistence.IPersistentData;
 import org.eclipse.tml.localization.tools.persistence.PersistableAttributes;
 
 /**
- * This class represents a real localization file in the project
- * and contains other information about it
+ * This class represents a real localization file in the project and contains
+ * other information about it
  */
 public class LocalizationFile implements IFilePersistentData {
 
@@ -55,7 +56,8 @@ public class LocalizationFile implements IFilePersistentData {
 	Map<String, StringNode> stringNodesMap = new HashMap<String, StringNode>();
 
 	/*
-	 * Whether the data in the model has been modified and differs from the values saved
+	 * Whether the data in the model has been modified and differs from the
+	 * values saved
 	 */
 	private boolean dirty = false;
 
@@ -72,9 +74,12 @@ public class LocalizationFile implements IFilePersistentData {
 	/**
 	 * Constructor method
 	 * 
-	 * @param file a reference to the file being represented
-	 * @param localeInfo the locale represented by the localization file
-	 * @param stringNodes the list of StringNodes which are part of the file
+	 * @param file
+	 *            a reference to the file being represented
+	 * @param localeInfo
+	 *            the locale represented by the localization file
+	 * @param stringNodes
+	 *            the list of StringNodes which are part of the file
 	 */
 	public LocalizationFile(IFile file, LocaleInfo localeInfo,
 			List<StringNode> stringNodes) {
@@ -95,7 +100,8 @@ public class LocalizationFile implements IFilePersistentData {
 	/**
 	 * Set the LocalizationProject which the LocalizationFile belongs to
 	 * 
-	 * @param localizationProject the LocalizationProject which the LocalizationFile belongs to
+	 * @param localizationProject
+	 *            the LocalizationProject which the LocalizationFile belongs to
 	 */
 	public void setLocalizationProject(LocalizationProject localizationProject) {
 		this.localizationProject = localizationProject;
@@ -113,7 +119,9 @@ public class LocalizationFile implements IFilePersistentData {
 	/**
 	 * Set information about the locale represented by the localization file
 	 * 
-	 * @param localeInfo information about the locale represented by the localization file
+	 * @param localeInfo
+	 *            information about the locale represented by the localization
+	 *            file
 	 */
 	public void setLocaleInfo(LocaleInfo localeInfo) {
 		this.localeInfo = localeInfo;
@@ -129,10 +137,11 @@ public class LocalizationFile implements IFilePersistentData {
 	}
 
 	/**
-	 * Get the StringNodes which represents a specific key.
-	 * If there is no node for this key, a new node is created and returned
+	 * Get the StringNodes which represents a specific key. If there is no node
+	 * for this key, a new node is created and returned
 	 * 
-	 * @param key the StringNode key attribute
+	 * @param key
+	 *            the StringNode key attribute
 	 * @return the StringNodes which represents the key passed as a parameter
 	 */
 	public StringNode getStringNodeByKey(String key) {
@@ -150,7 +159,8 @@ public class LocalizationFile implements IFilePersistentData {
 	/**
 	 * Set the list of StringNodes which are part of the file
 	 * 
-	 * @param stringNodes the list of StringNodes which are part of the file
+	 * @param stringNodes
+	 *            the list of StringNodes which are part of the file
 	 */
 	public void setStringNodes(List<StringNode> stringNodes) {
 		for (StringNode stringNode : stringNodes) {
@@ -162,18 +172,23 @@ public class LocalizationFile implements IFilePersistentData {
 	}
 
 	/**
-	 * Check whether the data in the model has been modified and differs from the values saved
+	 * Check whether the data in the model has been modified and differs from
+	 * the values saved
 	 * 
-	 * @return true if the data in the model has been modified and differs from the values saved, false otherwise
+	 * @return true if the data in the model has been modified and differs from
+	 *         the values saved, false otherwise
 	 */
 	public boolean isDirty() {
 		return dirty;
 	}
 
 	/**
-	 * Set whether the data in the model has been modified and differs from the values saved
+	 * Set whether the data in the model has been modified and differs from the
+	 * values saved
 	 * 
-	 * @param dirty true if the data in the model has been modified and differs from the values saved, false otherwise
+	 * @param dirty
+	 *            true if the data in the model has been modified and differs
+	 *            from the values saved, false otherwise
 	 */
 	public void setDirty(boolean dirty) {
 		// propagate the state if dirty = true
@@ -184,18 +199,23 @@ public class LocalizationFile implements IFilePersistentData {
 	}
 
 	/**
-	 * Check whether there are changes in the associated meta-data / extra-info or not
+	 * Check whether there are changes in the associated meta-data / extra-info
+	 * or not
 	 * 
-	 * @return true if there are changes in the associated meta-data / extra-info, false otherwise
+	 * @return true if there are changes in the associated meta-data /
+	 *         extra-info, false otherwise
 	 */
 	public boolean isDirtyMetaExtraData() {
 		return dirtyMetaExtraData;
 	}
 
 	/**
-	 * Set whether there are changes in the associated meta-data / extra-info or not
+	 * Set whether there are changes in the associated meta-data / extra-info or
+	 * not
 	 * 
-	 * @param dirtyMetaExtraData true if there are changes in the associated meta-data / extra-info, false otherwise
+	 * @param dirtyMetaExtraData
+	 *            true if there are changes in the associated meta-data /
+	 *            extra-info, false otherwise
 	 */
 	public void setDirtyMetaExtraData(boolean dirtyMetaExtraData) {
 		this.dirtyMetaExtraData = dirtyMetaExtraData;
@@ -204,7 +224,8 @@ public class LocalizationFile implements IFilePersistentData {
 	/**
 	 * Set the file that is being represented
 	 * 
-	 * @param file the file that is being represented
+	 * @param file
+	 *            the file that is being represented
 	 */
 	public void setFile(IFile file) {
 		this.file = file;
@@ -230,6 +251,7 @@ public class LocalizationFile implements IFilePersistentData {
 	 */
 	public void addStringNode(StringNode stringNode) {
 		stringNodes.add(stringNode);
+		stringNodesMap.put(stringNode.getKey(), stringNode);
 		stringNode.setLocalizationFile(this);
 		this.setDirty(true);
 	}
@@ -240,6 +262,7 @@ public class LocalizationFile implements IFilePersistentData {
 	public void removeStringNode(StringNode stringNode) {
 		if (stringNodes.contains(stringNode)) {
 			stringNodes.remove(stringNode);
+			stringNodesMap.remove(stringNode.getKey());
 			this.setDirty(true);
 		}
 	}
@@ -283,10 +306,33 @@ public class LocalizationFile implements IFilePersistentData {
 	/**
 	 * Set whether the file shall be deleted or not
 	 * 
-	 * @param shallBeDeleted true if the shall be deleted or not, false otherwise
+	 * @param shallBeDeleted
+	 *            true if the shall be deleted or not, false otherwise
 	 */
 	public void setToBeDeleted(boolean toBeDeleted) {
 		this.toBeDeleted = toBeDeleted;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		boolean result = true;
+		LocalizationFile locFile = (LocalizationFile) obj;
+		List<StringNode> locFileStringNodes = locFile.getStringNodes();
+		if (stringNodes.size() != locFileStringNodes.size()) {
+			result = false;
+		} else {
+			boolean keyEqual, valueEqual;
+			for (int i = 0; i < stringNodes.size(); i++) {
+				keyEqual = stringNodes.get(i).getKey().equals(
+						locFileStringNodes.get(i).getKey());
+				valueEqual = stringNodes.get(i).getValue().equals(
+						locFileStringNodes.get(i).getValue());
+				if ((!keyEqual) || (!valueEqual)) {
+					result = false;
+					break;
+				}
+			}
+		}
+		return result;
+	}
 }
