@@ -12,6 +12,7 @@ package org.eclipse.tml.framework.device;
  * Contributors:
  * Fabio Fantato (Eldorado) - [244069] -  Need some APIs that could be common use of the framework
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  ********************************************************************************/
 
 import java.util.Collection;
@@ -19,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.tml.framework.device.factory.DeviceTypeRegistry;
 import org.eclipse.tml.framework.device.factory.InstanceRegistry;
-import org.eclipse.tml.framework.device.manager.InstanceManager;
 import org.eclipse.tml.framework.device.model.IDeviceType;
 import org.eclipse.tml.framework.device.model.IInstance;
 import org.eclipse.tml.framework.device.model.IService;
@@ -79,7 +79,7 @@ public abstract class DeviceUtils
         IInstance deviceInstanceToReturn = null;
 
         List<IInstance> deviceInstances =
-                InstanceManager.getInstance().getInstancesByname(instanceName);
+                InstanceRegistry.getInstance().getInstancesByName(instanceName);
         if (!deviceInstances.isEmpty())
         {
             deviceInstanceToReturn = deviceInstances.get(0);

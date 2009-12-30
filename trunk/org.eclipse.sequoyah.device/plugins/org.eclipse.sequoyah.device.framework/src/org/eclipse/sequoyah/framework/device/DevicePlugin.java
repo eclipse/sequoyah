@@ -10,6 +10,8 @@
  * Contributors:
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247333] - New Icons for Start and Stop
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
+ * Mauren Brenner (Eldorado) - Bug [280813] - Support saving instance info outside the workspace
+ * Daniel Barboza Franco (Eldorado) - Bug [287187] -Save device instance information in a directory defined in runtime.
  ********************************************************************************/
 package org.eclipse.tml.framework.device;
 
@@ -58,8 +60,10 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	public static final String TML_STATUS_OFF="OFF"; //$NON-NLS-1$
 	public static final String TML_STATUS_INACTIVE ="INACTIVE"; //$NON-NLS-1$
 
-	public static final Properties DEFAULT_PROPERTIES = new Properties();	
-
+	public static final Properties DEFAULT_PROPERTIES = new Properties();
+	
+	private static final String DEVICE_XML_LOCATION = "DeviceXMLLocation";
+	
 	// The shared instance
 	private static DevicePlugin plugin;
 	
@@ -76,6 +80,8 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		getPreferenceStore().setDefault(DEVICE_XML_LOCATION, XML_LocationOption.USER_HOME.name());
 	}
 
 	/*
@@ -146,6 +152,77 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 			image = getImageRegistry().get(key);
 		}
 		return image;
+	}
+	
+	/**
+	 * Specifies the possible locations for the XML file which contains the instances data.
+	 */
+	public enum XML_LocationOption {
+		USER_HOME {
+			@Override
+			public File getLocation(){
+				return fileFromLocation(Platform.getUserLocation()); 		 
+			}
+		}, 
+		ECLIPSE_CONFIGURATION {
+			@Override
+			public File getLocation(){
+				return fileFromLocation(Platform.getConfigurationLocation());
+			}
+			
+		},
+		PLUGIN_STATE {
+			@Override
+			public File getLocation() {
+				return getDefault().getStateLocation().toFile();
+			}
+			
+		};
+		
+		protected File fileFromLocation(Location location){
+			if (location == null) return null;
+			URL configURL = location.getURL();
+			if ((configURL != null) && (configURL.getProtocol().startsWith("file"))) {
+				return new File(configURL.getFile(), PLUGIN_ID);
+			}
+			else return null;
+		}
+		public abstract File getLocation();
+		
+	};
+	
+	/**
+	 * Set the default location where the XML file is saved.
+	 * @param locationOption - one of the values defined in 
+	 */
+	public static void setDeviceXmlLocation(XML_LocationOption locationOption){
+		
+		getDefault().getPreferenceStore().putValue(DEVICE_XML_LOCATION, locationOption.name());
+		
+	}
+	
+	
+	public static File getDeviceXmlLocation() {
+		
+		String locationPref = getDefault().getPreferenceStore().getString(DEVICE_XML_LOCATION);
+		XML_LocationOption option;
+		File locationFile = null;
+		
+		if (locationPref != "") {
+			option = XML_LocationOption.valueOf(XML_LocationOption.class, locationPref);
+			locationFile = option.getLocation();
+		}
+		
+		/* The default location for the file is the plug-in state folder
+		 *  in case it was not possible to retrieve the preferred location
+		 */
+		if (locationFile != null) {
+			return locationFile;
+		}
+		else { 
+			return getDefault().getStateLocation().toFile();
+		}
+
 	}
 
 }
