@@ -22,12 +22,19 @@
       <update label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.4/"/>
    </url>
 
-   <requires>
-      <import feature="org.eclipse.tml.localization.tools.feature" match="greaterOrEqual"/>
-   </requires>
+   <includes
+         id="org.eclipse.tml.localization.tools.feature"
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.tml.localization.android"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tml.localization.android.help"
          download-size="0"
          install-size="0"
          version="0.0.0"
