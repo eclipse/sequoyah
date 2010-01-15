@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.tml.service.vncviewer;singleton:=true
+Bundle-Version: 0.3.0.qualifier
+Bundle-Localization: plugin
+Bundle-Activator: org.eclipse.tml.service.vncviewer.VNCViewerServicePlugin
+Bundle-Vendor: %providerName
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.tml.common.utilities,
+ org.eclipse.tml.framework.device,
+ org.eclipse.tml.vncviewer,
+ org.eclipse.tml.vncviewer.vncviews,
+ org.eclipse.tml.protocol
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+
