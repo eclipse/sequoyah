@@ -11,12 +11,12 @@
  * name (company) - description.
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemuarm.exception;
+package org.eclipse.sequoyah.device.qemuarm.exception;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.tml.common.utilities.exception.AbstractExceptionStatus;
-import org.eclipse.tml.common.utilities.exception.ExceptionMessage;
-import org.eclipse.tml.device.qemuarm.QEmuARMResources;
+import org.eclipse.sequoyah.device.common.utilities.exception.AbstractExceptionStatus;
+import org.eclipse.sequoyah.device.common.utilities.exception.ExceptionMessage;
+import org.eclipse.sequoyah.device.qemuarm.QEmuARMResources;
 
 public class QEmuARMDeviceExceptionStatus extends AbstractExceptionStatus {
 	public static final int CODE_ERROR_RESOURCE_NOT_AVAILABLE = 3101;

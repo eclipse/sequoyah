@@ -11,34 +11,34 @@
  * name (company) - description.
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemuarm.exception;
+package org.eclipse.sequoyah.device.qemuarm.exception;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.tml.common.utilities.exception.ExceptionHandler;
-import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.device.qemuarm.QEmuARMPlugin;
+import org.eclipse.sequoyah.device.common.utilities.exception.ExceptionHandler;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.device.qemuarm.QEmuARMPlugin;
 
 public class QEmuARMDeviceExceptionHandler extends ExceptionHandler {
 	
 
-	public static TmLException exception(IStatus status) {
-		return new TmLException(new QEmuARMDeviceExceptionStatus(status));
+	public static SequoyahException exception(IStatus status) {
+		return new SequoyahException(new QEmuARMDeviceExceptionStatus(status));
 	}
 	
-	public static TmLException exception(int severity, int code, String message, Throwable exception) {
-		return new TmLException(new QEmuARMDeviceExceptionStatus(severity, QEmuARMPlugin.PLUGIN_ID, code, message, exception));
+	public static SequoyahException exception(int severity, int code, String message, Throwable exception) {
+		return new SequoyahException(new QEmuARMDeviceExceptionStatus(severity, QEmuARMPlugin.PLUGIN_ID, code, message, exception));
 	}
 
-	public static TmLException exception(int code){
-		return new TmLException(new QEmuARMDeviceExceptionStatus(code,QEmuARMPlugin.PLUGIN_ID,null,null));
+	public static SequoyahException exception(int code){
+		return new SequoyahException(new QEmuARMDeviceExceptionStatus(code,QEmuARMPlugin.PLUGIN_ID,null,null));
 	}
 
-	public static TmLException exception(int code,Throwable exception) {
-		return new TmLException(new QEmuARMDeviceExceptionStatus(code,QEmuARMPlugin.PLUGIN_ID,exception));
+	public static SequoyahException exception(int code,Throwable exception) {
+		return new SequoyahException(new QEmuARMDeviceExceptionStatus(code,QEmuARMPlugin.PLUGIN_ID,exception));
 	}
 	
-	public static TmLException exception(int code,Object[] args,Throwable exception) {
-		return new TmLException(new QEmuARMDeviceExceptionStatus(code,QEmuARMPlugin.PLUGIN_ID,args,exception));		
+	public static SequoyahException exception(int code,Object[] args,Throwable exception) {
+		return new SequoyahException(new QEmuARMDeviceExceptionStatus(code,QEmuARMPlugin.PLUGIN_ID,args,exception));		
 	}
 	
 }

@@ -10,12 +10,12 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.device.qemureact.handler;
+package org.eclipse.sequoyah.device.qemureact.handler;
 
-import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.framework.device.model.IInstance;
-import org.eclipse.tml.framework.status.IStatusTransition;
-import org.eclipse.tml.framework.status.StatusHandler;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.device.framework.model.IInstance;
+import org.eclipse.sequoyah.device.framework.status.IStatusTransition;
+import org.eclipse.sequoyah.device.framework.status.StatusHandler;
 
 public class VNCStatusHandler extends StatusHandler {
 
@@ -24,6 +24,6 @@ public class VNCStatusHandler extends StatusHandler {
 	}
 
 	
-	public void execute(IStatusTransition transition,IInstance instance) throws TmLException {
+	public void execute(IStatusTransition transition,IInstance instance) throws SequoyahException {
 	}
 }

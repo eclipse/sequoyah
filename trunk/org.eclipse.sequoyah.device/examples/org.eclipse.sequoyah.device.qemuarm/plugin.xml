@@ -4,24 +4,24 @@
    <extension
          id="qemuarmDevice"
          name="qemuarmDevice"
-         point="org.eclipse.tml.deviceTypes">
+         point="org.eclipse.sequoyah.device.framework.deviceTypes">
        <deviceType
-            handler="org.eclipse.tml.device.qemuarm.handler.QEmuARMDeviceHandler"
+            handler="org.eclipse.sequoyah.device.qemuarm.handler.QEmuARMDeviceHandler"
             icon="icons/full/obj16/qemuarm.gif"
-            id="org.eclipse.tml.device.qemuarm.qemuarmDevice"
+            id="org.eclipse.sequoyah.device.qemuarm.qemuarmDevice"
             isAbstract="false"
             isPersistent="true"
             label="QEmuARM Mobile Device"
             name="QEmuARM Mobile Device"
-            superClass="org.eclipse.tml.device.qemu.abstract"/>
+            superClass="org.eclipse.sequoyah.device.qemu.abstract"/>
    </extension>
    <extension
-          point="org.eclipse.tml.device.ui.newDeviceWizardPages">
+          point="org.eclipse.sequoyah.device.framework.ui.newDeviceWizardPages">
        <wizardPage
-             id="org.eclipse.tml.device.wizardPage1"
-             pageClass="org.eclipse.tml.framework.device.ui.wizard.DefaultConnectionInfoWizardPage">
+             id="org.eclipse.sequoyah.device.wizardPage1"
+             pageClass="org.eclipse.sequoyah.device.framework.ui.wizard.DefaultConnectionInfoWizardPage">
           <deviceType
-                deviceTypeId="org.eclipse.tml.device.qemuarm.qemuarmDevice">
+                deviceTypeId="org.eclipse.sequoyah.device.qemuarm.qemuarmDevice">
           </deviceType>
        </wizardPage>
    </extension>

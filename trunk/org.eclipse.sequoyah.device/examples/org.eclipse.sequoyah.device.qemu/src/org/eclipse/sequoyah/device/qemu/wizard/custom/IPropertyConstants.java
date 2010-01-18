@@ -12,7 +12,7 @@
  * 							  other plugin access these constants values.
  * Yu-Fen Kuo (MontaVista)  - bug#236476 - provide a generic device type
  ********************************************************************************/
-package org.eclipse.tml.device.qemu.wizard.custom;
+package org.eclipse.sequoyah.device.qemu.wizard.custom;
 
 /*
  * Defines constants used by new device instance wizard's properties

@@ -12,14 +12,14 @@
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemureact;
+package org.eclipse.sequoyah.device.qemureact;
 
-import org.eclipse.tml.common.utilities.IPropertyConstants;
-import org.eclipse.tml.common.utilities.PluginUtils;
-import org.eclipse.tml.framework.device.model.IConnection;
-import org.eclipse.tml.framework.device.model.IDeviceLauncher;
-import org.eclipse.tml.framework.device.model.IInstance;
-import org.eclipse.tml.service.start.launcher.DefaultConnection;
+import org.eclipse.sequoyah.device.common.utilities.IPropertyConstants;
+import org.eclipse.sequoyah.device.common.utilities.PluginUtils;
+import org.eclipse.sequoyah.device.framework.model.IConnection;
+import org.eclipse.sequoyah.device.framework.model.IDeviceLauncher;
+import org.eclipse.sequoyah.device.framework.model.IInstance;
+import org.eclipse.sequoyah.device.service.start.launcher.DefaultConnection;
 
 public class QEmuReactLauncher implements IDeviceLauncher {
 	public static final String SLASH = "\\"; //$NON-NLS-1$

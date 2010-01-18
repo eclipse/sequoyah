@@ -13,13 +13,13 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemuarm;
+package org.eclipse.sequoyah.device.qemuarm;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.tml.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -28,9 +28,9 @@ import org.osgi.framework.BundleContext;
 public class QEmuARMPlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.device.qemuarm"; //$NON-NLS-1$
-	public static final String DEVICE_ID = "org.eclipse.tml.device.qemuarm.qemuarmDevice"; //$NON-NLS-1$
-	public static final String WIZARD_ID = "org.eclipse.tml.device.qemuarm.qemuarmWizard"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.sequoyah.device.qemuarm"; //$NON-NLS-1$
+	public static final String DEVICE_ID = "org.eclipse.sequoyah.device.qemuarm.qemuarmDevice"; //$NON-NLS-1$
+	public static final String WIZARD_ID = "org.eclipse.sequoyah.device.qemuarm.qemuarmWizard"; //$NON-NLS-1$
 	
 	public static final String ICON_DEVICE_QEMUARM = "ICON_DEVICE_QEMUARM"; //$NON-NLS-1$
 	
@@ -124,7 +124,7 @@ public class QEmuARMPlugin extends BasePlugin {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.tml.common.utilities.BasePlugin#initializeImageRegistry()
+	 * @see org.eclipse.sequoyah.common.utilities.BasePlugin#initializeImageRegistry()
 	 */
 	@Override
 	protected void initializeImageRegistry() {

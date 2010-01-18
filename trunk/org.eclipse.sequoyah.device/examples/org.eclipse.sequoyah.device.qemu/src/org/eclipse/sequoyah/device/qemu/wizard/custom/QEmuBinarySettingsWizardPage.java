@@ -9,12 +9,14 @@
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  *******************************************************************************/
-package org.eclipse.tml.device.qemu.wizard.custom;
+package org.eclipse.sequoyah.device.qemu.wizard.custom;
 
 import java.util.Properties;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.sequoyah.device.framework.ui.wizard.IInstanceProperties;
+import org.eclipse.sequoyah.device.qemu.QEmuPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
@@ -30,8 +32,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tml.device.qemu.QEmuPlugin;
-import org.eclipse.tml.framework.device.ui.wizard.IInstanceProperties;
 
 /*
  * custom wizard page used by the new device instance wizard for generic QEmu

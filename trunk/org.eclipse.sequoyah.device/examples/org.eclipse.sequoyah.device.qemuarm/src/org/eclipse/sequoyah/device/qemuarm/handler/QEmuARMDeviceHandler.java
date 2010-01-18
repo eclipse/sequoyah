@@ -14,13 +14,13 @@
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemuarm.handler;
+package org.eclipse.sequoyah.device.qemuarm.handler;
 
-import org.eclipse.tml.device.qemuarm.QEmuARMLauncher;
-import org.eclipse.tml.framework.device.internal.model.MobileInstance;
-import org.eclipse.tml.framework.device.model.IDeviceLauncher;
-import org.eclipse.tml.framework.device.model.IInstance;
-import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
+import org.eclipse.sequoyah.device.framework.internal.model.MobileInstance;
+import org.eclipse.sequoyah.device.framework.model.IDeviceLauncher;
+import org.eclipse.sequoyah.device.framework.model.IInstance;
+import org.eclipse.sequoyah.device.framework.model.handler.IDeviceHandler;
+import org.eclipse.sequoyah.device.qemuarm.QEmuARMLauncher;
 
 public class QEmuARMDeviceHandler implements IDeviceHandler {
 	public IInstance createDeviceInstance(String id) {

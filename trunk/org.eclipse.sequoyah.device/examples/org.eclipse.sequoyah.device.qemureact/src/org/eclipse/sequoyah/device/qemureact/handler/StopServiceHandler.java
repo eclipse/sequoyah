@@ -9,19 +9,19 @@
  * 
  * Contributors:
  * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
- * Fabio Fantato (Eldorado) - Bug [244539] - The plug-in "org.eclipse.tml.service.start" depends on jdt
+ * Fabio Fantato (Eldorado) - Bug [244539] - The plug-in "org.eclipse.sequoyah.service.start" depends on jdt
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemureact.handler;
+package org.eclipse.sequoyah.device.qemureact.handler;
 
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.tml.framework.device.model.IInstance;
-import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
-import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
+import org.eclipse.sequoyah.device.framework.model.IInstance;
+import org.eclipse.sequoyah.device.framework.model.handler.IServiceHandler;
+import org.eclipse.sequoyah.device.framework.model.handler.ServiceHandler;
 
 public class StopServiceHandler extends ServiceHandler {
 

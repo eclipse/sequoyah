@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.tml.device.qemu</name>
+	<name>org.eclipse.sequoyah.device.qemu</name>
 	<comment></comment>
 	<projects>
 	</projects>

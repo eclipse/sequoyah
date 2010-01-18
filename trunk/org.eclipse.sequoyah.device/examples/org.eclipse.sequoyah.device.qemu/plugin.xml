@@ -2,16 +2,16 @@
 <?eclipse version="3.2"?>
 <plugin>   
    <extension
-         point="org.eclipse.tml.deviceTypes">
+         point="org.eclipse.sequoyah.device.framework.deviceTypes">
       <deviceType
             description="Abstract device for QEMU"
-            handler="org.eclipse.tml.device.qemu.handler.QEmuGenericDeviceHandler"
-            id="org.eclipse.tml.device.qemu.abstract"
+            handler="org.eclipse.sequoyah.device.qemu.handler.QEmuGenericDeviceHandler"
+            id="org.eclipse.sequoyah.device.qemu.abstract"
             isAbstract="true"
             isPersistent="true"
             label="Abstract QEMU device"
             name="Abstract QEMU device"
-            superClass="org.eclipse.tml.device.emulator">
+            superClass="org.eclipse.sequoyah.device.emulator">
          <property
                name="icon"
                value="icons/full/obj16/qemu.gif">
@@ -19,11 +19,11 @@
       </deviceType>
    </extension>
    <extension
-         id="org.eclipse.tml.device.qemu.abstract"
+         id="org.eclipse.sequoyah.device.qemu.abstract"
          name="startService"
-         point="org.eclipse.tml.serviceDefinition">
+         point="org.eclipse.sequoyah.device.framework.serviceDefinition">
       <service
-           id="org.eclipse.tml.service.start.startService">
+           id="org.eclipse.sequoyah.device.service.start.startService">
          <status
                endId="IDLE"
                haltId="OFF"
@@ -32,11 +32,11 @@
       </service>
    </extension>
    <extension
-         id="org.eclipse.tml.device.qemu.abstract"
+         id="org.eclipse.sequoyah.device.qemu.abstract"
          name="stopService"
-         point="org.eclipse.tml.serviceDefinition">
+         point="org.eclipse.sequoyah.device.framework.serviceDefinition">
       <service
-            id="org.eclipse.tml.service.stop.stopService">
+            id="org.eclipse.sequoyah.device.service.stop.stopService">
          <status
                endId="OFF"
                haltId="IDLE"
@@ -51,15 +51,15 @@
    </extension>
 	<extension
 
-          id="org.eclipse.tml.device.qemu.abstract"
+          id="org.eclipse.sequoyah.device.qemu.abstract"
 
           name="vncViewerService"
 
-          point="org.eclipse.tml.serviceDefinition">
+          point="org.eclipse.sequoyah.device.framework.serviceDefinition">
 
        <service
 
-             id="org.eclipse.tml.service.vncviewer.vncViewerService">
+             id="org.eclipse.sequoyah.device.service.vncviewer.vncViewerService">
 
           <status
                 endId="IDLE-VNC"
@@ -76,15 +76,15 @@
     </extension>
     <extension
 
-          id="org.eclipse.tml.device.qemu.abstract"
+          id="org.eclipse.sequoyah.device.qemu.abstract"
 
           name="unplugVncViewerService"
 
-          point="org.eclipse.tml.serviceDefinition">
+          point="org.eclipse.sequoyah.device.framework.serviceDefinition">
 
        <service
 
-             id="org.eclipse.tml.service.vncviewer.unplugVncViewerService">
+             id="org.eclipse.sequoyah.device.service.vncviewer.unplugVncViewerService">
 
           <status
 
@@ -101,16 +101,16 @@
    <extension
          id="generic"
          name="generic"
-         point="org.eclipse.tml.deviceTypes">
+         point="org.eclipse.sequoyah.device.framework.deviceTypes">
       <deviceType
             description="generic device for QEMU"
-            handler="org.eclipse.tml.device.qemu.handler.QEmuGenericDeviceHandler"
-            id="org.eclipse.tml.device.qemu.generic"
+            handler="org.eclipse.sequoyah.device.qemu.handler.QEmuGenericDeviceHandler"
+            id="org.eclipse.sequoyah.device.qemu.generic"
             isAbstract="false"
             isPersistent="true"
             label="Generic QEMU device"
             name="Generic QEMU device"
-            superClass="org.eclipse.tml.device.qemu.abstract">
+            superClass="org.eclipse.sequoyah.device.qemu.abstract">
          <property
                name="icon"
                value="icons/full/obj16/qemu.gif">
@@ -118,22 +118,22 @@
       </deviceType>
    </extension>
    <extension
-          point="org.eclipse.tml.device.ui.newDeviceWizardPages">
+          point="org.eclipse.sequoyah.device.framework.ui.newDeviceWizardPages">
        <wizardPage
-             id="org.eclipse.tml.device.qemu.generic.wizardPage1"
-             pageClass="org.eclipse.tml.device.qemu.wizard.custom.QEmuBinarySettingsWizardPage">
+             id="org.eclipse.sequoyah.device.qemu.generic.wizardPage1"
+             pageClass="org.eclipse.sequoyah.device.qemu.wizard.custom.QEmuBinarySettingsWizardPage">
           <deviceType
-                deviceTypeId="org.eclipse.tml.device.qemu.generic">
+                deviceTypeId="org.eclipse.sequoyah.device.qemu.generic">
           </deviceType>
        </wizardPage>
    </extension>
    <extension
-          point="org.eclipse.tml.device.ui.newDeviceWizardPages">
+          point="org.eclipse.sequoyah.device.framework.ui.newDeviceWizardPages">
        <wizardPage
-             id="org.eclipse.tml.device.qemu.generic.wizardPage2"
-             pageClass="org.eclipse.tml.device.qemu.wizard.custom.QEmuConnectionInfoWizardPage">
+             id="org.eclipse.sequoyah.device.qemu.generic.wizardPage2"
+             pageClass="org.eclipse.sequoyah.device.qemu.wizard.custom.QEmuConnectionInfoWizardPage">
           <deviceType
-                deviceTypeId="org.eclipse.tml.device.qemu.generic">
+                deviceTypeId="org.eclipse.sequoyah.device.qemu.generic">
           </deviceType>
        </wizardPage>
    </extension>

@@ -13,13 +13,13 @@
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  *******************************************************************************/
 
-package org.eclipse.tml.device.qemureact.handler;
+package org.eclipse.sequoyah.device.qemureact.handler;
 
-import org.eclipse.tml.device.qemureact.QEmuReactLauncher;
-import org.eclipse.tml.framework.device.internal.model.MobileInstance;
-import org.eclipse.tml.framework.device.model.IDeviceLauncher;
-import org.eclipse.tml.framework.device.model.IInstance;
-import org.eclipse.tml.framework.device.model.handler.IDeviceHandler;
+import org.eclipse.sequoyah.device.framework.internal.model.MobileInstance;
+import org.eclipse.sequoyah.device.framework.model.IDeviceLauncher;
+import org.eclipse.sequoyah.device.framework.model.IInstance;
+import org.eclipse.sequoyah.device.framework.model.handler.IDeviceHandler;
+import org.eclipse.sequoyah.device.qemureact.QEmuReactLauncher;
 
 public class QEmuReactDeviceHandler implements IDeviceHandler {
 	public IInstance createDeviceInstance(String id) {

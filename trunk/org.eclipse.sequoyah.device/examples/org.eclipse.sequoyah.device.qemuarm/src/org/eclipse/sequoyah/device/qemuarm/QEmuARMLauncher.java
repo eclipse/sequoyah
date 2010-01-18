@@ -14,15 +14,15 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemuarm;
+package org.eclipse.sequoyah.device.qemuarm;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.tml.common.utilities.IPropertyConstants;
-import org.eclipse.tml.common.utilities.PluginUtils;
-import org.eclipse.tml.framework.device.model.IConnection;
-import org.eclipse.tml.framework.device.model.IDeviceLauncher;
-import org.eclipse.tml.framework.device.model.IInstance;
-import org.eclipse.tml.service.start.launcher.DefaultConnection;
+import org.eclipse.sequoyah.device.common.utilities.PluginUtils;
+import org.eclipse.sequoyah.device.framework.model.IConnection;
+import org.eclipse.sequoyah.device.framework.model.IDeviceLauncher;
+import org.eclipse.sequoyah.device.framework.model.IInstance;
+import org.eclipse.sequoyah.device.qemu.wizard.custom.IPropertyConstants;
+import org.eclipse.sequoyah.device.service.start.launcher.DefaultConnection;
 
 public class QEmuARMLauncher implements IDeviceLauncher {
 	public static final String SLASH = "/"; //$NON-NLS-1$

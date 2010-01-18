@@ -8,11 +8,13 @@
  * Contributors:
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tml.device.qemu.wizard.custom;
+package org.eclipse.sequoyah.device.qemu.wizard.custom;
 
 import java.util.Properties;
 
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.sequoyah.device.framework.ui.wizard.IInstanceProperties;
+import org.eclipse.sequoyah.device.qemu.QEmuPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -21,8 +23,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tml.device.qemu.QEmuPlugin;
-import org.eclipse.tml.framework.device.ui.wizard.IInstanceProperties;
 
 /*
  * wizard page for the new QEmu device type device instance wizard. It allows

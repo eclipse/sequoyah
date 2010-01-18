@@ -11,12 +11,12 @@
  * Yu-Fen Kuo (MontaVista) - bug#236476 - provide a generic device type 
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemu.exception;
+package org.eclipse.sequoyah.device.qemu.exception;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.tml.common.utilities.exception.AbstractExceptionStatus;
-import org.eclipse.tml.common.utilities.exception.ExceptionMessage;
-import org.eclipse.tml.device.qemu.QEmuPlugin;
+import org.eclipse.sequoyah.device.common.utilities.exception.AbstractExceptionStatus;
+import org.eclipse.sequoyah.device.common.utilities.exception.ExceptionMessage;
+import org.eclipse.sequoyah.device.qemu.QEmuPlugin;
 
 public class QEmuDeviceExceptionStatus extends AbstractExceptionStatus {
 	public static final int CODE_ERROR_RESOURCE_NOT_AVAILABLE = 3101;
@@ -51,11 +51,11 @@ public class QEmuDeviceExceptionStatus extends AbstractExceptionStatus {
 		switch (code) {
 		case CODE_ERROR_RESOURCE_NOT_AVAILABLE:
 			message = new ExceptionMessage(IStatus.ERROR, QEmuPlugin
-					.getResourceString("TML_Resource_Not_Available")); //$NON-NLS-1$
+					.getResourceString("Sequoyah_Resource_Not_Available")); //$NON-NLS-1$
 			break;
 		default:
 			message = new ExceptionMessage(IStatus.ERROR, QEmuPlugin
-					.getResourceString("TML_Error")); //$NON-NLS-1$
+					.getResourceString("Sequoyah_Error")); //$NON-NLS-1$
 			break;
 		}
 		return message;

@@ -8,7 +8,7 @@
  * Contributors:
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tml.device.qemu;
+package org.eclipse.sequoyah.device.qemu;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.tml.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -27,7 +27,7 @@ import org.osgi.framework.BundleContext;
 public class QEmuPlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.device.qemu"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.sequoyah.device.qemu"; //$NON-NLS-1$
 
 	// The shared instance
 	private static QEmuPlugin plugin;

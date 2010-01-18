@@ -11,7 +11,7 @@
  * name (company) - description.
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemureact;
+package org.eclipse.sequoyah.device.qemureact;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 public class QEmuReactResources extends NLS {
 	
 
-	private static String BUNDLE_NAME = "org.eclipse.tml.device.qemureact.QEmuReactResources";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.sequoyah.device.qemureact.QEmuReactResources";//$NON-NLS-1$
 
 	public static String TML_Device_Plugin_Name;
 	public static String TML_Error;

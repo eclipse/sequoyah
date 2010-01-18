@@ -13,15 +13,15 @@
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemu.launcher;
+package org.eclipse.sequoyah.device.qemu.launcher;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.tml.device.qemu.QEmuPlugin;
-import org.eclipse.tml.device.qemu.wizard.custom.IPropertyConstants;
-import org.eclipse.tml.framework.device.model.IConnection;
-import org.eclipse.tml.framework.device.model.IDeviceLauncher;
-import org.eclipse.tml.framework.device.model.IInstance;
-import org.eclipse.tml.service.start.launcher.DefaultConnection;
+import org.eclipse.sequoyah.device.framework.model.IConnection;
+import org.eclipse.sequoyah.device.framework.model.IDeviceLauncher;
+import org.eclipse.sequoyah.device.framework.model.IInstance;
+import org.eclipse.sequoyah.device.qemu.QEmuPlugin;
+import org.eclipse.sequoyah.device.qemu.wizard.custom.IPropertyConstants;
+import org.eclipse.sequoyah.device.service.start.launcher.DefaultConnection;
 
 public class QEmuLauncher implements IDeviceLauncher {
 

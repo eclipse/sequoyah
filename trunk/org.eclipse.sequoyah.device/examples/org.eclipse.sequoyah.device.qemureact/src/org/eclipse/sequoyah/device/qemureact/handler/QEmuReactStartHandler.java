@@ -11,17 +11,17 @@
  * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads 
  ********************************************************************************/
 
-package org.eclipse.tml.device.qemureact.handler;
+package org.eclipse.sequoyah.device.qemureact.handler;
 
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.tml.common.utilities.BasePlugin;
-import org.eclipse.tml.device.qemureact.QEmuReactResources;
-import org.eclipse.tml.framework.device.model.IInstance;
-import org.eclipse.tml.framework.device.model.handler.IServiceHandler;
-import org.eclipse.tml.framework.device.model.handler.ServiceHandler;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.device.framework.model.IInstance;
+import org.eclipse.sequoyah.device.framework.model.handler.IServiceHandler;
+import org.eclipse.sequoyah.device.framework.model.handler.ServiceHandler;
+import org.eclipse.sequoyah.device.qemureact.QEmuReactResources;
 
 public class QEmuReactStartHandler extends ServiceHandler {
 

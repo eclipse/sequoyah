@@ -12,9 +12,9 @@
  * Fabio Fantato (Instituto Eldorado) - [263188] Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  ********************************************************************************/
-package org.eclipse.tml.device.qemureact;
+package org.eclipse.sequoyah.device.qemureact;
 
-import org.eclipse.tml.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -23,9 +23,9 @@ import org.osgi.framework.BundleContext;
 public class QEmuReactPlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.device.qemureact"; //$NON-NLS-1$
-	public static final String WIZARD_ID = "org.eclipse.tml.device.qemureact.qemureactWizard"; //$NON-NLS-1$
-	public static final String DEVICE_ID = "org.eclipse.tml.device.qemureact.qemureactDevice"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.sequoyah.device.qemureact"; //$NON-NLS-1$
+	public static final String WIZARD_ID = "org.eclipse.sequoyah.device.qemureact.qemureactWizard"; //$NON-NLS-1$
+	public static final String DEVICE_ID = "org.eclipse.sequoyah.device.qemureact.qemureactDevice"; //$NON-NLS-1$
 	
 	public static final String ICON_DEVICE_QEMUREACT = "ICON_DEVICE_QEMUREACT"; //$NON-NLS-1$
 	public static final String NATURE_ID = PLUGIN_ID;
@@ -76,7 +76,7 @@ public class QEmuReactPlugin extends BasePlugin {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.tml.common.utilities.BasePlugin#initializeImageRegistry()
+	 * @see org.eclipse.sequoyah.common.utilities.BasePlugin#initializeImageRegistry()
 	 */
 	@Override
 	protected void initializeImageRegistry() {
