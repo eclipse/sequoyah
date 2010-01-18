@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.tml.framework.device.wizard;singleton:=true
+Bundle-SymbolicName: org.eclipse.sequoyah.device.framework.wizard;singleton:=true
 Bundle-Version: 0.3.0.qualifier
 Bundle-Localization: plugin
-Bundle-Activator: org.eclipse.tml.framework.device.wizard.DeviceWizardPlugin
+Bundle-Activator: org.eclipse.sequoyah.device.framework.wizard.DeviceWizardPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.tml.common.utilities,
- org.eclipse.tml.framework.device,
+ org.eclipse.sequoyah.device.common.utilities,
+ org.eclipse.sequoyah.device.framework,
  org.eclipse.core.runtime,
  org.eclipse.ui.ide,
  org.eclipse.debug.ui,
@@ -28,8 +28,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.navigator,
  org.eclipse.ui.navigator.resources
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.tml.framework.device.wizard,
- org.eclipse.tml.framework.device.wizard.exception,
- org.eclipse.tml.framework.device.wizard.model,
- org.eclipse.tml.framework.device.wizard.ui
+Export-Package: org.eclipse.sequoyah.device.framework.wizard,
+ org.eclipse.sequoyah.device.framework.wizard.exception,
+ org.eclipse.sequoyah.device.framework.wizard.model,
+ org.eclipse.sequoyah.device.framework.wizard.ui
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
