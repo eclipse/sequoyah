@@ -1,27 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.tml.common.utilities;singleton:=true
+Bundle-SymbolicName: org.eclipse.sequoyah.device.common.utilities;singleton:=true
 Bundle-Version: 0.3.0.qualifier
 Bundle-Localization: plugin
-Bundle-Activator: org.eclipse.tml.common.utilities.UtilitiesPlugin
+Bundle-Activator: org.eclipse.sequoyah.device.common.utilities.UtilitiesPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.ui.console
-Export-Package: org.eclipse.tml.common.utilities;
-  uses:="org.eclipse.core.runtime,
-   org.eclipse.jface.resource,
-   org.eclipse.ui,
-   org.eclipse.ui.plugin,
-   org.eclipse.osgi.util,
-   org.eclipse.tml.common.utilities.logger,
-   org.eclipse.core.resources,
-   org.eclipse.swt.graphics,
-   org.eclipse.jface.viewers,
-   org.osgi.framework,
-   org.eclipse.swt.widgets",
- org.eclipse.tml.common.utilities.exception;uses:="org.eclipse.core.runtime",
- org.eclipse.tml.common.utilities.logger
+Export-Package: org.eclipse.sequoyah.device.common.utilities,
+ org.eclipse.sequoyah.device.common.utilities.exception,
+ org.eclipse.sequoyah.device.common.utilities.logger
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
