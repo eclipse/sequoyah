@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.tml.device.sdk.feature"
+      id="org.eclipse.sequoyah.device.sdk.feature"
       label="%featureName"
       version="0.3.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.tml.framework.device.sdk">
+      plugin="org.eclipse.sequoyah.device.framework.sdk">
 
    <description>
       %description
@@ -23,22 +23,18 @@
       <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3/"/>
    </url>
 
-   <includes
-         id="org.eclipse.tml.device.feature"
-         version="0.0.0"
-         search-location="both"/>
-
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.tml.common.utilities"/>
+      <import plugin="org.eclipse.sequoyah.device.common.utilities"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.tml.framework.device"/>
+      <import plugin="org.eclipse.sequoyah.device.framework"/>
       <import plugin="org.eclipse.osgi"/>
+      <import feature="org.eclipse.sequoyah.device.feature"/>
    </requires>
 
    <plugin
-         id="org.eclipse.tml.framework.device.sdk"
+         id="org.eclipse.sequoyah.device.framework.sdk"
          download-size="0"
          install-size="0"
          version="0.0.0"

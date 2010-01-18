@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.tml.device.feature"
+      id="org.eclipse.sequoyah.device.feature"
       label="%featureName"
       version="0.3.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.tml.framework.device">
+      plugin="org.eclipse.sequoyah.device.framework">
 
    <description>
       %description
@@ -23,16 +23,12 @@
       <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3/"/>
    </url>
 
-   <includes
-         id="org.eclipse.tml.common.feature"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.tml.common.utilities"/>
+      <import plugin="org.eclipse.sequoyah.device.common.utilities"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.tml.framework.device.wizard"/>
+      <import plugin="org.eclipse.sequoyah.device.framework.wizard"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
@@ -43,38 +39,39 @@
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.ui.navigator"/>
       <import plugin="org.eclipse.ui.navigator.resources"/>
+      <import feature="org.eclipse.sequoyah.device.common.feature"/>
    </requires>
 
    <plugin
-         id="org.eclipse.tml.framework.device"
+         id="org.eclipse.sequoyah.device.framework"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.tml.framework.device.ui"
+         id="org.eclipse.sequoyah.device.framework.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.tml.service.start"
+         id="org.eclipse.sequoyah.device.service.start"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.tml.service.stop"
+         id="org.eclipse.sequoyah.device.service.stop"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.tml.framework.device.wizard"
+         id="org.eclipse.sequoyah.device.framework.wizard"
          download-size="0"
          install-size="0"
          version="0.0.0"
