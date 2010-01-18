@@ -1,44 +1,26 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.tml.framework.device.ui;singleton:=true
+Bundle-SymbolicName: org.eclipse.sequoyah.device.framework.ui;singleton:=true
 Bundle-Version: 0.3.0.qualifier
 Bundle-Localization: plugin
-Bundle-Activator: org.eclipse.tml.framework.device.ui.DeviceUIPlugin
+Bundle-Activator: org.eclipse.sequoyah.device.framework.ui.DeviceUIPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.tml.common.utilities,
- org.eclipse.tml.framework.device,
+ org.eclipse.sequoyah.device.common.utilities,
+ org.eclipse.sequoyah.device.framework,
  org.eclipse.core.resources,
  org.eclipse.ui.ide,
  org.eclipse.help
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.tml.framework.device.ui;
-  uses:="org.eclipse.osgi.util,
-   org.eclipse.ui,
-   org.osgi.framework,
-   org.eclipse.tml.common.utilities",
- org.eclipse.tml.framework.device.ui.editors;uses:="org.eclipse.ui.dialogs,org.eclipse.swt.widgets",
- org.eclipse.tml.framework.device.ui.exception;uses:="org.eclipse.core.runtime,org.eclipse.tml.common.utilities.exception",
- org.eclipse.tml.framework.device.ui.internal.model;uses:="org.eclipse.jface.wizard,org.eclipse.jface.operation,org.eclipse.tml.framework.device.ui.model",
- org.eclipse.tml.framework.device.ui.model;uses:="org.eclipse.jface.wizard,org.eclipse.jface.operation",
- org.eclipse.tml.framework.device.ui.view;
-  uses:="org.eclipse.tml.framework.device.model,
-   org.eclipse.ui,
-   org.eclipse.ui.part,
-   org.eclipse.swt.widgets",
- org.eclipse.tml.framework.device.ui.view.model;uses:="org.eclipse.tml.framework.device.model,org.eclipse.tml.framework.device.ui.view.provider,org.eclipse.jface.viewers",
- org.eclipse.tml.framework.device.ui.view.provider;uses:="org.eclipse.swt.graphics,org.eclipse.jface.viewers,org.eclipse.tml.framework.device.ui.view.model",
- org.eclipse.tml.framework.device.ui.wizard;
-  uses:="org.eclipse.jface.wizard,
-   org.eclipse.tml.framework.device.model,
-   org.eclipse.core.runtime,
-   org.eclipse.jface.resource,
-   org.eclipse.ui,
-   org.eclipse.tml.framework.device.internal.model,
-   org.eclipse.osgi.util,
-   org.eclipse.jface.viewers,
-   org.eclipse.swt.graphics,
-   org.eclipse.swt.widgets"
+Export-Package: org.eclipse.sequoyah.device.framework.ui,
+ org.eclipse.sequoyah.device.framework.ui.editors,
+ org.eclipse.sequoyah.device.framework.ui.exception,
+ org.eclipse.sequoyah.device.framework.ui.internal.model,
+ org.eclipse.sequoyah.device.framework.ui.model,
+ org.eclipse.sequoyah.device.framework.ui.view,
+ org.eclipse.sequoyah.device.framework.ui.view.model,
+ org.eclipse.sequoyah.device.framework.ui.view.provider,
+ org.eclipse.sequoyah.device.framework.ui.wizard
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
