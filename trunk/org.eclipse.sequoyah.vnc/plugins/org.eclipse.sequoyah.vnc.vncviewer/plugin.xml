@@ -2,42 +2,38 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="org.eclipse.tml.protocol.protocolDefinition">
+         point="org.eclipse.sequoyah.vnc.protocol.protocolDefinition">
       <protocol
-            handshake="org.eclipse.tml.vncviewer.network.VNCProtocol"
-            initializer="org.eclipse.tml.vncviewer.network.VNCProtocol"
+            handshake="org.eclipse.sequoyah.vnc.vncviewer.network.VNCProtocol"
             isBigEndianProtocol="true"
             protocolId="vncProtocol">
       </protocol>
       <protocol
-            handshake="org.eclipse.tml.vncviewer.network.VNCProtocol33"
-            initializer="org.eclipse.tml.vncviewer.network.VNCProtocol33"
+            handshake="org.eclipse.sequoyah.vnc.vncviewer.network.VNCProtocol33"
             isBigEndianProtocol="true"
             parentProtocol="vncProtocol"
             protocolId="vncProtocol33">
       </protocol>
       <protocol
-            handshake="org.eclipse.tml.vncviewer.network.VNCProtocol37"
-            initializer="org.eclipse.tml.vncviewer.network.VNCProtocol37"
+            handshake="org.eclipse.sequoyah.vnc.vncviewer.network.VNCProtocol37"
             isBigEndianProtocol="true"
             parentProtocol="vncProtocol"
             protocolId="vncProtocol37">
       </protocol>
       <protocol
-            handshake="org.eclipse.tml.vncviewer.network.VNCProtocol38"
-            initializer="org.eclipse.tml.vncviewer.network.VNCProtocol38"
+            handshake="org.eclipse.sequoyah.vnc.vncviewer.network.VNCProtocol38"
             isBigEndianProtocol="true"
             parentProtocol="vncProtocol"
             protocolId="vncProtocol38">
       </protocol>
    </extension>
    <extension
-         point="org.eclipse.tml.protocol.protocolMessage">
+         point="org.eclipse.sequoyah.vnc.protocol.protocolMessage">
       <message
             isMessageCodeSigned="false"
             messageCode="0x00"
             messageCodeSizeInBytes="1"
-            messageHandler="org.eclipse.tml.vncviewer.network.handlers.FramebufferUpdateHandler"
+            messageHandler="org.eclipse.sequoyah.vnc.vncviewer.network.handlers.FramebufferUpdateHandler"
             messageId="framebufferUpdate"
             messageName="FRAMEBUFFER_UPDATE"
             protocolId="vncProtocol">
@@ -81,7 +77,7 @@
             </fixedSizeData>
             <rawDataHandler
                   fieldName="pixelData"
-                  rawDataHandler="org.eclipse.tml.vncviewer.network.handlers.FramebufferRectanglesHandler">
+                  rawDataHandler="org.eclipse.sequoyah.vnc.vncviewer.network.handlers.FramebufferRectanglesHandler">
             </rawDataHandler>
          </iteratableBlock>
       </message>
@@ -169,7 +165,7 @@
             isMessageCodeSigned="false"
             messageCode="0x03"
             messageCodeSizeInBytes="1"
-            messageHandler="org.eclipse.tml.vncviewer.network.handlers.ServerCutTextHandler"
+            messageHandler="org.eclipse.sequoyah.vnc.vncviewer.network.handlers.ServerCutTextHandler"
             messageId="serverCutText"
             messageName="SERVER_CUT_TEXT"
             protocolId="vncProtocol">
@@ -190,14 +186,41 @@
             isMessageCodeSigned="false"
             messageCode="0x02"
             messageCodeSizeInBytes="1"
-            messageHandler="org.eclipse.tml.vncviewer.network.handlers.BellHandler"
+            messageHandler="org.eclipse.sequoyah.vnc.vncviewer.network.handlers.BellHandler"
             messageId="bell"
             messageName="BELL"
             protocolId="vncProtocol">
       </message>
+      <message
+            isMessageCodeSigned="false"
+            messageCode="0x02"
+            messageCodeSizeInBytes="1"
+            messageId="setEncoding"
+            messageName="SET_ENCODINGS"
+            protocolId="vncProtocol">
+         <fixedSizeData
+               fieldName="padding"
+               fieldSizeInBytes="1"
+               isFieldSigned="false">
+         </fixedSizeData>
+         <fixedSizeData
+               fieldName="number-of-encodings"
+               fieldSizeInBytes="2"
+               isFieldSigned="false">
+         </fixedSizeData>
+         <iteratableBlock
+               iterableBlockId="encoding-types"
+               iterateOn="number-of-encodings">
+            <fixedSizeData
+                  fieldName="encoding-type"
+                  fieldSizeInBytes="4"
+                  isFieldSigned="true">
+            </fixedSizeData>
+         </iteratableBlock>
+      </message>
    </extension>
    <extension
-         point="org.eclipse.tml.protocol.protocolMessageDirection">
+         point="org.eclipse.sequoyah.vnc.protocol.protocolMessageDirection">
       <clientMessage
             messageId="framebufferUpdateRequest"
             protocolId="vncProtocol">
@@ -208,6 +231,10 @@
       </clientMessage>
       <clientMessage
             messageId="pointerEvent"
+            protocolId="vncProtocol">
+      </clientMessage>
+      <clientMessage
+            messageId="setEncoding"
             protocolId="vncProtocol">
       </clientMessage>
       <serverMessage

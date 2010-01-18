@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.tml.example.protocol" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.sequoyah.vnc.protocol" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
-         <meta.schema plugin="org.eclipse.tml.example.protocol" id="protocolDefinition" name="Protocol Definition"/>
-      </appinfo>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.sequoyah.vnc.protocol" id="protocolDefinition" name="Protocol Definition"/>
+      </appInfo>
       <documentation>
          The Protocol Definition extension point is used for declaring communication protocols to use within the TmL protocol framework.&lt;br&gt;
 A protocol is the set of standard rules for data representation, signalling, authentication and error detection required to send information over a communication channel. It usually comprises a initialization/handshake routine, then a ordinary message exchange phase and finalization routine in the end.
@@ -13,9 +13,9 @@ A protocol is the set of standard rules for data representation, signalling, aut
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
@@ -40,9 +40,9 @@ A protocol is the set of standard rules for data representation, signalling, aut
                <documentation>
                   An optional name of the extension instance.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -50,9 +50,9 @@ A protocol is the set of standard rules for data representation, signalling, aut
 
    <element name="protocol">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="protocolId"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             A protocol declaration shall be done using this element
          </documentation>
@@ -84,33 +84,33 @@ A protocol is the set of standard rules for data representation, signalling, aut
                <documentation>
                   A class that represents a part of the protocol communication (server and/or client). I must provide an implementations of the procedures to be used during protocol handshake/init phases.
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.tml.protocol.lib.IProtocolHandshake"/>
-               </appinfo>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.sequoyah.vnc.protocol.lib.IProtocolHandshake"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          0.4.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of the extension point:
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension
-         point=&quot;org.eclipse.tml.protocol.protocolDefinition&quot;&gt;
+         point=&quot;org.eclipse.sequoyah.vnc.protocol.protocolDefinition&quot;&gt;
       &lt;protocol
             class=&quot;org.xyz.protocol.ProtocolImplementorClass1&quot;
             isBigEndianProtocol=&quot;true&quot;
@@ -124,27 +124,27 @@ A protocol is the set of standard rules for data representation, signalling, aut
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         The value of the class attribute must be a fully qualified name of a class that implements &lt;samp&gt;org.eclipse.tml.protocol.lib.IProtocolInit&lt;/samp&gt;.
+         The value of the class attribute must be a fully qualified name of a class that implements &lt;samp&gt;org.eclipse.sequoyah.vnc.protocol.lib.IProtocolInit&lt;/samp&gt;.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The protocol init class must contain the routines for initialization as defined in the IProtocolInit interface. It is expected that it contains attributes and methods that describe a single instance of a client and/or server side of the communication. That means that data regarding an instance should be accessed from there.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies

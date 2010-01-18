@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.tml.protocol" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.sequoyah.vnc.protocol" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.tml.protocol" id="protocolMessageDirection" name="Protocol Message Direction"/>
+         <meta.schema plugin="org.eclipse.sequoyah.vnc.protocol" id="protocolMessageDirection" name="Protocol Message Direction"/>
       </appinfo>
       <documentation>
          The protocol direction extension is used to define which part (client or server) owns a message. In the protocol framework context, the message owner is the part that sends a message.&lt;br&gt;&lt;br&gt;
@@ -115,7 +115,7 @@
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension
-         point=&quot;org.eclipse.tml.protocol.protocolMessageOrientation&quot;&gt;
+         point=&quot;org.eclipse.sequoyah.vnc.protocol.protocolMessageOrientation&quot;&gt;
       &lt;serverMessage
             messageId=&quot;messageY&quot;
             protocolId=&quot;xyz&quot;&gt;
