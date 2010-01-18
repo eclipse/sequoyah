@@ -4,13 +4,13 @@
    <extension
          id="vncViewerService"
          name="vncViewerService"
-         point="org.eclipse.tml.service">
+         point="org.eclipse.sequoyah.device.framework.service">
       <service
             copyright="Motorola Inc. 2007"
             description="Service to Start the VNC Viewer"
-            handler="org.eclipse.tml.service.vncviewer.handler.VNCViewerServiceHandler"
+            handler="org.eclipse.sequoyah.device.service.vncviewer.handler.VNCViewerServiceHandler"
             icon="icons/full/obj16/vnc.gif"
-            id="org.eclipse.tml.service.vncviewer.vncViewerService"
+            id="org.eclipse.sequoyah.device.service.vncviewer.vncViewerService"
             name="Connect VNC"
             provider="Eclipse.org"
             version="0.2.0"
@@ -20,13 +20,13 @@
  <extension
          id="unplugVncViewerService"
          name="unplugVncViewerService"
-         point="org.eclipse.tml.service">
+         point="org.eclipse.sequoyah.device.framework.service">
       <service
             copyright="Motorola Inc. 2007"
             description="Service to stop the VNC Viewer"
-            handler="org.eclipse.tml.service.vncviewer.handler.UnplugVNCViewerServiceHandler"
+            handler="org.eclipse.sequoyah.device.service.vncviewer.handler.UnplugVNCViewerServiceHandler"
             icon="icons/full/obj16/vnc.gif"
-            id="org.eclipse.tml.service.vncviewer.unplugVncViewerService"
+            id="org.eclipse.sequoyah.device.service.vncviewer.unplugVncViewerService"
             name="Disconnect VNC"
             provider="Eclipse.org"
             version="0.2.0"
@@ -35,7 +35,7 @@
    </extension>
     <extension
          id="IDLE-VNC"
-         point="org.eclipse.tml.status">
+         point="org.eclipse.sequoyah.device.framework.status">
       <status
             id="IDLE-VNC"
             image="icons/full/obj16/vnc2.gif"
