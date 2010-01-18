@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.tml.service.start;singleton:=true
+Bundle-SymbolicName: org.eclipse.sequoyah.device.service.start;singleton:=true
 Bundle-Version: 0.3.0.qualifier
 Bundle-Localization: plugin
-Bundle-Activator: org.eclipse.tml.service.start.StartServicePlugin
+Bundle-Activator: org.eclipse.sequoyah.device.service.start.StartServicePlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.tml.common.utilities,
- org.eclipse.tml.framework.device,
+ org.eclipse.sequoyah.device.common.utilities,
+ org.eclipse.sequoyah.device.framework,
  org.eclipse.ui,
  org.eclipse.ui.views,
  org.eclipse.core.runtime,
@@ -20,9 +20,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.eclipse.ui.externaltools
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.tml.service.start,
- org.eclipse.tml.service.start.exception,
- org.eclipse.tml.service.start.handler,
- org.eclipse.tml.service.start.launcher
+Export-Package: org.eclipse.sequoyah.device.service.start,
+ org.eclipse.sequoyah.device.service.start.exception,
+ org.eclipse.sequoyah.device.service.start.handler,
+ org.eclipse.sequoyah.device.service.start.launcher
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 
