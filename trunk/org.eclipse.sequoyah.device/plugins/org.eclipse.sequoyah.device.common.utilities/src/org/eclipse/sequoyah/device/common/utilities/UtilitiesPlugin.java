@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
 public class UtilitiesPlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.common.utilities"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.sequoyah.device.common.utilities"; //$NON-NLS-1$
 	public static final String ICON_ID_EMULATOR = "ICON_ID_EMULATOR"; //$NON-NLS-1$
 	
 	// The shared instance
