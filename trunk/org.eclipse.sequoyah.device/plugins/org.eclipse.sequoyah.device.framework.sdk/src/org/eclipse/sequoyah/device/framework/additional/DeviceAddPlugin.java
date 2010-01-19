@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
 public class DeviceAddPlugin extends BasePlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.framework.device.ui";
+	public static final String PLUGIN_ID = "org.eclipse.sequoyah.device.framework.ui";
 	public static final String ICON_DEVICE= "ICON_DEVICE";
 	public static final String ICON_SERVICE = "ICON_SERVICE";
 	public static final String ICON_MOVING = "ICON_MOVING";
