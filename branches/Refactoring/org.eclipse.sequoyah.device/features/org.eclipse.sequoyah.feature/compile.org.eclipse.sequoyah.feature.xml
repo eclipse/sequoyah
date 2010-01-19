@@ -6,7 +6,7 @@
 		<ant antfile="build.xml" dir="../../../org.eclipse.sequoyah.vnc/plugins/org.eclipse.sequoyah.vnc.protocol" target="build.jars"/>
 		<ant antfile="build.xml" dir="../../../org.eclipse.sequoyah.vnc/plugins/org.eclipse.sequoyah.vnc.vncviewer" target="build.jars"/>
 		<ant antfile="build.xml" dir="../../../org.eclipse.sequoyah.vnc/plugins/org.eclipse.sequoyah.vnc.vncviewer.vncviews" target="build.jars"/>
-		<ant antfile="build.xml" dir="../../../org.eclipse.sequoyah.vnc/examples/org.eclipse.tml.echo" target="build.jars"/>
+		<ant antfile="build.xml" dir="../../../org.eclipse.sequoyah.vnc/examples/org.eclipse.sequoyah.vnc.echo" target="build.jars"/>
 		<ant antfile="build.xml" dir="../../../org.eclipse.sequoyah.localization/plugins/org.eclipse.sequoyah.localization.stringeditor" target="build.jars"/>
 		<ant antfile="build.xml" dir="../../../org.eclipse.sequoyah.localization/plugins/org.eclipse.sequoyah.localization.tools" target="build.jars"/>
 		<ant antfile="build.xml" dir="../../../org.eclipse.sequoyah.localization/plugins/org.eclipse.sequoyah.localization.android" target="build.jars"/>
