@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.tml.localization.android.feature"
+      id="org.eclipse.sequoyah.localization.android.feature"
       label="%featureName"
       version="0.1.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.tml.localization.android">
+      plugin="org.eclipse.sequoyah.localization.android">
 
    <description>
       %description
@@ -22,19 +22,19 @@
       <update label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.4/"/>
    </url>
 
-   <includes
-         id="org.eclipse.tml.localization.tools.feature"
-         version="0.0.0"/>
+   <requires>
+      <import feature="org.eclipse.sequoyah.localization.tools.feature"/>
+   </requires>
 
    <plugin
-         id="org.eclipse.tml.localization.android"
+         id="org.eclipse.sequoyah.localization.android"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.tml.localization.android.help"
+         id="org.eclipse.sequoyah.localization.android.help"
          download-size="0"
          install-size="0"
          version="0.0.0"
