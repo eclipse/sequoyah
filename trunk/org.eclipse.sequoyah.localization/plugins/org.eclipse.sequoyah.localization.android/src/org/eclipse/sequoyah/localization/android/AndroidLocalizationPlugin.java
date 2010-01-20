@@ -10,7 +10,7 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.android;
+package org.eclipse.sequoyah.localization.android;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
 public class AndroidLocalizationPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.localization.android";
+	public static final String PLUGIN_ID = "org.eclipse.sequoyah.localization.android";
 
 	// The shared instance
 	private static AndroidLocalizationPlugin plugin;

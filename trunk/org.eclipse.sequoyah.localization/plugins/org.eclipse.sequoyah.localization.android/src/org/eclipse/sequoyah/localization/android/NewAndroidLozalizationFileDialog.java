@@ -11,7 +11,7 @@
  * Marcelo Marzola Bossoni (Eldorado) -  Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
 
-package org.eclipse.tml.localization.android;
+package org.eclipse.sequoyah.localization.android;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;

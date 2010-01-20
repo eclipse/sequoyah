@@ -10,7 +10,7 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.android.i18n;
+package org.eclipse.sequoyah.localization.android.i18n;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
  * 
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.tml.localization.android.i18n.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.sequoyah.localization.android.i18n.messages"; //$NON-NLS-1$
 
 	public static String AndroidLocalizationSchema_Default_Andr_Localization_File_Tooltip;
 

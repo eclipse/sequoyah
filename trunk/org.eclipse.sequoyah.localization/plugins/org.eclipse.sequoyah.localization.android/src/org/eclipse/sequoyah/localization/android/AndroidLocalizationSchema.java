@@ -14,7 +14,7 @@
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted 
  ********************************************************************************/
-package org.eclipse.tml.localization.android;
+package org.eclipse.sequoyah.localization.android;
 
 import static org.w3c.dom.Node.COMMENT_NODE;
 
@@ -54,17 +54,17 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.localization.android.i18n.Messages;
-import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.tml.localization.tools.datamodel.LocaleAttribute;
-import org.eclipse.tml.localization.tools.datamodel.LocaleInfo;
-import org.eclipse.tml.localization.tools.datamodel.LocalizationFile;
-import org.eclipse.tml.localization.tools.datamodel.StringNode;
-import org.eclipse.tml.localization.tools.datamodel.StringNodeComment;
-import org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema;
-import org.eclipse.tml.localization.tools.managers.LocalizationManager;
-import org.eclipse.tml.localization.tools.managers.ProjectLocalizationManager;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.localization.android.i18n.Messages;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringNodeComment;
+import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
+import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
+import org.eclipse.sequoyah.localization.tools.managers.ProjectLocalizationManager;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -119,7 +119,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #isValueValid(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -149,7 +149,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #promptCollumnName()
 	 */
 	@Override
@@ -217,7 +217,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #getEditorName()
 	 */
 	@Override
@@ -232,12 +232,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * <?xml version="1.0" encoding="utf-8"?> <resources> <string
 	 * name="KEY">VALUE</string> ... </resources>
 	 * 
-	 * @see org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
-	 *      #createFile(org.eclipse.tml.localization.tools.datamodel.LocaleInfo)
+	 * @see org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
+	 *      #createFile(org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo)
 	 */
 	@Override
 	public void createFile(LocalizationFile localizationFile)
-			throws TmLException {
+			throws SequoyahException {
 
 		try {
 			String filePath = localizationFile.getFile().getFullPath()
@@ -332,7 +332,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			transformer.transform(source, result);
 
 		} catch (Exception e) {
-			throw new TmLException();
+			throw new SequoyahException();
 		}
 
 	}
@@ -341,7 +341,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #getLocaleToolTip(org.eclipse.core.runtime.Path)
 	 */
 	@Override
@@ -373,7 +373,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #getLocaleAttributes()
 	 */
 	@Override
@@ -410,7 +410,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #getLocalizationFileExtensions()
 	 */
 	@Override
@@ -424,7 +424,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #getLocalizationFiles(org.eclipse.core.resources.IProject)
 	 */
 	@Override
@@ -519,7 +519,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #isLocalizationFile(org.eclipse.core.resources.IFile)
 	 */
 	@Override
@@ -541,7 +541,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #loadAllFiles()
 	 */
 	@Override
@@ -563,7 +563,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #loadFile(org.eclipse.core.resources.IFile)
 	 */
 	@Override
@@ -578,7 +578,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 					stringNodes);
 			try {
 				createFile(tempFile);
-			} catch (TmLException e) {
+			} catch (SequoyahException e) {
 				// do nothing
 			}
 		}
@@ -641,13 +641,13 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #
-	 * updateFile(org.eclipse.tml.localization.tools.datamodel.LocalizationFile)
+	 * updateFile(org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile)
 	 */
 	@Override
 	public void updateFile(LocalizationFile localizationFile)
-			throws TmLException {
+			throws SequoyahException {
 		createFile(localizationFile);
 		localizationFile.setDirty(false);
 	}
@@ -698,8 +698,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
-	 * #getLocaleID(org.eclipse.tml.localization.tools.datamodel.LocaleInfo)
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
+	 * #getLocaleID(org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo)
 	 */
 	@Override
 	public String getLocaleID(LocaleInfo localeInfo) {
@@ -723,7 +723,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema
+	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 * #getLocaleInfoFromID(java.lang.String)
 	 */
 	@Override

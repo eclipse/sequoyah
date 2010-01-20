@@ -10,13 +10,13 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.android;
+package org.eclipse.sequoyah.localization.android;
 
 import java.awt.Dimension;
 import java.util.HashMap;
 
-import org.eclipse.tml.localization.android.i18n.Messages;
-import org.eclipse.tml.localization.tools.datamodel.LocaleAttribute;
+import org.eclipse.sequoyah.localization.android.i18n.Messages;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 
 public class AndroidLocaleAttribute extends LocaleAttribute {
 
