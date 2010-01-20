@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.tml.localization.tools.feature"
+      id="org.eclipse.sequoyah.localization.tools.feature"
       label="%featureName"
       version="0.1.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.tml.localization.tools">
+      plugin="org.eclipse.sequoyah.localization.tools">
 
    <description>
       %description
@@ -23,10 +23,6 @@
       <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3/"/>
    </url>
 
-   <includes
-         id="org.eclipse.tml.common.feature"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
@@ -34,17 +30,18 @@
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.forms"/>
+      <import feature="org.eclipse.sequoyah.device.common.feature"/>
    </requires>
 
    <plugin
-         id="org.eclipse.tml.localization.tools"
+         id="org.eclipse.sequoyah.localization.tools"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.tml.localization.stringeditor"
+         id="org.eclipse.sequoyah.localization.stringeditor"
          download-size="0"
          install-size="0"
          version="0.0.0"
