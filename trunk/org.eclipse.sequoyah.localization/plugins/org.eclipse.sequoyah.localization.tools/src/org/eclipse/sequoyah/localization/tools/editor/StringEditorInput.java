@@ -14,7 +14,7 @@
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted
  ********************************************************************************/
-package org.eclipse.tml.localization.tools.editor;
+package org.eclipse.sequoyah.localization.tools.editor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,22 +31,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.common.utilities.exception.TmLExceptionStatus;
-import org.eclipse.tml.localization.stringeditor.datatype.CellInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.RowInfo;
-import org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput;
-import org.eclipse.tml.localization.tools.LocalizationToolsPlugin;
-import org.eclipse.tml.localization.tools.datamodel.LocaleInfo;
-import org.eclipse.tml.localization.tools.datamodel.LocalizationFile;
-import org.eclipse.tml.localization.tools.datamodel.StringNode;
-import org.eclipse.tml.localization.tools.datamodel.StringNodeComment;
-import org.eclipse.tml.localization.tools.extensions.classes.ILocalizationSchema;
-import org.eclipse.tml.localization.tools.i18n.Messages;
-import org.eclipse.tml.localization.tools.managers.LocalizationManager;
-import org.eclipse.tml.localization.tools.managers.ProjectLocalizationManager;
-import org.eclipse.tml.localization.tools.managers.LocalizationManager.IFileChangeListener;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahExceptionStatus;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput;
+import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringNodeComment;
+import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
+import org.eclipse.sequoyah.localization.tools.i18n.Messages;
+import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
+import org.eclipse.sequoyah.localization.tools.managers.ProjectLocalizationManager;
+import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager.IFileChangeListener;
 import org.eclipse.ui.IPersistableElement;
 
 /***
@@ -62,7 +62,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #getTitle()
 	 */
 	@Override
@@ -102,7 +102,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #addRow(org .eclipse.tml.stringeditor.datatype.RowInfo)
 	 */
 	@Override
@@ -156,7 +156,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #removeRow (java.lang.String)
 	 */
 	@Override
@@ -175,12 +175,12 @@ public class StringEditorInput extends IStringEditorInput {
 	/**
 	 * Instantiate the Project Localization Manager
 	 * 
-	 * @throws TmLException
+	 * @throws SequoyahException
 	 * 
-	 * @see org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput#init(org.eclipse.core.resources.IProject)
+	 * @see org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput#init(org.eclipse.core.resources.IProject)
 	 */
 	@Override
-	public void init(final IProject project) throws TmLException {
+	public void init(final IProject project) throws SequoyahException {
 		projectLocalizationManager = LocalizationManager.getInstance()
 				.getProjectLocalizationManager(project, true);
 
@@ -192,7 +192,7 @@ public class StringEditorInput extends IStringEditorInput {
 			Status status = new Status(Status.ERROR,
 					LocalizationToolsPlugin.PLUGIN_ID,
 					Messages.StringEditorInput_ErrorInitializingEditor);
-			throw new TmLException(new TmLExceptionStatus(status));
+			throw new SequoyahException(new SequoyahExceptionStatus(status));
 		}
 	}
 
@@ -204,7 +204,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #getColumns()
 	 */
 	@Override
@@ -250,7 +250,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #translate (java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -264,7 +264,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #addColumn (java.lang.String)
 	 */
 	@Override
@@ -299,7 +299,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #removeColumn (java.lang.String)
 	 */
 	@Override
@@ -316,18 +316,18 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #setValue (java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void setValue(String columnID, String key, String value)
-			throws TmLException {
+			throws SequoyahException {
 
 		if (projectLocalizationManager == null) {
 			Status status = new Status(Status.ERROR,
 					LocalizationToolsPlugin.PLUGIN_ID,
 					Messages.StringEditorInput_ErrorManagerNotInitialized);
-			throw new TmLException(new TmLExceptionStatus(status));
+			throw new SequoyahException(new SequoyahExceptionStatus(status));
 		}
 		LocaleInfo locale = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
@@ -340,7 +340,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #getValue (java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -358,7 +358,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #getValues (java.lang.String)
 	 */
 	@Override
@@ -408,7 +408,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #canSave()
 	 */
 	@Override
@@ -420,7 +420,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #save()
 	 */
 	@Override
@@ -432,7 +432,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #isDirty()
 	 */
 	@Override
@@ -518,7 +518,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #revert()
 	 */
 	@Override
@@ -536,7 +536,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #revert(java .lang.String)
 	 */
 	@Override
@@ -581,7 +581,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #dispose()
 	 */
 	@Override
@@ -600,7 +600,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #removeCell (java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -616,7 +616,7 @@ public class StringEditorInput extends IStringEditorInput {
 				&& schema.getDefaultID().equals(columnID)) {
 			try {
 				setValue(columnID, key, "");
-			} catch (TmLException e) {
+			} catch (SequoyahException e) {
 				// do nothing
 			}
 		} else {
@@ -629,17 +629,17 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #setCellTooltip (java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void setCellTooltip(String columnID, String key, String tooltip)
-			throws TmLException {
+			throws SequoyahException {
 		if (projectLocalizationManager == null) {
 			Status status = new Status(Status.ERROR,
 					LocalizationToolsPlugin.PLUGIN_ID,
 					Messages.StringEditorInput_ErrorManagerNotInitialized);
-			throw new TmLException(new TmLExceptionStatus(status));
+			throw new SequoyahException(new SequoyahExceptionStatus(status));
 		}
 		LocaleInfo locale = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
@@ -661,7 +661,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #validate()
 	 */
 	@Override
@@ -699,7 +699,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput
+	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
 	 * #canHandle (org.eclipse.core.resources.IFile)
 	 */
 	@Override
