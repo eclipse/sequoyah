@@ -4,5 +4,5 @@ Bundle-ManifestVersion: 2
 Bundle-Localization: plugin
 Bundle-Name: %name
 Bundle-Vendor: %providerName
-Eclipse-LazyStart: true
-Bundle-SymbolicName: org.eclipse.tml.localization.android.help; singleton:=true
+Bundle-ActivationPolicy: lazy
+Bundle-SymbolicName: org.eclipse.sequoyah.localization.android.help;singleton:=true

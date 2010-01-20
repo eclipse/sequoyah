@@ -9,8 +9,8 @@
       <index file="index.xml"/>
    </extension>
 
-<!--Context extension point for all TML context-sensitive help-->
+<!--Context extension point for all Sequoyah context-sensitive help-->
 <extension point="org.eclipse.help.contexts">
-  <contexts file="cs_tml.xml" plugin="org.eclipse.tml.localization.stringeditor"/>
+  <contexts file="cs_tml.xml" plugin="org.eclipse.sequoyah.localization.stringeditor"/>
 </extension>
 </plugin>
