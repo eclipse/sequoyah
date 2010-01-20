@@ -10,15 +10,15 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.providers;
+package org.eclipse.sequoyah.localization.stringeditor.providers;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.RowInfo;
-import org.eclipse.tml.localization.stringeditor.i18n.Messages;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.stringeditor.i18n.Messages;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -31,7 +31,7 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.providers.IOperationProvider
+	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
 	 * #init(org.eclipse .core.resources.IProject)
 	 */
 	public void init(IProject project) throws Exception {
@@ -42,7 +42,7 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.providers.IOperationProvider
+	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
 	 * #getNewColumn()
 	 */
 	public ColumnInfo getNewColumn() {
@@ -75,7 +75,7 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.tml.localization.stringeditor.providers.IOperationProvider
+	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
 	 * #getNewRow()
 	 */
 	public RowInfo getNewRow() {

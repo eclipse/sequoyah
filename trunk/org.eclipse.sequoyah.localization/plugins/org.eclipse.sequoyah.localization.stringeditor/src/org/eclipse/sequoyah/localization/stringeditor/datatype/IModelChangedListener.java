@@ -10,9 +10,9 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.datatype;
+package org.eclipse.sequoyah.localization.stringeditor.datatype;
 
-import org.eclipse.tml.localization.stringeditor.editor.StringEditorViewerModel;
+import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorViewerModel;
 
 public interface IModelChangedListener {
 	public void modelChanged(StringEditorViewerModel model);

@@ -10,7 +10,7 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor;
+package org.eclipse.sequoyah.localization.stringeditor;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
 public class StringEditorPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tml.localization.stringeditor";
+	public static final String PLUGIN_ID = "org.eclipse.sequoyah.localization.stringeditor";
 
 	// The shared instance
 	private static StringEditorPlugin plugin;

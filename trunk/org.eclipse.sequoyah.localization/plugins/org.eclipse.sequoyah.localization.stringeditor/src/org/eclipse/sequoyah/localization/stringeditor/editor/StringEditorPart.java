@@ -15,7 +15,7 @@
  * Daniel Barboza Franco (Eldorado) - Bug [290058] - fixing NullPointerException's while listening changes made from outside Eclipse
  * Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor;
+package org.eclipse.sequoyah.localization.stringeditor.editor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +58,29 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.localization.stringeditor.EditorExtensionLoader;
+import org.eclipse.sequoyah.localization.stringeditor.StringEditorPlugin;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.IModelChangedListener;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.stringeditor.editor.EditorSession.PROPERTY;
+import org.eclipse.sequoyah.localization.stringeditor.editor.input.IInputChangeListener;
+import org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput;
+import org.eclipse.sequoyah.localization.stringeditor.editor.operations.AddColumnOperation;
+import org.eclipse.sequoyah.localization.stringeditor.editor.operations.AddKeyOperation;
+import org.eclipse.sequoyah.localization.stringeditor.editor.operations.EditCellOperation;
+import org.eclipse.sequoyah.localization.stringeditor.editor.operations.EditorOperation;
+import org.eclipse.sequoyah.localization.stringeditor.editor.operations.RemoveColumnOperation;
+import org.eclipse.sequoyah.localization.stringeditor.editor.operations.RemoveKeyOperation;
+import org.eclipse.sequoyah.localization.stringeditor.editor.operations.RevertColumnToSavedStateOperation;
+import org.eclipse.sequoyah.localization.stringeditor.editor.operations.TranslateOperation;
+import org.eclipse.sequoyah.localization.stringeditor.i18n.Messages;
+import org.eclipse.sequoyah.localization.stringeditor.providers.ContentProvider;
+import org.eclipse.sequoyah.localization.stringeditor.providers.ICellValidator;
+import org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -81,29 +104,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tml.common.utilities.BasePlugin;
-import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.localization.stringeditor.EditorExtensionLoader;
-import org.eclipse.tml.localization.stringeditor.StringEditorPlugin;
-import org.eclipse.tml.localization.stringeditor.datatype.CellInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.IModelChangedListener;
-import org.eclipse.tml.localization.stringeditor.datatype.RowInfo;
-import org.eclipse.tml.localization.stringeditor.editor.EditorSession.PROPERTY;
-import org.eclipse.tml.localization.stringeditor.editor.input.IInputChangeListener;
-import org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput;
-import org.eclipse.tml.localization.stringeditor.editor.operations.AddColumnOperation;
-import org.eclipse.tml.localization.stringeditor.editor.operations.AddKeyOperation;
-import org.eclipse.tml.localization.stringeditor.editor.operations.EditCellOperation;
-import org.eclipse.tml.localization.stringeditor.editor.operations.EditorOperation;
-import org.eclipse.tml.localization.stringeditor.editor.operations.RemoveColumnOperation;
-import org.eclipse.tml.localization.stringeditor.editor.operations.RemoveKeyOperation;
-import org.eclipse.tml.localization.stringeditor.editor.operations.RevertColumnToSavedStateOperation;
-import org.eclipse.tml.localization.stringeditor.editor.operations.TranslateOperation;
-import org.eclipse.tml.localization.stringeditor.i18n.Messages;
-import org.eclipse.tml.localization.stringeditor.providers.ContentProvider;
-import org.eclipse.tml.localization.stringeditor.providers.ICellValidator;
-import org.eclipse.tml.localization.stringeditor.providers.IOperationProvider;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -1507,7 +1507,7 @@ public class StringEditorPart extends EditorPart {
 					getEditorInput().setValue(info.getId(), cellKey,
 							cell.getValue());
 				}
-			} catch (TmLException e) {
+			} catch (SequoyahException e) {
 				BasePlugin.logError("Error adding column: " + info.getId(), e);
 			}
 		}

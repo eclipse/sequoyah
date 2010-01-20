@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.tml.localization.stringeditor" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.sequoyah.localization.stringeditor" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.tml.localization.stringeditor" id="contentprovider" name="String Editor Content Provider"/>
+         <meta.schema plugin="org.eclipse.sequoyah.localization.stringeditor" id="contentprovider" name="String Editor Content Provider"/>
       </appinfo>
       <documentation>
          Provide a input to this multiporpouse editor
@@ -55,7 +55,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -65,7 +65,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.tml.localization.stringeditor.providers.IOperationProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -75,7 +75,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.tml.localization.stringeditor.providers.ICellValidator"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.sequoyah.localization.stringeditor.providers.ICellValidator"/>
                </appinfo>
             </annotation>
          </attribute>

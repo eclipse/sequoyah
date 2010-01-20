@@ -12,7 +12,7 @@
  *  Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  *  Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor.input;
+package org.eclipse.sequoyah.localization.stringeditor.editor.input;
 
 /**
  * Listener that aim to be notified when there is a change in the editor

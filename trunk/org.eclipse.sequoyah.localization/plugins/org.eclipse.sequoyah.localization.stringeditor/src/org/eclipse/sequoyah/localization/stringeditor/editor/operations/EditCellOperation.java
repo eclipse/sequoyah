@@ -11,17 +11,17 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor.operations;
+package org.eclipse.sequoyah.localization.stringeditor.editor.operations;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.tml.common.utilities.BasePlugin;
-import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.localization.stringeditor.datatype.CellInfo;
-import org.eclipse.tml.localization.stringeditor.editor.StringEditorPart;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
+import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart;
 
 /**
  * The operation of editing a specific editor cell.
@@ -94,7 +94,7 @@ public class EditCellOperation extends EditorOperation {
 			} else {
 				getEditorInput().setValue(column, key, newValue.getValue());
 			}
-		} catch (TmLException e) {
+		} catch (SequoyahException e) {
 			BasePlugin.logError("Error editing cell value: (" + column + ", "
 					+ key + ") = " + newValue != null ? newValue.getValue()
 					: null, e);
@@ -124,7 +124,7 @@ public class EditCellOperation extends EditorOperation {
 			} else {
 				getEditorInput().removeCell(key, column);
 			}
-		} catch (TmLException e) {
+		} catch (SequoyahException e) {
 			BasePlugin.logError("Error undoing cell edition: (" + column + ", "
 					+ key + ") = " + oldValue != null ? oldValue.getValue()
 					: null, e);

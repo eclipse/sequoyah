@@ -10,9 +10,9 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.providers;
+package org.eclipse.sequoyah.localization.stringeditor.providers;
 
-import org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput;
+import org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput;
 
 /**
  * This class gives editor its input and operation provider

@@ -10,7 +10,7 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) -  Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor;
+package org.eclipse.sequoyah.localization.stringeditor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,12 +21,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.tml.common.utilities.BasePlugin;
-import org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput;
-import org.eclipse.tml.localization.stringeditor.providers.ContentProvider;
-import org.eclipse.tml.localization.stringeditor.providers.DefaultOperationProvider;
-import org.eclipse.tml.localization.stringeditor.providers.ICellValidator;
-import org.eclipse.tml.localization.stringeditor.providers.IOperationProvider;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput;
+import org.eclipse.sequoyah.localization.stringeditor.providers.ContentProvider;
+import org.eclipse.sequoyah.localization.stringeditor.providers.DefaultOperationProvider;
+import org.eclipse.sequoyah.localization.stringeditor.providers.ICellValidator;
+import org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider;
 
 public class EditorExtensionLoader {
 

@@ -11,15 +11,15 @@
  * Contributors:
  *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor.operations;
+package org.eclipse.sequoyah.localization.stringeditor.editor.operations;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.tml.localization.stringeditor.editor.StringEditorPart;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart;
 
 /**
  * The operation of removing a column from the editor.

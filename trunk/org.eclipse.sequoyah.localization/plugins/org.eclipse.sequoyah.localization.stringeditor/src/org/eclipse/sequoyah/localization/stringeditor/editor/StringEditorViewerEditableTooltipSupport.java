@@ -10,11 +10,14 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor;
+package org.eclipse.sequoyah.localization.stringeditor.editor;
 
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -28,9 +31,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tml.common.utilities.BasePlugin;
-import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.localization.stringeditor.datatype.RowInfo;
 
 public class StringEditorViewerEditableTooltipSupport extends
 		ColumnViewerToolTipSupport {
@@ -127,7 +127,7 @@ public class StringEditorViewerEditableTooltipSupport extends
 						editor.getEditorInput().setCellTooltip(
 								column.getText(), row.getKey(), tooltipText);
 						editor.fireDirtyPropertyChanged();
-					} catch (TmLException e) {
+					} catch (SequoyahException e) {
 						BasePlugin.logError("Error setting cell tooltip: ("
 								+ column.getText() + ", " + row.getKey()
 								+ ") = " + tooltipText, e);

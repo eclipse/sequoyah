@@ -12,7 +12,7 @@
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor.input;
+package org.eclipse.sequoyah.localization.stringeditor.editor.input;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,10 +22,10 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.tml.common.utilities.exception.TmLException;
-import org.eclipse.tml.localization.stringeditor.datatype.CellInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.RowInfo;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
 import org.eclipse.ui.IEditorInput;
 
 public abstract class IStringEditorInput implements IEditorInput {
@@ -79,10 +79,10 @@ public abstract class IStringEditorInput implements IEditorInput {
 	 *            the key
 	 * @param value
 	 *            the value
-	 * @throws TmLException
+	 * @throws SequoyahException
 	 */
 	public abstract void setValue(String columnID, String key, String value)
-			throws TmLException;
+			throws SequoyahException;
 
 	/**
 	 * Get the value of a certain key at following column
@@ -188,10 +188,10 @@ public abstract class IStringEditorInput implements IEditorInput {
 	 * @param columnID
 	 * @param key
 	 * @param tooltip
-	 * @throws TmLException
+	 * @throws SequoyahException
 	 */
 	public abstract void setCellTooltip(String columnID, String key,
-			String tooltip) throws TmLException;
+			String tooltip) throws SequoyahException;
 
 	/**
 	 * Do a Lightwight validation of the entire input This validation shall not

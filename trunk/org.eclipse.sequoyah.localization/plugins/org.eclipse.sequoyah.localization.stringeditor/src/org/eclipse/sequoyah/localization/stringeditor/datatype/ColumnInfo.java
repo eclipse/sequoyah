@@ -10,7 +10,7 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.datatype;
+package org.eclipse.sequoyah.localization.stringeditor.datatype;
 
 import java.util.HashMap;
 import java.util.Map;

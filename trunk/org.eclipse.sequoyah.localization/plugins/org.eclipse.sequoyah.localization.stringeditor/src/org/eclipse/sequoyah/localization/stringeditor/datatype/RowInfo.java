@@ -10,14 +10,14 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) -  Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.datatype;
+package org.eclipse.sequoyah.localization.stringeditor.datatype;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.tml.localization.stringeditor.StringEditorPlugin;
+import org.eclipse.sequoyah.localization.stringeditor.StringEditorPlugin;
 
 /**
  * This class represents a row of the editor

@@ -10,17 +10,17 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor;
+package org.eclipse.sequoyah.localization.stringeditor.editor;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.stringeditor.i18n.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.tml.localization.stringeditor.datatype.CellInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.RowInfo;
-import org.eclipse.tml.localization.stringeditor.i18n.Messages;
 
 /**
  * This class provides a label for each column

@@ -10,11 +10,11 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.providers;
+package org.eclipse.sequoyah.localization.stringeditor.providers;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
 
 /**
  * 

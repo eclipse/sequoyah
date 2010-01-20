@@ -10,16 +10,16 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor;
+package org.eclipse.sequoyah.localization.stringeditor.editor;
 
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.stringeditor.i18n.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.tml.localization.stringeditor.datatype.CellInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.RowInfo;
-import org.eclipse.tml.localization.stringeditor.i18n.Messages;
 
 /**
  * A simple comparator based on the viewer compare logic

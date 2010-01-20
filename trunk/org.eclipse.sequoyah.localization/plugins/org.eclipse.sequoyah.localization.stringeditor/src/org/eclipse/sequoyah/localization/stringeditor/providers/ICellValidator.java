@@ -10,7 +10,7 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.providers;
+package org.eclipse.sequoyah.localization.stringeditor.providers;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;

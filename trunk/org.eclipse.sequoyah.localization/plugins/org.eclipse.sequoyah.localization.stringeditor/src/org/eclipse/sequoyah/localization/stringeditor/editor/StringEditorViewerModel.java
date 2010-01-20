@@ -11,7 +11,7 @@
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor;
+package org.eclipse.sequoyah.localization.stringeditor.editor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +24,12 @@ import java.util.Set;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.tml.localization.stringeditor.StringEditorPlugin;
-import org.eclipse.tml.localization.stringeditor.datatype.CellInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.tml.localization.stringeditor.datatype.IModelChangedListener;
-import org.eclipse.tml.localization.stringeditor.datatype.RowInfo;
-import org.eclipse.tml.localization.stringeditor.providers.ICellValidator;
+import org.eclipse.sequoyah.localization.stringeditor.StringEditorPlugin;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.IModelChangedListener;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.stringeditor.providers.ICellValidator;
 
 public class StringEditorViewerModel {
 

@@ -10,12 +10,12 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor.operations;
+package org.eclipse.sequoyah.localization.stringeditor.editor.operations;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
-import org.eclipse.tml.localization.stringeditor.editor.StringEditorPart;
-import org.eclipse.tml.localization.stringeditor.editor.StringEditorViewerModel;
-import org.eclipse.tml.localization.stringeditor.editor.input.IStringEditorInput;
+import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart;
+import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorViewerModel;
+import org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput;
 
 /**
  * This class is the base for all the operations executed inside the editor.

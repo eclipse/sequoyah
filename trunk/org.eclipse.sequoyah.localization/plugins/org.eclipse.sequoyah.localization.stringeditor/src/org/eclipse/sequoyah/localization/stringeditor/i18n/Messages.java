@@ -11,12 +11,12 @@
  * Marcelo Marzola Bossoni (Eldorado) - Bug (289236) - Editor Permitting create 2 columns with same id
  *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.i18n;
+package org.eclipse.sequoyah.localization.stringeditor.i18n;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.tml.localization.stringeditor.i18n.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.sequoyah.localization.stringeditor.i18n.messages"; //$NON-NLS-1$
 	public static String DefaultOperationProvider_NewColumnDescription;
 	public static String DefaultOperationProvider_NewColumnErrorNotEmpty;
 	public static String DefaultOperationProvider_NewColumnTitle;

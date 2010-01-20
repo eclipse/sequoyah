@@ -10,7 +10,7 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor;
+package org.eclipse.sequoyah.localization.stringeditor.editor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.tml.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 
 public class EditorSession {
 
@@ -26,7 +26,7 @@ public class EditorSession {
 
 	private final IProject project;
 
-	private static final String PROPERTY_GROUP = "org.eclipse.tml.localization.stringeditor";
+	private static final String PROPERTY_GROUP = "org.eclipse.sequoyah.localization.stringeditor";
 
 	public static enum PROPERTY {
 		WIDTH, VISIBLE, ORDER, SORT_BY_COLUMN, HIGHLIGHT_CHANGES, SEARCH_TEXT, SHOW_COMMENTS, FILTER_BY_KEY

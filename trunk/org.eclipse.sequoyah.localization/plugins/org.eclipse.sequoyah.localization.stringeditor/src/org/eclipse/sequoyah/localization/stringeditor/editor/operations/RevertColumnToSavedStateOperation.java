@@ -10,7 +10,7 @@
  * Contributors:
  *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
-package org.eclipse.tml.localization.stringeditor.editor.operations;
+package org.eclipse.sequoyah.localization.stringeditor.editor.operations;
 
 import java.io.IOException;
 
@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.tml.common.utilities.BasePlugin;
-import org.eclipse.tml.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.tml.localization.stringeditor.editor.StringEditorPart;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart;
 
 public class RevertColumnToSavedStateOperation extends EditorOperation {
 
