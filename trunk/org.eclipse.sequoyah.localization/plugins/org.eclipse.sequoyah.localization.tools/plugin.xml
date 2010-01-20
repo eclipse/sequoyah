@@ -5,28 +5,28 @@
    <extension-point id="localizationSchema" name="Project Localization Schema" schema="schema/localizationSchema.exsd"/>
    <extension-point id="translator" name="Translator" schema="schema/translator.exsd"/>
    <extension
-         point="org.eclipse.tml.localization.stringeditor.contentprovider">
+         point="org.eclipse.sequoyah.localization.stringeditor.contentprovider">
       <provider
-            cellValidator="org.eclipse.tml.localization.tools.editor.CellValidator"
-            contextHelpID="org.eclipse.tml.localization.stringeditor.StringEditor"
-            editorInput="org.eclipse.tml.localization.tools.editor.StringEditorInput"
-            operationsProvider="org.eclipse.tml.localization.tools.editor.NewColumnProvider">
+            cellValidator="org.eclipse.sequoyah.localization.tools.editor.CellValidator"
+            contextHelpID="org.eclipse.sequoyah.localization.stringeditor.StringEditor"
+            editorInput="org.eclipse.sequoyah.localization.tools.editor.StringEditorInput"
+            operationsProvider="org.eclipse.sequoyah.localization.tools.editor.NewColumnProvider">
       </provider>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.eclipse.tml.localization.stringeditor.editor.StringEditorPart"
+            class="org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart"
             default="true"
             icon="icons/loc_icon.png"
-            id="org.eclipse.tml.localization.tools.extensions.implementation.android.localizationEditor"
-            matchingStrategy="org.eclipse.tml.localization.tools.editor.StringEditorMatchingStrategy"
+            id="org.eclipse.sequoyah.localization.tools.extensions.implementation.android.localizationEditor"
+            matchingStrategy="org.eclipse.sequoyah.localization.tools.editor.StringEditorMatchingStrategy"
             name="Localization Files Editor">
       </editor>
    </extension>
    <extension
          point="org.eclipse.ui.startup">
       <startup
-            class="org.eclipse.tml.localization.tools.LocalizationToolsStartup"></startup>
+            class="org.eclipse.sequoyah.localization.tools.LocalizationToolsStartup"></startup>
    </extension>
 </plugin>
