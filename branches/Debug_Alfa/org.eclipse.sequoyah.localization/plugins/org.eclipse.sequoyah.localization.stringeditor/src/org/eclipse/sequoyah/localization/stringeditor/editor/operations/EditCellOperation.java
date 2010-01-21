@@ -26,112 +26,125 @@ import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart;
 /**
  * The operation of editing a specific editor cell.
  */
-public class EditCellOperation extends EditorOperation {
+public class EditCellOperation extends EditorOperation
+{
 
-	private final String key;
+    private final String key;
 
-	private final String column;
+    private final String column;
 
-	private final CellInfo oldValue;
+    private final CellInfo oldValue;
 
-	private final CellInfo newValue;
+    private final CellInfo newValue;
 
-	/**
-	 * Creates a new EditCellOperation.
-	 * 
-	 * @param key
-	 *            - the key related to the cell.
-	 * @param column
-	 *            - the column related to the cell.
-	 * @param oldValue
-	 *            - the cell old value.
-	 * @param newValue
-	 *            - the cell new value.
-	 * @param editor
-	 *            - the editor Object.
-	 */
-	public EditCellOperation(String key, String column, CellInfo oldValue,
-			CellInfo newValue, StringEditorPart editor) {
-		super("Edit Cell", editor);
-		this.key = key;
-		this.column = column;
-		this.oldValue = oldValue;
-		this.newValue = newValue;
-	}
+    /**
+     * Creates a new EditCellOperation.
+     * 
+     * @param key
+     *            - the key related to the cell.
+     * @param column
+     *            - the column related to the cell.
+     * @param oldValue
+     *            - the cell old value.
+     * @param newValue
+     *            - the cell new value.
+     * @param editor
+     *            - the editor Object.
+     */
+    public EditCellOperation(String key, String column, CellInfo oldValue, CellInfo newValue,
+            StringEditorPart editor)
+    {
+        super("Edit Cell", editor);
+        this.key = key;
+        this.column = column;
+        this.oldValue = oldValue;
+        this.newValue = newValue;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.commands.operations.AbstractOperation#execute(org.eclipse
-	 * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
-	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		return redo(monitor, info);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.core.commands.operations.AbstractOperation#execute(org.eclipse
+     * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+     */
+    @Override
+    public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+    {
+        return redo(monitor, info);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.commands.operations.AbstractOperation#redo(org.eclipse
-	 * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
-	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.core.commands.operations.AbstractOperation#redo(org.eclipse
+     * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+     */
+    @Override
+    public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+    {
 
-		getModel().addCell(newValue, key, column);
-		if (newValue != null && !newValue.isDirty()) {
-			newValue.setDirty(true);
-		}
-		try {
-			if (newValue == null
-					|| (newValue != null && newValue.getValue() == null)) {
-				getEditorInput().removeCell(key, column);
-			} else {
-				getEditorInput().setValue(column, key, newValue.getValue());
-			}
-		} catch (SequoyahException e) {
-			BasePlugin.logError("Error editing cell value: (" + column + ", "
-					+ key + ") = " + newValue != null ? newValue.getValue()
-					: null, e);
-		}
-		getEditor().fireDirtyPropertyChanged();
-		getEditor().getEditorViewer().update(getModel().getRow(key), null);
-		return Status.OK_STATUS;
-	}
+        getModel().addCell(newValue, key, column);
+        if (newValue != null && !newValue.isDirty())
+        {
+            newValue.setDirty(true);
+        }
+        try
+        {
+            if (newValue == null || (newValue != null && newValue.getValue() == null))
+            {
+                getEditorInput().removeCell(key, column);
+            }
+            else
+            {
+                getEditorInput().setValue(column, key, newValue.getValue());
+            }
+        }
+        catch (SequoyahException e)
+        {
+            BasePlugin.logError("Error editing cell value: (" + column + ", " + key + ") = "
+                    + newValue != null ? newValue.getValue() : null, e);
+        }
+        getEditor().fireDirtyPropertyChanged();
+        getEditor().getEditorViewer().update(getModel().getRow(key), null);
+        return Status.OK_STATUS;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.commands.operations.AbstractOperation#undo(org.eclipse
-	 * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
-	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		getModel().addCell(oldValue, key, column);
-		try {
-			if (oldValue != null) {
-				oldValue.setDirty(true);
-			}
-			if (oldValue != null && oldValue.getValue() != null) {
-				getEditorInput().setValue(column, key, oldValue.getValue());
-			} else {
-				getEditorInput().removeCell(key, column);
-			}
-		} catch (SequoyahException e) {
-			BasePlugin.logError("Error undoing cell edition: (" + column + ", "
-					+ key + ") = " + oldValue != null ? oldValue.getValue()
-					: null, e);
-		}
-		getEditor().fireDirtyPropertyChanged();
-		getEditor().getEditorViewer().update(getModel().getRow(key), null);
-		return Status.OK_STATUS;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.core.commands.operations.AbstractOperation#undo(org.eclipse
+     * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+     */
+    @Override
+    public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+    {
+        getModel().addCell(oldValue, key, column);
+        try
+        {
+            if (oldValue != null)
+            {
+                oldValue.setDirty(true);
+            }
+            if (oldValue != null && oldValue.getValue() != null)
+            {
+                getEditorInput().setValue(column, key, oldValue.getValue());
+            }
+            else
+            {
+                getEditorInput().removeCell(key, column);
+            }
+        }
+        catch (SequoyahException e)
+        {
+            BasePlugin.logError("Error undoing cell edition: (" + column + ", " + key + ") = "
+                    + oldValue != null ? oldValue.getValue() : null, e);
+        }
+        getEditor().fireDirtyPropertyChanged();
+        getEditor().getEditorViewer().update(getModel().getRow(key), null);
+        return Status.OK_STATUS;
+    }
 
 }

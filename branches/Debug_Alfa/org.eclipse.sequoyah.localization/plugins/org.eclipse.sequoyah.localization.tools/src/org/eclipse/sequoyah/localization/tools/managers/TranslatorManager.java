@@ -12,82 +12,134 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.managers;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.TranslationResult;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 import org.eclipse.sequoyah.localization.tools.extensions.providers.TranslatorProvider;
 
 /**
- * 
+ * Manage translators
  */
-public class TranslatorManager {
+public class TranslatorManager
+{
 
-	private List<ITranslator> translators;
+    /*
+     * The translators, indexed by name
+     */
+    private Map<String, ITranslator> translators;
 
-	private PreferencesManager preferencesManager;
+    private PreferencesManager preferencesManager;
 
-	private TranslatorProvider translatorProvider;
+    private TranslatorProvider translatorProvider;
 
-	/**
-	 * @param string
-	 * @param fromLanguage
-	 * @param toLanguage
-	 * @return
-	 */
-	public TranslationResult translate(String string, String fromLanguage,
-			String toLanguage) {
-		return null;
-	}
+    /*
+     * Singleton instance
+     */
+    private static TranslatorManager instance = null;
 
-	/**
-	 * @param strings
-	 * @param fromLanguage
-	 * @param toLanguage
-	 * @return
-	 */
-	public List<TranslationResult> translateAll(List<String> strings,
-			String fromLanguage, String toLanguage) {
-		return null;
-	}
+    /**
+     * Singleton
+     * 
+     * @return TranslatorManager
+     */
+    public static TranslatorManager getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new TranslatorManager();
+        }
+        return instance;
+    }
 
-	/**
-	 * @param translator
-	 * @param string
-	 * @param fromLanguage
-	 * @param toLanguage
-	 * @return
-	 */
-	public TranslationResult translate(ITranslator translator, String string,
-			String fromLanguage, String toLanguage) {
-		return null;
-	}
+    /**
+     * Constructor
+     */
+    public TranslatorManager()
+    {
+        this.translatorProvider = TranslatorProvider.getInstance();
+        this.preferencesManager = PreferencesManager.getInstance();
+        this.translators = this.translatorProvider.getTranslators();
+        this.preferencesManager.setDefaultTranslator(this.translators.get("Google Translator"));
+    }
 
-	/**
-	 * @param translator
-	 * @param strings
-	 * @param fromLanguage
-	 * @param toLanguage
-	 * @return
-	 */
-	public List<TranslationResult> translateAll(ITranslator translator,
-			List<String> strings, String fromLanguage, String toLanguage) {
-		return null;
-	}
+    /**
+     * Translate the string passed as parameter
+     * 
+     * @param string string to translate
+     * @param fromLanguage language ID to translate from
+     * @param toLanguage language ID to translate to
+     * @return a TranslationResult object with information about the translation
+     */
+    public TranslationResult translate(String string, String fromLanguage, String toLanguage)
+    {
 
-	/**
-	 * @return
-	 */
-	public List<ITranslator> getTranslators() {
-		return translators;
-	}
+        TranslationResult translationResults = null;
 
-	/**
-	 * @param name
-	 * @return
-	 */
-	public ITranslator getTranslatorByName(String name) {
-		return null;
-	}
+        ITranslator translator = preferencesManager.getDefaultTranslator();
+
+        try
+        {
+            translationResults = translator.translate(string, fromLanguage, toLanguage);
+        }
+        catch (Exception e)
+        {
+            BasePlugin.logError("Errow while using translator");
+        }
+
+        return translationResults;
+    }
+
+    /**
+     * Translate all strings passed as parameter
+     * 
+     * @param strings strings to translate
+     * @param fromLanguage language ID to translate from
+     * @param toLanguage language ID to translate to
+     * @return a TranslationResult object with information about the translation
+     */
+    public List<TranslationResult> translateAll(List<String> strings, String fromLanguage,
+            String toLanguage)
+    {
+
+        List<TranslationResult> translationResults = null;
+
+        ITranslator translator = preferencesManager.getDefaultTranslator();
+
+        try
+        {
+            translationResults = translator.translateAll(strings, fromLanguage, toLanguage);
+        }
+        catch (Exception e)
+        {
+            BasePlugin.logError("Errow while using translator");
+        }
+
+        return translationResults;
+    }
+
+    /**
+     * Get all registered translators
+     * 
+     * @return all registered translators
+     */
+    public List<ITranslator> getTranslators()
+    {
+        return new ArrayList<ITranslator>(translators.values());
+    }
+
+    /**
+     * Get a specific translator by its name
+     * 
+     * @param name translator name
+     * @return the translator
+     */
+    public ITranslator getTranslatorByName(String name)
+    {
+        return this.translators.get(name);
+    }
 
 }

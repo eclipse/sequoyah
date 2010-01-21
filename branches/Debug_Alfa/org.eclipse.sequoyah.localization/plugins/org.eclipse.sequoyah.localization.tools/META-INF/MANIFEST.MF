@@ -17,5 +17,14 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.sequoyah.localization.tools.datamodel,
  org.eclipse.sequoyah.localization.tools.editor,
  org.eclipse.sequoyah.localization.tools.extensions.classes,
+ org.eclipse.sequoyah.localization.tools.extensions.implementation.generic,
  org.eclipse.sequoyah.localization.tools.managers
 Bundle-Vendor: %pluginProvider
+Import-Package: org.apache.commons.httpclient,
+ org.apache.commons.httpclient.auth,
+ org.apache.commons.httpclient.methods,
+ org.apache.commons.httpclient.params,
+ org.eclipse.core.internal.net,
+ org.eclipse.core.net.proxy,
+ org.eclipse.sequoyah.localization.tools.extensions.implementation.generic,
+ org.eclipse.ui.internal.net.auth

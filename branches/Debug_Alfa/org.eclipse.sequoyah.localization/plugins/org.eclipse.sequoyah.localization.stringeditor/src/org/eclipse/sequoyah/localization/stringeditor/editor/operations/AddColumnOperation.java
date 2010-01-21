@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart;
 
@@ -43,7 +44,7 @@ public class AddColumnOperation extends EditorOperation {
 	 */
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+			throws ExecutionException {		
 		return redo(monitor, info);
 	}
 
@@ -57,7 +58,6 @@ public class AddColumnOperation extends EditorOperation {
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-
 		getEditor().addColumn(columnInfo, -1);
 		return Status.OK_STATUS;
 
@@ -73,8 +73,8 @@ public class AddColumnOperation extends EditorOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-
 		getEditor().removeColumn(columnInfo.getId());
+		getEditor().getEditorViewer().refresh();		
 		return Status.OK_STATUS;
 	}
 

@@ -16,6 +16,7 @@ import java.util.Date;
 
 import org.eclipse.sequoyah.localization.tools.persistence.IPersistentMetaData;
 import org.eclipse.sequoyah.localization.tools.persistence.PersistableAttributes;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
 
 /**
  * This class stores meta-info about the grammar checker process and is intended

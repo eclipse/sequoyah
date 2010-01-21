@@ -35,6 +35,21 @@ public class TranslationResult {
 
 	private boolean succesful;
 
+	
+	
+	public TranslationResult(String word, ITranslator translator,
+			String translatedWord, String originalLanguage,
+			String translatedLanguage, Date date, boolean succesful) {
+		super();
+		this.word = word;
+		this.translator = translator;
+		this.translatedWord = translatedWord;
+		this.originalLanguage = originalLanguage;
+		this.translatedLanguage = translatedLanguage;
+		this.date = date;
+		this.succesful = succesful;
+	}
+
 	/**
 	 * @return
 	 */

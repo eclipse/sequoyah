@@ -32,111 +32,122 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
-public class StringEditorViewerEditableTooltipSupport extends
-		ColumnViewerToolTipSupport {
+public class StringEditorViewerEditableTooltipSupport extends ColumnViewerToolTipSupport
+{
 
-	private String tooltipText;
+    private String tooltipText;
 
-	private final ColumnViewer viewer;
+    private final ColumnViewer viewer;
 
-	private Event currentTooltipEvent;
+    private Event currentTooltipEvent;
 
-	private final StringEditorPart editor;
+    private final StringEditorPart editor;
 
-	protected StringEditorViewerEditableTooltipSupport(ColumnViewer viewer,
-			int style, boolean manualActivation, StringEditorPart editor) {
-		super(viewer, style, manualActivation);
-		setHideDelay(0);
-		setHideOnMouseDown(false);
-		setPopupDelay(100);
-		setShift(new Point(-3, 0));
-		this.tooltipText = null;
-		this.viewer = viewer;
-		this.editor = editor;
-	}
+    protected StringEditorViewerEditableTooltipSupport(ColumnViewer viewer, int style,
+            boolean manualActivation, StringEditorPart editor)
+    {
+        super(viewer, style, manualActivation);
+        setHideDelay(0);
+        setHideOnMouseDown(false);
+        setPopupDelay(100);
+        setShift(new Point(-3, 0));
+        this.tooltipText = null;
+        this.viewer = viewer;
+        this.editor = editor;
+    }
 
-	public static void enableFor(ColumnViewer viewer, int style,
-			StringEditorPart editor) {
-		new StringEditorViewerEditableTooltipSupport(viewer, style, false,
-				editor);
-	}
+    public static void enableFor(ColumnViewer viewer, int style, StringEditorPart editor)
+    {
+        new StringEditorViewerEditableTooltipSupport(viewer, style, false, editor);
+    }
 
-	@Override
-	protected Composite createViewerToolTipContentArea(Event event,
-			ViewerCell cell, Composite parent) {
+    @Override
+    protected Composite createViewerToolTipContentArea(Event event, ViewerCell cell,
+            Composite parent)
+    {
 
-		Composite toReturn = null;
+        Composite toReturn = null;
 
-		if (cell.getColumnIndex() != 0) {
-			final String text = getText(event);
-			toReturn = new Composite(parent, SWT.FILL);
-			GridLayout layout = new GridLayout();
-			toReturn.setLayout(layout);
-			final Text textComposite = new Text(toReturn, SWT.MULTI | SWT.WRAP);
-			GridData layouData = new GridData(GridData.FILL_BOTH);
-			layouData.minimumWidth = 200;
-			layouData.minimumHeight = 50;
-			layouData.grabExcessHorizontalSpace = true;
-			layouData.grabExcessVerticalSpace = true;
-			textComposite.setText(text.trim().length() > 0 ? text
-					: "Type your comment here");
-			textComposite.setLayoutData(layouData);
-			textComposite.addModifyListener(new ModifyListener() {
+        if (cell.getColumnIndex() != 0)
+        {
+            final String text = getText(event);
+            toReturn = new Composite(parent, SWT.FILL);
+            GridLayout layout = new GridLayout();
+            toReturn.setLayout(layout);
+            final Text textComposite = new Text(toReturn, SWT.MULTI | SWT.WRAP);
+            GridData layouData = new GridData(GridData.FILL_BOTH);
+            layouData.minimumWidth = 200;
+            layouData.minimumHeight = 50;
+            layouData.grabExcessHorizontalSpace = true;
+            layouData.grabExcessVerticalSpace = true;
+            textComposite.setText(text.trim().length() > 0 ? text : "Type your comment here");
+            textComposite.setLayoutData(layouData);
+            textComposite.addModifyListener(new ModifyListener()
+            {
 
-				public void modifyText(ModifyEvent e) {
-					tooltipText = ((Text) e.widget).getText();
-				}
-			});
-			textComposite.addFocusListener(new FocusListener() {
+                public void modifyText(ModifyEvent e)
+                {
+                    tooltipText = ((Text) e.widget).getText();
+                }
+            });
+            textComposite.addFocusListener(new FocusListener()
+            {
 
-				public void focusLost(FocusEvent e) {
-					// do nothing
-				}
+                public void focusLost(FocusEvent e)
+                {
+                    // do nothing
+                }
 
-				public void focusGained(FocusEvent e) {
-					if (text.trim().length() == 0) {
-						textComposite.setText("");
-						tooltipText = null;
-					}
-				}
-			});
-		} else {
-			toReturn = super
-					.createViewerToolTipContentArea(event, cell, parent);
-		}
-		currentTooltipEvent = event;
-		return toReturn;
-	}
+                public void focusGained(FocusEvent e)
+                {
+                    if (text.trim().length() == 0)
+                    {
+                        textComposite.setText("");
+                        tooltipText = null;
+                    }
+                }
+            });
+        }
+        else
+        {
+            toReturn = super.createViewerToolTipContentArea(event, cell, parent);
+        }
+        currentTooltipEvent = event;
+        return toReturn;
+    }
 
-	@Override
-	protected void afterHideToolTip(Event event) {
+    @Override
+    protected void afterHideToolTip(Event event)
+    {
 
-		ViewerCell cell = viewer.getCell(new Point(currentTooltipEvent.x,
-				currentTooltipEvent.y));
-		if (cell.getColumnIndex() != 0) {
-			RowInfo row = ((RowInfo) cell.getViewerRow().getElement());
-			TableColumn column = ((Table) viewer.getControl()).getColumn(cell
-					.getColumnIndex());
-			if (tooltipText != null
-					&& !tooltipText.trim().equals(
-							row.getCells().get(column.getText()).getComment())) {
-				row.getCells().get(column.getText()).setComment(
-						tooltipText.trim());
-				if (this.editor != null) {
-					try {
-						editor.getEditorInput().setCellTooltip(
-								column.getText(), row.getKey(), tooltipText);
-						editor.fireDirtyPropertyChanged();
-					} catch (SequoyahException e) {
-						BasePlugin.logError("Error setting cell tooltip: ("
-								+ column.getText() + ", " + row.getKey()
-								+ ") = " + tooltipText, e);
-					}
-				}
-			}
-			this.tooltipText = null;
-			currentTooltipEvent = null;
-		}
-		super.afterHideToolTip(event);
-	}
+        ViewerCell cell = viewer.getCell(new Point(currentTooltipEvent.x, currentTooltipEvent.y));
+        if (cell.getColumnIndex() != 0)
+        {
+            RowInfo row = ((RowInfo) cell.getViewerRow().getElement());
+            TableColumn column = ((Table) viewer.getControl()).getColumn(cell.getColumnIndex());
+            if (tooltipText != null
+                    && !tooltipText.trim()
+                            .equals(row.getCells().get(column.getText()).getComment()))
+            {
+                row.getCells().get(column.getText()).setComment(tooltipText.trim());
+                if (this.editor != null)
+                {
+                    try
+                    {
+                        editor.getEditorInput().setCellTooltip(column.getText(), row.getKey(),
+                                tooltipText);
+                        editor.fireDirtyPropertyChanged();
+                    }
+                    catch (SequoyahException e)
+                    {
+                        BasePlugin.logError("Error setting cell tooltip: (" + column.getText()
+                                + ", " + row.getKey() + ") = " + tooltipText, e);
+                    }
+                }
+            }
+            this.tooltipText = null;
+            currentTooltipEvent = null;
+        }
+        super.afterHideToolTip(event);
+    }
 }

@@ -23,55 +23,60 @@ import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart;
 
-public class RevertColumnToSavedStateOperation extends EditorOperation {
+public class RevertColumnToSavedStateOperation extends EditorOperation
+{
 
-	private final ColumnInfo actualState;
+    private final ColumnInfo actualState;
 
-	private ColumnInfo savedState = null;
+    private ColumnInfo savedState = null;
 
-	boolean changedColumn = false;
+    boolean changedColumn = false;
 
-	public RevertColumnToSavedStateOperation(String label,
-			StringEditorPart editor, ColumnInfo actual) {
-		super(label, editor);
-		this.actualState = actual;
-	}
+    public RevertColumnToSavedStateOperation(String label, StringEditorPart editor,
+            ColumnInfo actual)
+    {
+        super(label, editor);
+        this.actualState = actual;
+    }
 
-	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		try {
-			getEditorInput().revert(actualState.getId());
-		} catch (IOException e) {
-			BasePlugin.logError("Error reverting column: "
-					+ actualState.getId(), e);
-		}
-		savedState = new ColumnInfo(actualState.getId(), actualState
-				.getTooltip(), getEditorInput().getValues(actualState.getId()),
-				actualState.canRemove());
-		return redo(monitor, info);
-	}
+    @Override
+    public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+    {
+        try
+        {
+            getEditorInput().revert(actualState.getId());
+        }
+        catch (IOException e)
+        {
+            BasePlugin.logError("Error reverting column: " + actualState.getId(), e);
+        }
+        savedState =
+                new ColumnInfo(actualState.getId(), actualState.getTooltip(), getEditorInput()
+                        .getValues(actualState.getId()), actualState.canRemove());
+        return redo(monitor, info);
+    }
 
-	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		getModel().removeColumn(actualState.getId());
-		getModel().addColumn(savedState);
-		changedColumn = getEditor().unmarkColumnAsChanged(actualState.getId());
-		getEditor().getEditorViewer().refresh();
-		return Status.OK_STATUS;
-	}
+    @Override
+    public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+    {
+        getModel().removeColumn(actualState.getId());
+        getModel().addColumn(savedState);
+        changedColumn = getEditor().unmarkColumnAsChanged(actualState.getId());
+        getEditor().getEditorViewer().refresh();
+        return Status.OK_STATUS;
+    }
 
-	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		getModel().removeColumn(savedState.getId());
-		getModel().addColumn(actualState);
-		if (changedColumn) {
-			getEditor().markColumnAsChanged(actualState.getId());
-		}
-		getEditor().getEditorViewer().refresh();
-		return Status.OK_STATUS;
-	}
+    @Override
+    public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+    {
+        getModel().removeColumn(savedState.getId());
+        getModel().addColumn(actualState);
+        if (changedColumn)
+        {
+            getEditor().markColumnAsChanged(actualState.getId());
+        }
+        getEditor().getEditorViewer().refresh();
+        return Status.OK_STATUS;
+    }
 
 }

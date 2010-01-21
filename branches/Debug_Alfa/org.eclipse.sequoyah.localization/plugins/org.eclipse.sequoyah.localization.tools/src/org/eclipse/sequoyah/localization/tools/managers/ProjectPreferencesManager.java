@@ -17,96 +17,140 @@ import org.eclipse.core.resources.IProject;
 /**
  *
  */
-public class ProjectPreferencesManager {
+public class ProjectPreferencesManager
+{
 
-	private IProject project;
+    private IProject project;
 
-	private ProjectLocalizationManager projectLocalizationManager;
+    /*
+    * The default translator to be used in the translation processes
+    */
+    private String defaultLanguage;
 
-	private boolean metadataEnabled;
+    private ProjectLocalizationManager projectLocalizationManager;
 
-	/**
-	 * @return
-	 */
-	public boolean hasMetadata() {
-		return false;
-	}
+    private boolean metadataEnabled;
 
-	/**
-	 * @return
-	 */
-	public boolean hasExtraInfo() {
-		return false;
-	}
+    public ProjectPreferencesManager(IProject project)
+    {
+        this.project = project;
+    }
 
-	/**
-	 * 
-	 */
-	public void clearMetadata() {
+    /**
+     * Get the default language to be used in the translation processes
+     * 
+     * @return the default language to be used in the translation processes
+     */
+    public String getDefaultLanguage()
+    {
+        return defaultLanguage;
+    }
 
-	}
+    /**
+     * Set the default language to be used in the translation processes
+     * 
+     * @param languageID
+     *            the default language ID to be used in the translation processes
+     */
+    public void setDefaultLanguage(String languageID)
+    {
+        this.defaultLanguage = languageID;
+    }
 
-	/**
-	 * 
-	 */
-	public void clearExtraInfo() {
+    /**
+     * @return
+     */
+    public boolean hasMetadata()
+    {
+        return false;
+    }
 
-	}
+    /**
+     * @return
+     */
+    public boolean hasExtraInfo()
+    {
+        return false;
+    }
 
-	/**
-	 * 
-	 */
-	public boolean hasComments() {
-		return false;
-	}
+    /**
+     * 
+     */
+    public void clearMetadata()
+    {
 
-	/**
-	 * 
-	 */
-	public boolean hasTranslationDetails() {
-		return false;
-	}
+    }
 
-	/**
-	 * 
-	 */
-	public boolean hasGrammarCheckerDetails() {
-		return false;
-	}
+    /**
+     * 
+     */
+    public void clearExtraInfo()
+    {
 
-	/**
-	 * 
-	 */
-	public void clearComments() {
+    }
 
-	}
+    /**
+     * 
+     */
+    public boolean hasComments()
+    {
+        return false;
+    }
 
-	/**
-	 * 
-	 */
-	public void clearTranslationDetails() {
+    /**
+     * 
+     */
+    public boolean hasTranslationDetails()
+    {
+        return false;
+    }
 
-	}
+    /**
+     * 
+     */
+    public boolean hasGrammarCheckerDetails()
+    {
+        return false;
+    }
 
-	/**
-	 * 
-	 */
-	public void clearGrammarCheckerDetails() {
+    /**
+     * 
+     */
+    public void clearComments()
+    {
 
-	}
+    }
 
-	/**
-	 * @return
-	 */
-	public boolean isMetadataEnabled() {
-		return metadataEnabled;
-	}
+    /**
+     * 
+     */
+    public void clearTranslationDetails()
+    {
 
-	/**
-	 * @param metadataEnabled
-	 */
-	public void setMetadataEnabled(boolean metadataEnabled) {
-		this.metadataEnabled = metadataEnabled;
-	}
+    }
+
+    /**
+     * 
+     */
+    public void clearGrammarCheckerDetails()
+    {
+
+    }
+
+    /**
+     * @return
+     */
+    public boolean isMetadataEnabled()
+    {
+        return metadataEnabled;
+    }
+
+    /**
+     * @param metadataEnabled
+     */
+    public void setMetadataEnabled(boolean metadataEnabled)
+    {
+        this.metadataEnabled = metadataEnabled;
+    }
 
 }

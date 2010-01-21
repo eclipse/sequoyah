@@ -17,14 +17,16 @@ import org.eclipse.sequoyah.localization.tools.extensions.classes.IGrammarChecke
 /**
  *
  */
-public class GenericGrammarCheckerByURL implements IGrammarChecker {
+public class GenericGrammarCheckerByURL implements IGrammarChecker
+{
 
-	/**
-	 * @see org.eclipse.sequoyah.localization.tools.extensions.classes.IGrammarChecker#checkGrammar(java.lang.String,
-	 *      java.lang.String)
-	 */
-	public void checkGrammar(String word, String lang) {
+    /**
+     * @see org.eclipse.sequoyah.localization.tools.extensions.classes.IGrammarChecker#checkGrammar(java.lang.String,
+     *      java.lang.String)
+     */
+    public void checkGrammar(String word, String lang)
+    {
 
-	}
+    }
 
 }

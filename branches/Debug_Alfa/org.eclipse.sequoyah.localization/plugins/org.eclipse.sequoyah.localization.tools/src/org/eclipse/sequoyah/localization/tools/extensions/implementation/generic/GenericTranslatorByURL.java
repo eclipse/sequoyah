@@ -12,19 +12,28 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.implementation.generic;
 
+import java.util.List;
+
+import org.eclipse.sequoyah.localization.tools.datamodel.TranslationResult;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 
 /**
  *
  */
-public class GenericTranslatorByURL implements ITranslator {
+public class GenericTranslatorByURL extends ITranslator {
 
-	/**
-	 * @see org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator#translate(java.lang.String,
-	 *      java.lang.String, java.lang.String)
-	 */
-	public void translate(String word, String fromLanguage, String toLanguage) {
+	@Override
+	public TranslationResult translate(String word, String fromLanguage,
+			String toLanguage) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	@Override
+	public List<TranslationResult> translateAll(List<String> words,
+			String fromLanguage, String toLanguage) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

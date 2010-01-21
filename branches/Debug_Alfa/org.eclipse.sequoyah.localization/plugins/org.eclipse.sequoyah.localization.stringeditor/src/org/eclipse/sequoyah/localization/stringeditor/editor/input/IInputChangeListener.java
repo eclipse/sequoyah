@@ -9,8 +9,7 @@
  * Vinicius Rigoni Hernandes (Eldorado)
  * 
  * Contributors:
- *  Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
- *  Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted
+ *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.stringeditor.editor.input;
 
@@ -21,7 +20,5 @@ package org.eclipse.sequoyah.localization.stringeditor.editor.input;
 public interface IInputChangeListener {
 
 	public void columnChanged(String columnID);
-
-	public void projectRemoved();
 
 }

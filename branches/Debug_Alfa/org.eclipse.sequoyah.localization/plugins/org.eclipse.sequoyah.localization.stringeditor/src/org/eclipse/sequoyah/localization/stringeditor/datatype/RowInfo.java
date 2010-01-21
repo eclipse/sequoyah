@@ -22,84 +22,112 @@ import org.eclipse.sequoyah.localization.stringeditor.StringEditorPlugin;
 /**
  * This class represents a row of the editor
  */
-public class RowInfo {
+public class RowInfo
+{
 
-	/*
-	 * This row key
-	 */
-	private final String key;
+    /*
+     * This row key
+     */
+    private String key;
 
-	/*
-	 * This row cells
-	 */
-	private final Map<String, CellInfo> cells;
+    /*
+     * This row cells
+     */
+    private final Map<String, CellInfo> cells;
 
-	/*
-	 * This row status
-	 */
-	private MultiStatus rowStatus;
+    /*
+     * Array info
+     */
+    boolean isArray = false;
 
-	/**
-	 * Create a new row with a key and initial cells
-	 * 
-	 * @param key
-	 * @param cells
-	 */
-	public RowInfo(String key, Map<String, CellInfo> cells) {
-		this.key = key;
-		this.cells = cells != null ? cells : new HashMap<String, CellInfo>();
-		this.rowStatus = new MultiStatus(StringEditorPlugin.PLUGIN_ID, 0, null,
-				null);
-	}
+    /*
+     * This row status
+     */
+    private MultiStatus rowStatus;
 
-	/**
-	 * Add a cell to this row
-	 * 
-	 * @param columnID
-	 * @param value
-	 */
-	public void addCell(String columnID, CellInfo value) {
-		cells.put(columnID, value);
-	}
+    /**
+     * Create a new row with a key and initial cells
+     * 
+     * @param key
+     * @param cells
+     */
+    public RowInfo(String key, boolean isArray, Map<String, CellInfo> cells)
+    {
+        this.key = key;
+        this.isArray = isArray;
+        this.cells = cells != null ? cells : new HashMap<String, CellInfo>();
+        this.rowStatus = new MultiStatus(StringEditorPlugin.PLUGIN_ID, 0, null, null);
+    }
 
-	/**
-	 * Remove a cell of this row.
-	 * 
-	 * @param columnID
-	 */
-	public void removeCell(String columnID) {
-		cells.remove(columnID);
-	}
+    /**
+     * Add a cell to this row
+     * 
+     * @param columnID
+     * @param value
+     */
+    public void addCell(String columnID, CellInfo value)
+    {
+        cells.put(columnID, value);
+    }
 
-	/**
-	 * get this row key
-	 * 
-	 * @return
-	 */
-	public String getKey() {
-		return key;
-	}
+    /**
+     * Remove a cell of this row.
+     * 
+     * @param columnID
+     */
+    public void removeCell(String columnID)
+    {
+        cells.remove(columnID);
+    }
 
-	/**
-	 * get this row cells
-	 * 
-	 * @return the cells
-	 */
-	public Map<String, CellInfo> getCells() {
-		return cells;
-	}
+    /**
+     * get this row key
+     * 
+     * @return
+     */
+    public String getKey()
+    {
+        return key;
+    }
 
-	public void addStatus(IStatus status) {
-		this.rowStatus.merge(status);
-	}
+    public void setKey(String key)
+    {
+        this.key = key;
+    }
 
-	public void cleanStatus() {
-		this.rowStatus = new MultiStatus(StringEditorPlugin.PLUGIN_ID, 0, null,
-				null);
-	}
+    /**
+     * get this row cells
+     * 
+     * @return the cells
+     */
+    public Map<String, CellInfo> getCells()
+    {
+        return cells;
+    }
 
-	public MultiStatus getStatus() {
-		return rowStatus;
-	}
+    public void addStatus(IStatus status)
+    {
+        this.rowStatus.merge(status);
+    }
+
+    public void cleanStatus()
+    {
+        this.rowStatus = new MultiStatus(StringEditorPlugin.PLUGIN_ID, 0, null, null);
+    }
+
+    public MultiStatus getStatus()
+    {
+        return rowStatus;
+    }
+
+    public boolean isArray()
+    {
+        return isArray;
+    }
+
+    public void setArray(boolean isArray)
+    {
+        this.isArray = isArray;
+    }
 
 }
