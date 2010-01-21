@@ -1,0 +1,8 @@
+Bundle-Version: 0.1.0.qualifier
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Localization: plugin
+Bundle-Name: %name
+Bundle-Vendor: %providerName
+Bundle-ActivationPolicy: lazy
+Bundle-SymbolicName: org.eclipse.sequoyah.localization.android.help;singleton:=true
