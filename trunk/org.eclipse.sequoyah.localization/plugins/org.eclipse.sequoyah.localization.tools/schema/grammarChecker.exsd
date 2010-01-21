@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.tml.localization.tools" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.sequoyah.localization.tools" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.tml.localization.tools" id="grammarChecker" name="Grammar Checker"/>
+         <meta.schema plugin="org.eclipse.sequoyah.localization.tools" id="grammarChecker" name="Grammar Checker"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -59,7 +59,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.tml.localization.tools.extensions.classes.IGrammarChecker"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.sequoyah.localization.tools.extensions.classes.IGrammarChecker"/>
                </appinfo>
             </annotation>
          </attribute>

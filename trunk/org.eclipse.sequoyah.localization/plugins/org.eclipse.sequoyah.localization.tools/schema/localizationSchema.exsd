@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.tml.localization.tools" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.sequoyah.localization.tools" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.tml.localization.tools" id="localizationSchema" name="Project Localization Schema"/>
+         <meta.schema plugin="org.eclipse.sequoyah.localization.tools" id="localizationSchema" name="Project Localization Schema"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -76,7 +76,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.tml.localization.tools.extensions.classes.LocalizationSchema:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.sequoyah.localization.tools.extensions.classes.LocalizationSchema:"/>
                </appinfo>
             </annotation>
          </attribute>
