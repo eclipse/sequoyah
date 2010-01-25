@@ -17,5 +17,6 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.sequoyah.localization.tools.datamodel,
  org.eclipse.sequoyah.localization.tools.editor,
  org.eclipse.sequoyah.localization.tools.extensions.classes,
+ org.eclipse.sequoyah.localization.tools.extensions.implementation.generic,
  org.eclipse.sequoyah.localization.tools.managers
 Bundle-Vendor: %pluginProvider
