@@ -10,9 +10,10 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) -  Bug [289146] - Performance and Usability Issues
- * Marcelo Marzola Bossoni (Eldorado) - Bug [289236] - Editor Permitting create 2 columns with same id
+ * Marcelo Marzola Bossoni (Eldorado) - Bug (289236) - Editor Permitting create 2 columns with same id
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
- * Marcelo Marzola Bossoni (Eldorado) - Bug [294445] - Localization Editor remains opened when project is deleted 
+ * Matheus Tait Lima (Eldorado) - Adapting to accept automatic translation
+ * Marcel Gorri (Eldorado) -  Add method to retrieve ISO639 lang ID
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
 
@@ -57,14 +58,21 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.android.i18n.Messages;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNodeComment;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
+import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.NewRowInputDialog;
+import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.TranslateColumnInputDialog;
+import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.TranslateColumnsInputDialog;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.sequoyah.localization.tools.managers.ProjectLocalizationManager;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -101,9 +109,19 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	private final String XML_STRING_TAG = "string"; //$NON-NLS-1$
 
+	private final String XML_STRING_ARRAY_TAG = "string-array"; //$NON-NLS-1$
+
+	private final String XML_STRING_ARRAY_ITEM_TAG = "item"; //$NON-NLS-1$
+
 	private final String XML_STRING_ATTR_NAME = "name"; //$NON-NLS-1$
 
 	private final String NEW_COLUMN_TITLE = Messages.AndroidNewColumnProvider_NewColumnTitle;
+
+	private final String NEW_TRANSLATE_COLUMN_TITLE = Messages.AndroidTranslatedColumnProvider_NewColumnTitle;
+
+	private final String TRANSLATE_CELLS_TITLE = Messages.AndroidTranslateCells_DialogTitle;
+
+	private final String NEW_ROW_TITLE = Messages.AndroidNewRow_DialogTitle;
 
 	private final String NEW_COLUMN_DESCRIPTION = Messages.AndroidNewColumnProvider_NewColumnDescription;
 
@@ -118,9 +136,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #isValueValid(java.lang.String, java.lang.String, java.lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #isValueValid(java.lang.String, java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
 	public IStatus isValueValid(String localeID, String key, String value) {
@@ -148,9 +166,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #promptCollumnName()
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #promptCollumnName()
 	 */
 	@Override
 	public ColumnInfo promptCollumnName(final IProject project) {
@@ -159,7 +176,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		// Ask user for the ID
 		InputDialog dialog = new InputDialog(PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell(), NEW_COLUMN_TITLE,
-				NEW_COLUMN_DESCRIPTION, NEW_COLUMN_TEXT, new IInputValidator() {
+				NEW_COLUMN_DESCRIPTION, NEW_COLUMN_TEXT, //$NON-NLS-2$
+				new IInputValidator() {
 
 					public String isValid(String newText) {
 						return isValid2(newText, project);
@@ -172,6 +190,104 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		}
 
 		return newColumn;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema#promptRowName(org.eclipse.core.resources.IProject)
+	 */
+	@Override
+	public RowInfo[] promptRowName(final IProject iProject) {
+		RowInfo[] rowInfo = null;
+
+		NewRowInputDialog dialog = new NewRowInputDialog(PlatformUI
+				.getWorkbench().getActiveWorkbenchWindow().getShell(),
+				iProject, NEW_ROW_TITLE);
+
+		if (dialog.open() == IDialogConstants.OK_ID) {
+			rowInfo = new RowInfo[dialog.getNumEntries()];
+			String key = dialog.getKey();
+			boolean isArray = dialog.isArray();
+			for (int i = 0; i < dialog.getNumEntries(); i++) {
+				rowInfo[i] = new RowInfo(key, isArray, null);
+			}
+		}
+
+		return rowInfo;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #promptTranslatedCollumnName()
+	 */
+	@Override
+	public TranslationInfo promptTranslatedCollumnName(final IProject project,
+			String selectedColumn) {
+		TranslationInfo newColumn = null;
+
+		// Ask user for the ID
+		TranslateColumnInputDialog dialog = new TranslateColumnInputDialog(
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+				project, selectedColumn, NEW_TRANSLATE_COLUMN_TITLE,
+				NEW_COLUMN_DESCRIPTION, NEW_COLUMN_TEXT, new IInputValidator() {
+
+					public String isValid(String newText) {
+						return isValid2(newText, project);
+					};
+				});
+
+		if (dialog.open() == IDialogConstants.OK_ID) {
+
+			newColumn = new TranslationInfo(dialog.getValue(), dialog
+					.getValue(), null, true, dialog.getFromLanguage(), dialog
+					.getToLanguage(), null, dialog.getTranslator());
+		}
+
+		return newColumn;
+	}
+
+	@Override
+	public TranslationInfo[] promptTranslatedCollumnsName(
+			final IProject project, String selectedColumn,
+			String[] selectedKeys, String[] selectedCells, TableColumn[] columns) {
+		TranslationInfo[] newColumns = null;
+
+		// Ask user for the ID
+		TranslateColumnsInputDialog dialog = new TranslateColumnsInputDialog(
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+				project, selectedColumn, selectedCells, columns,
+				TRANSLATE_CELLS_TITLE);
+
+		if (dialog.open() == IDialogConstants.OK_ID) {
+			List<TranslateColumnsInputDialog.DestinationColumn> destinationColumns = dialog
+					.getDestinationColumns();
+			newColumns = new TranslationInfo[selectedCells.length
+					* destinationColumns.size()];
+
+			int count = 0;
+			for (int i = 0; i < selectedCells.length; i++) {
+				String selectedCell = selectedCells[i];
+				String selectedKey = selectedKeys[i];
+				for (int j = 0; j < destinationColumns.size(); j++) {
+					TranslateColumnsInputDialog.DestinationColumn destColumn = destinationColumns
+							.get(j);
+					newColumns[count] = new TranslationInfo(destColumn
+							.getText(), destColumn.getText(), null, true,
+							dialog.getFromLanguage(), destColumn.getLang(),
+							selectedCell, dialog.getTranslator());
+					newColumns[count].setFromKey(selectedKey);
+					newColumns[count].setToColumn(destColumn.getText());
+					count++;
+				}
+			}
+
+		}
+
+		return newColumns;
 	}
 
 	/**
@@ -199,7 +315,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 							.equalsIgnoreCase(AndroidLocalizationSchema.LOCALIZATION_FILES_FOLDER))) {
 				LocalizationFile file = manager.getLocalizationProject()
 						.getLocalizationFile(info);
-				if ((file != null) && !file.isToBeDeleted()) {
+				if (file != null && !file.isToBeDeleted()) {
 					result = Messages.AndroidNewColumnProvider_Dialog_FileAlreadyExists;
 				}
 			} else {
@@ -216,9 +332,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #getEditorName()
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #getEditorName()
 	 */
 	@Override
 	public String getEditorName() {
@@ -242,17 +357,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		try {
 			String filePath = localizationFile.getFile().getFullPath()
 					.toOSString();
-
-			IProject project = localizationFile.getLocalizationProject()
-					.getProject();
-
-			IPath temp = new Path(filePath);
-
-			while (temp.segment(0).equals(project.getName())) {
-				temp = temp.removeFirstSegments(1);
-			}
-
-			filePath = File.separator + temp.toOSString();
 
 			if (!localizationFile.getFile().exists()) {
 				localizationFile.getFile().getLocation();
@@ -287,26 +391,57 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			 */
 			Element resources = document.createElement(XML_RESOURCES_TAG);
 
+			// Simple entries
 			for (StringNode stringNode : localizationFile.getStringNodes()) {
-				Element string = document.createElement(XML_STRING_TAG);
-				string.setAttribute(XML_STRING_ATTR_NAME, stringNode.getKey());
-				string.appendChild(document.createTextNode(stringNode
-						.getValue()));
+				if (!stringNode.isArray()) {
+					Element string = document.createElement(XML_STRING_TAG);
+					string.setAttribute(XML_STRING_ATTR_NAME, stringNode
+							.getKey());
+					string.appendChild(document.createTextNode(stringNode
+							.getValue()));
 
-				StringNodeComment nodeComment = stringNode
-						.getStringNodeComment();
-				if (nodeComment != null) {
-					if (nodeComment.getComment() != null) {
-						if (nodeComment.getComment().length() > 0) {
-							Comment comment = document
-									.createComment(nodeComment.getComment());
-							string.appendChild(comment);
+					StringNodeComment nodeComment = stringNode
+							.getStringNodeComment();
+					if (nodeComment != null) {
+						if (nodeComment.getComment() != null) {
+							if (nodeComment.getComment().length() > 0) {
+								Comment comment = document
+										.createComment(nodeComment.getComment());
+								string.appendChild(comment);
+							}
+						}
+					}
+
+					resources.appendChild(string);
+				}
+			}
+
+			// Arrays
+			for (StringArray stringArray : localizationFile.getStringArrays()) {
+				Element array = document.createElement(XML_STRING_ARRAY_TAG);
+				array.setAttribute(XML_STRING_ATTR_NAME, stringArray.getKey());
+				for (StringNode stringNode : stringArray.getValues()) {
+					Element arrayItem = document
+							.createElement(XML_STRING_ARRAY_ITEM_TAG);
+					arrayItem.appendChild(document.createTextNode(stringNode
+							.getValue()));
+					array.appendChild(arrayItem);
+
+					StringNodeComment nodeComment = stringNode
+							.getStringNodeComment();
+					if (nodeComment != null) {
+						if (nodeComment.getComment() != null) {
+							if (nodeComment.getComment().length() > 0) {
+								Comment comment = document
+										.createComment(nodeComment.getComment());
+								arrayItem.appendChild(comment);
+							}
 						}
 					}
 				}
-
-				resources.appendChild(string);
+				resources.appendChild(array);
 			}
+
 			document.appendChild(resources);
 
 			TransformerFactory transformerFactory = TransformerFactory
@@ -340,9 +475,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #getLocaleToolTip(org.eclipse.core.runtime.Path)
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #getLocaleToolTip(org.eclipse.core.runtime.Path)
 	 */
 	@Override
 	public String getLocaleToolTip(IPath path) {
@@ -372,9 +506,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #getLocaleAttributes()
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #getLocaleAttributes()
 	 */
 	@Override
 	public List<LocaleAttribute> getLocaleAttributes() {
@@ -384,9 +517,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				AndroidLocaleAttribute.INDEX_COUNTRY_CODE));
 		localeAttributes.add(new AndroidLocaleAttribute(new Integer(000),
 				AndroidLocaleAttribute.INDEX_NETWORK_CODE));
-		localeAttributes.add(new AndroidLocaleAttribute("pt", //$NON-NLS-1$
+		// TODO: change this values
+		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttribute.INDEX_LANGUAGE));
-		localeAttributes.add(new AndroidLocaleAttribute("br", //$NON-NLS-1$
+		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttribute.INDEX_REGION));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttribute.INDEX_SCREEN_ORIENTATION));
@@ -409,9 +543,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #getLocalizationFileExtensions()
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #getLocalizationFileExtensions()
 	 */
 	@Override
 	public List<String> getLocalizationFileExtensions() {
@@ -423,8 +556,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema
 	 * #getLocalizationFiles(org.eclipse.core.resources.IProject)
 	 */
 	@Override
@@ -518,9 +651,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #isLocalizationFile(org.eclipse.core.resources.IFile)
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #isLocalizationFile(org.eclipse.core.resources.IFile)
 	 */
 	@Override
 	public boolean isLocalizationFile(IFile file) {
@@ -540,9 +672,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #loadAllFiles()
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #loadAllFiles()
 	 */
 	@Override
 	public Map<LocaleInfo, LocalizationFile> loadAllFiles(IProject project)
@@ -562,9 +693,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #loadFile(org.eclipse.core.resources.IFile)
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #loadFile(org.eclipse.core.resources.IFile)
 	 */
 	@Override
 	public LocalizationFile loadFile(IFile file) throws IOException {
@@ -572,10 +702,11 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		LocalizationFile localizationFile = null;
 		LocaleInfo localeInfo = getLocaleInfoFromPath(file.getFullPath());
 		List<StringNode> stringNodes = new ArrayList<StringNode>();
+		List<StringArray> stringArrays = new ArrayList<StringArray>();
 
 		if (!file.exists()) {
 			LocalizationFile tempFile = new LocalizationFile(file, localeInfo,
-					stringNodes);
+					stringNodes, null);
 			try {
 				createFile(tempFile);
 			} catch (SequoyahException e) {
@@ -607,7 +738,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				if (stringNode.hasChildNodes()) {
 					NodeList childs = stringNode.getChildNodes();
 					for (int j = 0; j < childs.getLength(); j++) {
-						Node childN = childs.item(j);
+						Node childN = (Node) childs.item(j);
 						if (childN.getNodeType() == COMMENT_NODE) {
 							comment = childN.getNodeValue();
 						}
@@ -625,8 +756,53 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				stringNodes.add(stringNodeObj);
 			}
 
+			/*
+			 * Get array nodes
+			 */
+			NodeList arrayNodeList = document
+					.getElementsByTagName(XML_STRING_ARRAY_TAG);
+			String arrayKey = null;
+			String arrayValue = null;
+			for (int i = 0; i < arrayNodeList.getLength(); i++) {
+				Element arrayNode = (Element) arrayNodeList.item(i);
+				arrayKey = arrayNode.getAttributeNode(XML_STRING_ATTR_NAME)
+						.getNodeValue();
+				StringArray stringArray = new StringArray(arrayKey);
+				if (arrayNode.hasChildNodes()) {
+					NodeList arrayItems = arrayNode
+							.getElementsByTagName(XML_STRING_ARRAY_ITEM_TAG);
+					for (int j = 0; j < arrayItems.getLength(); j++) {
+						Node childN = (Node) arrayItems.item(j);
+						arrayValue = childN.getTextContent();
+						StringNode newNode = stringArray.addValue(arrayValue);
+
+						// comments
+						String comment = null;
+						if (childN.hasChildNodes()) {
+							NodeList childs = childN.getChildNodes();
+							for (int k = 0; k < childs.getLength(); k++) {
+								Node commentNode = (Node) childs.item(k);
+								if (commentNode.getNodeType() == COMMENT_NODE) {
+									comment = commentNode.getNodeValue();
+								}
+							}
+
+						}
+
+						if (comment != null) {
+							StringNodeComment nodeComment = new StringNodeComment();
+							nodeComment.setComment(comment);
+							newNode.setStringNodeComment(nodeComment);
+						}
+
+					}
+
+				}
+				stringArrays.add(stringArray);
+			}
+
 			localizationFile = new LocalizationFile(file, localeInfo,
-					stringNodes);
+					stringNodes, stringArrays);
 
 		} catch (Exception e) {
 			throw new IOException(
@@ -640,10 +816,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #
-	 * updateFile(org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile)
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #
+	 * updateFile(org.eclipse.sequoyah.localization.tools.datamodel
+	 * .LocalizationFile)
 	 */
 	@Override
 	public void updateFile(LocalizationFile localizationFile)
@@ -697,9 +873,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #getLocaleID(org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo)
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema
+	 * #getLocaleID(org.eclipse.sequoyah.localization.tools.datamodel
+	 * .LocaleInfo)
 	 */
 	@Override
 	public String getLocaleID(LocaleInfo localeInfo) {
@@ -722,9 +899,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
-	 * #getLocaleInfoFromID(java.lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * ILocalizationSchema #getLocaleInfoFromID(java.lang.String)
 	 */
 	@Override
 	public LocaleInfo getLocaleInfoFromID(String ID) {
@@ -805,6 +981,20 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		result.setLocaleAttributes(localeAttributes);
 
 		return result;
+	}
+
+	@Override
+	public String getISO639LangFromID(String ID) {
+		String iso639 = null;
+
+		LocaleInfo localeInfo = getLocaleInfoFromID(ID);
+		for (LocaleAttribute locAtt : localeInfo.getLocaleAttributes()) {
+			if (locAtt.getDisplayName().equals("Language")) {
+				iso639 = locAtt.getFolderValue();
+			}
+		}
+
+		return iso639;
 	}
 
 	@Override

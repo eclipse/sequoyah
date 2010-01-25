@@ -36,12 +36,20 @@ public class Messages extends NLS {
 
 	public static String AndroidStringEditorInput_EditorTooltip;
 
+	public static String AndroidTranslatedColumnProvider_NewColumnTitle;
+
+	public static String AndroidTranslateCells_DialogTitle;
+
+	public static String AndroidNewRow_DialogTitle;
+
 	// Status message
 	public static String EmptyKey_Discouraged;
 
 	// Exception texts
 	public static String Unknown_Andr_Type;
+
 	public static String Invalid_Andr_Value;
+
 	public static String Invalid_Andr_Value_Size;
 
 	static {
