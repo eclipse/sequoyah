@@ -1,7 +1,7 @@
 package org.eclipse.sequoyah.device.framework;
 
 /********************************************************************************
- * Copyright (c) 2008 Motorola Inc and others
+ * Copyright (c) 2008-2010 Motorola Inc and others
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@ package org.eclipse.sequoyah.device.framework;
  * Fabio Fantato (Eldorado) - [244069] -  Need some APIs that could be common use of the framework
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 import java.util.Collection;
@@ -26,16 +27,16 @@ import org.eclipse.sequoyah.device.framework.model.IService;
 
 /**
  * Utilities class that contains some functionalities that are not yet provided
- * by the TmL device framework.
+ * by the Sequoyah device framework.
  * As soon as the methods/functionalities of this class are made available 
- * on TmL they should be removed from this class.
+ * on Sequoyah they should be removed from this class.
  */
 public abstract class DeviceUtils
 {
 
     /**
      * Names of all IDevice elements in an array, so it can be used on SWT widgets.
-     * @return an string array with the names all IDevice available on TmL
+     * @return an string array with the names all IDevice available on Sequoyah
      */
     public static String[] getAllDeviceNames()
     {
@@ -53,7 +54,7 @@ public abstract class DeviceUtils
 
     /**
      * Names of all IInstance elements in an array, so it can be used on SWT widgets.
-     * @return an string array with the names all IInstance available on TmL
+     * @return an string array with the names all IInstance available on Sequoyah
      */
     public static String[] getAllInstanceNames()
     {

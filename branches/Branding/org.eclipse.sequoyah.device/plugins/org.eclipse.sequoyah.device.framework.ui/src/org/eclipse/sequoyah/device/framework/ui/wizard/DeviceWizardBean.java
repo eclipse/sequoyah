@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2009 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2010 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  *                          project location field from the default project page
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.wizard;
@@ -221,7 +222,7 @@ public class DeviceWizardBean
     {
         if (projectTitle == null)
         {
-            projectTitle = DeviceWizardResources.TML_Emulator_Wizard_Project_Title;
+            projectTitle = DeviceWizardResources.SEQUOYAH_Emulator_Wizard_Project_Title;
         }
         return projectTitle;
     }
@@ -234,7 +235,7 @@ public class DeviceWizardBean
     {
         if (projectDescription == null)
         {
-            projectDescription = DeviceWizardResources.TML_Emulator_Wizard_Project_Description;
+            projectDescription = DeviceWizardResources.SEQUOYAH_Emulator_Wizard_Project_Description;
         }
         return projectDescription;
     }

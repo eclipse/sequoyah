@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2009 Motorola Inc and others.
+ * Copyright (c) 2007-2010 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,6 +21,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [272056] - Method getInstance() on the singleton class InatanceManager is not synchronized.
  * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [288301] - Device view crashes when there is a device plug-in missing.
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.manager;
 
@@ -175,7 +176,7 @@ public class InstanceManager {
 	 */
 	public static void createProject(IDeviceType device, IInstanceBuilder projectBuilder,
 			IProgressMonitor monitor) throws SequoyahException {
-		IInstance inst = createInstance(projectBuilder.getProjectName(), device.getId(), DevicePlugin.TML_STATUS_OFF, projectBuilder.getProperties());
+		IInstance inst = createInstance(projectBuilder.getProjectName(), device.getId(), DevicePlugin.SEQUOYAH_STATUS_OFF, projectBuilder.getProperties());
 		if (currentInstance == null) {
 			currentInstance = inst;
 		}

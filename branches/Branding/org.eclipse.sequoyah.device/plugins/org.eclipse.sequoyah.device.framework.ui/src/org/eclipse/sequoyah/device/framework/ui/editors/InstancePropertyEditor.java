@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008 Motorola Inc and others.
+ * Copyright (c) 2008-2010 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
  * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.editors;
@@ -104,13 +105,13 @@ public class InstancePropertyEditor extends PropertyPage {
 	        		instanceName.equals(initialInstanceName)) {
 	        		retVal = true;
 	        	} else {
-	        		errorMessage = DeviceUIResources.TML_Instance_Name_Duplicated_Error;
+	        		errorMessage = DeviceUIResources.SEQUOYAH_Instance_Name_Duplicated_Error;
 	        	}
 	        	
 	        	if (retVal) {
 	        		if (!AbstractMobileInstance.validName(instanceName)) {
 	        			retVal = false;
-	        			errorMessage = DeviceUIResources.TML_Instance_Name_Invalid_Error;
+	        			errorMessage = DeviceUIResources.SEQUOYAH_Instance_Name_Invalid_Error;
 	        		}
 	        	}
 	        }

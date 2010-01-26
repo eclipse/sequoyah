@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2009 Motorola Inc and others.
+ * Copyright (c) 2007-2010 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Mauren Brenner (Eldorado) - Bug [280813] - Support saving instance info outside the workspace
  * Daniel Barboza Franco (Eldorado) - Bug [287187] -Save device instance information in a directory defined in runtime.
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework;
 
@@ -40,7 +41,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	public static final String DEVICE_TYPES_EXTENSION_POINT_ID = "org.eclipse.sequoyah.device.framework.deviceTypes"; //$NON-NLS-1$	
 	
 	@Deprecated
-	public static final String DEVICE_ID = "org.eclipse.tml.device"; //$NON-NLS-1$ 
+	public static final String DEVICE_ID = "org.eclipse.sequoyah.device"; //$NON-NLS-1$ 
 	
 	public static final String SERVICE_ID = "org.eclipse.sequoyah.device.framework.service"; //$NON-NLS-1$
 	public static final String STATUS_ID = "org.eclipse.sequoyah.device.framework.status"; //$NON-NLS-1$
@@ -57,10 +58,10 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	public static final String ICON_REFRESH = "ICON_REFRESH"; //$NON-NLS-1$
 	public static final String ICON_INACTIVE = "ICON_INACTIVE"; //$NON-NLS-1$
 	public static final String ICON_PROPERTY = "ICON_PROPERTY"; //$NON-NLS-1$
-	public static final String TML_STATUS_UNAVAILABLE = "UNAVAILABLE"; //$NON-NLS-1$
-	public static final String TML_STATUS_IDLE="IDLE"; //$NON-NLS-1$
-	public static final String TML_STATUS_OFF="OFF"; //$NON-NLS-1$
-	public static final String TML_STATUS_INACTIVE ="INACTIVE"; //$NON-NLS-1$
+	public static final String SEQUOYAH_STATUS_UNAVAILABLE = "UNAVAILABLE"; //$NON-NLS-1$
+	public static final String SEQUOYAH_STATUS_IDLE="IDLE"; //$NON-NLS-1$
+	public static final String SEQUOYAH_STATUS_OFF="OFF"; //$NON-NLS-1$
+	public static final String SEQUOYAH_STATUS_INACTIVE ="INACTIVE"; //$NON-NLS-1$
 
 	public static final Properties DEFAULT_PROPERTIES = new Properties();
 	
@@ -105,7 +106,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.tml.common.utilities.BasePlugin#initializeImageRegistry()
+	 * @see org.eclipse.sequoyah.device.common.utilities.BasePlugin#initializeImageRegistry()
 	 */
 	@Override
 	protected void initializeImageRegistry() {

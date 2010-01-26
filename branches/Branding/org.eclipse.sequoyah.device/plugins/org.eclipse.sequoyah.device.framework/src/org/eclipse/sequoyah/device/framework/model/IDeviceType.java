@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 MontaVista Software, Inc.
+ * Copyright (c) 2008-2010 MontaVista Software, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271695] - Support to non-persistent instances of devices
  * Mauren Brenner (Eldorado) - [281377] Support device types whose instances cannot be created by user
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  *******************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.model;
