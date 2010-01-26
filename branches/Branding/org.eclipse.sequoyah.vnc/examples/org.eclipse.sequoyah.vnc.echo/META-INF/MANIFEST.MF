@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.sequoyah.vnc.echo;singleton:=true
+Bundle-Version: 0.2.0.qualifier
+Bundle-Activator: org.eclipse.sequoyah.vnc.echo.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.sequoyah.vnc.protocol
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %pluginProvider
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
