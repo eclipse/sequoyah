@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2010 Motorola Inc.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247333] - New Icons for Start and Stop
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.service.start;
@@ -36,7 +37,7 @@ public class StartServicePlugin extends BasePlugin {
 
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.tml.common.utilities.BasePlugin#start(org.osgi.framework.BundleContext)
+	 * @see org.eclipse.sequoyah.device.common.utilities.BasePlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -45,7 +46,7 @@ public class StartServicePlugin extends BasePlugin {
 
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.tml.common.utilities.BasePlugin#stop(org.osgi.framework.BundleContext)
+	 * @see org.eclipse.sequoyah.device.common.utilities.BasePlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
@@ -62,7 +63,7 @@ public class StartServicePlugin extends BasePlugin {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tml.common.utilities.BasePlugin#initializeImageRegistry()
+	 * @see org.eclipse.sequoyah.device.common.utilities.BasePlugin#initializeImageRegistry()
 	 */
 	@Override
 	protected void initializeImageRegistry() {

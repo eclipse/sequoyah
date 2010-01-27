@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009 MontaVista Software, Inc and others
+ * Copyright (c) 2008-2010 MontaVista Software, Inc and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  *******************************************************************************/
 package org.eclipse.sequoyah.device.qemu.wizard.custom;
 

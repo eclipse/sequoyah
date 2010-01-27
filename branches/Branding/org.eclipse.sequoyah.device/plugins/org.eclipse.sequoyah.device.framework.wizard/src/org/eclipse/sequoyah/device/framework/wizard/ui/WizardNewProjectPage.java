@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008 Motorola Inc. All rights reserved.
+ * Copyright (c) 2008-2010 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.wizard.ui;
@@ -111,7 +112,7 @@ public class WizardNewProjectPage extends WizardPage implements IWizardProjectPa
 	        		retVal = true;
 	        	} else {
 	        		errorMessage =
-	        			DeviceWizardResources.TML_Emulator_Wizard_Project_Description_Duplicated_Error;
+	        			DeviceWizardResources.SEQUOYAH_Emulator_Wizard_Project_Description_Duplicated_Error;
 	        	}
 	        }
      	}

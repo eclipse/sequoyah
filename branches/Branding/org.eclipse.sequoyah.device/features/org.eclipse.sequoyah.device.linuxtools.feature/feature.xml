@@ -19,8 +19,8 @@
    </license>
 
    <url>
-      <update label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3/"/>
-      <discovery label="%tmlUpdateSiteName" url="http://download.eclipse.org/dsdp/tml/updates/0.3/"/>
+      <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/dsdp/sequoyah/updates/0.5/"/>
+      <discovery label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/dsdp/sequoyah/updates/0.5/"/>
    </url>
 
    <plugin
