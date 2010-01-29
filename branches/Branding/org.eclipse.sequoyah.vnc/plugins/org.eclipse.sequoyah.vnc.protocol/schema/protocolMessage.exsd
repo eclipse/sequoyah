@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          A protocol message is a set of bytes, structured as defined by the protocol rules, which is sent through a communication channel and has meaning to both sender and receiver parts.&lt;p&gt;
-In TmL, the message structure is defined by the &lt;samp&gt;protocolMessage&lt;/samp&gt; extension point and associated to a protocol by means of the &lt;samp&gt;protocolId&lt;/samp&gt; defined by a protocolDefinition extension (see &lt;samp&gt;protocolDefinition&lt;/samp&gt; extension point). Once the message structure is known by the framework, it is able to serialize and send a set of provided data through the communication channel (if it is an outgoing message), as well as receive and deserialize messages data from the communication channel, providing a handler with meaningful data (if it is an incoming message).&lt;p&gt;
+In Sequoyah, the message structure is defined by the &lt;samp&gt;protocolMessage&lt;/samp&gt; extension point and associated to a protocol by means of the &lt;samp&gt;protocolId&lt;/samp&gt; defined by a protocolDefinition extension (see &lt;samp&gt;protocolDefinition&lt;/samp&gt; extension point). Once the message structure is known by the framework, it is able to serialize and send a set of provided data through the communication channel (if it is an outgoing message), as well as receive and deserialize messages data from the communication channel, providing a handler with meaningful data (if it is an incoming message).&lt;p&gt;
 Finally, it is possible to have pre-defined structures for the message fields, including the &lt;i&gt;fixed size field&lt;/i&gt; (when the field fits within a pre-defined number of bytes), the &lt;i&gt;variable size field&lt;/i&gt; (when a size field right before determines the field size) and the &lt;i&gt;raw field&lt;/i&gt; (when the field has an unusual format that needs to be handled by a provided handler). It is also possible to group a set of the previous fields into an &lt;i&gt;iteratable block&lt;/i&gt;, which allows a set of fields to be read multiple times.
       </documentation>
    </annotation>
@@ -391,10 +391,10 @@ On the other hand, when a message needs to be serialized and sent through the so
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         This program and the accompanying materials are made
-available under the terms of the Eclipse Public License v1.0 which accompanies
-this distribution, and is available at &lt;a 
-href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+         Copyright (c) 2007-2010 Motorola Inc. All rights reserved.
+ This program and the accompanying materials are made available under the terms
+ of the Eclipse Public License v1.0 which accompanies this distribution, and is
+ available at http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
 

@@ -8,7 +8,7 @@
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  * 
  * Contributors:
- * name (company) - description.
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 package org.eclipse.sequoyah.vnc.protocol.lib.internal.engine;
 

@@ -1,4 +1,5 @@
 /********************************************************************************
+ * Copyright (c) 2007-2010 Motorola Inc.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +15,7 @@
  * Fabio Rigo (Eldorado Research Institute) - [260559] - Enhance protocol framework and VNC viewer robustness
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [289650] - cleanStoppedProtocols removing an element from a Map during iteration
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 package org.eclipse.sequoyah.vnc.protocol.lib.internal.model;
 
