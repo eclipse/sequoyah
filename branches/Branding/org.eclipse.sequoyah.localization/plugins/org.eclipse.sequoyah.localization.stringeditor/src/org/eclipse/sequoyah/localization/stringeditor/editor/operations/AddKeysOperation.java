@@ -8,7 +8,7 @@
  * Marcel Gorri (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.stringeditor.editor.operations;
 
