@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2010 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Petr Baranov (Nokia) - Bug [262371] - New Connection Dialog improvement
  * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  * Petr Baranov (Nokia) - Bug [262371] (reopened) - New Connection Dialog improvement
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.vnc.vncviewer.vncviews.views;
