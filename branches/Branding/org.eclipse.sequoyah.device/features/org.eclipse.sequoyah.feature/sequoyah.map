@@ -1,0 +1,16 @@
+##### features
+feature@org.eclipse.sequoyah.feature=SVN,,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah/trunk/org.eclipse.sequoyah.device/features/,,org.eclipse.sequoyah.feature
+### device features
+features@org.eclipse.sequoyah.device.common.feature=SVN,,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah/trunk/org.eclipse.sequoyah.device/features/org.eclipse.sequoyah.device.common.feature
+### localization features
+
+### vnc features
+
+
+##### plugins
+### device plugins
+plugin@org.eclipse.sequoyah.device.common.utilities=SVN,,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah/trunk/org.eclipse.sequoyah.device/plugins/org.eclipse.sequoyah.device.common.utilities
+### localization plugins
+
+### vnc plugins
+

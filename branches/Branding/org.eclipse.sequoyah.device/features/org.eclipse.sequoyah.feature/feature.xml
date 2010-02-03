@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.sequoyah.feature"
       label="Sequoyah Build Feature"
-      version="0.1.0.qualifier">
+      version="0.5.0.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
