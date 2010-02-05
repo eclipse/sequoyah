@@ -6,6 +6,8 @@
  *
  * Initial Contributor:
  * Fabio Rigo - [246212] Enhance encapsulation of protocol implementer
+ * 
+ * Contributors:
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 package org.eclipse.sequoyah.vnc.protocol.lib;
