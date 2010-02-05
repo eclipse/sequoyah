@@ -6,7 +6,7 @@
          name="vncViewerService"
          point="org.eclipse.sequoyah.device.framework.service">
       <service
-            copyright="Motorola Inc. 2007"
+            copyright="Motorola Inc. 2007-2010"
             description="Service to Start the VNC Viewer"
             handler="org.eclipse.sequoyah.device.service.vncviewer.handler.VNCViewerServiceHandler"
             icon="icons/full/obj16/vnc.gif"
@@ -22,7 +22,7 @@
          name="unplugVncViewerService"
          point="org.eclipse.sequoyah.device.framework.service">
       <service
-            copyright="Motorola Inc. 2007"
+            copyright="Motorola Inc. 2007-2010"
             description="Service to stop the VNC Viewer"
             handler="org.eclipse.sequoyah.device.service.vncviewer.handler.UnplugVNCViewerServiceHandler"
             icon="icons/full/obj16/vnc.gif"

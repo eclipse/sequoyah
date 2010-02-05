@@ -29,10 +29,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.sequoyah.device.linuxtools.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.sequoyah.localization.android.feature"
          version="0.0.0"/>
 
