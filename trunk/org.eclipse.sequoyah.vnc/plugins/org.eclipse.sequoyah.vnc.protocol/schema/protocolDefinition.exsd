@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.sequoyah.vnc.protocol" id="protocolDefinition" name="Protocol Definition"/>
       </appInfo>
       <documentation>
-         The Protocol Definition extension point is used for declaring communication protocols to use within the TmL protocol framework.&lt;br&gt;
+         The Protocol Definition extension point is used for declaring communication protocols to use within the Sequoyah protocol framework.&lt;br&gt;
 A protocol is the set of standard rules for data representation, signalling, authentication and error detection required to send information over a communication channel. It usually comprises a initialization/handshake routine, then a ordinary message exchange phase and finalization routine in the end.
       </documentation>
    </annotation>
@@ -146,10 +146,12 @@ A protocol is the set of standard rules for data representation, signalling, aut
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         This program and the accompanying materials are made
-available under the terms of the Eclipse Public License v1.0 which accompanies
-this distribution, and is available at &lt;a 
-href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+         Copyright (c) 2007-2010 Motorola Inc. All rights reserved.
+ This program and the accompanying materials are made available under the terms
+ of the Eclipse Public License v1.0 which accompanies this distribution, and is
+ available at http://www.eclipse.org/legal/epl-v10.html
+
+
       </documentation>
    </annotation>
 
