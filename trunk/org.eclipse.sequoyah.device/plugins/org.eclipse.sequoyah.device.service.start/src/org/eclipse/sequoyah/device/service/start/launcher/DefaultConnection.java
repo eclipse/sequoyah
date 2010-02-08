@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2010 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.service.start.launcher;
@@ -45,7 +45,7 @@ public class DefaultConnection implements IConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.tml.emulator.model.IEmulatorConnection#getDisplay()
+	 * @see org.eclipse.sequoyah.emulator.model.IEmulatorConnection#getDisplay()
 	 */
 	public String getDisplay() {
 		return display;
@@ -54,7 +54,7 @@ public class DefaultConnection implements IConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.tml.emulator.model.IEmulatorConnection#setDisplay(java.lang.String)
+	 * @see org.eclipse.sequoyah.emulator.model.IEmulatorConnection#setDisplay(java.lang.String)
 	 */
 	public void setDisplay(String display) {
 		this.display = display;
@@ -63,7 +63,7 @@ public class DefaultConnection implements IConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.tml.emulator.model.IEmulatorConnection#getHost()
+	 * @see org.eclipse.sequoyah.emulator.model.IEmulatorConnection#getHost()
 	 */
 	public String getHost() {
 		return host;
@@ -72,7 +72,7 @@ public class DefaultConnection implements IConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.tml.emulator.model.IEmulatorConnection#setHost(java.lang.String)
+	 * @see org.eclipse.sequoyah.emulator.model.IEmulatorConnection#setHost(java.lang.String)
 	 */
 	public void setHost(String host) {
 		this.host = host;
@@ -81,7 +81,7 @@ public class DefaultConnection implements IConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.tml.emulator.model.IEmulatorConnection#getPort()
+	 * @see org.eclipse.sequoyah.emulator.model.IEmulatorConnection#getPort()
 	 */
 	public int getPort() {
 		return port;
@@ -90,7 +90,7 @@ public class DefaultConnection implements IConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.tml.emulator.model.IEmulatorConnection#setPort(int)
+	 * @see org.eclipse.sequoyah.emulator.model.IEmulatorConnection#setPort(int)
 	 */
 	public void setPort(int port) {
 		this.port = port;
@@ -99,7 +99,7 @@ public class DefaultConnection implements IConnection {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.tml.emulator.model.IEmulatorConnection#getStringHost()
+	 * @see org.eclipse.sequoyah.emulator.model.IEmulatorConnection#getStringHost()
 	 */
 	public String getStringHost() {
 		return host + display;

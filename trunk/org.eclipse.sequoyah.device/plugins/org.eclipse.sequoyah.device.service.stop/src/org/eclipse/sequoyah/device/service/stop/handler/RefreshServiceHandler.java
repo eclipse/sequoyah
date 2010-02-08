@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2010 Motorola Inc.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Fabio Rigo (Eldorado) - Bug [244066] - The services are being run at one of the UI threads
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.service.stop.handler;
@@ -27,12 +28,12 @@ import org.eclipse.sequoyah.device.service.stop.StopServiceResources;
 public class RefreshServiceHandler extends ServiceHandler  {
 
 	public IStatus runService(IInstance instance, Map<Object , Object> arguments,  IProgressMonitor monitor) {
-		BasePlugin.logInfo(StopServiceResources.TML_Refresh_Service+"->"+instance.getName()); //$NON-NLS-1$
+		BasePlugin.logInfo(StopServiceResources.SEQUOYAH_Refresh_Service+"->"+instance.getName()); //$NON-NLS-1$
 		return Status.OK_STATUS;
 	}
 	
 	public IStatus updatingService(IInstance instance, IProgressMonitor monitor) {
-		BasePlugin.logInfo(StopServiceResources.TML_Refresh_Service_Update+"->"+instance.getName()); //$NON-NLS-1$
+		BasePlugin.logInfo(StopServiceResources.SEQUOYAH_Refresh_Service_Update+"->"+instance.getName()); //$NON-NLS-1$
 		return Status.OK_STATUS;
 	}
 	

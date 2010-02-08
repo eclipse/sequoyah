@@ -1,16 +1,16 @@
 /********************************************************************************
- * Copyright (c) 2008 Motorola Inc. and others.  All rights reserved.
+ * Copyright (c) 2008-2010 Motorola Inc. and others.  All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Initial Contributor:
- * Fabio Rigo (Eldorado Research Institute)
- * [244951] Implement listener/event mechanism at device framework
+ * Fabio Rigo (Eldorado) - [244951] Implement listener/event mechanism at device framework
  *
  * Contributors:
- * Fabio Rigo (Eldorado) Bug - [284998] Modify addInstanceListener() method to add a listener before thread is started.
- * Fabio Rigo (Eldorado Research Institute) - Bug [287995] - Provide an instance is about to transition event
+ * Fabio Rigo (Eldorado) - [284998] Modify addInstanceListener() method to add a listener before thread is started.
+ * Fabio Rigo (Eldorado) - [287995] - Provide an instance is about to transition event
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.events;

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008, 2009 Motorola Inc and others. All rights reserved
+ * Copyright (c) 2008-2010 Motorola Inc and others. All rights reserved
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  * Daniel Barboza Franco (Eldorado) - Bug [287187] -Save device instance information in a directory defined in runtime.
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [288301] - Device view crashes when there is a device plug-in missing.
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.manager.persistence;
@@ -53,7 +54,7 @@ public class DeviceXmlWriter implements IDeviceXmlTags
      */
     public static void saveInstances() {
         File path = DevicePlugin.getDeviceXmlLocation();
-        File file = new File(path, TML_DEVICE_DATAFILE);
+        File file = new File(path, SEQUOYAH_DEVICE_DATAFILE);
 
         Document document = createDocument(file);
 
@@ -110,7 +111,7 @@ public class DeviceXmlWriter implements IDeviceXmlTags
 
                 // Create the document
                 document = impl.createDocument(null,
-                        TML_XML_ROOT, null);
+                        SEQUOYAH_XML_ROOT, null);
 
             } catch (ParserConfigurationException e) {
                 e.printStackTrace();
@@ -125,7 +126,7 @@ public class DeviceXmlWriter implements IDeviceXmlTags
      */
     private static Element createInstancesElement(Document document) {
         Element instancesRoot = document
-                .createElement(TML_XML_INSTANCES);
+                .createElement(SEQUOYAH_XML_INSTANCES);
         InstanceRegistry registry = InstanceRegistry.getInstance();
         Iterator<IInstance> iterator = registry.getInstances().iterator();
    
@@ -142,12 +143,12 @@ public class DeviceXmlWriter implements IDeviceXmlTags
             if (device == null || device.isPersistent()) {
            
 	            Element element = document
-	                    .createElement(TML_XML_INSTANCE);
-	            element.setAttribute(TML_XML_INSTANCE_NAME, iIInst
+	                    .createElement(SEQUOYAH_XML_INSTANCE);
+	            element.setAttribute(SEQUOYAH_XML_INSTANCE_NAME, iIInst
 	                    .getName());
 	            String xml_device_id = iIInst.getDeviceTypeId();
 	
-	            element.setAttribute(TML_XML_INSTANCE_DEVICE_ID,
+	            element.setAttribute(SEQUOYAH_XML_INSTANCE_DEVICE_ID,
 	                    xml_device_id);
 	            if (element != null)
 	                instancesRoot.appendChild(element);

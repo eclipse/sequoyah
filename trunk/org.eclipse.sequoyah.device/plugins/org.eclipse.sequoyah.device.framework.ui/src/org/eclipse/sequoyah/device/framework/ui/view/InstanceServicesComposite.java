@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008-2009 Motorola Inc. and Other. All rights reserved
+ * Copyright (c) 2008-2010 Motorola Inc. and Other. All rights reserved
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [274502] - Change labels: Instance Management view and Services label
  * Mauren Brenner (Eldorado) - Bug [282271] - Applying solution contributed by Vinicius Hernandes (Eldorado)
  * Mauren Brenner (Eldorado) - Bug [289577] - Add condition to handle case where button image is not defined
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.view;

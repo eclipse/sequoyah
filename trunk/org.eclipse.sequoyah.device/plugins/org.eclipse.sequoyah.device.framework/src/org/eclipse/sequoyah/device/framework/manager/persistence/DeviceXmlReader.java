@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008, 2009 Motorola Inc and others. All rights reserved
+ * Copyright (c) 20082010 Motorola Inc and others. All rights reserved
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,7 @@
  * [245114] Enhance persistence policies
  * Mauren Brenner (Eldorado) - Bug [280813] - Support saving instance info outside the workspace
  * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 
@@ -47,7 +48,7 @@ public class DeviceXmlReader implements IDeviceXmlTags
      */
     public static Collection<IInstance> loadInstances() {
         File path = DevicePlugin.getDeviceXmlLocation();
-        File file = new File(path, TML_DEVICE_DATAFILE);
+        File file = new File(path, SEQUOYAH_DEVICE_DATAFILE);
         Collection<IInstance> loadedInstances = new ArrayList<IInstance>();
         
         if (file.exists()) {
@@ -78,13 +79,13 @@ public class DeviceXmlReader implements IDeviceXmlTags
     	
     	// parse list of instances
         NodeList instancesNodes = rootElement
-                .getElementsByTagName(TML_XML_INSTANCES);
+                .getElementsByTagName(SEQUOYAH_XML_INSTANCES);
         if (instancesNodes != null && instancesNodes.getLength() == 1) {
             Node node = instancesNodes.item(0);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element instancesElement = (Element) node;
                 NodeList instanceNodeList = instancesElement
-                        .getElementsByTagName(TML_XML_INSTANCE);
+                        .getElementsByTagName(SEQUOYAH_XML_INSTANCE);
                 for (int i = 0; instanceNodeList != null
                         && i < instanceNodeList.getLength(); i++) {
 
@@ -92,9 +93,9 @@ public class DeviceXmlReader implements IDeviceXmlTags
                     if (childNode.getNodeType() == Node.ELEMENT_NODE) {
                         Element childElement = (Element) childNode;
                         String xml_device_id = childElement
-                                .getAttribute(TML_XML_INSTANCE_DEVICE_ID);
+                                .getAttribute(SEQUOYAH_XML_INSTANCE_DEVICE_ID);
                         String instanceName = childElement
-                                .getAttribute(TML_XML_INSTANCE_NAME);
+                                .getAttribute(SEQUOYAH_XML_INSTANCE_NAME);
 
                         Properties prop = new Properties();
                         NodeList propList = childElement
@@ -117,7 +118,7 @@ public class DeviceXmlReader implements IDeviceXmlTags
                             try {
                                 inst = InstanceManager.createInstance(instanceName,
                                         xml_device_id,
-                                        DevicePlugin.TML_STATUS_OFF,
+                                        DevicePlugin.SEQUOYAH_STATUS_OFF,
                                         prop);
                                 loadedInstances.add(inst);
                             } catch (SequoyahException te) {

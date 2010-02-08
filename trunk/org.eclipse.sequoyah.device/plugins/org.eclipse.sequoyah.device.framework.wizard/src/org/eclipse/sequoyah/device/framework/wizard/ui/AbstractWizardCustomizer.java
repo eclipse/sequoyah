@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2010 Motorola Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,7 +8,7 @@
  * Fabio Fantato (Motorola)
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.wizard.ui;
 
@@ -16,9 +16,9 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.sequoyah.device.framework.wizard.model.IWizardCustomizer;
 
 /**
- * The Wizard Factory defines the common methods to support customized wizards for TML Wizard Instances.
+ * The Wizard Factory defines the common methods to support customized wizards for SEQUOYAH Wizard Instances.
  * If the user decides to customize on wizard it is need to implement a concrete class for it and 
- * reference this class using the extension point {@link org.eclipse.tml.emulator.core.wizard}
+ * reference this class using the extension point {@link org.eclipse.sequoyah.emulator.core.wizard}
  * @author Fabio Fantato
  */
 public abstract class AbstractWizardCustomizer implements IWizardCustomizer {

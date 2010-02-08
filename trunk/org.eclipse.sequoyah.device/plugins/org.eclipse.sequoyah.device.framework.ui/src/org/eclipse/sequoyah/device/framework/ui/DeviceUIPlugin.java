@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2009 Motorola Inc and others.
+ * Copyright (c) 2007-2010 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [248036] - New Icons for "New Instance" and "Filter services" on Device View
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [247179] - Choice of service buttons orientation on Instance Mgt View should be persisted
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.ui;
 
@@ -84,7 +85,7 @@ public class DeviceUIPlugin extends BasePlugin {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.tml.common.utilities.BasePlugin#initializeImageRegistry()
+	 * @see org.eclipse.sequoyah.device.common.utilities.BasePlugin#initializeImageRegistry()
 	 */
 	@Override
 	protected void initializeImageRegistry() {

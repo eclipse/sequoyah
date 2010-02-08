@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2008 Motorola Inc and others.
+ * Copyright (c) 2007-2010 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [250644] - Instance view keeps enabled buttons while performing a service.
  * Fabio Rigo (Eldorado Research Institute) - Bug [251595] - Proportion of ticks in ServiceHandler class is not adequate
  * Fabio Rigo (Eldorado Research Institute) - Bug [287995] - Provide an instance is about to transition event
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.statemachine;

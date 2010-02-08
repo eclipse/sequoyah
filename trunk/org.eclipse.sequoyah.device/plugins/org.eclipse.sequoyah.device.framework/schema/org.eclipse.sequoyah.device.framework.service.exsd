@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.sequoyah.device.framework" id="org.eclipse.sequoyah.device.service" name="Service definition"/>
       </appInfo>
       <documentation>
-         This extension point allow mobile services be defined for other plugins and connects with the TmL framework
+         This extension point allow mobile services be defined for other plugins and connects with the Sequoyah framework
       </documentation>
    </annotation>
 
@@ -135,7 +135,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         VNCViewer, start, stop and refresh are services that need to be described before they could be used in TmL
+         VNCViewer, start, stop and refresh are services that need to be described before they could be used in Sequoyah
       </documentation>
    </annotation>
 
@@ -162,7 +162,10 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Motorola Inc 2007
+         Copyright (c) 2007-2010 Motorola Inc.
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+available at http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
 

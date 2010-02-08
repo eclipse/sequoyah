@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2009 Motorola Inc and others.
+ * Copyright (c) 2007-2010 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@
  * Otavio Luiz Ferranti (Eldorado Research Institute) - bug#221733 - Added a 
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.wizard;
@@ -19,22 +20,22 @@ import org.eclipse.osgi.util.NLS;
 
 
 /**
- * Resources for externalized Strings of the TmL Emulator Core.
+ * Resources for externalized Strings of the Sequoyah Emulator Core.
  */
 public class DeviceWizardResources extends NLS {
 	
 
 	private static String BUNDLE_NAME = "org.eclipse.sequoyah.device.framework.wizard.DeviceWizardResources";//$NON-NLS-1$
 
-	public static String TML_Device_Plugin_Name;
-	public static String TML_Error;
-	public static String TML_Resource_Not_Available;
-	public static String TML_Handler_Not_Instanced;
+	public static String SEQUOYAH_Device_Plugin_Name;
+	public static String SEQUOYAH_Error;
+	public static String SEQUOYAH_Resource_Not_Available;
+	public static String SEQUOYAH_Handler_Not_Instanced;
 
-	public static String TML_Emulator_Wizard_Plugin_Name;
-	public static String TML_Emulator_Wizard_Project_Title;
-	public static String TML_Emulator_Wizard_Project_Description;
-	public static String TML_Emulator_Wizard_Project_Description_Duplicated_Error;
+	public static String SEQUOYAH_Emulator_Wizard_Plugin_Name;
+	public static String SEQUOYAH_Emulator_Wizard_Project_Title;
+	public static String SEQUOYAH_Emulator_Wizard_Project_Description;
+	public static String SEQUOYAH_Emulator_Wizard_Project_Description_Duplicated_Error;
 	
 	public static String msg_new_wizard_emulator_title;
 	public static String msg_new_wizard_emulator_description;

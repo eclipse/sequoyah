@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 Motorola Inc.
+ * Copyright (c) 2007-2010 Motorola Inc.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  * Fabio Rigo (Eldorado Research Institute) - Bug [262632] - Avoid providing raw streams to the user in the protocol framework
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.service.vncviewer.handler;
@@ -107,7 +108,7 @@ public class VNCViewerServiceHandler extends ServiceHandler
          *  The code below is a fix for QEMU-ARM which expect 
          *  the sequence ctrl+alt+3 to show it's display. 
          *****/
-        if (instance.getDeviceTypeId().equals("org.eclipse.tml.device.qemuarm.qemuarmDevice")) //$NON-NLS-1$
+        if (instance.getDeviceTypeId().equals("org.eclipse.sequoyah.device.qemuarm.qemuarmDevice")) //$NON-NLS-1$
         {
 
             try

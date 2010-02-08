@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009 MontaVista Software, Inc and others
+ * Copyright (c) 2008-2010 MontaVista Software, Inc and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [280982] - Add sensitive context help support to InstanceView and New Instance Wizard.
  * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  *******************************************************************************/
 package org.eclipse.sequoyah.device.framework.ui.wizard;
 
@@ -55,9 +56,9 @@ public class DefaultDeviceTypeMenuWizardPage extends WizardPage {
 	
 	protected DefaultDeviceTypeMenuWizardPage(String pageName,String currentDeviceTypeId) {
 		super(pageName);
-		setTitle(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_title); //$NON-NLS-1$
+		setTitle(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_title); //$NON-NLS-1$
 	
-		setMessage(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_message); //$NON-NLS-1$
+		setMessage(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_message); //$NON-NLS-1$
 	
 		for (Object device:DeviceTypeRegistry.getInstance().getDeviceTypes().toArray()) {
 			if (((IDeviceType)device).getId().equals(currentDeviceTypeId)) {
@@ -75,7 +76,7 @@ public class DefaultDeviceTypeMenuWizardPage extends WizardPage {
 	
 		// new name label
 		Label label = new Label(container, SWT.NONE);
-		label.setText(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_name); //$NON-NLS-1$
+		label.setText(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_name); //$NON-NLS-1$
 		label.setFont(container.getFont());
 	
 		nameText = new Text(container, SWT.BORDER);
@@ -94,10 +95,10 @@ public class DefaultDeviceTypeMenuWizardPage extends WizardPage {
 					//name = name.trim();
 					if (!name.equals("")) { //$NON-NLS-1$
 						if (! (registry.getInstancesByName(name).size() == 0)) {
-							errorMessage = DeviceUIResources.TML_Emulator_Wizard_Project_Description_Duplicated_Error;
+							errorMessage = DeviceUIResources.SEQUOYAH_Emulator_Wizard_Project_Description_Duplicated_Error;
 						}
 						else if (!AbstractMobileInstance.validName(name)){
-							errorMessage = DeviceUIResources.TML_Instance_Name_Invalid_Error;
+							errorMessage = DeviceUIResources.SEQUOYAH_Instance_Name_Invalid_Error;
 						}
 					}
 				}
@@ -130,7 +131,7 @@ public class DefaultDeviceTypeMenuWizardPage extends WizardPage {
 	private void createDeviceTypesArea(Composite parent) {
 	
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(DeviceUIResources.TML_Default_Device_Type_Wizard_Page_deviceTypes+" "+currentDeviceType.getLabel()); //$NON-NLS-1$
+		label.setText(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_deviceTypes+" "+currentDeviceType.getLabel()); //$NON-NLS-1$
 		label.setFont(parent.getFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
