@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2008 Motorola Inc and others.
+ * Copyright (c) 2007-2010 Motorola Inc and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@
  * Otavio Luiz Ferranti (Eldorado Research Institute) - [bug221733]Device handlers
  *                                         shall be able to create device instances.
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  *******************************************************************************/
 
 package org.eclipse.sequoyah.device.qemureact.handler;
