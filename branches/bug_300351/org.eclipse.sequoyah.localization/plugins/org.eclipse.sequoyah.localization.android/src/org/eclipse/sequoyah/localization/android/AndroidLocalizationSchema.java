@@ -251,7 +251,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		return newColumn;
 	}
 
-	@Override
 	public TranslationInfo[] promptTranslatedCollumnsName(
 			final IProject project, String selectedColumn,
 			String[] selectedKeys, String[] selectedCells, TableColumn[] columns) {

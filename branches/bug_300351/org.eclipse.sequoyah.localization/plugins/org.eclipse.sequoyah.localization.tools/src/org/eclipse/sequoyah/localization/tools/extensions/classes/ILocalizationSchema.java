@@ -354,37 +354,5 @@ public abstract class ILocalizationSchema {
 		return null;
 	}
 
-	/**
-	 * Retrieves a ColumnInfo, which will be use by the editor to add a new
-	 * column. This new column is a translation of an existing one, so this
-	 * prompt must will also return the from and to languages
-	 * 
-	 * @param iProject
-	 * 
-	 * @return a ColumnInfo, which will be use by the editor to add a new column
-	 */
-	public TranslationInfo promptTranslatedCollumnName(IProject project,
-			String selectedColumn) {
-		// Must be overridden by subclasses if translation of columns is
-		// implemented
-		return null;
-	}
-
-	/**
-	 * Retrieves a ColumnInfo, which will be use by the editor to add a new
-	 * column. This new column is a translation of an existing one, so this
-	 * prompt must will also return the from and to languages
-	 * 
-	 * @param iProject
-	 * 
-	 * @return a ColumnInfo, which will be use by the editor to add a new column
-	 */
-	public TranslationInfo[] promptTranslatedCollumnsName(IProject project,
-			String selectedColumn, String[] selectedKeys,
-			String[] selectedCells, TableColumn[] columns) {
-		// Must be overridden by subclasses if translation of cells is
-		// implemented
-		return null;
-	}
-
+		
 }
