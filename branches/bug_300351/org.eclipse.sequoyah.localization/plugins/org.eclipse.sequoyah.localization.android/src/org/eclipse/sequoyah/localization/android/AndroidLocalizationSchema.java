@@ -998,20 +998,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	@Override
-	public String getISO639LangFromID(String ID) {
-		String iso639 = null;
-
-		LocaleInfo localeInfo = getLocaleInfoFromID(ID);
-		for (LocaleAttribute locAtt : localeInfo.getLocaleAttributes()) {
-			if (locAtt.getDisplayName().equals("Language")) {
-				iso639 = locAtt.getFolderValue();
-			}
-		}
-
-		return iso639;
-	}
-
-	@Override
 	public String getDefaultID() {
 		return LOCALIZATION_FILES_FOLDER;
 	}
