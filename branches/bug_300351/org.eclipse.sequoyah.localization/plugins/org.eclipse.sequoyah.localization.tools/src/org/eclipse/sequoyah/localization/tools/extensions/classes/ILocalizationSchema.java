@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,6 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Marcel Gorri (Eldorado) - Alter signatures to implement automatic translations
- * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.classes;
 
@@ -30,6 +29,8 @@ import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
@@ -116,6 +117,16 @@ public abstract class ILocalizationSchema {
 	 */
 	public abstract Map<LocaleInfo, IFile> getLocalizationFiles(IProject project);
 
+	/**
+	 * [Factory Method] Instantiate and return the object specific to one technology
+	 * @param file
+	 * @param localeInfo
+	 * @param stringNodes
+	 * @param stringArrays
+	 * @return
+	 */
+	public abstract LocalizationFile createLocalizationFile(IFile file, LocaleInfo localeInfo, List<StringNode> stringNodes, List<StringArray> stringArrays);
+	
 	/**
 	 * Read the given localization file and return its <key>:<value> pairs,
 	 * which need to be encapsulated in a LocalizationFile object
@@ -317,7 +328,24 @@ public abstract class ILocalizationSchema {
 	 * 
 	 * @return
 	 */
-	public String getDefaultID() {
+	public abstract String getDefaultID();
+
+	/**
+	 * @return
+	 */
+	public abstract String getIDforLanguage(String langID);
+
+	/**
+	 * @return
+	 */
+	public List<String> getAvailableLanguages() {
+		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	public List<String> getPreferedLanguages() {
 		return null;
 	}
 
@@ -354,5 +382,4 @@ public abstract class ILocalizationSchema {
 		return null;
 	}
 
-		
 }

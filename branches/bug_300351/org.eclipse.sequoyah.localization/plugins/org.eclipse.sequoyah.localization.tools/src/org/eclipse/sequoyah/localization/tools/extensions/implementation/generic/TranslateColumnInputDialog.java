@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009 Motorola Inc.
  * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,13 +10,18 @@
  * Marcel Gorri (Eldorado)
  * 
  * Contributors:
- * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.implementation.generic;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
@@ -33,8 +38,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 
 /**
  * Asks for: - the name of a new language, and - source language, and - target
@@ -42,9 +50,12 @@ import org.eclipse.swt.widgets.Text;
  * 
  * These data will be used for translation purposes
  */
+@SuppressWarnings("restriction")
 public class TranslateColumnInputDialog extends InputDialog {
 
 	private IProject project = null;
+
+	private ILocalizationSchema localizationSchema;
 
 	private final String initialValue;
 
@@ -71,6 +82,12 @@ public class TranslateColumnInputDialog extends InputDialog {
 
 	private Button automaticallyAddLangID;
 
+	private PreferenceDialog networkPreferencesDialog;
+
+	private PreferenceManager prefMan;
+
+	private static final String PROXY_PREFERENCE_PAGE_ID = "org.eclipse.ui.net.NetPreferences"; //$NON-NLS-1$
+
 	/**
 	 * The constructor
 	 */
@@ -81,6 +98,8 @@ public class TranslateColumnInputDialog extends InputDialog {
 		this.project = project;
 		this.initialValue = initialValue;
 		this.selectedColumn = selectedColumn;
+		this.localizationSchema = LocalizationManager.getInstance()
+				.getLocalizationSchema(project);
 	}
 
 	/**
@@ -119,9 +138,6 @@ public class TranslateColumnInputDialog extends InputDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
-		ILocalizationSchema schema = LocalizationManager.getInstance()
-				.getLocalizationSchema(project);
-
 		Composite languagesComposite = (Composite) super
 				.createDialogArea(parent);
 		this.columnName = this.getText();
@@ -154,21 +170,23 @@ public class TranslateColumnInputDialog extends InputDialog {
 		Label fromText = new Label(translationDetailsGroup, SWT.NONE);
 		fromText.setText(Messages.TranslationDialog_FromLanguage);
 
-		String selectedLanguage = schema
+		String selectedLanguage = this.localizationSchema
 				.getISO639LangFromID(this.selectedColumn);
+		// check if ISO639 exists
+		selectedLanguage = ((LanguagesUtil.getLanguageName(selectedLanguage) != null) ? selectedLanguage
+				: null);
 		String defaultLanguage = PreferencesManager.getInstance()
 				.getProjectPreferencesManager(this.project)
-				.getDefaultLanguage();
+				.getDefaultLanguageForColumn(this.selectedColumn);
 
 		fromCombo = LanguagesUtil.createLanguagesCombo(translationDetailsGroup,
-				selectedLanguage, defaultLanguage);
+				selectedLanguage, defaultLanguage, this.localizationSchema);
 		fromCombo
 				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		fromCombo.addSelectionListener(listener);
 
 		LanguagesUtil.createImageStatus(translationDetailsGroup,
-				((selectedLanguage != null) ? selectedLanguage
-						: defaultLanguage));
+				selectedLanguage);
 
 		/*
 		 * To Area
@@ -177,7 +195,7 @@ public class TranslateColumnInputDialog extends InputDialog {
 		toText.setText(Messages.TranslationDialog_ToLanguage);
 
 		toCombo = LanguagesUtil.createLanguagesCombo(translationDetailsGroup,
-				null, null);
+				null, null, this.localizationSchema);
 		toCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		toCombo.addSelectionListener(listener);
 
@@ -190,6 +208,8 @@ public class TranslateColumnInputDialog extends InputDialog {
 		automaticallyAddLangID
 				.setText("Automatically add language ID to column name");
 		automaticallyAddLangID.setSelection(true);
+
+		createNetworkGroup(languagesComposite);
 
 		/*
 		 * Translator Branding Area
@@ -232,32 +252,132 @@ public class TranslateColumnInputDialog extends InputDialog {
 		public void widgetSelected(SelectionEvent e) {
 			if (e.getSource() == fromCombo) {
 				fromLanguage = fromCombo.getText();
+				if (!fromLanguage.equals(LanguagesUtil.getComboSeparator())) {
+					// update default language
+					PreferencesManager.getInstance()
+							.getProjectPreferencesManager(project)
+							.setDefaultLanguageForColumn(selectedColumn,
+									LanguagesUtil.getLanguageID(fromLanguage));
+				} else {
+					fromLanguage = null;
+				}
 			} else if (e.getSource() == toCombo) {
 				toLanguage = toCombo.getText();
-				if (automaticallyAddLangID.getSelection()) {
-					columnName.setText(getColumnNameWithLangID(LanguagesUtil
-							.getLanguageID(toLanguage)));
+				if (!toLanguage.equals(LanguagesUtil.getComboSeparator())) {
+					if (automaticallyAddLangID.getSelection()) {
+						columnName.setText(localizationSchema
+								.getIDforLanguage(LanguagesUtil
+										.getLanguageID(toLanguage)));
+					}
+
+				} else {
+					toLanguage = null;
 				}
 			} else if (e.getSource() == translatorsCombo) {
 				translator = translatorsCombo.getText();
 				TranslatorManager.getInstance().setTranslatorBranding(
 						translator, translatorBrandingImage);
 			}
+			validateSelection();
 		}
 	}
 
 	/**
-	 * Create a column name with the language ID attached
-	 * 
-	 * @param langID
-	 *            the language ID
-	 * @return the column name with the language ID attached
+	 * Validate the current selection and enable/disable OK button
 	 */
-	private String getColumnNameWithLangID(String langID) {
-		String columnName = null;
+	private void validateSelection() {
 
-		columnName = this.initialValue + "-" + langID;
+		boolean result = true;
 
-		return columnName;
+		if (fromLanguage == null) {
+			result = false;
+		}
+		if (toLanguage == null) {
+			result = false;
+		}
+
+		getButton(IDialogConstants.OK_ID).setEnabled(result);
 	}
+
+	/**
+	 * Create Network group
+	 * 
+	 * @param parent
+	 *            parent composite
+	 */
+	@SuppressWarnings("unchecked")
+	private void createNetworkGroup(Composite parent) {
+
+		// Makes the network preferences dialog manager
+		PreferenceManager manager = PlatformUI.getWorkbench()
+				.getPreferenceManager();
+
+		IPreferenceNode networkNode = null;
+
+		for (IPreferenceNode node : (List<IPreferenceNode>) manager
+				.getElements(PreferenceManager.PRE_ORDER)) {
+			if (node.getId().equals(PROXY_PREFERENCE_PAGE_ID)) {
+				networkNode = node;
+				break;
+			}
+		}
+		prefMan = new PreferenceManager();
+		if (networkNode != null) {
+			prefMan.addToRoot(networkNode);
+		}
+
+		Link downloadText = new Link(parent, SWT.WRAP);
+		downloadText.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// Do nothing
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				openNetworkPreferencesPage();
+			}
+		});
+
+		String linkText = Messages.bind(Messages.NetworkLinkText,
+				Messages.NetworkLinkText, Messages.NetworkLinkLink);
+
+		downloadText.setText(linkText);
+		downloadText.update();
+		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1,
+				1);
+		downloadText.setLayoutData(gridData);
+
+	}
+
+	/**
+	 * Centralizes a window on the screen
+	 * 
+	 * @param shell
+	 *            the window
+	 */
+	private static void centralizeShell(Shell shell) {
+		int width = shell.getSize().x;
+		int height = shell.getSize().y;
+		int x = (shell.getDisplay().getClientArea().width - width) / 2;
+		int y = (shell.getDisplay().getClientArea().height - height) / 2;
+		shell.setLocation(x, y);
+	}
+
+	/**
+	 * Opens the network preferences page
+	 * 
+	 * @return true if the user has confirmed the network configurations or
+	 *         false otherwise
+	 */
+	@SuppressWarnings("restriction")
+	private boolean openNetworkPreferencesPage() {
+		// Creates the dialog every time, because it is disposed when it is
+		// closed.
+		networkPreferencesDialog = new WorkbenchPreferenceDialog(this
+				.getShell(), prefMan);
+		networkPreferencesDialog.create();
+		centralizeShell(networkPreferencesDialog.getShell());
+		networkPreferencesDialog.open();
+		return networkPreferencesDialog.getReturnCode() == WorkbenchPreferenceDialog.OK;
+	}
+
 }

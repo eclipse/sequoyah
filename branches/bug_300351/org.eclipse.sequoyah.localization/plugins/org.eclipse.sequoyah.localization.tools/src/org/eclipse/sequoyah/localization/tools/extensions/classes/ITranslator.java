@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,14 +10,15 @@
  * Contributors:
  * Matheus Tait Lima (Eldorado) - Adapting to work with automatic translation
  * Marcel Gorri (Eldorado) - Add new attribute - branding
- * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.classes;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.sequoyah.localization.tools.datamodel.TranslationResult;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 
 public abstract class ITranslator {
 
@@ -59,7 +60,7 @@ public abstract class ITranslator {
 	 * @throws Exception
 	 */
 	public abstract List<TranslationResult> translateAll(List<String> words,
-			String fromLanguage, String toLanguage) throws Exception;
+			String fromLanguage, String toLanguage, IProgressMonitor monitor) throws Exception;
 
 	/**
 	 * Get the name of the translator
@@ -99,4 +100,29 @@ public abstract class ITranslator {
 		this.brandingImg = brandingImg;
 	}
 
+    /**
+     * Translate a single string from a given 
+     * language to several other languages.
+     * 
+     * @param word the string to be translated
+     * @param fromLanguage the original language of the word
+     * @param toLanguages list of languages for the string to be translated for
+     */
+    public abstract List<TranslationResult> translate(String word, String fromLanguage,
+            List<String> toLanguages) throws Exception;	
+    
+    /**
+     * Translates a list of strings from a list of given languages to other given languages (given by a list, or course),
+     * using google Ajax API's for that.
+     * 
+     * This comment feels like the "Three Swatch watch switching witches watched switched Swatch watch witches switch",
+     * but I'll let it here anyway.
+     * 
+     * @param words the strings to be translated
+     * @param fromLanguage the list of original languages 
+     * @param toLanguages list of languages for the strings to be translated for      
+     */
+    public abstract List<TranslationResult> translateAll(List<String> words, List<String>  fromLanguage,
+    		List<String>  toLanguage, IProgressMonitor monitor) throws Exception;   
+      
 }

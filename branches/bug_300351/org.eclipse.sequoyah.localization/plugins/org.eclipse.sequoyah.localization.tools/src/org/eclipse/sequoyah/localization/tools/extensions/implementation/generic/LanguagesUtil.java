@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,16 +10,17 @@
  * Marcel Gorri (Eldorado)
  * 
  * Contributors:
- * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah 
+ * name (company) - description.
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.implementation.generic;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
+import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.managers.PreferencesManager;
@@ -40,6 +41,8 @@ import org.eclipse.ui.PlatformUI;
 public class LanguagesUtil implements TranslatorConstants {
 
 	private static Map<String, String> availableLanguages = new LinkedHashMap<String, String>();
+
+	private static String COMBO_SEPARATOR = "-";
 
 	// Images
 	private static Image warningImage = new Image(Display.getDefault(),
@@ -153,8 +156,42 @@ public class LanguagesUtil implements TranslatorConstants {
 	 * Return a set of the supported languages (strings with the language name
 	 * in uppercase)
 	 */
-	public static Set<String> getAvailableLanguages() {
-		return availableLanguages.keySet();
+	public static List<String> getAvailableLanguages() {
+		return new ArrayList<String>(availableLanguages.keySet());
+	}
+
+	/**
+	 * Get preferred languages for certain localization schema
+	 * 
+	 * @param locSchema
+	 *            localization schema
+	 * @return a set of the preferred languages (strings with the language name
+	 *         in uppercase)
+	 */
+	public static List<String> getPreferredLanguages(
+			ILocalizationSchema locSchema) {
+
+		List<String> languageNames = new ArrayList<String>();
+		List<String> preferedLanguagesIds = locSchema.getPreferedLanguages();
+
+		if (preferedLanguagesIds != null) {
+			for (String langID : preferedLanguagesIds) {
+				languageNames.add(getLanguageName(langID));
+			}
+		}
+
+		return languageNames;
+
+	}
+
+	/**
+	 * Return the separator used in combobox, which represent a non-valid
+	 * selection
+	 * 
+	 * @return separator used in combobox
+	 */
+	public static String getComboSeparator() {
+		return COMBO_SEPARATOR;
 	}
 
 	/**
@@ -211,26 +248,33 @@ public class LanguagesUtil implements TranslatorConstants {
 	}
 
 	public static Combo createLanguagesCombo(Composite parent,
-			String initialSelection, String defaultSelection) {
+			String initialSelection, String defaultSelection,
+			ILocalizationSchema locSchema) {
 		Combo languagesCombo = null;
 
-		String[] availableLangs = (String[]) getAvailableLanguages().toArray(
-				new String[LanguagesUtil.getAvailableLanguages().size()]);
+		List<String> availableLangs = getAvailableLanguages();
+		List<String> preferedLangs = getPreferredLanguages(locSchema);
+
+		List<String> allLangs = new ArrayList<String>();
+		allLangs.addAll(preferedLangs);
+		allLangs.add(COMBO_SEPARATOR);
+		allLangs.addAll(availableLangs);
 
 		languagesCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY
 				| SWT.SINGLE);
 
-		if (availableLangs.length > 0) {
-			languagesCombo.setItems(availableLangs);
+		if (allLangs.size() > 0) {
+			languagesCombo.setItems(allLangs
+					.toArray(new String[allLangs.size()]));
 
-			String fromComboSelection = initialSelection;
+			String comboSelection = initialSelection;
 
-			if (fromComboSelection == null) {
-				fromComboSelection = defaultSelection;
+			if (comboSelection == null) {
+				comboSelection = defaultSelection;
 			}
 
-			if (fromComboSelection != null) {
-				String langName = getLanguageName(fromComboSelection);
+			if (comboSelection != null) {
+				String langName = getLanguageName(comboSelection);
 				int index = 0;
 				for (int i = 0; i < languagesCombo.getItems().length; i++) {
 					String item = languagesCombo.getItem(i);
