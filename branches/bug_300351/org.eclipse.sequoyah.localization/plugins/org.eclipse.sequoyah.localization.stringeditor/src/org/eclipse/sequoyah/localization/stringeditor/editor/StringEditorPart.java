@@ -14,6 +14,7 @@
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Daniel Barboza Franco (Eldorado) - Bug [290058] - fixing NullPointerException's while listening changes made from outside Eclipse
  * Matheus Lima (Eldorado) - Adapting to accept online translation for a column
+ * Paulo Faria (Eldorado) - Add option to expand rows for global maximum height (default) or let all lines with row 1 and include scroll for items with multiple lines
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.stringeditor.editor;
 
@@ -107,10 +108,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -195,7 +199,7 @@ public class StringEditorPart extends EditorPart
         {
             super(viewer);
             this.columnID = columnID;
-            this.editor = new TextCellEditor(viewer.getTable());
+            this.editor = new TextCellEditor(viewer.getTable(), SWT.MULTI | SWT.V_SCROLL);
         }
 
         /*
@@ -855,10 +859,23 @@ public class StringEditorPart extends EditorPart
     private Button highlightChangesButton = null;
 
     /*
+     * Expand row button
+     */
+    private Button expandRowButton = null;
+    
+    /*
      * Highlight user changes
      */
     private boolean highlightChanges = false;
 
+    
+    /*
+     * Expand rows: if row size must be expanded according to the number of lines
+     */
+    private boolean expandRow = true;
+
+    
+    
     /*
      * Search text
      */
@@ -905,7 +922,7 @@ public class StringEditorPart extends EditorPart
     public StringEditorPart()
     {
         undoContext = new ObjectUndoContext(this);
-        operationHistory = OperationHistoryFactory.getOperationHistory();
+        operationHistory = OperationHistoryFactory.getOperationHistory();       
         viewer = null;
         associatedProject = null;
     }
@@ -1059,7 +1076,7 @@ public class StringEditorPart extends EditorPart
             }
         });
 
-        layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 5, 1);
+        layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 6, 1);
         Composite optionsComposite = toolkit.createComposite(expandableComposite);
         optionsComposite.setLayoutData(layoutData);
         optionsComposite.setLayout(layout);
@@ -1085,10 +1102,12 @@ public class StringEditorPart extends EditorPart
             public void widgetDefaultSelected(SelectionEvent e)
             {
                 // do nothing
-
             }
         });
 
+
+        
+        
         Label search =
                 toolkit.createLabel(optionsComposite, Messages.StringEditorPart_SearchLabel + ": ");
         layoutData = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
@@ -1118,6 +1137,12 @@ public class StringEditorPart extends EditorPart
             }
         });
 
+        
+        
+
+	    
+	    
+        
         Label filter =
                 toolkit.createLabel(optionsComposite, Messages.StringEditorPart_FilterByKeyLabel
                         + ": ");
@@ -1151,6 +1176,30 @@ public class StringEditorPart extends EditorPart
                 getEditorViewer().refresh();
             }
         });
+        
+        expandRowButton =
+            toolkit.createButton(optionsComposite,
+                    Messages.StringEditorPart_ExpandRows, SWT.CHECK);
+	    layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+	    expandRowButton.setLayoutData(layoutData);
+	    expandRowButton.setSelection(new Boolean(expandRow));
+	    expandRowButton.addSelectionListener(new SelectionListener()
+	    {
+	
+	        public void widgetSelected(SelectionEvent e)
+	        {
+	            expandRow = ((Button) e.widget).getSelection();
+	            for (RowInfo info : getModel().getRows().values())
+	            {
+	                viewer.update(info, null);
+	            }
+	        }
+	
+	        public void widgetDefaultSelected(SelectionEvent e)
+	        {
+	            // do nothing
+	        }
+	    });        
     }
 
     /*
@@ -1356,7 +1405,49 @@ public class StringEditorPart extends EditorPart
             PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getTable(),
                     contentProvider.getContextHelpID());
         }
-
+        
+        if (expandRow) {
+        	//user preference is to view all the rows with the global maximum number of lines
+	        viewer.getTable().addListener(SWT.MeasureItem, new Listener() {   
+	        	final int TEXT_MARGIN = 3;
+	        	
+	            public void handleEvent(Event event) {                   
+	                   TableItem item = (TableItem)event.item;                  
+	                   String text = item.getText(event.index);                  
+	                   Point size = event.gc.textExtent(text);
+	                   event.width = size.x + 2 * TEXT_MARGIN;
+	                   event.height = Math.max(event.height, size.y + TEXT_MARGIN);                	
+	            }
+	        });
+	            
+	        viewer.getTable().addListener(SWT.EraseItem, new Listener() {
+	    		public void handleEvent(Event event) {
+	    			event.detail &= ~SWT.FOREGROUND;
+	    		}
+	    	});
+	        
+	        viewer.getTable().addListener(SWT.PaintItem, new Listener() {
+	        	final int TEXT_MARGIN = 3;
+	        	final int FIRST_COLUM_TEXT_MARGIN = 20;
+	        	public void handleEvent(Event event) {
+	        		  int yOffset = 0;
+	        		  TableItem item = (TableItem)event.item;
+	    			  String text = item.getText(event.index);
+	        		  if (event.index > 0){        			  
+	        			  event.gc.drawText(text, event.x + TEXT_MARGIN, event.y + yOffset, true);
+	        		  }
+	        		  else if (event.index == 0){ 
+	        			  event.gc.drawImage(item.getImage(), event.x, event.y);
+	        			  event.gc.drawText(text, event.x + FIRST_COLUM_TEXT_MARGIN, event.y + yOffset, true);
+	        		  }
+	         	   }
+	        });
+	        
+	        for (int i = 0; i < viewer.getTable().getColumnCount(); i++) {
+	        	viewer.getTable().getColumn(i).pack();
+	        }
+	        viewer.getTable().pack();  
+    	}
     }
 
     private void saveSession()
@@ -1397,6 +1488,7 @@ public class StringEditorPart extends EditorPart
         session.setProperty(namespace, PROPERTY.SHOW_COMMENTS, Boolean.toString(showCellComments));
         session.setProperty(namespace, PROPERTY.FILTER_BY_KEY, filterByKeyString.length() > 0
                 ? filterByKeyString : null);
+        session.setProperty(namespace, PROPERTY.EXPAND_ROW, Boolean.toString(expandRow));
     }
 
     private void restoreOptions()
@@ -1409,6 +1501,7 @@ public class StringEditorPart extends EditorPart
         String highlight = session.getProperty(namespace, PROPERTY.HIGHLIGHT_CHANGES);
         String showComments = session.getProperty(namespace, PROPERTY.SHOW_COMMENTS);
         String filterByKey = session.getProperty(namespace, PROPERTY.FILTER_BY_KEY);
+        String shouldExpandRow = session.getProperty(namespace, PROPERTY.EXPAND_ROW);       
         if (search != null)
         {
             searchText.setText(search);
@@ -1429,6 +1522,10 @@ public class StringEditorPart extends EditorPart
             filterByKeyText.setText(filterByKey);
             filterByKeyString = filterByKeyText.getText();
         }
+        if (shouldExpandRow != null){
+        	expandRowButton.setSelection(new Boolean(shouldExpandRow));
+            expandRow = expandRowButton.getSelection();
+        }        
     }
 
     private void restoreSession(List<ColumnInfo> infos)
@@ -1660,7 +1757,7 @@ public class StringEditorPart extends EditorPart
 
     @Override
     public void doSave(IProgressMonitor monitor)
-    {
+    {    	
         if (promptUpdateConflicts())
         {
             getEditorInput().save();
@@ -1668,7 +1765,7 @@ public class StringEditorPart extends EditorPart
             updateViewer(changed);
             fireDirtyPropertyChanged();
             setEditorStatus(getEditorInput().validate());
-        }
+        }             
     }
 
     public void updateViewer(List<RowInfo> rows)
