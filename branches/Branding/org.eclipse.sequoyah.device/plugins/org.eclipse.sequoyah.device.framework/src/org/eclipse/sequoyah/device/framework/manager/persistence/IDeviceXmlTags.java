@@ -15,9 +15,8 @@ package org.eclipse.sequoyah.device.framework.manager.persistence;
 
 interface IDeviceXmlTags
 {
-    String SEQUOYAH_DEVICE_DATAFILE = "sequoyah_devices.xml"; //$NON-NLS-1$
- 
-    String SEQUOYAH_XML_DEVICES = "devices"; //$NON-NLS-1$
+
+	String SEQUOYAH_XML_DEVICES = "devices"; //$NON-NLS-1$
     String SEQUOYAH_XML_DEVICE = "deviceType"; //$NON-NLS-1$
     String SEQUOYAH_XML_DEVICE_ID = "id"; //$NON-NLS-1$
     String SEQUOYAH_XML_DEVICE_PLUGIN = "plugin"; //$NON-NLS-1$

@@ -131,6 +131,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.PORT, IPropertyConstants.DEFAULT_PORT);
 		StatusManager.getInstance().listStatus();
 	}
+	
 	/*
 	 * get image with specified iconPath relative to the bundleName.
 	 * 
@@ -228,4 +229,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 
 	}
 
+	public static String getDeviceXmlFileName(){
+		return TML_DEVICE_DATAFILE;
+	}
 }
