@@ -14,8 +14,7 @@ package org.eclipse.sequoyah.device.framework.manager.persistence;
 
 interface IDeviceXmlTags
 {
-    String TML_DEVICE_DATAFILE = "tml_devices.xml"; //$NON-NLS-1$
- 
+    
     String TML_XML_DEVICES = "devices"; //$NON-NLS-1$
     String TML_XML_DEVICE = "deviceType"; //$NON-NLS-1$
     String TML_XML_DEVICE_ID = "id"; //$NON-NLS-1$

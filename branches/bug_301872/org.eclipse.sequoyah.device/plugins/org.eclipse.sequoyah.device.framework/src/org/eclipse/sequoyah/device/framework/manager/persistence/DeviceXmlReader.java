@@ -47,7 +47,7 @@ public class DeviceXmlReader implements IDeviceXmlTags
      */
     public static Collection<IInstance> loadInstances() {
         File path = DevicePlugin.getDeviceXmlLocation();
-        File file = new File(path, TML_DEVICE_DATAFILE);
+        File file = new File(path, DevicePlugin.getDeviceXmlFileName());
         Collection<IInstance> loadedInstances = new ArrayList<IInstance>();
         
         if (file.exists()) {
