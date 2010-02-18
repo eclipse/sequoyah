@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,9 +7,8 @@
  * Initial Contributors:
  * Marcel Gorri (Eldorado)
  * Vinicius Hernandes (Eldorado)
+ * Paulo Faria (Eldorado) - Add methods for not to lose comments on save (currently only on update)
  * 
- * Contributors:
- * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah  
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
@@ -202,6 +201,17 @@ public class StringArray {
 		if (arrayKey != null) {
 			result = this.key.equals(arrayKey);
 		}
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		return result;
 	}
 

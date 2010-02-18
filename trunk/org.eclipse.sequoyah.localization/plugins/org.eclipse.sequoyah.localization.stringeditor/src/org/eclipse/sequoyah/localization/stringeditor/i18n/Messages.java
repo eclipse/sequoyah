@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,6 @@
  * Marcelo Marzola Bossoni (Eldorado) - Bug (289236) - Editor Permitting create 2 columns with same id
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Matheus Tait Lima (Eldorado) - Adapting localization plugins to accept automatic translations
- * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.stringeditor.i18n;
 
@@ -49,6 +48,8 @@ public class Messages extends NLS
     public static String StringEditorPart_HideAllColumnsActionName;
 
     public static String StringEditorPart_HighlightChangesLabel;
+    
+    public static String StringEditorPart_ExpandRows;
 
     public static String StringEditorPart_KeyAlreadyExistsErrorMessage;
 

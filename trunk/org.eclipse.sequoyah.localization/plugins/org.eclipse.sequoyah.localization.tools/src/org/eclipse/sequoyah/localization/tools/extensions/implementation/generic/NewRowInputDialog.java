@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009 Motorola Inc.
  * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,7 +9,6 @@
  * 
  * Contributors:
  * Marcel Gorri (Eldorado) - Extend to support arrays
- * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.implementation.generic;
 
@@ -30,6 +29,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -50,6 +51,8 @@ import org.eclipse.swt.widgets.Text;
 public class NewRowInputDialog extends Dialog {
 
 	private final int DEFAULT_NUM_ENTRIES = 1;
+
+	private final int LIMIT_NUM_ENTRIES_SIZE = 2;
 
 	private IProject project = null;
 
@@ -282,6 +285,7 @@ public class NewRowInputDialog extends Dialog {
 
 		this.unitsExistingArray = new Text(arraysArea, SWT.BORDER);
 		unitsExistingArray.setText(String.valueOf(DEFAULT_NUM_ENTRIES));
+		setEntriesTextSize(unitsExistingArray);
 		unitsExistingArray.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent arg0) {
 				numEntries = Integer.parseInt(unitsExistingArray.getText());
@@ -316,6 +320,7 @@ public class NewRowInputDialog extends Dialog {
 
 		this.unitsNewArray = new Text(arraysArea, SWT.BORDER);
 		unitsNewArray.setText(String.valueOf(DEFAULT_NUM_ENTRIES));
+		setEntriesTextSize(unitsNewArray);
 		unitsNewArray.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent arg0) {
 				numEntries = Integer.parseInt(unitsNewArray.getText());
@@ -325,6 +330,22 @@ public class NewRowInputDialog extends Dialog {
 
 		this.unitsNewArrayLabel = new Label(arraysArea, SWT.NONE);
 		unitsNewArrayLabel.setText(Messages.NewRowDialog_Entries);
+	}
+
+	/**
+	 * Define the size for entries field
+	 * 
+	 * @param text
+	 *            Text composite
+	 */
+	private void setEntriesTextSize(Text text) {
+		GC gc = new GC(text);
+		FontMetrics fm = gc.getFontMetrics();
+		GridData data = new GridData();
+		data.widthHint = (LIMIT_NUM_ENTRIES_SIZE + 1)
+				* fm.getAverageCharWidth();
+		text.setLayoutData(data);
+		text.setTextLimit(LIMIT_NUM_ENTRIES_SIZE);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,7 +10,8 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
- * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Paulo Faria (Eldorado) - Add methods for not to lose comments on save (currently only on update)
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
@@ -429,4 +430,36 @@ public class StringNode implements Comparable<StringNode>
         return this.getKey().compareTo(o.getKey());
     }
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		StringNode other = (StringNode) obj;
+		if (key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!key.equals(other.key))
+			return false;
+		return true;
+	}
+
+    
 }

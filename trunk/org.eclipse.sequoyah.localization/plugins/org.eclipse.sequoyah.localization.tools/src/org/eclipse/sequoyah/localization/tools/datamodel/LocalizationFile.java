@@ -1,5 +1,4 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,8 +9,7 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
- * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
- * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
@@ -249,6 +247,13 @@ public class LocalizationFile implements IFilePersistentData
     }
 
     /**
+	 * @return the stringNodesMap
+	 */
+	public Map<String, StringNode> getStringNodesMap() {
+		return stringNodesMap;
+	}
+
+	/**
      * Check whether the data in the model has been modified and differs from
      * the values saved
      * 
