@@ -67,6 +67,8 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	
 	private static final String DEVICE_XML_LOCATION = "DeviceXMLLocation";
 	
+	private static final String TML_DEVICE_DATAFILE = "sequoyah_devices.xml"; //$NON-NLS-1$
+	
 	// The shared instance
 	private static DevicePlugin plugin;
 	
@@ -131,6 +133,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.PORT, IPropertyConstants.DEFAULT_PORT);
 		StatusManager.getInstance().listStatus();
 	}
+	
 	/*
 	 * get image with specified iconPath relative to the bundleName.
 	 * 
@@ -204,7 +207,6 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 		
 	}
 	
-	
 	public static File getDeviceXmlLocation() {
 		
 		String locationPref = getDefault().getPreferenceStore().getString(DEVICE_XML_LOCATION);
@@ -228,4 +230,8 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 
 	}
 
+	public static String getDeviceXmlFileName(){
+		return TML_DEVICE_DATAFILE;
+	}
+		
 }

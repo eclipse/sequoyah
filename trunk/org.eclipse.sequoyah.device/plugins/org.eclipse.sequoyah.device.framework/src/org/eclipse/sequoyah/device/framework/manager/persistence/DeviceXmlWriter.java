@@ -54,7 +54,7 @@ public class DeviceXmlWriter implements IDeviceXmlTags
      */
     public static void saveInstances() {
         File path = DevicePlugin.getDeviceXmlLocation();
-        File file = new File(path, SEQUOYAH_DEVICE_DATAFILE);
+        File file = new File(path, DevicePlugin.getDeviceXmlFileName());
 
         Document document = createDocument(file);
 
