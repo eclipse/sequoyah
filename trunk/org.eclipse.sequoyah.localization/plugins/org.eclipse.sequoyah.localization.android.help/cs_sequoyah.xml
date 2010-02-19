@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS type="org.eclipse.help.contexts"?>
 <!-- meta name="DC.Type" content="cshelp -->
-<!-- meta name="DC.Title" content="TmL CS Help" -->
+<!-- meta name="DC.Title" content="Sequoyah CS Help" -->
 <!-- meta name="abstract" content="" -->
 <!-- meta name="description" content="" -->
 <!-- meta name="DC.Format" content="XML" -->
-<!-- meta name="DC.Identifier" content="cs_tml" -->
+<!-- meta name="DC.Identifier" content="cs_sequoyah" -->
 <!-- meta name="DC.Language" content="en-us" -->
 <contexts>
 <context id="StringEditor" title="Localization Files Editor">
