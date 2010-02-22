@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Backward
+Bundle-Name: %pluginName  
 Bundle-SymbolicName: org.eclipse.sequoyah.device.backward;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.5.0.qualifier
 Bundle-Activator: org.eclipse.sequoyah.device.backward.DeviceBackwardPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -10,3 +10,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.sequoyah.device.common.utilities;bundle-version="0.3.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+
