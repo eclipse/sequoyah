@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?metadataRepository version='1.1.0'?>
+<repository name='file:/C:/Pastore/Sequoyah/build/repos/apache.commons.net - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+  <properties size='2'>
+    <property name='p2.timestamp' value='1263325039836'/>
+    <property name='p2.compressed' value='false'/>
+  </properties>
+  <units size='1'>
+    <unit id='org.apache.commons.net' version='2.0.0' singleton='false'>
+      <update id='org.apache.commons.net' range='[0.0.0,2.0.0)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Commons Net'/>
+        <property name='org.eclipse.equinox.p2.description' value='A collection of network utilities and protocol implementations.'/>
+        <property name='org.eclipse.equinox.p2.provider' value='The Apache Software Foundation'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://commons.apache.org/net/'/>
+      </properties>
+      <provides size='22'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.commons.net' version='2.0.0'/>
+        <provided namespace='osgi.bundle' name='org.apache.commons.net' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.smtp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.ftp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.pop3' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.daytime' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.chargen' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.discard' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.util' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.tftp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.ntp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.bsd' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.io' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.time' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.telnet' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.echo' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.whois' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.ftp.parser' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.nntp' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net' version='2.0.0'/>
+        <provided namespace='java.package' name='org.apache.commons.net.finger' version='2.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='21'>
+        <required namespace='java.package' name='javax.net' range='0.0.0'/>
+        <required namespace='java.package' name='javax.net.ssl' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.bsd' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.chargen' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.daytime' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.discard' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.echo' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.finger' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.ftp' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.ftp.parser' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.io' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.nntp' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.ntp' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.pop3' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.smtp' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.telnet' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.tftp' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.time' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.util' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.whois' range='2.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.commons.net' version='2.0.0'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Created-By: 1.5.0_04 (Sun Microsystems Inc.)&#xA;X-Compile-Target-JDK: 1.5&#xA;Manifest-Version: 1.0&#xA;Archiver-Version: Plexus Archiver&#xA;Implementation-Vendor-Id: org.apache&#xA;Built-By: Rory&#xA;Bundle-DocURL: http://commons.apache.org/net/&#xA;Bundle-Description: A collection of network utilities and protocol implementations.&#xA;Bnd-LastModified: 1224435154718&#xA;X-Compile-Source-JDK: 1.5&#xA;Specification-Version: 2.0&#xA;Export-Package: org.apache.commons.net.smtp;version=&quot;2.0&quot;,org.apache.commons.net.ftp;version=&quot;2.0&quot;,org.apache.commons.net.pop3;version=&quot;2.0&quot;,org.apache.commons.net.daytime;version=&quot;2.0&quot;,org.apache.commons.net.chargen;version=&quot;2.0&quot;,org.apache.commons.net.discard;version=&quot;2.0&quot;,org.apache.commons.net.util;version=&quot;2.0&quot;,org.apache.commons.net.tftp;version=&quot;2.0&quot;,org.apache.commons.net.ntp;version=&quot;2.0&quot;,org.apache.commons.net.bsd;version=&quot;2.0&quot;,org.apache.commons.net.io;version=&quot;2.0&quot;,org.apache.commons.net.time;version=&quot;2.0&quot;,org.apache.commons.net.telnet;version=&quot;2.0&quot;,org.apache.commons.net.echo;version=&quot;2.0&quot;,org.apache.commons.net.whois;version=&quot;2.0&quot;,org.apache.commons.net.ftp.parser;version=&quot;2.0&quot;,org.apache.commons.net.nntp;version=&quot;2.0&quot;,org.apache.commons.net;version=&quot;2.0&quot;,org.apache.commons.net.finger;version=&quot;2.0&quot;&#xA;Tool: Bnd-0.0.238&#xA;Implementation-Vendor: The Apache Software Foundation&#xA;Specification-Vendor: The Apache Software Foundation&#xA;Bundle-Name: Commons Net&#xA;Bundle-Vendor: The Apache Software Foundation&#xA;Bundle-SymbolicName: org.apache.commons.net&#xA;Import-Package: javax.net,javax.net.ssl,org.apache.commons.net;version=&quot;2.0&quot;,org.apache.commons.net.bsd;version=&quot;2.0&quot;,org.apache.commons.net.chargen;version=&quot;2.0&quot;,org.apache.commons.net.daytime;version=&quot;2.0&quot;,org.apache.commons.net.discard;version=&quot;2.0&quot;,org.apache.commons.net.echo;version=&quot;2.0&quot;,org.apache.commons.net.finger;version=&quot;2.0&quot;,org.apache.commons.net.ftp;version=&quot;2.0&quot;,org.apache.commons.net.ftp.parser;version=&quot;2.0&quot;,org.apache.commons.net.io;version=&quot;2.0&quot;,org.apache.commons.net.nntp;version=&quot;2.0&quot;,org.apache.commons.net.ntp;version=&quot;2.0&quot;,org.apache.commons.net.pop3;version=&quot;2.0&quot;,org.apache.commons.net.smtp;version=&quot;2.0&quot;,org.apache.commons.net.telnet;version=&quot;2.0&quot;,org.apache.commons.net.tftp;version=&quot;2.0&quot;,org.apache.commons.net.time;version=&quot;2.0&quot;,org.apache.commons.net.util;version=&quot;2.0&quot;,org.apache.commons.net.whois;version=&quot;2.0&quot;&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt&#xA;Build-Jdk: 1.5.0_04&#xA;Implementation-Version: 2.0&#xA;Bundle-Version: 2.0&#xA;Implementation-Title: Commons Net&#xA;Specification-Title: Commons Net&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+  </units>
+</repository>
