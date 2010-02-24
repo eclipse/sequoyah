@@ -12,6 +12,7 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.implementation.generic;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
@@ -357,9 +359,14 @@ public class NewRowInputDialog extends Dialog {
 
 		List<String> arrayNames = new ArrayList<String>();
 
-		LocalizationProject localizationProject = LocalizationManager
-				.getInstance().getProjectLocalizationManager(project, false)
-				.getLocalizationProject();
+		LocalizationProject localizationProject = null;
+		try {
+			localizationProject = LocalizationManager
+					.getInstance().getProjectLocalizationManager(project, false)
+					.getLocalizationProject();
+		} catch (IOException e) {
+		
+		}
 
 		Set<StringArray> allStringArrays = localizationProject
 				.getAllStringArrays();

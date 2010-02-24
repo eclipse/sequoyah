@@ -35,6 +35,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -199,7 +200,7 @@ public class StringEditorPart extends EditorPart
         {
             super(viewer);
             this.columnID = columnID;
-            this.editor = new TextCellEditor(viewer.getTable(), SWT.MULTI | SWT.V_SCROLL);
+            this.editor = new TextCellEditor(viewer.getTable(), SWT.MULTI | SWT.V_SCROLL);            
         }
 
         /*
@@ -248,12 +249,20 @@ public class StringEditorPart extends EditorPart
          * java.lang.Object)
          */
         @Override
-        protected void setValue(Object element, Object value)
+		protected void setValue(Object element, Object value)
         {
             RowInfo theRow = (RowInfo) element;
             CellInfo oldCell = theRow.getCells().get(columnID);
             CellInfo newCell = null;
-
+            
+            String EOL = System.getProperty("line.separator"); 
+            String oldValue = oldCell.getValue();                        
+            String newValue = ((String) value).replaceAll(EOL, "\n");
+            if ( newValue.equals(oldValue))
+            {
+            	return;
+            }
+            
             /*
              * If our new value is a valid one, we create a new cell
              */
@@ -1082,28 +1091,43 @@ public class StringEditorPart extends EditorPart
         optionsComposite.setLayout(layout);
         expandableComposite.setClient(optionsComposite);
 
-        highlightChangesButton =
-                toolkit.createButton(optionsComposite,
-                        Messages.StringEditorPart_HighlightChangesLabel, SWT.CHECK);
-        layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
-        highlightChangesButton.setLayoutData(layoutData);
-        highlightChangesButton.addSelectionListener(new SelectionListener()
-        {
+        
+        expandRowButton =
+            toolkit.createButton(optionsComposite,
+                    Messages.StringEditorPart_ExpandRows, SWT.CHECK);
+	    layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+	    expandRowButton.setLayoutData(layoutData);
+	    expandRowButton.setSelection(new Boolean(expandRow));
+	    expandRowButton.addSelectionListener(new SelectionListener()
+	    {
+	
+	        public void widgetSelected(SelectionEvent e)
+	        {
+	            expandRow = ((Button) e.widget).getSelection();	          	            
 
-            public void widgetSelected(SelectionEvent e)
-            {
-                highlightChanges = ((Button) e.widget).getSelection();
-                for (RowInfo info : getModel().getRows().values())
-                {
-                    viewer.update(info, null);
-                }
-            }
+	            viewer.getTable().setRedraw(true);	            
+	            viewer.getTable().layout();
+	            viewer.getTable().update();
+	            viewer.getTable().redraw();	 	            
+		        for (int i = 0; i < viewer.getTable().getColumnCount(); i++) {
+		        	viewer.getTable().getColumn(i).pack();
+		        }
+		        viewer.getTable().pack(); 	
+		        
+	            viewer.getTable().getParent().layout();
+	            viewer.getTable().getParent().setRedraw(true);
+	            viewer.getTable().getParent().redraw();           	            
+	            viewer.refresh();
+	            
+            
+	        }
+	
+	        public void widgetDefaultSelected(SelectionEvent e)
+	        {
+	            // do nothing
+	        }
+	    });        
 
-            public void widgetDefaultSelected(SelectionEvent e)
-            {
-                // do nothing
-            }
-        });
 
 
         
@@ -1177,30 +1201,33 @@ public class StringEditorPart extends EditorPart
             }
         });
         
-        expandRowButton =
-            toolkit.createButton(optionsComposite,
-                    Messages.StringEditorPart_ExpandRows, SWT.CHECK);
-	    layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
-	    expandRowButton.setLayoutData(layoutData);
-	    expandRowButton.setSelection(new Boolean(expandRow));
-	    expandRowButton.addSelectionListener(new SelectionListener()
-	    {
-	
-	        public void widgetSelected(SelectionEvent e)
-	        {
-	            expandRow = ((Button) e.widget).getSelection();
-	            for (RowInfo info : getModel().getRows().values())
-	            {
-	                viewer.update(info, null);
-	            }
-	        }
-	
-	        public void widgetDefaultSelected(SelectionEvent e)
-	        {
-	            // do nothing
-	        }
-	    });        
-    }
+        
+        if (!Platform.getOS().equals(Platform.OS_LINUX)) { 
+	        highlightChangesButton =
+	            toolkit.createButton(optionsComposite,
+	                    Messages.StringEditorPart_HighlightChangesLabel, SWT.CHECK);
+		    layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+		    highlightChangesButton.setLayoutData(layoutData);
+		    highlightChangesButton.addSelectionListener(new SelectionListener()
+		    {
+		
+		        public void widgetSelected(SelectionEvent e)
+		        {
+		            highlightChanges = ((Button) e.widget).getSelection();
+		            for (RowInfo info : getModel().getRows().values())
+		            {
+		                viewer.update(info, null);
+		            }
+		        }
+		
+		        public void widgetDefaultSelected(SelectionEvent e)
+		        {
+		            // do nothing
+		        }
+		    });
+        }
+        
+	  }
 
     /*
      * (non-Javadoc)
@@ -1295,7 +1322,9 @@ public class StringEditorPart extends EditorPart
                     if (position <= x)
                     {
                         activeColumn = i;
-                        activeRow = viewer.getCell(new Point(position, positiony));
+                        int currentX = viewer.getTable().toControl(e.x, e.y).x;
+                        int currentY = viewer.getTable().toControl(e.x, e.y).y;
+                        activeRow = viewer.getCell(new Point(currentX, currentY));
                         break;
                     }
                 }
@@ -1406,7 +1435,7 @@ public class StringEditorPart extends EditorPart
                     contentProvider.getContextHelpID());
         }
         
-        if (expandRow) {
+        //if (expandRow) {
         	//user preference is to view all the rows with the global maximum number of lines
 	        viewer.getTable().addListener(SWT.MeasureItem, new Listener() {   
 	        	final int TEXT_MARGIN = 3;
@@ -1416,7 +1445,12 @@ public class StringEditorPart extends EditorPart
 	                   String text = item.getText(event.index);                  
 	                   Point size = event.gc.textExtent(text);
 	                   event.width = size.x + 2 * TEXT_MARGIN;
-	                   event.height = Math.max(event.height, size.y + TEXT_MARGIN);                	
+	                   if (expandRow){	                	  
+	                	   event.height = Math.max(event.height, size.y + TEXT_MARGIN);
+	                   } else{	    
+	                	   Point size2 = event.gc.textExtent("A");
+	                	   event.height = size2.y + TEXT_MARGIN;
+	                   }                	
 	            }
 	        });
 	            
@@ -1447,7 +1481,7 @@ public class StringEditorPart extends EditorPart
 	        	viewer.getTable().getColumn(i).pack();
 	        }
 	        viewer.getTable().pack();  
-    	}
+    	//}
     }
 
     private void saveSession()
@@ -1509,8 +1543,10 @@ public class StringEditorPart extends EditorPart
         }
         if (highlight != null)
         {
-            highlightChangesButton.setSelection(new Boolean(highlight));
-            highlightChanges = highlightChangesButton.getSelection();
+        	 if (!Platform.getOS().equals(Platform.OS_LINUX)){
+	            highlightChangesButton.setSelection(new Boolean(highlight));
+	            highlightChanges = highlightChangesButton.getSelection();
+        	 }
         }
         if (showComments != null)
         {
@@ -1859,12 +1895,15 @@ public class StringEditorPart extends EditorPart
 
     public boolean unmarkColumnAsChanged(String columnID)
     {
-        return changedColumns.remove(columnID);
+    	boolean result = changedColumns.remove(columnID); 
+    	needToPromptFileSystemChange = (!changedColumns.isEmpty());        
+    	return result;
     }
 
     private void clearColumnsMarkedAsChanged()
     {
         changedColumns.clear();
+        needToPromptFileSystemChange = (!changedColumns.isEmpty());
     }
 
     /**
