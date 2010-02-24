@@ -15,6 +15,7 @@
  * Mauren Brenner (Eldorado) - [282428] Notify when instance is null
  * Mauren Brenner (Eldorado) - [282724] Add dispose listener to the top composite
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Marcel Gorri (Eldorado) - [303646] Add support for UI styles.
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.view;
@@ -22,6 +23,9 @@ package org.eclipse.sequoyah.device.framework.ui.view;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
 import org.eclipse.sequoyah.device.framework.ui.view.model.InstanceSelectionChangeEvent;
 import org.eclipse.sequoyah.device.framework.ui.view.model.InstanceSelectionChangeListener;
@@ -37,7 +41,7 @@ import org.eclipse.ui.part.ViewPart;
 public class InstanceMgtView extends ViewPart
 {   
 
-	private static final Set<InstanceSelectionChangeListener> listeners = new LinkedHashSet<InstanceSelectionChangeListener>();
+    private static final Set<InstanceSelectionChangeListener> listeners = new LinkedHashSet<InstanceSelectionChangeListener>();
     private static InstanceServicesComposite instanceServicesComposite = null;
     private static IInstance selectedInstance = null;
     private static InstanceStatusComposite topComposite;
@@ -46,9 +50,17 @@ public class InstanceMgtView extends ViewPart
 	
 	private static SashForm form;
 	private static String contextId;
+	private boolean useDropDown;
+	private String viewLayout;
+	
+	private static final String LAYOUT_HORIZONTAL = "horizontal";
+	private static final String LAYOUT_VERTICAL = "vertical";
+
 	
     public InstanceMgtView()
     {
+        useDropDown = false;
+        viewLayout = LAYOUT_VERTICAL;
     }
 
     public static InstanceServicesComposite getInstanceServicesComposite(){
@@ -74,16 +86,26 @@ public class InstanceMgtView extends ViewPart
     
     public void createPartControl(Composite parent)
     {
-        form = new SashForm(parent,SWT.VERTICAL);
+
+    	IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+    	.getExtensionPoint("org.eclipse.sequoyah.device.framework.ui.deviceManagerView");
+    	IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
+    	for(IConfigurationElement configElement : configurationElements) {
+    		String attribute = configElement.getAttribute("useDropDown");
+    		useDropDown = Boolean.parseBoolean(attribute);
+    		viewLayout = configElement.getAttribute("viewLayout");
+    	}
+    	
+    	if(LAYOUT_VERTICAL.equals(viewLayout)) {
+    		form = new SashForm(parent,SWT.VERTICAL);
+    	} else {
+    		form = new SashForm(parent,SWT.HORIZONTAL);
+    	}
+    		
+
         form.setLayout(new FillLayout());
         
-        topComposite = new InstanceStatusComposite(form, getViewSite());
-        
-        final InstanceServicesComposite bottomComposite = new InstanceServicesComposite(form);
-        instanceServicesComposite = bottomComposite;
-        
-        form.setWeights(new int[] {60,40});
-        
+        topComposite = new InstanceStatusComposite(form, getViewSite(), useDropDown);
         topComposite.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e)
             {
@@ -101,15 +123,22 @@ public class InstanceMgtView extends ViewPart
             topComposite.removeInstanceSelectionChangeListener(selectionChangeListener);
         }
         
-        selectionChangeListener = new InstanceSelectionChangeListener() {
-            public void instanceSelectionChanged(InstanceSelectionChangeEvent event)
-            {
-                bottomComposite.setSelectedInstance(event.getInstance());
-            }
-        };
-        
-        topComposite.addInstanceSelectionChangeListener(selectionChangeListener);
-        
+        if(!useDropDown) {
+        	final InstanceServicesComposite bottomComposite = new InstanceServicesComposite(form);
+        	instanceServicesComposite = bottomComposite;
+        	form.setWeights(new int[] {60,40});
+        	selectionChangeListener = new InstanceSelectionChangeListener() {
+        		public void instanceSelectionChanged(InstanceSelectionChangeEvent event)
+        		{
+        			bottomComposite.setSelectedInstance(event.getInstance());
+        		}
+        	};
+        	topComposite.addInstanceSelectionChangeListener(selectionChangeListener);
+        }
+        else {
+        	form.setWeights(new int[] {100});
+        }
+
         if (contextId != null) {
         	PlatformUI.getWorkbench().getHelpSystem().setHelp(form, contextId);
         }

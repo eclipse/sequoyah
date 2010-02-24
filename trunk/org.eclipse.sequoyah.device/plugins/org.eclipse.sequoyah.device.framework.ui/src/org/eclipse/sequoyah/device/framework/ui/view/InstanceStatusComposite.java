@@ -31,12 +31,15 @@
  * Daniel Barboza Franco - Bug [287996] - Dont show device selection dialog when there is only one device
  * Eric Cloninger (Motorola) - [287883] Adjust the status column in device management view - Modified relative widths
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Marcel Gorri (Eldorado) - [303646] Add support for UI styles.
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.view;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -87,19 +90,30 @@ import org.eclipse.sequoyah.device.framework.ui.view.provider.InstanceMgtViewCon
 import org.eclipse.sequoyah.device.framework.ui.view.provider.InstanceMgtViewLabelProvider;
 import org.eclipse.sequoyah.device.framework.ui.wizard.DeviceWizardExtensionManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -107,6 +121,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -161,11 +176,13 @@ public class InstanceStatusComposite extends Composite
 	        InstanceStatusComposite.this.instanceTransitioned(e.getInstance());
 	    }
 	};
+	private boolean useDropDown;
 
-	public InstanceStatusComposite(Composite parent, IViewSite viewSite)
+	public InstanceStatusComposite(Composite parent, IViewSite viewSite, boolean useDropDown)
 	{
 		super(parent, SWT.NONE);
 		this.viewSite = viewSite;
+		this.useDropDown = useDropDown;
 		createContents();
 
 		InstanceEventManager eventMgr = InstanceEventManager.getInstance();
@@ -212,7 +229,26 @@ public class InstanceStatusComposite extends Composite
 	private void createContents()
 	{
 		setLayout(new FillLayout());
-		viewer = new TreeViewer(this, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TreeViewer(this, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL)
+		{
+			@Override
+			protected void createTreeItem(Widget parent, Object element,
+					int index) {
+				super.createTreeItem(parent, element, index);
+				if(useDropDown)
+				{
+					if(element instanceof ViewerInstanceNode)
+					{
+						ViewerInstanceNode instanceNode = (ViewerInstanceNode) element;
+						if(instanceNode.getInstance() !=  null)
+						{
+							configureButtons(instanceNode.getInstance());
+						}
+					}
+				}
+			}
+		};
+		
 		Tree tree = viewer.getTree();
 		TableLayout layout = new TableLayout();
 		tree.setLayout(layout);
@@ -287,26 +323,32 @@ public class InstanceStatusComposite extends Composite
             }
         }
     }
+    
+	protected void clearContextMenu(Menu menu) {
+		 // Get rid of existing menu items 
+        MenuItem[] items = menu.getItems(); 
+        for (int i = 0; i < items.length; i++) { 
+            ((MenuItem) items[i]).dispose(); 
+        }
+		
+	}
+    
     private void fillMenuContext()
     {
         final Menu menu = new Menu(viewer.getTree()); 
         viewer.getTree().setMenu(menu); 
         menu.addMenuListener(new MenuAdapter() { 
             public void menuShown(MenuEvent e) { 
-                // Get rid of existing menu items 
-                MenuItem[] items = menu.getItems(); 
-                for (int i = 0; i < items.length; i++) { 
-                    ((MenuItem) items[i]).dispose(); 
-                }
-                fillMenuContext(menu);              
+            	clearContextMenu(menu);
+                fillMenuContext(menu, false);              
 
             }
         }); 
     }
-
-    private void fillMenuContext(Menu menu)
+    
+    private void fillMenuContext(Menu menu, boolean justActions)
     {
-        MenuItem newItem = null;
+    	MenuItem newItem = null;
 
         ISelection selection = viewer.getSelection();
         if (selection instanceof IStructuredSelection)
@@ -320,64 +362,7 @@ public class InstanceStatusComposite extends Composite
                 if (node.containsInstance())
                 {
                     IInstance instance = getSelectedInstance();
-                    String statusId = instance.getStatus();
-                    IStatus status = StatusRegistry.getInstance().getStatus(statusId);
-                    IDeviceType device = DeviceUtils.getDeviceType(instance);
-                    String deviceName = device.getLabel();
-                    
-                    if (device.supportsUserInstances()) {
-                    	// menu item "New..."
-                    	newItem = new MenuItem(menu, SWT.PUSH);
-                    	newItem.setText(MENU_NEW);
-                    	newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
-                    
-                    	newItem = new MenuItem(menu, SWT.SEPARATOR);
-
-                    	// menu item "Delete"
-                    	newItem = new MenuItem(menu, SWT.PUSH);
-                    	newItem.setText(MENU_DELETE);
-                    	newItem.addListener(SWT.Selection, new MenuDeleteListener(instance));
-                    	newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
-                    	newItem.setEnabled(status.canDeleteInstance());
-
-                    	newItem = new MenuItem(menu, SWT.SEPARATOR);
-                    }
-
-                    // menu item "Properties"
-                    newItem = new MenuItem(menu, SWT.PUSH);
-                    newItem.setText(MENU_PROPERTIES);
-                    newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DeviceUIPlugin.ICON_PROPERTY));
-                    newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
-                    newItem.setEnabled(status.canEditProperties());
-                    
-                    newItem = new MenuItem(menu, SWT.SEPARATOR);
-                    
-                    for (IService service:device.getServices()){
-                        if (service.isVisible()) {
-                        	
-                        	boolean inTransition = ((AbstractMobileInstance)instance).getStateMachineHandler().isTransitioning();
-                        	boolean isServiceEnabled = (service.getStatusTransitions(instance.getStatus())!=null);
-                        	isServiceEnabled = isServiceEnabled && !inTransition;
-                        	
-                            newItem = new MenuItem(menu, SWT.PUSH);  
-                            ImageData serviceImageData = service.getImage().getImageData().scaledTo(DEFAULT_MENU_IMAGE_SIZE, DEFAULT_MENU_IMAGE_SIZE);
-                            Image serviceImage = new Image(getDisplay(), serviceImageData);
-                            newItem.setImage(serviceImage);
-                            newItem.setEnabled(isServiceEnabled);
-                            newItem.setText(service.getName());
-                            newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
-
-                            // The listener below updates the services composite
-                            final IInstance inst = instance;
-                            newItem.addListener(SWT.Selection,  new Listener(){
-    							public void handleEvent(Event event) {
-    								InstanceMgtView.getInstanceServicesComposite().setSelectedInstance(inst);
-    							}
-    							
-    						} );
-                            
-                        }
-                    }
+                    fillMenuContext(menu, instance, justActions);
                 }
             }
             else if (firstSelection instanceof ViewerDeviceNode)
@@ -394,6 +379,70 @@ public class InstanceStatusComposite extends Composite
             }
         }  
     }
+    
+	private void fillMenuContext(Menu menu, IInstance instance, boolean justActions) {
+		MenuItem newItem = null;
+		String statusId = instance.getStatus();
+        IStatus status = StatusRegistry.getInstance().getStatus(statusId);
+        IDeviceType device = DeviceUtils.getDeviceType(instance);
+        String deviceName = device.getLabel();
+        if(!justActions)
+        {
+        	if (device.supportsUserInstances()) {
+        		// menu item "New..."
+        		newItem = new MenuItem(menu, SWT.PUSH);
+        		newItem.setText(MENU_NEW);
+        		newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
+
+        		newItem = new MenuItem(menu, SWT.SEPARATOR);
+
+        		// menu item "Delete"
+        		newItem = new MenuItem(menu, SWT.PUSH);
+        		newItem.setText(MENU_DELETE);
+        		newItem.addListener(SWT.Selection, new MenuDeleteListener(instance));
+        		newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
+        		newItem.setEnabled(status.canDeleteInstance());
+
+        		newItem = new MenuItem(menu, SWT.SEPARATOR);
+        	}
+
+        	// menu item "Properties"
+        	newItem = new MenuItem(menu, SWT.PUSH);
+        	newItem.setText(MENU_PROPERTIES);
+        	newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DeviceUIPlugin.ICON_PROPERTY));
+        	newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
+        	newItem.setEnabled(status.canEditProperties());
+
+        	newItem = new MenuItem(menu, SWT.SEPARATOR);
+        }
+        
+        for (IService service:device.getServices()){
+            if (service.isVisible()) {
+            	
+            	boolean inTransition = ((AbstractMobileInstance)instance).getStateMachineHandler().isTransitioning();
+            	boolean isServiceEnabled = (service.getStatusTransitions(instance.getStatus())!=null);
+            	isServiceEnabled = isServiceEnabled && !inTransition;
+            	
+                newItem = new MenuItem(menu, SWT.PUSH);  
+                ImageData serviceImageData = service.getImage().getImageData().scaledTo(DEFAULT_MENU_IMAGE_SIZE, DEFAULT_MENU_IMAGE_SIZE);
+                Image serviceImage = new Image(getDisplay(), serviceImageData);
+                newItem.setImage(serviceImage);
+                newItem.setEnabled(isServiceEnabled);
+                newItem.setText(service.getName());
+                newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
+
+                // The listener below updates the services composite
+                final IInstance inst = instance;
+                newItem.addListener(SWT.Selection,  new Listener(){
+					public void handleEvent(Event event) {
+						InstanceMgtView.getInstanceServicesComposite().setSelectedInstance(inst);
+					}
+					
+				} );
+                
+            }
+        }
+	}
     
 	private void fillViewMenu()
 	{
@@ -454,6 +503,96 @@ public class InstanceStatusComposite extends Composite
 		expandToNodeValues(expandedDevices, selectedInstance);		
 
         notifyInstanceSelectionChangeListeners(getSelectedInstance());
+	}
+	
+	private void configureButtons(final IInstance instance)
+	{
+		TreeItem[] items = viewer.getTree().getItems();
+
+		TreeItem desiredItem = getInstanceItem(instance, items);
+
+		if(desiredItem != null)
+		{
+			if(!desiredItem.isDisposed())
+			{
+				final Tree tree = viewer.getTree();
+				final TreeEditor editor = new TreeEditor(tree);
+				final Menu contextMenu = new Menu(viewer.getTree());
+
+				final Composite composite = new Composite(tree, SWT.TRANSPARENT | SWT.FILL);
+//				composite.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+				GridLayout layout = new GridLayout(2, false);
+				composite.setLayout(layout);
+				layout.marginHeight = 0;
+				layout.marginWidth = 0;
+				composite.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseUp(MouseEvent e) {
+						Rectangle bounds = composite.getBounds();
+						TreeItem item = tree.getItem(new Point(bounds.x, bounds.y));
+						tree.setSelection(item);
+						clearContextMenu(contextMenu);
+						fillMenuContext(contextMenu, false);
+						super.mouseUp(e);
+					}
+				});
+				layout.marginTop = 0;
+				layout.horizontalSpacing = 0;
+				
+				
+				final Composite blank = new Composite(composite, SWT.TRANSPARENT);
+				GridData blankData = new GridData();
+				blankData.horizontalAlignment = SWT.FILL;
+				blankData.grabExcessHorizontalSpace = true;
+				blankData.grabExcessVerticalSpace = true;
+				blank.setLayoutData(blankData);
+				blank.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseUp(MouseEvent e) {
+						Rectangle bounds = composite.getBounds();
+						TreeItem item = tree.getItem(new Point(bounds.x, bounds.y));
+						tree.setSelection(item);
+						clearContextMenu(contextMenu);
+						fillMenuContext(contextMenu, false);
+						notifyInstanceSelectionChangeListeners(getSelectedInstance());
+						super.mouseUp(e);
+					}
+				});
+				blank.setMenu(contextMenu);
+				composite.setMenu(contextMenu);
+
+				final Button butao = new Button(composite, SWT.ARROW | SWT.DOWN);
+				GridData buttonData = new GridData(SWT.END, GridData.VERTICAL_ALIGN_BEGINNING, false, true, 1, 1);
+				buttonData.widthHint = 15;
+				buttonData.heightHint = 15;
+				buttonData.horizontalIndent = 0;
+				butao.setLayoutData(buttonData);
+				butao.pack();
+				final Menu menu = new Menu(InstanceStatusComposite.this);
+				butao.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						clearContextMenu(menu);
+						fillMenuContext(menu, instance, true);
+						Rectangle rect = butao.getBounds();
+						Point pt = new Point(0, rect.height);
+						pt = butao.toDisplay(pt);
+						menu.setLocation(pt.x, pt.y);
+						menu.setVisible(true);
+					}
+				});
+
+				editor.grabHorizontal = true;
+				editor.horizontalAlignment = SWT.RIGHT;
+				editor.setEditor(composite, desiredItem, 0);
+				desiredItem.addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						editor.dispose();
+						composite.dispose();
+					}
+				});
+			}
+		}
 	}
 	
 	private Collection<String> getExpandedDevices()
@@ -599,7 +738,6 @@ public class InstanceStatusComposite extends Composite
                 viewer.refresh();
                 expandedDevices.add(instance.getDeviceTypeId());
                 expandToNodeValues(expandedDevices, instance);
-                
                 notifyInstanceSelectionChangeListeners(instance);
             }});
 	}
@@ -707,7 +845,7 @@ public class InstanceStatusComposite extends Composite
         
         public MenuPropertiesListener(IInstance instance)
         {
-            super();
+        	super();
             this.instance = instance;
         }
         
@@ -846,5 +984,41 @@ public class InstanceStatusComposite extends Composite
 	protected void removeListener() {
 		InstanceEventManager eventMgr = InstanceEventManager.getInstance();
 		eventMgr.removeInstanceListener(listener);
+	}
+
+	TreeItem getInstanceItem(final IInstance instance, TreeItem[] items) {
+		TreeItem desiredItem = null;
+		for (TreeItem treeNode : items)
+		{
+		    Object node = treeNode.getData();
+		    if (node instanceof ViewerInstanceNode)
+		    {
+		    	ViewerInstanceNode deviceNode = (ViewerInstanceNode) node;
+		    	if(instance.getName().equals(deviceNode.getInstanceName()))
+		    	{
+		    		return treeNode;
+		    	}
+		    }
+	    	desiredItem = getInstanceItem(instance, treeNode.getItems());
+	    	if(desiredItem != null)
+	    	{
+	    		break;
+	    	}
+		}
+		return desiredItem;
+	}
+	
+	List getInstanceItems(TreeItem[] items) {
+		List instanceItems = new ArrayList();
+		for (TreeItem treeNode : items)
+		{
+		    Object node = treeNode.getData();
+		    if (node instanceof ViewerInstanceNode)
+		    {
+		    	instanceItems.add(treeNode);
+		    }
+		    instanceItems.addAll(getInstanceItems(treeNode.getItems()));
+		}
+		return instanceItems;
 	}
 }
