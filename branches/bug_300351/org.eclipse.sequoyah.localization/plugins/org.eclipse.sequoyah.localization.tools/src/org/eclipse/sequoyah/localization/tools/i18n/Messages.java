@@ -23,6 +23,8 @@ public class Messages extends NLS
 {
     private static final String BUNDLE_NAME = "org.eclipse.sequoyah.localization.tools.i18n.messages"; //$NON-NLS-1$
 
+	public static String StringEditorInput_FileMalformed;
+
     public static String StringEditorInput_ErrorInitializingEditor;
 
     public static String StringEditorInput_ErrorManagerNotInitialized;

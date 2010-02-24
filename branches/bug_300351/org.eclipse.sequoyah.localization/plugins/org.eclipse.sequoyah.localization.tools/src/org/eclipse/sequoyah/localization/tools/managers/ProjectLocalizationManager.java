@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,16 +103,26 @@ public class ProjectLocalizationManager {
 
 	}
 
-	public void reload() {
+	public void reload(IProject project) {
 		List<LocalizationFile> localizationFiles = new ArrayList<LocalizationFile>();
 		List<LocalizationFile> notPersisted = new ArrayList<LocalizationFile>();
 		Map<IFile, LocalizationFile> localizationFilesMap = new HashMap<IFile, LocalizationFile>();
-
-		notPersisted = getLocalizationProject().getLocalizationFiles();
+		
+		boolean createLocalizationProject = false;
+		if (getLocalizationProject()!=null){			
+			notPersisted = getLocalizationProject().getLocalizationFiles();			
+		}
+		else {
+			//manager is loaded but location project is not updated
+			createLocalizationProject = true;		
+		}
 
 		try {
-			localizationFiles.addAll(this.projectLocalizationSchema
-					.loadAllFiles(project).values());
+			Collection<LocalizationFile> loadedLocationFiles = this.projectLocalizationSchema.loadAllFiles(project).values();
+			if (createLocalizationProject){
+								
+			}
+			localizationFiles.addAll(loadedLocationFiles);
 			for (LocalizationFile file : localizationFiles) {
 				localizationFilesMap.put(file.getFile(), file);
 			}
@@ -132,6 +143,8 @@ public class ProjectLocalizationManager {
 		}
 
 	}
+
+	
 
 	// add missing string nodes from source to destination
 	private void syncNodes(LocalizationFile destination, LocalizationFile source) {
@@ -409,6 +422,20 @@ public class ProjectLocalizationManager {
 
 		return localeInfo;
 
+	}
+	
+	/**
+	 * @param localizationProject the localizationProject to set
+	 */
+	public void setLocalizationProject(LocalizationProject localizationProject) {
+		this.localizationProject = localizationProject;
+	}
+	
+	/**
+	 * @param project the project to set
+	 */
+	public void setProject(IProject project) {
+		this.project = project;
 	}
 
 }

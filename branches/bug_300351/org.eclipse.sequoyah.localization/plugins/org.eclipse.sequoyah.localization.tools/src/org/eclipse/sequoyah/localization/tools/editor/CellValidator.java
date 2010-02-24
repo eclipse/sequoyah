@@ -12,6 +12,8 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
+import java.io.IOException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -43,8 +45,12 @@ public class CellValidator implements ICellValidator
      */
     public void init(IProject project) throws SequoyahException
     {
-        projectLocalizationManager =
-                LocalizationManager.getInstance().getProjectLocalizationManager(project, true);
+        try {
+			projectLocalizationManager =
+			        LocalizationManager.getInstance().getProjectLocalizationManager(project, true);
+		} catch (IOException e) {
+			
+		}
         if (projectLocalizationManager == null)
         {
 

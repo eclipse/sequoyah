@@ -466,9 +466,11 @@ public class LocalizationFile implements IFilePersistentData
             for (int i = 0; i < thisStringNodes.size(); i++)
             {
                 keyEqual = thisStringNodes.get(i).getKey().equals(otherStringNodes.get(i).getKey());
+                String EOL = System.getProperty("line.separator"); 
+                     
+                String fromFile = thisStringNodes.get(i).getValue().replaceAll(EOL, "\n"); 
                 valueEqual =
-                        thisStringNodes.get(i).getValue()
-                                .equals(otherStringNodes.get(i).getValue());
+                	fromFile.equals(otherStringNodes.get(i).getValue());
                 if ((!keyEqual) || (!valueEqual))
                 {
                     result = false;

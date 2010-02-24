@@ -189,19 +189,26 @@ public class StringEditorInput extends IStringEditorInput {
 	 * @see org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput#init(org.eclipse.core.resources.IProject)
 	 */
 	public void init(final IProject project) throws SequoyahException {
-		projectLocalizationManager = LocalizationManager.getInstance()
-				.getProjectLocalizationManager(project, true);
-
-		LocalizationManager.getInstance().addFileChangeListener(
-				fileChangeListener);
-
-		if (projectLocalizationManager == null) {
-
+		try {
+			projectLocalizationManager = LocalizationManager.getInstance().getProjectLocalizationManager(project, true);
+	
+			LocalizationManager.getInstance().addFileChangeListener(
+					fileChangeListener);
+	
+			if (projectLocalizationManager == null) {
+	
+				Status status = new Status(Status.ERROR,
+						LocalizationToolsPlugin.PLUGIN_ID,
+						Messages.StringEditorInput_ErrorInitializingEditor);
+				throw new SequoyahException(new SequoyahExceptionStatus(status));
+			}
+		}
+		catch (IOException ioe){			
 			Status status = new Status(Status.ERROR,
 					LocalizationToolsPlugin.PLUGIN_ID,
-					Messages.StringEditorInput_ErrorInitializingEditor);
+					Messages.StringEditorInput_FileMalformed);
 			throw new SequoyahException(new SequoyahExceptionStatus(status));
-		}
+		}		
 	}
 
 	private String getColumnID(IFile file) {
@@ -675,9 +682,13 @@ public class StringEditorInput extends IStringEditorInput {
 		LocalizationManager.getInstance().unloadProjectLocalizationManager(
 				projectLocalizationManager.getLocalizationProject()
 						.getProject());
-		LocalizationManager.getInstance().getProjectLocalizationManager(
-				projectLocalizationManager.getLocalizationProject()
-						.getProject(), false);
+		try {
+			LocalizationManager.getInstance().getProjectLocalizationManager(
+					projectLocalizationManager.getLocalizationProject()
+							.getProject(), false);
+		} catch (IOException e) {
+			
+		}
 		return true;
 	}
 

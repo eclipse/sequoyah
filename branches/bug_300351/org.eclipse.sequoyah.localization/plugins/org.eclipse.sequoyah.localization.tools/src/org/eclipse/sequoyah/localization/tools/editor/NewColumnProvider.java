@@ -13,6 +13,8 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
+import java.io.IOException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
@@ -55,8 +57,15 @@ public class NewColumnProvider extends DefaultOperationProvider
      */
     public void init(IProject project) throws SequoyahException
     {
-        projectLocalizationManager =
-                LocalizationManager.getInstance().getProjectLocalizationManager(project, true);
+        try {
+			projectLocalizationManager =
+			        LocalizationManager.getInstance().getProjectLocalizationManager(project, true);
+		} catch (IOException e) {
+			Status status =
+                new Status(Status.ERROR, LocalizationToolsPlugin.PLUGIN_ID,
+                        Messages.StringEditorInput_FileMalformed);
+			throw new SequoyahException(new SequoyahExceptionStatus(status));
+		}
         if (projectLocalizationManager == null)
         {
 
