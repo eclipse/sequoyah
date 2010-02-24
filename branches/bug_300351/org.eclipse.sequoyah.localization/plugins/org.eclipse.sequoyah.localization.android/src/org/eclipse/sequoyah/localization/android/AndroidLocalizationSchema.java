@@ -393,9 +393,13 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			AndroidLocalizationSchema schema = new AndroidLocalizationSchema();
 			String id = value.replace(LOCALIZATION_FILES_FOLDER, ""); //$NON-NLS-1$
 			LocaleInfo info = schema.getLocaleInfoFromID(id);
-			ProjectLocalizationManager manager = LocalizationManager
-					.getInstance()
-					.getProjectLocalizationManager(project, false);
+			ProjectLocalizationManager manager = null;
+			try {
+				manager = LocalizationManager
+						.getInstance()
+						.getProjectLocalizationManager(project, false);
+			} catch (IOException e) {
+			}
 
 			if ((info.getLocaleAttributes().size() > 0)
 					|| (value
