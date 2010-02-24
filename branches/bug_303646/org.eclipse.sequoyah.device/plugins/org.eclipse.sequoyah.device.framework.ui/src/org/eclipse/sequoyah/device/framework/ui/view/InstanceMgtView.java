@@ -41,7 +41,7 @@ import org.eclipse.ui.part.ViewPart;
 public class InstanceMgtView extends ViewPart
 {   
 
-	private static final Set<InstanceSelectionChangeListener> listeners = new LinkedHashSet<InstanceSelectionChangeListener>();
+    private static final Set<InstanceSelectionChangeListener> listeners = new LinkedHashSet<InstanceSelectionChangeListener>();
     private static InstanceServicesComposite instanceServicesComposite = null;
     private static IInstance selectedInstance = null;
     private static InstanceStatusComposite topComposite;
@@ -53,8 +53,14 @@ public class InstanceMgtView extends ViewPart
 	private boolean useDropDown;
 	private String viewLayout;
 	
+	private static final String LAYOUT_HORIZONTAL = "horizontal";
+	private static final String LAYOUT_VERTICAL = "vertical";
+
+	
     public InstanceMgtView()
     {
+        useDropDown = false;
+        viewLayout = LAYOUT_VERTICAL;
     }
 
     public static InstanceServicesComposite getInstanceServicesComposite(){
@@ -80,6 +86,7 @@ public class InstanceMgtView extends ViewPart
     
     public void createPartControl(Composite parent)
     {
+
     	IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
     	.getExtensionPoint("org.eclipse.sequoyah.device.framework.ui.deviceManagerView");
     	IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
@@ -89,12 +96,13 @@ public class InstanceMgtView extends ViewPart
     		viewLayout = configElement.getAttribute("viewLayout");
     	}
     	
-    	if(viewLayout.equals("vertical")) {
+    	if(LAYOUT_VERTICAL.equals(viewLayout)) {
     		form = new SashForm(parent,SWT.VERTICAL);
     	} else {
     		form = new SashForm(parent,SWT.HORIZONTAL);
     	}
     		
+
         form.setLayout(new FillLayout());
         
         topComposite = new InstanceStatusComposite(form, getViewSite(), useDropDown);
