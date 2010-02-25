@@ -242,7 +242,7 @@ public class InstanceStatusComposite extends Composite
 						ViewerInstanceNode instanceNode = (ViewerInstanceNode) element;
 						if(instanceNode.getInstance() !=  null)
 						{
-							configureButtons(instanceNode.getInstance());
+							configureButtons(instanceNode);
 						}
 					}
 				}
@@ -435,7 +435,9 @@ public class InstanceStatusComposite extends Composite
                 final IInstance inst = instance;
                 newItem.addListener(SWT.Selection,  new Listener(){
 					public void handleEvent(Event event) {
-						InstanceMgtView.getInstanceServicesComposite().setSelectedInstance(inst);
+					    InstanceServicesComposite composite = InstanceMgtView.getInstanceServicesComposite();
+						if (composite != null)
+						    composite.setSelectedInstance(inst);
 					}
 					
 				} );
@@ -505,11 +507,11 @@ public class InstanceStatusComposite extends Composite
         notifyInstanceSelectionChangeListeners(getSelectedInstance());
 	}
 	
-	private void configureButtons(final IInstance instance)
+	private void configureButtons(final ViewerInstanceNode instanceNode)
 	{
 		TreeItem[] items = viewer.getTree().getItems();
 
-		TreeItem desiredItem = getInstanceItem(instance, items);
+		TreeItem desiredItem = getInstanceItem(instanceNode, items);
 
 		if(desiredItem != null)
 		{
@@ -561,22 +563,22 @@ public class InstanceStatusComposite extends Composite
 				blank.setMenu(contextMenu);
 				composite.setMenu(contextMenu);
 
-				final Button butao = new Button(composite, SWT.ARROW | SWT.DOWN);
+				final Button menuButton = new Button(composite, SWT.ARROW | SWT.DOWN);
 				GridData buttonData = new GridData(SWT.END, GridData.VERTICAL_ALIGN_BEGINNING, false, true, 1, 1);
 				buttonData.widthHint = 15;
 				buttonData.heightHint = 15;
 				buttonData.horizontalIndent = 0;
-				butao.setLayoutData(buttonData);
-				butao.pack();
+				menuButton.setLayoutData(buttonData);
+				menuButton.pack();
 				final Menu menu = new Menu(InstanceStatusComposite.this);
-				butao.addSelectionListener(new SelectionAdapter() {
+				menuButton.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						clearContextMenu(menu);
-						fillMenuContext(menu, instance, true);
-						Rectangle rect = butao.getBounds();
+						fillMenuContext(menu, instanceNode.getInstance(), true);
+						Rectangle rect = menuButton.getBounds();
 						Point pt = new Point(0, rect.height);
-						pt = butao.toDisplay(pt);
+						pt = menuButton.toDisplay(pt);
 						menu.setLocation(pt.x, pt.y);
 						menu.setVisible(true);
 					}
@@ -986,7 +988,7 @@ public class InstanceStatusComposite extends Composite
 		eventMgr.removeInstanceListener(listener);
 	}
 
-	TreeItem getInstanceItem(final IInstance instance, TreeItem[] items) {
+	TreeItem getInstanceItem(final ViewerInstanceNode instance, TreeItem[] items) {
 		TreeItem desiredItem = null;
 		for (TreeItem treeNode : items)
 		{
@@ -994,7 +996,7 @@ public class InstanceStatusComposite extends Composite
 		    if (node instanceof ViewerInstanceNode)
 		    {
 		    	ViewerInstanceNode deviceNode = (ViewerInstanceNode) node;
-		    	if(instance.getName().equals(deviceNode.getInstanceName()))
+		    	if(instance.getInstanceName().equals(deviceNode.getInstanceName()))
 		    	{
 		    		return treeNode;
 		    	}
