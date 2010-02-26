@@ -31,7 +31,7 @@
       <import plugin="org.eclipse.sequoyah.device.framework.wizard"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui.ide"/>
-      <!-- import plugin="org.eclipse.sequoyah.device.service.start"/ -->
+      <import plugin="org.eclipse.sequoyah.device.service.start"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
