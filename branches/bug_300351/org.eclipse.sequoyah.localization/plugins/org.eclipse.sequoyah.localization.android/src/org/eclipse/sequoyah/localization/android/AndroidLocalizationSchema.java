@@ -77,14 +77,12 @@ import org.eclipse.sequoyah.localization.android.i18n.Messages;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
-import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNodeComment;
-import org.eclipse.sequoyah.localization.tools.editor.StringEditorInput;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.NewRowInputDialog;
 import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.TranslateColumnInputDialog;
@@ -97,6 +95,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -107,7 +106,7 @@ import org.w3c.dom.NodeList;
 public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	/*
-	 * (non-Javadoc) 
+	 * (non-Javadoc)
 	 * 
 	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
 	 * ILocalizationSchema#getPreferedLanguages()
@@ -395,8 +394,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			LocaleInfo info = schema.getLocaleInfoFromID(id);
 			ProjectLocalizationManager manager = null;
 			try {
-				manager = LocalizationManager
-						.getInstance()
+				manager = LocalizationManager.getInstance()
 						.getProjectLocalizationManager(project, false);
 			} catch (IOException e) {
 			}
@@ -494,11 +492,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 			document.appendChild(resources);
 
-			saveXMLDocument(localizationFile.getFile()
-					.getLocation().toFile(), document);
+			saveXMLDocument(localizationFile.getFile().getLocation().toFile(),
+					document);
 			loadAllFiles(localizationFile.getLocalizationProject().getProject());
-			
-			
+
 		} catch (Exception e) {
 			throw new SequoyahException();
 		}
@@ -507,8 +504,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	/**
 	 * Adds array entry into XML Android Localization file
+	 * 
 	 * @param document
-	 * @param resources 
+	 * @param resources
 	 * @param stringArray
 	 */
 	private void addArrayEntry(Document document, Element resources,
@@ -523,10 +521,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	private void createArrayItem(Document document, Element array,
 			StringNode stringNode) {
-		Element arrayItem = document
-				.createElement(XML_STRING_ARRAY_ITEM_TAG);
-		arrayItem.appendChild(document.createTextNode(stringNode
-				.getValue()));
+		Element arrayItem = document.createElement(XML_STRING_ARRAY_ITEM_TAG);
+		arrayItem.appendChild(document.createTextNode(stringNode.getValue()));
 		array.appendChild(arrayItem);
 
 		createOrUpdateComment(document, stringNode, arrayItem);
@@ -534,6 +530,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	/**
 	 * Adds single entry into XML Android Localization file
+	 * 
 	 * @param document
 	 * @param resources
 	 * @param stringNode
@@ -542,10 +539,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			StringNode stringNode) {
 		if (!stringNode.isArray()) {
 			Element string = document.createElement(XML_STRING_TAG);
-			string.setAttribute(XML_STRING_ATTR_NAME, stringNode
-					.getKey());
-			string.appendChild(document.createTextNode(stringNode
-					.getValue()));
+			string.setAttribute(XML_STRING_ATTR_NAME, stringNode.getKey());
+			string.appendChild(document.createTextNode(stringNode.getValue()));
 
 			createOrUpdateComment(document, stringNode, string);
 
@@ -555,13 +550,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	private void createOrUpdateComment(Document document,
 			StringNode stringNode, Element string) {
-		StringNodeComment nodeComment = stringNode
-				.getStringNodeComment();
+		StringNodeComment nodeComment = stringNode.getStringNodeComment();
 		if (nodeComment != null) {
 			if (nodeComment.getComment() != null) {
 				if (nodeComment.getComment().length() > 0) {
-					Comment comment = document
-							.createComment(nodeComment.getComment());
+					Comment comment = document.createComment(nodeComment
+							.getComment());
 					string.appendChild(comment);
 				}
 			}
@@ -570,6 +564,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	/**
 	 * Saves XML file into the file system
+	 * 
 	 * @param file
 	 * @param document
 	 * @throws TransformerFactoryConfigurationError
@@ -578,11 +573,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * @throws UnsupportedEncodingException
 	 * @throws TransformerException
 	 */
-	private void saveXMLDocument(File file,
-			Document document) throws TransformerFactoryConfigurationError,
+	private void saveXMLDocument(File file, Document document)
+			throws TransformerFactoryConfigurationError,
 			TransformerConfigurationException, FileNotFoundException,
 			UnsupportedEncodingException, TransformerException {
-		
 
 		TransformerFactory transformerFactory = TransformerFactory
 				.newInstance();
@@ -606,10 +600,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		transformer.transform(source, result);
 
 		unescapeEntity(file);
-		
-		
+
 	}
-		
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -641,83 +634,81 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		return result;
 	}
 
-	
-	
 	/**
-	 * Unescape some entities (such as &lt;) replacing it for the character
-	 * form (such as <) in a file. This entities are automatically created by the
+	 * Unescape some entities (such as &lt;) replacing it for the character form
+	 * (such as <) in a file. This entities are automatically created by the
 	 * Transform object, but we need the character form in the localization
 	 * file.
-	 *  
-	 * @param the text file whose entities are to be unescaped
+	 * 
+	 * @param the
+	 *            text file whose entities are to be unescaped
 	 */
-	private void unescapeEntity(File file1){	
+	private void unescapeEntity(File file1) {
 		File file2 = null;
 		DataOutputStream dataOutput = null;
-		FileInputStream	inputStream = null;
+		FileInputStream inputStream = null;
 		FileOutputStream fileOutputStream = null;
 		BufferedReader reader = null;
-				
-		try{			 						
+
+		try {
 			file2 = File.createTempFile("temp_localization", "dom");
-			FileUtil.copyFile(file1, file2);			
-			inputStream=new FileInputStream(file2);
-			fileOutputStream=new FileOutputStream(file1);
-			dataOutput = new DataOutputStream (fileOutputStream);			
-			reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));  							
+			FileUtil.copyFile(file1, file2);
+			inputStream = new FileInputStream(file2);
+			fileOutputStream = new FileOutputStream(file1);
+			dataOutput = new DataOutputStream(fileOutputStream);
+			reader = new BufferedReader(new InputStreamReader(inputStream,
+					"UTF-8"));
 			String line = null;
-									
-			if (reader != null){
+
+			if (reader != null) {
 				line = reader.readLine();
-				while(line!=null) {  
+				while (line != null) {
 					line = line.replaceAll("&lt;", "<");
 					line = line.replaceAll("&gt;", ">");
 					line = line.replaceAll("&#13;", "");
-					dataOutput.write(line.getBytes("UTF-8"));					
-					String eol = System.getProperty("line.separator"); 
+					dataOutput.write(line.getBytes("UTF-8"));
+					String eol = System.getProperty("line.separator");
 					dataOutput.write(eol.getBytes("UTF-8"));
 					line = reader.readLine();
-				}  	
-			}				
-		} catch (Exception e){
-			BasePlugin
-			.logError("Error translating file.", e);
-		}	finally 
-		{			
-			
-			try { 
-				if (inputStream != null){
-					inputStream.close(); 
+				}
+			}
+		} catch (Exception e) {
+			BasePlugin.logError("Error translating file.", e);
+		} finally {
+
+			try {
+				if (inputStream != null) {
+					inputStream.close();
 					inputStream = null;
-				}								
-				if (fileOutputStream != null){ 
-					fileOutputStream.close();					
+				}
+				if (fileOutputStream != null) {
+					fileOutputStream.close();
 					fileOutputStream = null;
-				}				
-				if (reader != null){
+				}
+				if (reader != null) {
 					reader.close();
 					reader = null;
 				}
 			} catch (IOException e) {
-				BasePlugin
-				.logError("Error cleaning up objects after translation", e);
-			}				
+				BasePlugin.logError(
+						"Error cleaning up objects after translation", e);
+			}
 
-			if (dataOutput != null){
+			if (dataOutput != null) {
 				try {
 					dataOutput.close();
 				} catch (IOException e) {
-					BasePlugin
-					.logError("Error closing file after translation", e);
+					BasePlugin.logError("Error closing file after translation",
+							e);
 				}
 				dataOutput = null;
 			}
-			
-			if (file2 != null){
-				if (!file2.delete()){
+
+			if (file2 != null) {
+				if (!file2.delete()) {
 					file2.deleteOnExit();
-				}				
-			}			
+				}
+			}
 			file1 = null;
 		}
 	}
@@ -922,8 +913,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		List<StringArray> stringArrays = new ArrayList<StringArray>();
 
 		if (!file.exists()) {
-			LocalizationFile tempFile = new AndroidLocalizationFile(file, localeInfo,
-					stringNodes, null);
+			LocalizationFile tempFile = new AndroidLocalizationFile(file,
+					localeInfo, stringNodes, null);
 			try {
 				createFile(tempFile);
 			} catch (SequoyahException e) {
@@ -938,7 +929,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document document = builder.parse(new File(file.getLocation()
 					.toString()));
-			
 
 			/*
 			 * Get string nodes
@@ -963,12 +953,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 					}
 
 				}
-				//get formatted text from single (non-array) item
+				// get formatted text from single (non-array) item
 				Node auxNode = stringNode.getFirstChild();
 				StringBuffer valueText = new StringBuffer();
 				getStringByNodes(valueText, auxNode);
 				value = valueText.toString();
-				
+
 				stringNode.toString();
 				StringNode stringNodeObj = new StringNode(key, value);
 				if (comment != null) {
@@ -996,13 +986,13 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 							.getElementsByTagName(XML_STRING_ARRAY_ITEM_TAG);
 					for (int j = 0; j < arrayItems.getLength(); j++) {
 						Node childN = (Node) arrayItems.item(j);
-						
-						//get formatted text from array item
+
+						// get formatted text from array item
 						Node auxNode = childN.getFirstChild();
 						StringBuffer valueText = new StringBuffer();
 						getStringByNodes(valueText, auxNode);
 						arrayValue = valueText.toString();
-						
+
 						StringNode newNode = stringArray.addValue(arrayValue);
 
 						// comments
@@ -1044,43 +1034,49 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	/**
-	 * Extracts the text with the right formatting from DOM XML representation 
-	 * @param valueText string to return, in the initial recursion set it as "" 
-	 * @param firstChildNode node to start iterating over siblings 
+	 * Extracts the text with the right formatting from DOM XML representation
+	 * 
+	 * @param valueText
+	 *            string to return, in the initial recursion set it as ""
+	 * @param firstChildNode
+	 *            node to start iterating over siblings
 	 */
 	private void getStringByNodes(StringBuffer valueText, Node firstChildNode) {
 		Node auxNode = firstChildNode;
-		while (auxNode!=null){					
-			//according to Android documentation it allows only <b>, <i>, <u> formatting
-			if (auxNode.getNodeName()!=null &&
-				(auxNode.getNodeName().toLowerCase().equals("b") ||
-				 auxNode.getNodeName().toLowerCase().equals("i") ||
-				 auxNode.getNodeName().toLowerCase().equals("u"))) {
-				//case: sibling with formatting node 				
-				valueText.append("<" + auxNode.getNodeName() + ">");
-				if (auxNode.hasChildNodes()){
-					//recursion (step): sibling has internal formatting nodes 
-					getStringByNodes(valueText, auxNode.getFirstChild());
+		while (auxNode != null) {
+			// according to Android documentation it allows only <b>, <i>, <u>
+			// formatting. However, we preserve any tags the user has included
+			if (auxNode.getNodeName() != null
+					&& (auxNode.getNodeType() == Node.ELEMENT_NODE)) {
+				NamedNodeMap nodeAttributes = auxNode.getAttributes();
+				String nodeAttributesText = "";
+				for (int i = 0; i < nodeAttributes.getLength(); i++) {
+					Node nodeAttribute = nodeAttributes.item(i);
+					nodeAttributesText += " " + nodeAttribute.toString();
 				}
-				else {
-					//recursion (base case): only simple text inside sibling  
-					if (auxNode.getNodeType()!=Node.COMMENT_NODE){
+
+				// case: sibling with formatting node
+				valueText.append("<" + auxNode.getNodeName()
+						+ nodeAttributesText + ">");
+				if (auxNode.hasChildNodes()) {
+					// recursion (step): sibling has internal formatting nodes
+					getStringByNodes(valueText, auxNode.getFirstChild());
+				} else {
+					// recursion (base case): only simple text inside sibling
+					if (auxNode.getNodeType() != Node.COMMENT_NODE) {
 						valueText.append(auxNode.getTextContent());
 					}
 				}
 				valueText.append("</" + auxNode.getNodeName() + ">");
-			}	
-			else {
-				//recursion (base case): simple text in the sibling
-				if (auxNode.getNodeType()!=Node.COMMENT_NODE){
+			} else {
+				// recursion (base case): simple text in the sibling
+				if (auxNode.getNodeType() != Node.COMMENT_NODE) {
 					valueText.append(auxNode.getTextContent());
 				}
 			}
 			auxNode = auxNode.getNextSibling();
-		}	
+		}
 	}
-
-			
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1092,45 +1088,54 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	@Override
 	public void updateFile(LocalizationFile localizationFile)
 			throws SequoyahException {
-		//load previously saved XML Document
-		AndroidLocalizationFile androidLocalizationFile =  (AndroidLocalizationFile)localizationFile;
+		// load previously saved XML Document
+		AndroidLocalizationFile androidLocalizationFile = (AndroidLocalizationFile) localizationFile;
 		Document document = androidLocalizationFile.getSavedXMLDocument();
-		if (document==null){
-			//file not created yet, do it
+		if (document == null) {
+			// file not created yet, do it
 			createFile(androidLocalizationFile);
-		}
-		else {
-			//file already created, update
-			//update nodes on XML Document according to LocalizationFile model
-			Map<String,StringNode> singleStringsToUpdateOrAdd = new HashMap<String, StringNode>();
-			for (StringNode stringNode : localizationFile.getStringNodes()){
-				if (!stringNode.isArray()){
-					singleStringsToUpdateOrAdd.put(stringNode.getKey(), stringNode);
+		} else {
+			// file already created, update
+			// update nodes on XML Document according to LocalizationFile model
+			Map<String, StringNode> singleStringsToUpdateOrAdd = new HashMap<String, StringNode>();
+			for (StringNode stringNode : localizationFile.getStringNodes()) {
+				if (!stringNode.isArray()) {
+					singleStringsToUpdateOrAdd.put(stringNode.getKey(),
+							stringNode);
 				}
 			}
-			Map<String,StringArray> arrayStringsToUpdateOrAdd = new HashMap<String, StringArray>();
-			for (StringArray stringArray : localizationFile.getStringArrays()){
-				arrayStringsToUpdateOrAdd.put(stringArray.getKey(), stringArray);
+			Map<String, StringArray> arrayStringsToUpdateOrAdd = new HashMap<String, StringArray>();
+			for (StringArray stringArray : localizationFile.getStringArrays()) {
+				arrayStringsToUpdateOrAdd
+						.put(stringArray.getKey(), stringArray);
 			}
-			
+
 			NodeList resourcesList = document.getElementsByTagName("resources");
 			for (int i = 0; i < resourcesList.getLength(); i++) {
 				Element resource = (Element) resourcesList.item(i);
-				//remove nodes
-				visitToRemoveDOMChildren(document, resource.getFirstChild(), "name", androidLocalizationFile.getSingleEntryToRemove(), androidLocalizationFile.getArrayEntryToRemove(), androidLocalizationFile.getArrayItemsToRemove());
-				//update nodes
-				visitToUpdateDOMChildren(document, resource.getFirstChild(), "name", singleStringsToUpdateOrAdd, arrayStringsToUpdateOrAdd);
-				//add new nodes (append in the end of file)
-				visitToAddDOMChildren(document, singleStringsToUpdateOrAdd, arrayStringsToUpdateOrAdd, resource);
-			}		
-			//save modified document
+				// remove nodes
+				visitToRemoveDOMChildren(document, resource.getFirstChild(),
+						"name", androidLocalizationFile
+								.getSingleEntryToRemove(),
+						androidLocalizationFile.getArrayEntryToRemove(),
+						androidLocalizationFile.getArrayItemsToRemove());
+				// update nodes
+				visitToUpdateDOMChildren(document, resource.getFirstChild(),
+						"name", singleStringsToUpdateOrAdd,
+						arrayStringsToUpdateOrAdd);
+				// add new nodes (append in the end of file)
+				visitToAddDOMChildren(document, singleStringsToUpdateOrAdd,
+						arrayStringsToUpdateOrAdd, resource);
+			}
+			// save modified document
 			try {
-				saveXMLDocument(localizationFile.getFile().getLocation().toFile(), document);
+				saveXMLDocument(localizationFile.getFile().getLocation()
+						.toFile(), document);
 			} catch (Exception e) {
 				SequoyahException sqE = new SequoyahException();
 				sqE.setStackTrace(e.getStackTrace());
 				throw sqE;
-			} 
+			}
 			localizationFile.setDirty(false);
 		}
 	}
@@ -1138,126 +1143,146 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	private void visitToAddDOMChildren(Document document,
 			Map<String, StringNode> singleStringsToUpdateOrAdd,
 			Map<String, StringArray> arrayStringsToUpdateOrAdd, Element resource) {
-		for(Map.Entry<String, StringNode> singleEntry : singleStringsToUpdateOrAdd.entrySet()){
+		for (Map.Entry<String, StringNode> singleEntry : singleStringsToUpdateOrAdd
+				.entrySet()) {
 			StringNode stringNode = singleEntry.getValue();
-			addSingleEntry(document, resource, stringNode);				
+			addSingleEntry(document, resource, stringNode);
 		}
-		for(Map.Entry<String, StringArray> arrayEntry : arrayStringsToUpdateOrAdd.entrySet()){
+		for (Map.Entry<String, StringArray> arrayEntry : arrayStringsToUpdateOrAdd
+				.entrySet()) {
 			StringArray stringArray = arrayEntry.getValue();
 			addArrayEntry(document, resource, stringArray);
 		}
 	}
-	
+
 	/**
 	 */
-	public void visitToRemoveDOMChildren(Document document, Node visitingNode, String attrName, Map<String,StringNode> singleStringsToRemove, Map<String, StringArray> arrayStringsToRemove, Map<String, StringNode> arrayItemsToRemove) {
+	public void visitToRemoveDOMChildren(Document document, Node visitingNode,
+			String attrName, Map<String, StringNode> singleStringsToRemove,
+			Map<String, StringArray> arrayStringsToRemove,
+			Map<String, StringNode> arrayItemsToRemove) {
 		while (visitingNode != null) {
 			Node nextNodeToVisit = visitingNode.getNextSibling();
 			if (visitingNode.getNodeType() == Node.ELEMENT_NODE) {
 				Attr attribute = getAttribute((Element) visitingNode, attrName);
-				//check LocalizationFile to get new value for attribute
+				// check LocalizationFile to get new value for attribute
 				String keyName = attribute.getValue();
-				//try to find as single string entry
+				// try to find as single string entry
 				StringNode foundStringNode = singleStringsToRemove.get(keyName);
-				if (foundStringNode!=null){
-					//remove single entry	
-					visitingNode.getParentNode().removeChild(visitingNode);					
-				}
-				else {
-					//not found single string - try to find as entire array entry										
-					StringArray foundStringArray = arrayStringsToRemove.get(keyName);
-					if (foundStringArray!=null){	
-						//remove array entry
-						visitingNode.getParentNode().removeChild(visitingNode);											
-					}	
-					else {
-						//not found entire array entry - try to find as item inside array
+				if (foundStringNode != null) {
+					// remove single entry
+					visitingNode.getParentNode().removeChild(visitingNode);
+				} else {
+					// not found single string - try to find as entire array
+					// entry
+					StringArray foundStringArray = arrayStringsToRemove
+							.get(keyName);
+					if (foundStringArray != null) {
+						// remove array entry
+						visitingNode.getParentNode().removeChild(visitingNode);
+					} else {
+						// not found entire array entry - try to find as item
+						// inside array
 						NodeList items = visitingNode.getChildNodes();
 						int itemsIndex = 0;
 						while (itemsIndex < items.getLength()) {
 							Object obj = items.item(itemsIndex);
-							if (obj instanceof Element){
+							if (obj instanceof Element) {
 								Element item = (Element) obj;
-								DecimalFormat formatter = new DecimalFormat("000");
-								String virtualKey = keyName + "_" + formatter.format(itemsIndex);
-								StringNode arrayItem = arrayItemsToRemove.get(virtualKey);
+								DecimalFormat formatter = new DecimalFormat(
+										"000");
+								String virtualKey = keyName + "_"
+										+ formatter.format(itemsIndex);
+								StringNode arrayItem = arrayItemsToRemove
+										.get(virtualKey);
 								if (arrayItem != null) {
-									//remove array item
+									// remove array item
 									item.getParentNode().removeChild(item);
 								}
 							}
 							itemsIndex++;
 						}
 					}
-				}								
+				}
 			}
 			visitingNode = nextNodeToVisit;
 		}
 	}
-	
-	
+
 	/**
 	 * 
-	 * Visit all child in the DOM tree, 
-	 * as an attribute is found, 
-	 * it gets the corresponding item on LocalizationFile and updates the values
+	 * Visit all child in the DOM tree, as an attribute is found, it gets the
+	 * corresponding item on LocalizationFile and updates the values
 	 * 
 	 * @param visitingNode
-	 * @param attrName 
-	 * @param singleStringsToUpdateOrAdd map with single items to update/add (in the end of visit, only add items should remain)
-	 * @param arrayStringsToUpdateOrAdd map with array item to update/add (in the end of visit, only add item should 
+	 * @param attrName
+	 * @param singleStringsToUpdateOrAdd
+	 *            map with single items to update/add (in the end of visit, only
+	 *            add items should remain)
+	 * @param arrayStringsToUpdateOrAdd
+	 *            map with array item to update/add (in the end of visit, only
+	 *            add item should
 	 */
-	public void visitToUpdateDOMChildren(Document document, Node visitingNode, String attrName, Map<String,StringNode> singleStringsToUpdateOrAdd, Map<String, StringArray> arrayStringsToUpdateOrAdd) {
+	public void visitToUpdateDOMChildren(Document document, Node visitingNode,
+			String attrName,
+			Map<String, StringNode> singleStringsToUpdateOrAdd,
+			Map<String, StringArray> arrayStringsToUpdateOrAdd) {
 		while (visitingNode != null) {
 			if (visitingNode.getNodeType() == Node.ELEMENT_NODE) {
 				Attr attribute = getAttribute((Element) visitingNode, attrName);
-				//check LocalizationFile to get new value for attribute
+				// check LocalizationFile to get new value for attribute
 				String keyName = attribute.getValue();
-				//try to find as single string entry
-				StringNode foundStringNode = singleStringsToUpdateOrAdd.get(keyName);
-				if (foundStringNode!=null){
-					//update single entry	
-					String newSingleEntryValue = foundStringNode.getValue();					
+				// try to find as single string entry
+				StringNode foundStringNode = singleStringsToUpdateOrAdd
+						.get(keyName);
+				if (foundStringNode != null) {
+					// update single entry
+					String newSingleEntryValue = foundStringNode.getValue();
 					visitingNode.setTextContent(newSingleEntryValue);
-					createOrUpdateComment(document, foundStringNode, (Element)visitingNode);
-					//remove item from map (it was already updated and it does not need to add in the end)
+					createOrUpdateComment(document, foundStringNode,
+							(Element) visitingNode);
+					// remove item from map (it was already updated and it does
+					// not need to add in the end)
 					singleStringsToUpdateOrAdd.remove(keyName);
-				}
-				else {
-					//not found single string - try to find as array entry
-					StringArray foundStringArray = arrayStringsToUpdateOrAdd.get(keyName);
-					if (foundStringArray!=null){													
+				} else {
+					// not found single string - try to find as array entry
+					StringArray foundStringArray = arrayStringsToUpdateOrAdd
+							.get(keyName);
+					if (foundStringArray != null) {
 						NodeList items = visitingNode.getChildNodes();
 						List<StringNode> nodes = foundStringArray.getValues();
 						int itemsIndex = 0;
 						int nodesIndex = 0;
-						while (itemsIndex < items.getLength() && nodesIndex < nodes.size()) {
+						while (itemsIndex < items.getLength()
+								&& nodesIndex < nodes.size()) {
 							Object obj = items.item(itemsIndex);
-							if (obj instanceof Element){
+							if (obj instanceof Element) {
 								Element item = (Element) obj;
-								StringNode nodeItem = nodes.get(nodesIndex);								
-								//update array entry
+								StringNode nodeItem = nodes.get(nodesIndex);
+								// update array entry
 								String newArrayItemValue = nodeItem.getValue();
 								item.setTextContent(newArrayItemValue);
 								createOrUpdateComment(document, nodeItem, item);
-								//remove item from map (it was already updated and it does not need to add in the end)
+								// remove item from map (it was already updated
+								// and it does not need to add in the end)
 								arrayStringsToUpdateOrAdd.remove(keyName);
 								nodesIndex++;
 							}
 							itemsIndex++;
 						}
-						while (nodesIndex < nodes.size()){
-							//add new items into exiting array	
-							if (visitingNode instanceof Element){
+						while (nodesIndex < nodes.size()) {
+							// add new items into exiting array
+							if (visitingNode instanceof Element) {
 								Element arrayElement = (Element) visitingNode;
 								StringNode stringNode = nodes.get(nodesIndex);
-								createArrayItem(document, arrayElement, stringNode);
+								createArrayItem(document, arrayElement,
+										stringNode);
 								nodesIndex++;
 							}
 						}
-						
-					}					
-				}								
+
+					}
+				}
 			}
 			visitingNode = visitingNode.getNextSibling();
 		}
@@ -1265,15 +1290,17 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	/**
 	 * Get Attribute with the given name
-	 * @param el visiting element 
-	 * @param attrName attribute name to search
+	 * 
+	 * @param el
+	 *            visiting element
+	 * @param attrName
+	 *            attribute name to search
 	 * @return attribute
 	 */
 	public static Attr getAttribute(Element el, String attrName) {
-		Attr attr = el.getAttributeNode(attrName);		
+		Attr attr = el.getAttributeNode(attrName);
 		return attr;
 	}
-
 
 	/**
 	 * Given a localization file path, returns the language information
@@ -1523,7 +1550,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	@Override
 	public LocalizationFile createLocalizationFile(IFile file,
 			LocaleInfo localeInfo, List<StringNode> stringNodes,
-			List<StringArray> stringArrays) {		
-		return new AndroidLocalizationFile(file, localeInfo, stringNodes, stringArrays);
+			List<StringArray> stringArrays) {
+		return new AndroidLocalizationFile(file, localeInfo, stringNodes,
+				stringArrays);
 	}
 }
