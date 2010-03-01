@@ -38,13 +38,13 @@
 	<target name="init">
 		<echo level="info">
 			###################################
-			1 (5) Init phase: cleaning previous build
+			1 Init phase: cleaning previous build
 			###################################
 		</echo>
 		<defaultexcludes add="**/*.contrib" />
 		<echo level="info">
 			###################################
-			s (5) Fetch phase: fetching elements from SVN
+			2 Fetch phase: fetching elements from SVN
 			###################################
 		</echo>
 		<!-- path and typedef necessary for checking out SVN repo -->
@@ -67,7 +67,7 @@
 		<mkdir dir="${buildDirectory}" />
 
 		<svn javahl="false">
-			<checkout url="${svnrepo}/branches/bug_300351" destPath="${SOURCE_DIR}" />
+			<checkout url="${svnrepo}/trunk" destPath="${SOURCE_DIR}" />
 		</svn>
 
 		<copy todir="${buildDirectory}">
@@ -76,15 +76,8 @@
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.vnc/" includes="**" />
 		</copy>
 		<move todir="${buildDirectory}/plugins">
-			<!--fileset dir="${buildDirectory}/plugins/" includes="**" /-->
 			<fileset dir="${buildDirectory}/examples/" includes="**" />
 		</move>
-		<!--move todir="${buildDirectory}/features">
-			<fileset dir="${buildDirectory}/features/" includes="**" />
-		</move>
-		<delete dir="${buildDirectory}/${device}/" />
-		<delete dir="${buildDirectory}/${localization}/" />
-		<delete dir="${buildDirectory}/${vnc}/" /-->		
 	</target>
 
 	<target name="clearSettings">
@@ -96,12 +89,7 @@
 		</delete>
 	</target>
 
-	<target name="generate.release.artifacts" depends="clean, init, build.pde" description="Generate Release Artifacts">
-		<echo level="info">
-			###################################
-			5 (5) Creating installed products and their instalelrs
-			###################################
-		</echo>
+	<target name="generate.release.artifacts" depends="clean, init, build.pde, build.pde.publish" description="Generate Release Artifacts">
 		<echo level="info">
 			###################################
 			BUILD COMPLETELY DONE
@@ -109,10 +97,42 @@
 		</echo>
 	</target>
 
-	<target name="build.pde">
+	<target name="build.pde" unless="publish">
 		<echo level="info">
 			###################################
-			2 (5) PDE Build
+			3a PDE Build
+			###################################
+		</echo>
+		<antcall target="clearSettings" />
+		<echo level="info">
+			Using qualifier: ${forceContextQualifier}
+			Using timestamp: ${timestamp}
+		</echo>
+		<echo level="info">
+			Calling antRunner with the following arguments: 
+			-buildfile ${eclipse.base}/plugins/${eclipse.base.pde}/scripts/build.xml 
+			-Dbuilder=${BUILD_DIR}
+			-DBUILD_BASE_PATH=${BUILD_BASE_PATH}
+			-Dtimestamp=${timestamp}
+			-DforceContextQualifier=${forceContextQualifier}
+		</echo>
+		<java failonerror="true" jar="${eclipse.base}/plugins/${eclipse.base.launcher}" fork="true">
+			<arg value="-application" />
+			<arg value="org.eclipse.ant.core.antRunner" />
+			<arg value="-buildfile" />
+			<arg value="${eclipse.base}/plugins/${eclipse.base.pde}/scripts/build.xml" />
+			<arg value="-Dbuilder=${BUILD_DIR}" />
+			<arg value="-DBUILD_BASE_PATH=${BUILD_BASE_PATH}" />
+			<arg value="-DBUILD_DIR=${BUILD_DIR}" />
+			<arg value="-Dtimestamp=${timestamp}" />
+			<arg value="-DforceContextQualifier=${forceContextQualifier}" />
+		</java>
+	</target>
+
+	<target name="build.pde.publish" if="publish">
+		<echo level="info">
+			###################################
+			3b PDE Build Publish
 			###################################
 		</echo>
 		<antcall target="clearSettings" />

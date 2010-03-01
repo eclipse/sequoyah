@@ -162,30 +162,47 @@
 		<!-- property name="mailStatus" value="nomail" / -->
 		<property name="mailStatus" value="kpqb38@motorola.com" />
 
+		<!-- Rename zip file -->
 		<move file="${buildDirectory}/${buildLabel}/${topLevelElementId}-${buildId}-group.group.group.zip"
 		    toFile="${buildDirectory}/${buildLabel}/${fileName}.zip" />
 
 		<!-- Invoke sign script and wait -->
 		<echo message="Invoke sign script and wait" />
 
+		<!-- Copy zip file to staging directory -->
 		<copy toDir="${stagingDirectory}">
 			<fileset dir="${buildDirectory}/${buildLabel}" includes="*.zip"/>
 		</copy>
 
+		<!-- Call signer app -->
 		<exec dir="." executable="/usr/bin/sign" output="signing.txt" append="false">
 			<!-- arg line="${buildServerUser} &quot;cd ${stagingDirectory}; /usr/bin/sign ${stagingDirectory}/${fileName}.zip ${mailStatus} ${stagingDirectoryOutput};ls&quot;"/ -->
 			<arg line="${stagingDirectory}/${fileName}.zip ${mailStatus} ${stagingDirectoryOutput}"/>
 		</exec>
 
+		<!-- Wait for signer to complete signing file -->
 		<echo message="Waiting for signer..." />
 		<waitfor maxwait="10" maxwaitunit="minute" checkevery="1" checkeveryunit="minute">
 			<available file="${stagingDirectoryOutput}/${fileName}.zip" />
 		</waitfor>
 
-		<echo message="Copying output to Update Site." />
+		<!-- Copy zip file to Download Site -->
+		<echo message="Copying output to Download Site..." />
 		<copy file="${stagingDirectoryOutput}/${fileName}.zip" toDir="${downloadSite}/${buildLabel}" />
-		<unzip dest="${updateSite}/${buildLabel}" src="${stagingDirectoryOutput}/${fileName}.zip" />
+		<!-- if>
+			<bool>
+				<avaliable file="${downloadSite}/${buildLabel}/${fileName}.zip" />
+			</bool>
+			<echo message="File ${fileName}.zip copied successfully!" />
+			<else>
+				<echo message="File not copied" />
+			</else>
+		</if -->
+		<unzip dest="${updateSite}/${buildLabel}/" src="${stagingDirectoryOutput}/${fileName}.zip" />
 
+		<!-- if name="publish" value="true">
+			<echo message="Publishing new update site..." />
+		</if -->
 		<antcall target="publishUpdateSite"/>
 		
 	</target>
@@ -193,17 +210,16 @@
 	<target name="publishUpdateSite" if="publish">
 		<property name="updateSite" value="/home/data/httpd/download.eclipse.org/sequoyah/updates/0.5"/>
 
-		<echo message="Deleting old update site" />
+		<echo message="Deleting old update site..." />
 		<delete dir="${updateSite}/features"/>
 		<delete dir="${updateSite}/plugins"/>
 		<delete dir="${updateSite}/artifacts.xml"/>
 		<delete dir="${updateSite}/content.xml"/>
 
-		<echo message="Copying new update site" />
+		<echo message="Copying new update site..." />
 		<copy toDir="${updateSite}">
 			<fileset dir="${updateSite}/${buildLabel}" />
 		</copy>
-
 	</target>
 
 	<!-- ===================================================================== -->
