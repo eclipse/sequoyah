@@ -45,9 +45,7 @@ public class DeviceXmlReader implements IDeviceXmlTags
      * 
      * @return A collection containing all loaded instances
      */
-    public static Collection<IInstance> loadInstances() {
-        File path = DevicePlugin.getDeviceXmlLocation();
-        File file = new File(path, DevicePlugin.getDeviceXmlFileName());
+	public static Collection<IInstance> loadInstances(File file) {
         Collection<IInstance> loadedInstances = new ArrayList<IInstance>();
         
         if (file.exists()) {

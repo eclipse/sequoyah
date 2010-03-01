@@ -12,12 +12,19 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.device.backward;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
 
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.framework.DevicePlugin;
+import org.eclipse.sequoyah.device.framework.factory.InstanceRegistry;
+import org.eclipse.sequoyah.device.framework.manager.persistence.DeviceXmlReader;
+import org.eclipse.sequoyah.device.framework.model.IInstance;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -26,8 +33,6 @@ import org.osgi.framework.BundleContext;
  * The activator class controls the plug-in life cycle
  */
 public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
-
-	private final String DEVICE_BACKWARD_STATUS = "DEVICE_BACKWARD_STATUS";
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.sequoyah.device.backward";
@@ -39,12 +44,38 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 
 	private final String OLD_PROJECT_NAME = "tml"; //$NON-NLS-1$
 
+	private final String DEVICE_XML_INFO_SUFFIX = ".info"; //$NON-NLS-1$
+
+	private final String BACKWARD_MARK = "backward"; //$NON-NLS-1$
+
 	private final String OLD_DEVICE_PLUGIN_ID = "org.eclipse.tml.framework.device"; //$NON-NLS-1$
+
+	/*
+	 * Device XML location
+	 */
+	File deviceXmlLocation = null;
+
+	File deviceXmlFile = null;
+
+	File oldDeviceXmlFile = null;
+
+	File oldDeviceXmlFileInfo = null;
 
 	/**
 	 * The constructor
 	 */
 	public DeviceBackwardPlugin() {
+
+		this.deviceXmlLocation = DevicePlugin.getDeviceXmlLocation();
+		this.deviceXmlFile = new File(deviceXmlLocation.getAbsolutePath()
+				+ File.separator + DevicePlugin.getDeviceXmlFileName());
+		String oldDeviceXmlFilePath = deviceXmlFile.getAbsolutePath()
+				.replaceAll(DevicePlugin.PLUGIN_ID, OLD_DEVICE_PLUGIN_ID)
+				.replaceAll(PROJECT_NAME, OLD_PROJECT_NAME);
+		this.oldDeviceXmlFile = new File(oldDeviceXmlFilePath);
+		this.oldDeviceXmlFileInfo = new File(oldDeviceXmlFilePath
+				+ DEVICE_XML_INFO_SUFFIX);
+
 	}
 
 	/*
@@ -58,9 +89,7 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 		super.start(context);
 		plugin = this;
 
-		boolean deviceBackwardStatus = this.getPreferenceStore().getBoolean(
-				DEVICE_BACKWARD_STATUS);
-		if (!deviceBackwardStatus) {
+		if (!getBackwardStatus()) {
 			moveDeviceInstancesData();
 		}
 
@@ -88,35 +117,79 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 	}
 
 	/**
+	 * Check if backward procedure has already been executed
+	 * 
+	 * @return true if backward procedure has already been executed, false
+	 *         otherwise
+	 */
+	private boolean getBackwardStatus() {
+
+		boolean result = false;
+
+		try {
+			if (oldDeviceXmlFileInfo.exists()) {
+
+				FileReader oldDeviceXmlFileReader = new FileReader(
+						oldDeviceXmlFileInfo);
+				BufferedReader buffReader = new BufferedReader(
+						oldDeviceXmlFileReader);
+				String line;
+				while ((line = buffReader.readLine()) != null) {
+					if (line.startsWith(BACKWARD_MARK)) {
+						result = true;
+					}
+				}
+
+				oldDeviceXmlFileReader.close();
+				buffReader.close();
+
+			}
+		} catch (Exception e) {
+			BasePlugin.logError("Could not get TmL devices backward status");
+		}
+
+		return result;
+	}
+
+	/**
+	 * Add backward status information
+	 */
+	private void addBackwardStatus() {
+
+		FileWriter deviceXmlFileWriter;
+		try {
+			deviceXmlFileWriter = new FileWriter(oldDeviceXmlFileInfo);
+			deviceXmlFileWriter.write(BACKWARD_MARK + "="
+					+ new Date().toString());
+			deviceXmlFileWriter.close();
+		} catch (IOException e) {
+			BasePlugin.logError("Could not set TmL devices backward status");
+		}
+
+	}
+
+	/**
 	 * Move old TmL devices XML file to new Sequoyah location
 	 */
 	private void moveDeviceInstancesData() {
-
-		File deviceXmlLocation = DevicePlugin.getDeviceXmlLocation();
-		File deviceXmlFile = new File(deviceXmlLocation.getAbsolutePath()
-				+ File.separator + DevicePlugin.getDeviceXmlFileName());
-		File oldDeviceXmlFile = new File(deviceXmlFile.getAbsolutePath()
-				.replaceAll(DevicePlugin.PLUGIN_ID, OLD_DEVICE_PLUGIN_ID)
-				.replaceAll(PROJECT_NAME, OLD_PROJECT_NAME));
 
 		if (oldDeviceXmlFile.exists()) {
 
 			try {
 
-				FileReader oldDeviceXmlFileReader = new FileReader(
-						oldDeviceXmlFile);
-				FileWriter deviceXmlFileWriter = new FileWriter(deviceXmlFile);
-				int line;
+				Collection<IInstance> oldInstances = DeviceXmlReader
+						.loadInstances(oldDeviceXmlFile);
 
-				while ((line = oldDeviceXmlFileReader.read()) != -1) {
-					deviceXmlFileWriter.write(line);
+				InstanceRegistry instanceRegistry = InstanceRegistry
+						.getInstance();
+				for (IInstance instance : oldInstances) {
+					if (instanceRegistry.getInstancesByName(instance.getName())
+							.size() == 0) {
+						instanceRegistry.addInstance(instance);
+					}
 				}
 
-				this.getPreferenceStore()
-						.setValue(DEVICE_BACKWARD_STATUS, true);
-
-				oldDeviceXmlFileReader.close();
-				deviceXmlFileWriter.close();
+				addBackwardStatus();
 
 			} catch (Exception e) {
 				BasePlugin.logError("Could not recover TmL devices");
