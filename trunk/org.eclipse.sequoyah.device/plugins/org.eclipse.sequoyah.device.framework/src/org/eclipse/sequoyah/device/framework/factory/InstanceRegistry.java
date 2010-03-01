@@ -17,6 +17,7 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.factory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -51,7 +52,9 @@ public class InstanceRegistry implements IInstanceRegistry {
 	*/
 	private InstanceRegistry(){
 		instances = new ArrayList<IInstance>();
-		Collection<IInstance> loadedInstances = DeviceXmlReader.loadInstances();
+		File path = DevicePlugin.getDeviceXmlLocation();
+	    File file = new File(path, DevicePlugin.getDeviceXmlFileName());
+		Collection<IInstance> loadedInstances = DeviceXmlReader.loadInstances(file);
 		for (IInstance inst : loadedInstances)
 		{
 			addInstance(inst);
