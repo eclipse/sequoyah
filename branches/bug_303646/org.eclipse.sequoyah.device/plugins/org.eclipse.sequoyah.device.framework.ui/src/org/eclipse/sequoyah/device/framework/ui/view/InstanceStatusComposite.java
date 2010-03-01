@@ -97,8 +97,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -106,14 +104,11 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -519,57 +514,9 @@ public class InstanceStatusComposite extends Composite
 			{
 				final Tree tree = viewer.getTree();
 				final TreeEditor editor = new TreeEditor(tree);
-				final Menu contextMenu = new Menu(viewer.getTree());
 
-				final Composite composite = new Composite(tree, SWT.TRANSPARENT | SWT.FILL);
-//				composite.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-				GridLayout layout = new GridLayout(2, false);
-				composite.setLayout(layout);
-				layout.marginHeight = 0;
-				layout.marginWidth = 0;
-				composite.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseUp(MouseEvent e) {
-						Rectangle bounds = composite.getBounds();
-						TreeItem item = tree.getItem(new Point(bounds.x, bounds.y));
-						tree.setSelection(item);
-						clearContextMenu(contextMenu);
-						fillMenuContext(contextMenu, false);
-						super.mouseUp(e);
-					}
-				});
-				layout.marginTop = 0;
-				layout.horizontalSpacing = 0;
-				
-				
-				final Composite blank = new Composite(composite, SWT.TRANSPARENT);
-				GridData blankData = new GridData();
-				blankData.horizontalAlignment = SWT.FILL;
-				blankData.grabExcessHorizontalSpace = true;
-				blankData.grabExcessVerticalSpace = true;
-				blank.setLayoutData(blankData);
-				blank.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseUp(MouseEvent e) {
-						Rectangle bounds = composite.getBounds();
-						TreeItem item = tree.getItem(new Point(bounds.x, bounds.y));
-						tree.setSelection(item);
-						clearContextMenu(contextMenu);
-						fillMenuContext(contextMenu, false);
-						notifyInstanceSelectionChangeListeners(getSelectedInstance());
-						super.mouseUp(e);
-					}
-				});
-				blank.setMenu(contextMenu);
-				composite.setMenu(contextMenu);
-
-				final Button menuButton = new Button(composite, SWT.ARROW | SWT.DOWN);
-				GridData buttonData = new GridData(SWT.END, GridData.VERTICAL_ALIGN_BEGINNING, false, true, 1, 1);
-				buttonData.widthHint = 15;
-				buttonData.heightHint = 15;
-				buttonData.horizontalIndent = 0;
-				menuButton.setLayoutData(buttonData);
-				menuButton.pack();
+				final Button menuButton = new Button(tree, SWT.ARROW | SWT.DOWN);
+				menuButton.setSize(15, 15);
 				final Menu menu = new Menu(InstanceStatusComposite.this);
 				menuButton.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -584,13 +531,14 @@ public class InstanceStatusComposite extends Composite
 					}
 				});
 
-				editor.grabHorizontal = true;
 				editor.horizontalAlignment = SWT.RIGHT;
-				editor.setEditor(composite, desiredItem, 0);
+				editor.minimumHeight = 15;
+				editor.minimumWidth = 15;
+				editor.setEditor(menuButton, desiredItem, 0);
 				desiredItem.addDisposeListener(new DisposeListener() {
 					public void widgetDisposed(DisposeEvent e) {
 						editor.dispose();
-						composite.dispose();
+						menuButton.dispose();
 					}
 				});
 			}
