@@ -375,40 +375,40 @@ public class InstanceStatusComposite extends Composite
         }  
     }
     
-	private void fillMenuContext(Menu menu, IInstance instance, boolean justActions) {
+	private void fillMenuContext(Menu menu, IInstance instance, boolean dropDown) {
 		MenuItem newItem = null;
 		String statusId = instance.getStatus();
         IStatus status = StatusRegistry.getInstance().getStatus(statusId);
         IDeviceType device = DeviceUtils.getDeviceType(instance);
         String deviceName = device.getLabel();
-        if(!justActions)
-        {
-        	if (device.supportsUserInstances()) {
-        		// menu item "New..."
-        		newItem = new MenuItem(menu, SWT.PUSH);
-        		newItem.setText(MENU_NEW);
-        		newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
+        if (device.supportsUserInstances()) {
+            if(!dropDown)
+            {
+                // menu item "New..."
+                newItem = new MenuItem(menu, SWT.PUSH);
+                newItem.setText(MENU_NEW);
+                newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
 
-        		newItem = new MenuItem(menu, SWT.SEPARATOR);
+                newItem = new MenuItem(menu, SWT.SEPARATOR);
+            }
 
-        		// menu item "Delete"
-        		newItem = new MenuItem(menu, SWT.PUSH);
-        		newItem.setText(MENU_DELETE);
-        		newItem.addListener(SWT.Selection, new MenuDeleteListener(instance));
-        		newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
-        		newItem.setEnabled(status.canDeleteInstance());
+            // menu item "Delete"
+            newItem = new MenuItem(menu, SWT.PUSH);
+            newItem.setText(MENU_DELETE);
+            newItem.addListener(SWT.Selection, new MenuDeleteListener(instance));
+            newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
+            newItem.setEnabled(status.canDeleteInstance());
 
-        		newItem = new MenuItem(menu, SWT.SEPARATOR);
-        	}
+            newItem = new MenuItem(menu, SWT.SEPARATOR);
 
-        	// menu item "Properties"
-        	newItem = new MenuItem(menu, SWT.PUSH);
-        	newItem.setText(MENU_PROPERTIES);
-        	newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DeviceUIPlugin.ICON_PROPERTY));
-        	newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
-        	newItem.setEnabled(status.canEditProperties());
+            // menu item "Properties"
+            newItem = new MenuItem(menu, SWT.PUSH);
+            newItem.setText(MENU_PROPERTIES);
+            newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DeviceUIPlugin.ICON_PROPERTY));
+            newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
+            newItem.setEnabled(status.canEditProperties());
 
-        	newItem = new MenuItem(menu, SWT.SEPARATOR);
+            newItem = new MenuItem(menu, SWT.SEPARATOR);
         }
         
         for (IService service:device.getServices()){
