@@ -10,7 +10,9 @@
 <meta name="description" content="Allows you to easily create text string files for new locales, to see which strings will be used in a given locale, and to identify strings that have yet to be translated, all without having to work directly in XML-formatted files."/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-new-locale-creating.html"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-new-string-adding.html"/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_localize-new-array-adding.html"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-string-editing.html"/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_localize-array-editing.html"/>
 <meta name="copyright" content="Motorola, Inc. 2009-2010" type="primary"/>
 <meta name="DC.Rights.Owner" content="Motorola, Inc. 2009-2010" type="primary"/>
 <meta name="DC.Format" content="XHTML"/>
@@ -35,7 +37,9 @@
         localized (or an XML file containing the localized strings). Within an Android project, the base strings file is
         res/values/strings.xml. </p>
 
-      <div class="p">The Localization Files Editor should open, showing all of the strings defined in each of the <span class="filepath">strings.xml</span> files in your project's resources directory. If it does not, open it as follows:<ol>
+      <div class="p">The Localization Files Editor should open, showing all of the strings and string arrays defined in each of the
+          <span class="filepath">strings.xml</span> files in your project's resources directory. If it does not, open it as
+          follows:<ol>
           <li>Right-click one of the the XML files containing localized strings.</li>
 
           <li>From the context-sensitive menu select <span class="menucascade">
@@ -163,10 +167,10 @@
           <td valign="top"><span class="uicontrol">Add Key</span>
           </td>
 
-          <td valign="top">Adds a new table row, corresponding to a string to be localized. You will be asked to supply the key,
-            after which the row will be created with only the key filled in (all "values" columns for that key are left
-            blank). Note that until you actually supply a value for that key, none of the XML strings file in your
-            project are affected.</td>
+          <td valign="top">Adds a new table row (or rows, if adding a string array), corresponding to a string to be localized.
+            You will be asked to supply the key, after which the row will be created with only the key filled in (all
+            "values" columns for that key are left blank). Note that until you actually supply a value for that key,
+            none of the XML strings file in your project are affected.</td>
 
         </tr>
 
@@ -221,6 +225,25 @@
 
         </tr>
 
+        <tr>
+          <td valign="top"><span class="uicontrol">Translate column</span></td>
+
+          <td valign="top">Translates all of the text strings in the selected column to a different language using a selected
+            translation service. Note that a column corresponding to the language to which you are translating must not
+            already exist.</td>
+
+        </tr>
+
+        <tr>
+          <td valign="top"><span class="uicontrol">Translate cell(s)</span></td>
+
+          <td valign="top">Translates the text in the selected cell or cells to a different language (or languages) using a
+            selected translation service. This function allows you to translate a given string or strings into multiple
+            different languages at one time. Note that localization files for the target languages must already exist.
+          </td>
+
+        </tr>
+
       </table>
 
     </div>
@@ -230,7 +253,9 @@
 <div><div class="relinfo"><strong>Related tasks</strong><br/>
 <div><a href="../topics/t_localize-new-locale-creating.html" title="Create a new locale using the Localization Files Editor by adding a new column.">Creating a new locale</a></div>
 <div><a href="../topics/t_localize-new-string-adding.html" title="Create a new string using the Localization Files Editor by adding a new row.">Adding new strings</a></div>
+<div><a href="../topics/t_localize-new-array-adding.html" title="Create a new string array resource using the Localization Files Editor.">Adding new string arrays</a></div>
 <div><a href="../topics/t_localize-string-editing.html" title="Use the Localization Files Editor to create localized versions of text strings used in your applications.">Editing a localized string</a></div>
+<div><a href="../topics/t_localize-array-editing.html" title="Use the Localization Files Editor to create localized versions of text string arrays used in your applications.">Editing a localized string array</a></div>
 </div>
 </div>
 

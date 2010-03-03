@@ -5,30 +5,30 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="DC.Type" content="task"/>
-<meta name="DC.Title" content="Adding new strings"/>
-<meta name="abstract" content="Create a new string using the Localization Files Editor by adding a new row."/>
-<meta name="description" content="Create a new string using the Localization Files Editor by adding a new row."/>
+<meta name="DC.Title" content="Adding new string arrays"/>
+<meta name="abstract" content="Create a new string array resource using the Localization Files Editor."/>
+<meta name="description" content="Create a new string array resource using the Localization Files Editor."/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-about.html"/>
 <meta name="DC.Relation" scheme="URI" content="http://developer.android.com/guide/topics/resources/resources-i18n.html#best-match"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/r_localization-string-editor.html"/>
-<meta name="DC.Relation" scheme="URI" content="../topics/t_localize-new-array-adding.html"/>
-<meta name="DC.Relation" scheme="URI" content="../topics/t_localize-string-editing.html"/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_localize-new-string-adding.html"/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_localize-array-editing.html"/>
 <meta name="copyright" content="Motorola, Inc. 2009-2010" type="primary"/>
 <meta name="DC.Rights.Owner" content="Motorola, Inc. 2009-2010" type="primary"/>
 <meta name="DC.Format" content="XHTML"/>
-<meta name="DC.Identifier" content="t_localize-new-string-adding"/>
+<meta name="DC.Identifier" content="t_localize-new-array-adding"/>
 <meta name="DC.Language" content="en-us"/>
 <link rel="stylesheet" type="text/css" href="../commonltr.css"/>
-<title>Adding new strings</title>
+<title>Adding new string arrays</title>
 </head>
-<body id="t_localize-new-string-adding"><a name="t_localize-new-string-adding"><!-- --></a>
+<body id="t_localize-new-array-adding"><a name="t_localize-new-array-adding"><!-- --></a>
 <a class="hdr-none"/>
 
-  <h1 class="topictitle1">Adding new strings</h1>
+  <h1 class="topictitle1">Adding new string arrays</h1>
 
   
   
-  <div><p>Create a new string using the Localization Files Editor by adding a new row.</p>
+  <div><p>Create a new string array resource using the Localization Files Editor.</p>
 
     <ol>
       <li>
@@ -52,23 +52,39 @@
       </li>
 
       <li>
-        <span>Ensure that <span class="uicontrol">Add new</span> is set to <span class="uicontrol">String</span>.</span>
+        <span>From <span class="uicontrol">Add new</span> select <span class="uicontrol">Array</span>.</span>
       </li>
 
       <li>
-        <span>In the <span class="uicontrol">Row key</span> field, enter the key that will be used to access the new
-        string.</span>
+        <span>Select <span class="uicontrol">Add new array</span>, enter the key that will be used to access the new string
+          array, and specify the number of entries in the array.</span>
       </li>
 
       <li>
         <span>Click <span class="uicontrol">OK</span>.</span>
-         A new, empty row is added to the table identified by the supplied key. Note that a warning icon
-            (<img src="../images/localization-warning-icon.png"/>) appears next to the key, indicating that the
-          default strings file does not yet have a value defined for this key.
+         
+          <div class="p">A set of new, empty rows are added to the table, one for each array entry, identified by the supplied key
+            with a numeric index added (for instance, "myKey_002"). Although the Android Localization Files Editor shows
+            a set of keys with varying numeric indexes, the underlying XML creates a single &lt;string-array&gt; element
+            with the supplied key that contains the specified number of &lt;item&gt; elements. For example, if you create a
+            string array with the key "myKey" and three entries, the Android Localization Files editor would show three
+            rows with keys "myKey_000", "myKey_001", and "myKey_002" while the corresponding portion of the underlying
+            XML would look like the
+            following:<pre class="codeblock">&lt;string-array name="myKey"&gt;
+        &lt;item&gt;the first entry value goes here&lt;/item&gt;
+        &lt;item&gt;the second entry value goes here&lt;/item&gt;
+        &lt;item&gt;the third entry value goes here&lt;/item&gt;
+&lt;/string-array&gt;</pre>
+</div>
+
+          <p>Note that after creating a new string array a warning icon (<img src="../images/localization-warning-icon.png"/>) appears to the left of each key, indicating that the
+            default strings file does not yet have a value defined for these keys.</p>
+
+        
       </li>
 
       <li>
-        <span>Enter string values for the key in the appropriate columns. Generally you will enter a default, or base,
+        <span>Enter string values for each key in the appropriate columns. Generally you will enter a default, or base,
           string in the <span class="uicontrol">values</span> column and localized versions of that string in columns for those
           locales in which the default string is not appropriate. Note that you can enter multi-line string values by
           pressing the Return key between lines.</span>
@@ -81,8 +97,10 @@
 
     </ol>
 
-    <div class="section">To remove a string simply right-click within the row and select <span class="uicontrol">Remove
-    Key</span>.</div>
+    <div class="section">To remove an individual string simply right-click within the row and select <span class="uicontrol">Remove
+      Key</span>. To remove a string array you must select each of the rows that makes up the array (click in the
+      first row, and then while holding the shift key click in the last row to select a range), then right-click the
+      selected rows and select <span class="uicontrol">Remove Key</span>.</div>
 
   </div>
 
@@ -91,8 +109,8 @@
 <div class="parentlink"><strong>Parent topic:</strong> <a href="../topics/t_localize-about.html" title="Using the Localization Files Editor, you can easily create text string files for new locales, see which strings will be used in a given locale, and identify strings that have yet to be translated, all without having to work directly in XML-formatted files. It makes it easy to add new strings across multiple locales, and edit localized strings.">Localizing Text Strings</a></div>
 </div>
 <div class="relinfo"><strong>Related tasks</strong><br/>
-<div><a href="../topics/t_localize-new-array-adding.html" title="Create a new string array resource using the Localization Files Editor.">Adding new string arrays</a></div>
-<div><a href="../topics/t_localize-string-editing.html" title="Use the Localization Files Editor to create localized versions of text strings used in your applications.">Editing a localized string</a></div>
+<div><a href="../topics/t_localize-new-string-adding.html" title="Create a new string using the Localization Files Editor by adding a new row.">Adding new strings</a></div>
+<div><a href="../topics/t_localize-array-editing.html" title="Use the Localization Files Editor to create localized versions of text string arrays used in your applications.">Editing a localized string array</a></div>
 </div>
 <div class="relinfo"><strong>Related reference</strong><br/>
 <div><a href="../topics/r_localization-string-editor.html" title="Allows you to easily create text string files for new locales, to see which strings will be used in a given locale, and to identify strings that have yet to be translated, all without having to work directly in XML-formatted files.">Localization Files Editor</a></div>

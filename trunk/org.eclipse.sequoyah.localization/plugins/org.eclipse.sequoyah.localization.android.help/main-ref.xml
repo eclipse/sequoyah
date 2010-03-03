@@ -5,4 +5,8 @@
    
       <topic label="Localization Files Editor"
              href="topics/r_localization-string-editor.html"/>
+      <topic label="New Translated Column dialog"
+             href="topics/r_localization-new-translated-column.html"/>
+      <topic label="Translate Cells dialog"
+             href="topics/r_localization-translate-cells.html"/>
    </toc>
