@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.mtj.tfm.sign.core.securityManagement">
+      <security_Management
+            class="org.eclipse.mtj.tfm.sign.smgmt.ibm.IBMSecurityManagement"
+            id="org.eclipse.mtj.tfm.sign.smgmt.ibm.impl.securityManagement"
+            name="org.eclipse.mtj.tfm.sign.smgmt.ibm.impl.securityManagement">
+         <platform
+               name="JAVAME">
+         </platform>
+      </security_Management>
+   </extension>
+      <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.mtj.tfm.internal.sign.smgmt.ibm.PreferenceInitializer"/>
+   </extension>
+
+</plugin>

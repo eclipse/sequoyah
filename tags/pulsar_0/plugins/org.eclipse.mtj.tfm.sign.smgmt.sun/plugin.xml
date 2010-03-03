@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.mtj.tfm.sign.core.securityManagement">
+      <security_Management
+            class="org.eclipse.mtj.tfm.sign.smgmt.sun.SunSecurityManagement"
+            id="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.SecurityManagement"
+            name="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.SecurityManagement">
+         <platform
+               name="JAVAME">
+         </platform>
+         <platform
+               name="ANDROID">
+         </platform>
+      </security_Management>
+   </extension>
+      <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.mtj.tfm.internal.sign.smgmt.sun.PreferenceInitializer"/>
+   </extension>
+
+</plugin>
