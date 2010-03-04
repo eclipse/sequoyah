@@ -200,7 +200,8 @@ public class StringEditorPart extends EditorPart
         {
             super(viewer);
             this.columnID = columnID;
-            this.editor = new TextCellEditor(viewer.getTable(), SWT.MULTI | SWT.V_SCROLL);            
+            this.editor =
+                    new TextCellEditor(viewer.getTable(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
         }
 
         /*
@@ -249,20 +250,20 @@ public class StringEditorPart extends EditorPart
          * java.lang.Object)
          */
         @Override
-		protected void setValue(Object element, Object value)
+        protected void setValue(Object element, Object value)
         {
             RowInfo theRow = (RowInfo) element;
             CellInfo oldCell = theRow.getCells().get(columnID);
             CellInfo newCell = null;
-            
-            String EOL = System.getProperty("line.separator"); 
-            String oldValue = oldCell.getValue();                        
+
+            String EOL = System.getProperty("line.separator");
+            String oldValue = ((oldCell != null) ? oldCell.getValue() : "");
             String newValue = ((String) value).replaceAll(EOL, "\n");
-            if ( newValue.equals(oldValue))
+            if (newValue.equals(oldValue))
             {
-            	return;
+                return;
             }
-            
+
             /*
              * If our new value is a valid one, we create a new cell
              */
@@ -382,7 +383,7 @@ public class StringEditorPart extends EditorPart
                 }
                 catch (InvocationTargetException e)
                 {
-                    // Do nothing				
+                    // Do nothing
                 }
                 catch (InterruptedException e)
                 {
@@ -492,7 +493,7 @@ public class StringEditorPart extends EditorPart
                 }
                 catch (InvocationTargetException e)
                 {
-                    // Do nothing               
+                    // Do nothing
                 }
                 catch (InterruptedException e)
                 {
@@ -871,20 +872,18 @@ public class StringEditorPart extends EditorPart
      * Expand row button
      */
     private Button expandRowButton = null;
-    
+
     /*
      * Highlight user changes
      */
     private boolean highlightChanges = false;
 
-    
     /*
-     * Expand rows: if row size must be expanded according to the number of lines
+     * Expand rows: if row size must be expanded according to the number of
+     * lines
      */
     private boolean expandRow = true;
 
-    
-    
     /*
      * Search text
      */
@@ -931,7 +930,7 @@ public class StringEditorPart extends EditorPart
     public StringEditorPart()
     {
         undoContext = new ObjectUndoContext(this);
-        operationHistory = OperationHistoryFactory.getOperationHistory();       
+        operationHistory = OperationHistoryFactory.getOperationHistory();
         viewer = null;
         associatedProject = null;
     }
@@ -1091,47 +1090,42 @@ public class StringEditorPart extends EditorPart
         optionsComposite.setLayout(layout);
         expandableComposite.setClient(optionsComposite);
 
-        
         expandRowButton =
-            toolkit.createButton(optionsComposite,
-                    Messages.StringEditorPart_ExpandRows, SWT.CHECK);
-	    layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
-	    expandRowButton.setLayoutData(layoutData);
-	    expandRowButton.setSelection(new Boolean(expandRow));
-	    expandRowButton.addSelectionListener(new SelectionListener()
-	    {
-	
-	        public void widgetSelected(SelectionEvent e)
-	        {
-	            expandRow = ((Button) e.widget).getSelection();	          	            
+                toolkit.createButton(optionsComposite, Messages.StringEditorPart_ExpandRows,
+                        SWT.CHECK);
+        layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+        expandRowButton.setLayoutData(layoutData);
+        expandRowButton.setSelection(new Boolean(expandRow));
+        expandRowButton.addSelectionListener(new SelectionListener()
+        {
 
-	            viewer.getTable().setRedraw(true);	            
-	            viewer.getTable().layout();
-	            viewer.getTable().update();
-	            viewer.getTable().redraw();	 	            
-		        for (int i = 0; i < viewer.getTable().getColumnCount(); i++) {
-		        	viewer.getTable().getColumn(i).pack();
-		        }
-		        viewer.getTable().pack(); 	
-		        
-	            viewer.getTable().getParent().layout();
-	            viewer.getTable().getParent().setRedraw(true);
-	            viewer.getTable().getParent().redraw();           	            
-	            viewer.refresh();
-	            
-            
-	        }
-	
-	        public void widgetDefaultSelected(SelectionEvent e)
-	        {
-	            // do nothing
-	        }
-	    });        
+            public void widgetSelected(SelectionEvent e)
+            {
+                expandRow = ((Button) e.widget).getSelection();
 
+                viewer.getTable().setRedraw(true);
+                viewer.getTable().layout();
+                viewer.getTable().update();
+                viewer.getTable().redraw();
+                for (int i = 0; i < viewer.getTable().getColumnCount(); i++)
+                {
+                    viewer.getTable().getColumn(i).pack();
+                }
+                viewer.getTable().pack();
 
+                viewer.getTable().getParent().layout();
+                viewer.getTable().getParent().setRedraw(true);
+                viewer.getTable().getParent().redraw();
+                viewer.refresh();
 
-        
-        
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e)
+            {
+                // do nothing
+            }
+        });
+
         Label search =
                 toolkit.createLabel(optionsComposite, Messages.StringEditorPart_SearchLabel + ": ");
         layoutData = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
@@ -1161,12 +1155,6 @@ public class StringEditorPart extends EditorPart
             }
         });
 
-        
-        
-
-	    
-	    
-        
         Label filter =
                 toolkit.createLabel(optionsComposite, Messages.StringEditorPart_FilterByKeyLabel
                         + ": ");
@@ -1200,34 +1188,34 @@ public class StringEditorPart extends EditorPart
                 getEditorViewer().refresh();
             }
         });
-        
-        
-        if (!Platform.getOS().equals(Platform.OS_LINUX)) { 
-	        highlightChangesButton =
-	            toolkit.createButton(optionsComposite,
-	                    Messages.StringEditorPart_HighlightChangesLabel, SWT.CHECK);
-		    layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
-		    highlightChangesButton.setLayoutData(layoutData);
-		    highlightChangesButton.addSelectionListener(new SelectionListener()
-		    {
-		
-		        public void widgetSelected(SelectionEvent e)
-		        {
-		            highlightChanges = ((Button) e.widget).getSelection();
-		            for (RowInfo info : getModel().getRows().values())
-		            {
-		                viewer.update(info, null);
-		            }
-		        }
-		
-		        public void widgetDefaultSelected(SelectionEvent e)
-		        {
-		            // do nothing
-		        }
-		    });
+
+        if (!Platform.getOS().equals(Platform.OS_LINUX))
+        {
+            highlightChangesButton =
+                    toolkit.createButton(optionsComposite,
+                            Messages.StringEditorPart_HighlightChangesLabel, SWT.CHECK);
+            layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+            highlightChangesButton.setLayoutData(layoutData);
+            highlightChangesButton.addSelectionListener(new SelectionListener()
+            {
+
+                public void widgetSelected(SelectionEvent e)
+                {
+                    highlightChanges = ((Button) e.widget).getSelection();
+                    for (RowInfo info : getModel().getRows().values())
+                    {
+                        viewer.update(info, null);
+                    }
+                }
+
+                public void widgetDefaultSelected(SelectionEvent e)
+                {
+                    // do nothing
+                }
+            });
         }
-        
-	  }
+
+    }
 
     /*
      * (non-Javadoc)
@@ -1434,54 +1422,70 @@ public class StringEditorPart extends EditorPart
             PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getTable(),
                     contentProvider.getContextHelpID());
         }
-        
-        //if (expandRow) {
-        	//user preference is to view all the rows with the global maximum number of lines
-	        viewer.getTable().addListener(SWT.MeasureItem, new Listener() {   
-	        	final int TEXT_MARGIN = 3;
-	        	
-	            public void handleEvent(Event event) {                   
-	                   TableItem item = (TableItem)event.item;                  
-	                   String text = item.getText(event.index);                  
-	                   Point size = event.gc.textExtent(text);
-	                   event.width = size.x + 2 * TEXT_MARGIN;
-	                   if (expandRow){	                	  
-	                	   event.height = Math.max(event.height, size.y + TEXT_MARGIN);
-	                   } else{	    
-	                	   Point size2 = event.gc.textExtent("A");
-	                	   event.height = size2.y + TEXT_MARGIN;
-	                   }                	
-	            }
-	        });
-	            
-	        viewer.getTable().addListener(SWT.EraseItem, new Listener() {
-	    		public void handleEvent(Event event) {
-	    			event.detail &= ~SWT.FOREGROUND;
-	    		}
-	    	});
-	        
-	        viewer.getTable().addListener(SWT.PaintItem, new Listener() {
-	        	final int TEXT_MARGIN = 3;
-	        	final int FIRST_COLUM_TEXT_MARGIN = 20;
-	        	public void handleEvent(Event event) {
-	        		  int yOffset = 0;
-	        		  TableItem item = (TableItem)event.item;
-	    			  String text = item.getText(event.index);
-	        		  if (event.index > 0){        			  
-	        			  event.gc.drawText(text, event.x + TEXT_MARGIN, event.y + yOffset, true);
-	        		  }
-	        		  else if (event.index == 0){ 
-	        			  event.gc.drawImage(item.getImage(), event.x, event.y);
-	        			  event.gc.drawText(text, event.x + FIRST_COLUM_TEXT_MARGIN, event.y + yOffset, true);
-	        		  }
-	         	   }
-	        });
-	        
-	        for (int i = 0; i < viewer.getTable().getColumnCount(); i++) {
-	        	viewer.getTable().getColumn(i).pack();
-	        }
-	        viewer.getTable().pack();  
-    	//}
+
+        // if (expandRow) {
+        // user preference is to view all the rows with the global maximum
+        // number of lines
+        viewer.getTable().addListener(SWT.MeasureItem, new Listener()
+        {
+            final int TEXT_MARGIN = 3;
+
+            public void handleEvent(Event event)
+            {
+                TableItem item = (TableItem) event.item;
+                String text = item.getText(event.index);
+                Point size = event.gc.textExtent(text);
+                event.width = size.x + 2 * TEXT_MARGIN;
+                if (expandRow)
+                {
+                    event.height = Math.max(event.height, size.y + TEXT_MARGIN);
+                }
+                else
+                {
+                    Point size2 = event.gc.textExtent("A");
+                    event.height = size2.y + TEXT_MARGIN;
+                }
+            }
+        });
+
+        viewer.getTable().addListener(SWT.EraseItem, new Listener()
+        {
+            public void handleEvent(Event event)
+            {
+                event.detail &= ~SWT.FOREGROUND;
+            }
+        });
+
+        viewer.getTable().addListener(SWT.PaintItem, new Listener()
+        {
+            final int TEXT_MARGIN = 3;
+
+            final int FIRST_COLUM_TEXT_MARGIN = 20;
+
+            public void handleEvent(Event event)
+            {
+                int yOffset = 0;
+                TableItem item = (TableItem) event.item;
+                String text = item.getText(event.index);
+                if (event.index > 0)
+                {
+                    event.gc.drawText(text, event.x + TEXT_MARGIN, event.y + yOffset, true);
+                }
+                else if (event.index == 0)
+                {
+                    event.gc.drawImage(item.getImage(), event.x, event.y);
+                    event.gc.drawText(text, event.x + FIRST_COLUM_TEXT_MARGIN, event.y + yOffset,
+                            true);
+                }
+            }
+        });
+
+        for (int i = 0; i < viewer.getTable().getColumnCount(); i++)
+        {
+            viewer.getTable().getColumn(i).pack();
+        }
+        viewer.getTable().pack();
+        // }
     }
 
     private void saveSession()
@@ -1535,7 +1539,7 @@ public class StringEditorPart extends EditorPart
         String highlight = session.getProperty(namespace, PROPERTY.HIGHLIGHT_CHANGES);
         String showComments = session.getProperty(namespace, PROPERTY.SHOW_COMMENTS);
         String filterByKey = session.getProperty(namespace, PROPERTY.FILTER_BY_KEY);
-        String shouldExpandRow = session.getProperty(namespace, PROPERTY.EXPAND_ROW);       
+        String shouldExpandRow = session.getProperty(namespace, PROPERTY.EXPAND_ROW);
         if (search != null)
         {
             searchText.setText(search);
@@ -1543,10 +1547,11 @@ public class StringEditorPart extends EditorPart
         }
         if (highlight != null)
         {
-        	 if (!Platform.getOS().equals(Platform.OS_LINUX)){
-	            highlightChangesButton.setSelection(new Boolean(highlight));
-	            highlightChanges = highlightChangesButton.getSelection();
-        	 }
+            if (!Platform.getOS().equals(Platform.OS_LINUX))
+            {
+                highlightChangesButton.setSelection(new Boolean(highlight));
+                highlightChanges = highlightChangesButton.getSelection();
+            }
         }
         if (showComments != null)
         {
@@ -1558,10 +1563,11 @@ public class StringEditorPart extends EditorPart
             filterByKeyText.setText(filterByKey);
             filterByKeyString = filterByKeyText.getText();
         }
-        if (shouldExpandRow != null){
-        	expandRowButton.setSelection(new Boolean(shouldExpandRow));
+        if (shouldExpandRow != null)
+        {
+            expandRowButton.setSelection(new Boolean(shouldExpandRow));
             expandRow = expandRowButton.getSelection();
-        }        
+        }
     }
 
     private void restoreSession(List<ColumnInfo> infos)
@@ -1793,7 +1799,7 @@ public class StringEditorPart extends EditorPart
 
     @Override
     public void doSave(IProgressMonitor monitor)
-    {    	
+    {
         if (promptUpdateConflicts())
         {
             getEditorInput().save();
@@ -1801,7 +1807,7 @@ public class StringEditorPart extends EditorPart
             updateViewer(changed);
             fireDirtyPropertyChanged();
             setEditorStatus(getEditorInput().validate());
-        }             
+        }
     }
 
     public void updateViewer(List<RowInfo> rows)
@@ -1895,9 +1901,9 @@ public class StringEditorPart extends EditorPart
 
     public boolean unmarkColumnAsChanged(String columnID)
     {
-    	boolean result = changedColumns.remove(columnID); 
-    	needToPromptFileSystemChange = (!changedColumns.isEmpty());        
-    	return result;
+        boolean result = changedColumns.remove(columnID);
+        needToPromptFileSystemChange = (!changedColumns.isEmpty());
+        return result;
     }
 
     private void clearColumnsMarkedAsChanged()
