@@ -13,6 +13,17 @@
 
 package org.eclipse.sequoyah.device.service.start.launcher;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.sequoyah.device.service.start.StartServicePlugin;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramLaunchDelegate;
 
 /**
@@ -24,7 +35,33 @@ import org.eclipse.ui.externaltools.internal.program.launchConfigurations.Progra
  * 
  */
 
-public class DeviceInstanceLaunchConfigurationDelegate extends
-		ProgramLaunchDelegate {
-	// no implementation additional
+public class DeviceInstanceLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
+
+	public static final String ATTR_LOCATION = StartServicePlugin.PLUGIN_ID + ".ATTR_LOCATION";
+	public static final String ATTR_TOOL_ARGUMENTS = StartServicePlugin.PLUGIN_ID + ".ATTR_TOOL_ARGUMENTS";
+	public static final String ATTR_WORKING_DIRECTORY = StartServicePlugin.PLUGIN_ID + ".ATTR_WORKING_DIRECTORY";
+	
+	public void launch(ILaunchConfiguration configuration, String mode,
+			ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		
+		String location = configuration.getAttribute(ATTR_LOCATION, "");
+		List<String> args = new ArrayList<String>();
+		args.add(location);
+		String toolArgs = configuration.getAttribute(ATTR_TOOL_ARGUMENTS, "");
+		if (toolArgs.trim().length()>0) {
+			String[] splitedArgs = toolArgs.trim().split(" ");
+			for (String arg : splitedArgs) {
+				args.add(arg);
+			}
+		}
+		ProcessBuilder pb = new ProcessBuilder(args);
+		pb.directory(new File(configuration.getAttribute(ATTR_WORKING_DIRECTORY, "")));
+		try {
+			Process p = pb.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 }
