@@ -35,6 +35,7 @@ import org.eclipse.ui.externaltools.internal.program.launchConfigurations.Progra
  * 
  */
 
+@SuppressWarnings("restriction")
 public class DeviceInstanceLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
 
 	public static final String ATTR_LOCATION = StartServicePlugin.PLUGIN_ID + ".ATTR_LOCATION";
