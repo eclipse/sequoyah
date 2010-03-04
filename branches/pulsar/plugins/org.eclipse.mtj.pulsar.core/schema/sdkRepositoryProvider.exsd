@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.mtj.pulsar.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.sequoyah.pulsar.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.mtj.pulsar.core" id="sdkRepositoryProvider" name="SDK Respository Provider"/>
+         <meta.schema plugin="org.eclipse.sequoyah.pulsar.core" id="sdkRepositoryProvider" name="SDK Respository Provider"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -55,7 +55,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.mtj.internal.provisional.pulsar.core.ISDKRepositoryProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDKRepositoryProvider"/>
                </appinfo>
             </annotation>
          </attribute>

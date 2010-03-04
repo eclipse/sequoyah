@@ -1,14 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Bundle-SymbolicName: org.eclipse.mtj.tfm.sign.smgmt.ibm;singleton:=true
+Bundle-SymbolicName: org.eclipse.sequoyah.tfm.sign.smgmt.ibm;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.mtj.tfm.sign.smgmt.ibm.IBMSmgmtCore
+Bundle-Activator: org.eclipse.sequoyah.tfm.sign.smgmt.ibm.IBMSmgmtCore
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.mtj.tfm.sign.core;bundle-version="1.0.0"
+ org.eclipse.sequoyah.tfm.sign.core;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.mtj.tfm.internal.sign.smgmt.ibm;x-internal:=true,
- org.eclipse.mtj.tfm.sign.smgmt.ibm
+Export-Package: org.eclipse.sequoyah.tfm.sign.internal.smgmt.ibm;x-internal:=true,
+ org.eclipse.sequoyah.tfm.sign.smgmt.ibm

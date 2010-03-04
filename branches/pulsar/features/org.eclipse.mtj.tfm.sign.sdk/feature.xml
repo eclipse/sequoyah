@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.mtj.tfm.sign.sdk"
+      id="org.eclipse.sequoyah.tfm.sign.sdk"
       label="%featureName"
       version="1.0.0.qualifier"
       provider-name="%providerName">
@@ -18,15 +18,15 @@
    </license>
 
    <includes
-         id="org.eclipse.mtj.tfm.sign"
+         id="org.eclipse.sequoyah.tfm.sign"
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.mtj.tfm.sign.source"
+         id="org.eclipse.sequoyah.tfm.sign.source"
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.mtj.tfm.sing.doc.isv"
+         id="org.eclipse.sequoyah.tfm.sing.doc.isv"
          download-size="0"
          install-size="0"
          version="0.0.0"

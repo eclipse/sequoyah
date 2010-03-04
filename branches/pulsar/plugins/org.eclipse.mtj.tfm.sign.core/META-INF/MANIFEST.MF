@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Bundle-SymbolicName: org.eclipse.mtj.tfm.sign.core;singleton:=true
+Bundle-SymbolicName: org.eclipse.sequoyah.tfm.sign.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.mtj.tfm.sign.core.SignCore
+Bundle-Activator: org.eclipse.sequoyah.tfm.sign.core.SignCore
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
@@ -12,22 +12,23 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.mtj.tfm.internal.sign.core;
-  x-friends:="org.eclipse.mtj.tfm.sign.core,
-   org.eclipse.mtj.tfm.sign.smgmt.ibm,
-   org.eclipse.mtj.tfm.sign.ui,
-   org.eclipse.mtj.tfm.sign.test.core",
- org.eclipse.mtj.tfm.internal.sign.core.extension;
-  x-friends:="org.eclipse.mtj.tfm.sign.core,
-   org.eclipse.mtj.tfm.sign.smgmt.ibm,
-   org.eclipse.mtj.tfm.sign.ui,
-   org.eclipse.mtj.tfm.sign.test.core",
- org.eclipse.mtj.tfm.internal.sign.core.extension.permission;x-friends:="org.eclipse.mtj.tfm.sign.core,org.eclipse.mtj.tfm.sign.test.core,org.eclipse.mtj.tfm.sign.ui",
- org.eclipse.mtj.tfm.sign.core,
- org.eclipse.mtj.tfm.sign.core.enumerations,
- org.eclipse.mtj.tfm.sign.core.exception,
- org.eclipse.mtj.tfm.sign.core.extension,
- org.eclipse.mtj.tfm.sign.core.extension.permission,
- org.eclipse.mtj.tfm.sign.core.extension.security,
- org.eclipse.mtj.tfm.sign.core.extension.sign,
- org.eclipse.mtj.tfm.sign.core.signing
+Export-Package: org.eclipse.sequoyah.tfm.sign.internal.core;
+  x-friends:="org.eclipse.sequoyah.tfm.sign.core,
+   org.eclipse.sequoyah.tfm.sign.test.core,
+   org.eclipse.sequoyah.tfm.sign.ui,
+   org.eclipse.sequoyah.tfm.sign.smgmt.ibm",
+ org.eclipse.sequoyah.tfm.sign.internal.core.extension;
+  x-friends:="org.eclipse.sequoyah.tfm.sign.core,
+   org.eclipse.sequoyah.tfm.sign.test.core,
+   org.eclipse.sequoyah.tfm.sign.ui,
+   org.eclipse.sequoyah.tfm.sign.smgmt.ibm",
+ org.eclipse.sequoyah.tfm.sign.internal.core.extension.permission;x-friends:="org.eclipse.sequoyah.tfm.sign.core,org.eclipse.sequoyah.tfm.sign.test.core,org.eclipse.sequoyah.tfm.sign.ui",
+ org.eclipse.sequoyah.tfm.sign.core,
+ org.eclipse.sequoyah.tfm.sign.core.enumerations,
+ org.eclipse.sequoyah.tfm.sign.core.exception,
+ org.eclipse.sequoyah.tfm.sign.core.extension,
+ org.eclipse.sequoyah.tfm.sign.core.extension.permission,
+ org.eclipse.sequoyah.tfm.sign.core.extension.security,
+ org.eclipse.sequoyah.tfm.sign.core.extension.sign,
+ org.eclipse.sequoyah.tfm.sign.core.signing
+

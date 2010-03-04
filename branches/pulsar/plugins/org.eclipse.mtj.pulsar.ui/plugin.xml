@@ -4,23 +4,23 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            category="org.eclipse.mtj.pulsar.category"
-            class="org.eclipse.mtj.internal.pulsar.ui.view.SDKInstallView"
+            category="org.eclipse.sequoyah.pulsar.category"
+            class="org.eclipse.sequoyah.pulsar.internal.ui.view.SDKInstallView"
             icon="icons/pulsar_16x16.png"
             id="org.eclipse.pulsar.ui.view.SDKInstallView"
             name="%view.name.0">
       </view>
       <category
-            id="org.eclipse.mtj.pulsar.category"
+            id="org.eclipse.sequoyah.pulsar.category"
             name="%pulsar.category">
       </category>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
        <perspective
-             class="org.eclipse.mtj.internal.pulsar.ui.PulsarPerspectiveFactory"
+             class="org.eclipse.sequoyah.pulsar.internal.ui.PulsarPerspectiveFactory"
              icon="icons/pulsar_16x16.png"
-             id="org.eclipse.mtj.pulsar.ui.PulsarPerspective"
+             id="org.eclipse.sequoyah.pulsar.ui.PulsarPerspective"
              name="%pulsar.perspective.name">
           <description>
              %pulsar.perspective.description
@@ -30,7 +30,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="org.eclipse.mtj.ui.MtjPerspective">
+            targetID="org.eclipse.sequoyah.ui.MtjPerspective">
          <view
                ratio="0.5"
                relative="org.eclipse.ui.views.TaskList"

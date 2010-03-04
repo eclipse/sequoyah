@@ -2,9 +2,9 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.mtj.pulsar.core.sdkRepositoryProvider">
+         point="org.eclipse.sequoyah.pulsar.core.sdkRepositoryProvider">
       <provider
-            class="org.eclipse.mtj.pulsar.core.tests.utils.TestSDKRepositoryProvider">
+            class="org.eclipse.sequoyah.pulsar.core.tests.utils.TestSDKRepositoryProvider">
       </provider>
    </extension>
 </plugin>

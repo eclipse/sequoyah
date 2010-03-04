@@ -2,11 +2,11 @@
 <?eclipse version="3.4"?>
 <fragment>
    <extension
-         id="org.eclipse.mtj.tfm.sign.core.permission.javame"
+         id="org.eclipse.sequoyah.tfm.sign.core.permission.javame"
          name="Default permission provider for Java ME"
-         point="org.eclipse.mtj.tfm.sign.core.securitypermission">
+         point="org.eclipse.sequoyah.tfm.sign.core.securitypermission">
       <abstract_provider
-            id="org.eclipse.mtj.tfm.sign.core.permission.javame"
+            id="org.eclipse.sequoyah.tfm.sign.core.permission.javame"
             name="Default permission provider for Java ME"
             vendor="Eclipse.org - DSDP"
             version="1.0.0">
@@ -241,11 +241,11 @@
       </abstract_provider>
    </extension>
    <extension
-         id="org.eclipse.mtj.tfm.sign.core.permission.android"
+         id="org.eclipse.sequoyah.tfm.sign.core.permission.android"
          name="Default permission provider for Android"
-         point="org.eclipse.mtj.tfm.sign.core.securitypermission">
+         point="org.eclipse.sequoyah.tfm.sign.core.securitypermission">
       <abstract_provider
-            id="org.eclipse.mtj.tfm.sign.core.permission.android"
+            id="org.eclipse.sequoyah.tfm.sign.core.permission.android"
             name="Default permission provider for Android"
             vendor="Eclipse.org - DSDP"
             version="1.0.0">

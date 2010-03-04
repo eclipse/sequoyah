@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.mtj.tfm.sign.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.sequoyah.tfm.sign.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.mtj.tfm.sign.core" id="securitypermission" name="Security Permission"/>
+         <meta.schema plugin="org.eclipse.sequoyah.tfm.sign.core" id="securitypermission" name="Security Permission"/>
       </appinfo>
       <documentation>
          This extension point allows third party plugins to add security permissions for third party APIs to the Sign Framework security permissions set.
@@ -124,7 +124,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.mtj.tfm.sign.core.extension.permission.IPermissionGroupProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.sequoyah.tfm.sign.core.extension.permission.IPermissionGroupProvider"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -210,7 +210,7 @@ Here is the grammar for version strings.
       </appinfo>
       <documentation>
          &lt;extension
-       id=&quot;jsr120permissions&quot; name=&quot;JSR120 Permissions&quot; point=&quot;org.eclipse.mtj.core.securitypermission&quot;&gt;
+       id=&quot;jsr120permissions&quot; name=&quot;JSR120 Permissions&quot; point=&quot;org.eclipse.sequoyah.core.securitypermission&quot;&gt;
     &lt;class name=&quot;javax.wireless.messaging.MessageConnection&quot;&gt;
        &lt;permission name=&quot;javax.microedition.io.Connector.sms&quot;&gt;
        &lt;/permission&gt;

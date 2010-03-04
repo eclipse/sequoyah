@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.mtj.tfm.sign.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.sequoyah.tfm.sign.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.mtj.tfm.sign.core" id="SECURITY_MANAGEMENT" name="SECURITY_MANAGEMENT"/>
+         <meta.schema plugin="org.eclipse.sequoyah.tfm.sign.core" id="SECURITY_MANAGEMENT" name="SECURITY_MANAGEMENT"/>
       </appinfo>
       <documentation>
          
@@ -75,7 +75,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.mtj.tfm.sign.core.extension.security.ISecurityManagement:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.sequoyah.tfm.sign.core.extension.security.ISecurityManagement:"/>
                </appinfo>
             </annotation>
          </attribute>

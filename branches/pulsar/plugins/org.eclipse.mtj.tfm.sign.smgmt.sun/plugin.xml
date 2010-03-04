@@ -2,11 +2,11 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.mtj.tfm.sign.core.securityManagement">
+         point="org.eclipse.sequoyah.tfm.sign.core.securityManagement">
       <security_Management
-            class="org.eclipse.mtj.tfm.sign.smgmt.sun.SunSecurityManagement"
-            id="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.SecurityManagement"
-            name="org.eclipse.mtj.tfm.sign.smgmt.sun.impl.SecurityManagement">
+            class="org.eclipse.sequoyah.tfm.sign.smgmt.sun.SunSecurityManagement"
+            id="org.eclipse.sequoyah.tfm.sign.smgmt.sun.impl.SecurityManagement"
+            name="org.eclipse.sequoyah.tfm.sign.smgmt.sun.impl.SecurityManagement">
          <platform
                name="JAVAME">
          </platform>
@@ -17,7 +17,7 @@
    </extension>
       <extension
          point="org.eclipse.core.runtime.preferences">
-      <initializer class="org.eclipse.mtj.tfm.internal.sign.smgmt.sun.PreferenceInitializer"/>
+      <initializer class="org.eclipse.sequoyah.tfm.sign.internal.smgmt.sun.PreferenceInitializer"/>
    </extension>
 
 </plugin>

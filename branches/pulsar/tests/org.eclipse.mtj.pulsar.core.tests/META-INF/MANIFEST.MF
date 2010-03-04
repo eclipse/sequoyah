@@ -1,22 +1,23 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
-Bundle-SymbolicName: org.eclipse.mtj.pulsar.core.tests;singleton:=true
+Bundle-SymbolicName: org.eclipse.sequoyah.pulsar.core.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.mtj.pulsar.core.tests.Activator
+Bundle-Activator: org.eclipse.sequoyah.pulsar.core.tests.Activator
 Bundle-Vendor: %Bundle.Vendor.0
 Require-Bundle: org.eclipse.core.runtime,
  org.junit;bundle-version="3.8.2",
- org.eclipse.mtj.pulsar.core;bundle-version="1.0.0",
+ org.eclipse.sequoyah.pulsar.core;bundle-version="1.0.0",
  org.eclipse.ui;bundle-version="3.5.0",
  org.eclipse.equinox.p2.core;bundle-version="1.0.100",
  org.eclipse.equinox.p2.console;bundle-version="1.0.0",
  org.eclipse.equinox.p2.metadata;bundle-version="1.0.0",
  org.eclipse.equinox.p2.engine;bundle-version="1.0.100",
  org.eclipse.equinox.p2.director;bundle-version="1.0.100",
- org.eclipse.mtj.pulsar.metadata.generator;bundle-version="1.0.0"
+ org.eclipse.sequoyah.pulsar.metadata.generator;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.mtj.pulsar.core.tests,
- org.eclipse.mtj.pulsar.core.tests.utils
+Export-Package: org.eclipse.sequoyah.pulsar.core.tests,
+ org.eclipse.sequoyah.pulsar.core.tests.utils,
+ sun.security.krb5.internal.crypto
 Bundle-Localization: plugin

@@ -7,7 +7,7 @@
       <actionSet
             label="%actionSet.label"
             visible="true"
-            id="org.eclipse.mtj.pulsar.metadata.generator.actionSet">
+            id="org.eclipse.sequoyah.pulsar.metadata.generator.actionSet">
          <menu
                label="%menu.label"
                id="pulsarAdminMenu">
@@ -18,7 +18,7 @@
          <action
                label="%action.label"
                icon="icons/sample.gif"
-               class="org.eclipse.mtj.internal.pulsar.metadata.generator.actions.GenerateAction"
+               class="org.eclipse.sequoyah.pulsar.internal.metadata.generator.actions.GenerateAction"
                tooltip="%action.tooltip"
                menubarPath="pulsarAdminMenu/adminGroup"
                toolbarPath="adminGroup"

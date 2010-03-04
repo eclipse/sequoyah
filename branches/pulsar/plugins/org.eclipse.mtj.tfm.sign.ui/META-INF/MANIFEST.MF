@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Bundle-SymbolicName: org.eclipse.mtj.tfm.sign.ui
+Bundle-SymbolicName: org.eclipse.sequoyah.tfm.sign.ui
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.mtj.tfm.sign.ui.SignUI
+Bundle-Activator: org.eclipse.sequoyah.tfm.sign.ui.SignUI
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy

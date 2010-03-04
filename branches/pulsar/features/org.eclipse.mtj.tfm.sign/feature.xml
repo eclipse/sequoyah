@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.mtj.tfm.sign"
+      id="org.eclipse.sequoyah.tfm.sign"
       label="%featureName"
       version="1.0.0.qualifier"
       provider-name="%providerName">
@@ -18,49 +18,49 @@
    </license>
 
    <plugin
-         id="org.eclipse.mtj.tfm.sign.core"
+         id="org.eclipse.sequoyah.tfm.sign.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.mtj.tfm.sign.ui"
+         id="org.eclipse.sequoyah.tfm.sign.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.mtj.tfm.sing.doc.user"
+         id="org.eclipse.sequoyah.tfm.sing.doc.user"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.mtj.tfm.sign.smgmt.ibm"
+         id="org.eclipse.sequoyah.tfm.sign.smgmt.ibm"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.mtj.tfm.sign.smgmt.j9"
+         id="org.eclipse.sequoyah.tfm.sign.smgmt.j9"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.mtj.tfm.sign.smgmt.sun"
+         id="org.eclipse.sequoyah.tfm.sign.smgmt.sun"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.mtj.tfm.sign.core.permission"
+         id="org.eclipse.sequoyah.tfm.sign.core.permission"
          download-size="0"
          install-size="0"
          version="0.0.0"

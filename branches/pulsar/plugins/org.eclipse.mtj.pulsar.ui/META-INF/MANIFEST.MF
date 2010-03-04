@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle.Name
-Bundle-SymbolicName: org.eclipse.mtj.pulsar.ui;singleton:=true
+Bundle-SymbolicName: org.eclipse.sequoyah.pulsar.ui;singleton:=true
 Bundle-Version: 1.0.1.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %Bundle.Vendor
 Require-Bundle: org.eclipse.ui;bundle-version="3.5.0",
  org.eclipse.core.runtime;bundle-version="3.5.0",
- org.eclipse.mtj.pulsar.core;bundle-version="1.0.0",
+ org.eclipse.sequoyah.pulsar.core;bundle-version="1.0.0",
  org.eclipse.equinox.p2.core;bundle-version="1.0.100",
  org.eclipse.equinox.p2.engine;bundle-version="1.0.100",
  org.eclipse.equinox.p2.director;bundle-version="1.0.100",
@@ -23,8 +23,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.5.0",
  org.eclipse.ui.ide;bundle-version="3.5.0",
  org.eclipse.equinox.p2.metadata.repository;bundle-version="1.0.100"
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: org.eclipse.mtj.pulsar.Activator
+Bundle-Activator: org.eclipse.sequoyah.pulsar.Activator
 Bundle-Localization: plugin
-Export-Package: org.eclipse.mtj.internal.pulsar.ui;x-internal:=true,
- org.eclipse.mtj.internal.pulsar.ui.view;x-internal:=true,
- org.eclipse.mtj.pulsar
+Export-Package: org.eclipse.sequoyah.pulsar,
+ org.eclipse.sequoyah.pulsar.internal.ui;x-internal:=true,
+ org.eclipse.sequoyah.pulsar.internal.ui.view;x-internal:=true
