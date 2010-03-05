@@ -201,7 +201,7 @@ public class StringEditorPart extends EditorPart
             super(viewer);
             this.columnID = columnID;
             this.editor =
-                    new TextCellEditor(viewer.getTable(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+                    new TextCellEditor(viewer.getTable(), SWT.MULTI | SWT.V_SCROLL);
         }
 
         /*
