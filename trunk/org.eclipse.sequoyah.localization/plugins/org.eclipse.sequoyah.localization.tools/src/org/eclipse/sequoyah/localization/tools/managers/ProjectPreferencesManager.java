@@ -35,17 +35,17 @@ public class ProjectPreferencesManager {
 	/*
 	 * The default language of this project
 	 */
-	private final String DEFAULT_LANGUAGE = "en";
+	private final String DEFAULT_LANGUAGE = Messages.ProjectPreferencesManager_0;
 
 	private Map<String, String> defaultLanguageForColumn = new HashMap<String, String>();
 
 	private IPreferenceStore preferenceStore = null;
 
-	private final String PREFERENCE_KEY_SUFFIX = "_DEFAULTLANGUAGES";
+	private final String PREFERENCE_KEY_SUFFIX = Messages.ProjectPreferencesManager_1;
 
-	private final String NODE_SEPARATOR = ",";
+	private final String NODE_SEPARATOR = Messages.ProjectPreferencesManager_2;
 
-	private final String FIELD_SEPARATOR = ":";
+	private final String FIELD_SEPARATOR = Messages.ProjectPreferencesManager_3;
 
 	private ProjectLocalizationManager projectLocalizationManager;
 
@@ -145,7 +145,7 @@ public class ProjectPreferencesManager {
 	private void load() {
 		String persistedData = preferenceStore.getString(project.getName()
 				+ PREFERENCE_KEY_SUFFIX);
-		if ((persistedData != null) && (!persistedData.equals(""))) {
+		if ((persistedData != null) && (!persistedData.equals(""))) { //$NON-NLS-1$
 			String[] dataForColumn = persistedData.split(NODE_SEPARATOR);
 			String[] data;
 			for (String columnData : dataForColumn) {
@@ -159,10 +159,10 @@ public class ProjectPreferencesManager {
 	 * Persist map columnID -> default lang ID
 	 */
 	private void save() {
-		String persistedData = "";
+		String persistedData = ""; //$NON-NLS-1$
 		for (Map.Entry<String, String> entry : defaultLanguageForColumn
 				.entrySet()) {
-			persistedData += ((persistedData != "") ? NODE_SEPARATOR : "")
+			persistedData += ((persistedData != "") ? NODE_SEPARATOR : "") //$NON-NLS-1$ //$NON-NLS-2$
 					+ entry.getKey() + FIELD_SEPARATOR + entry.getValue();
 		}
 		preferenceStore.setValue(project.getName() + PREFERENCE_KEY_SUFFIX,

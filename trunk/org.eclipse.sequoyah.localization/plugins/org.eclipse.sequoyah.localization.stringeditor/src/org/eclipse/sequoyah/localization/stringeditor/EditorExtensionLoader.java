@@ -31,17 +31,17 @@ import org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvid
 public class EditorExtensionLoader
 {
 
-    private static final String EXTENSION_POINT_ID = "contentprovider";
+    private static final String EXTENSION_POINT_ID = Messages.EditorExtensionLoader_0;
 
-    private static final String PROVIDER_ELEMENT_ID = "provider";
+    private static final String PROVIDER_ELEMENT_ID = Messages.EditorExtensionLoader_1;
 
-    private static final String PROVIDER_EDITOR_CONTEXT_HELP_ID = "contextHelpID";
+    private static final String PROVIDER_EDITOR_CONTEXT_HELP_ID = Messages.EditorExtensionLoader_2;
 
-    private static final String PROVIDER_EDITOR_INPUT_ID = "editorInput";
+    private static final String PROVIDER_EDITOR_INPUT_ID = Messages.EditorExtensionLoader_3;
 
-    private static final String PROVIDER_OPERATION_PROV_ID = "operationsProvider";
+    private static final String PROVIDER_OPERATION_PROV_ID = Messages.EditorExtensionLoader_4;
 
-    private static final String PROVIDER_CELL_VALIDATOR_ID = "cellValidator";
+    private static final String PROVIDER_CELL_VALIDATOR_ID = Messages.EditorExtensionLoader_5;
 
     private final Map<IFile, IConfigurationElement> knownProviders;
 
@@ -137,9 +137,9 @@ public class EditorExtensionLoader
         }
         catch (CoreException e)
         {
-            BasePlugin.logWarning("No operation provider found for "
+            BasePlugin.logWarning(Messages.EditorExtensionLoader_6
                     + element.getDeclaringExtension().getUniqueIdentifier()
-                    + ". Using a default operation provider.");
+                    + Messages.EditorExtensionLoader_7);
         }
         IStringEditorInput input = null;
         IOperationProvider provider = null;

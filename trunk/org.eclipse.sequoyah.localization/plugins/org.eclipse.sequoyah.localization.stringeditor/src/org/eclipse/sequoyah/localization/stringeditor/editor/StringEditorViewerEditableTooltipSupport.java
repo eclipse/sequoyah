@@ -80,7 +80,7 @@ public class StringEditorViewerEditableTooltipSupport extends ColumnViewerToolTi
             layouData.minimumHeight = 50;
             layouData.grabExcessHorizontalSpace = true;
             layouData.grabExcessVerticalSpace = true;
-            textComposite.setText(text.trim().length() > 0 ? text : "Type your comment here");
+            textComposite.setText(text.trim().length() > 0 ? text : Messages.StringEditorViewerEditableTooltipSupport_0);
             textComposite.setLayoutData(layouData);
             textComposite.addModifyListener(new ModifyListener()
             {
@@ -102,7 +102,7 @@ public class StringEditorViewerEditableTooltipSupport extends ColumnViewerToolTi
                 {
                     if (text.trim().length() == 0)
                     {
-                        textComposite.setText("");
+                        textComposite.setText(""); //$NON-NLS-1$
                         tooltipText = null;
                     }
                 }
@@ -140,8 +140,8 @@ public class StringEditorViewerEditableTooltipSupport extends ColumnViewerToolTi
                     }
                     catch (SequoyahException e)
                     {
-                        BasePlugin.logError("Error setting cell tooltip: (" + column.getText()
-                                + ", " + row.getKey() + ") = " + tooltipText, e);
+                        BasePlugin.logError(Messages.StringEditorViewerEditableTooltipSupport_2 + column.getText()
+                                + ", " + row.getKey() + Messages.StringEditorViewerEditableTooltipSupport_4 + tooltipText, e);
                     }
                 }
             }

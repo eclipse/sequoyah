@@ -51,8 +51,8 @@ public class TableComparator extends ViewerComparator {
 				r1 = (RowInfo) e2;
 			}
 
-			String s1 = "";
-			String s2 = "";
+			String s1 = ""; //$NON-NLS-1$
+			String s2 = ""; //$NON-NLS-1$
 			if (sortColumnID
 					.equalsIgnoreCase(Messages.StringEditorPart_KeyLabel)) {
 				s1 = r1.getKey();
@@ -60,8 +60,8 @@ public class TableComparator extends ViewerComparator {
 			} else {
 				CellInfo t1 = r1.getCells().get(sortColumnID);
 				CellInfo t2 = r2.getCells().get(sortColumnID);
-				s1 = t1 != null ? t1.toString() : "";
-				s2 = t2 != null ? t2.toString() : "";
+				s1 = t1 != null ? t1.toString() : ""; //$NON-NLS-1$
+				s2 = t2 != null ? t2.toString() : ""; //$NON-NLS-1$
 			}
 			result = s1.toLowerCase().compareTo(s2.toLowerCase());
 		} else {

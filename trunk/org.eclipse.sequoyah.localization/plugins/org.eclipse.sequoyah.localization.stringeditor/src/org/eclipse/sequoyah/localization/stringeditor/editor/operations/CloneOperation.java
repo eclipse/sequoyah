@@ -32,7 +32,7 @@ public class CloneOperation extends EditorOperation {
 
 	public CloneOperation(StringEditorPart editor, String sourceColumnID,
 			ColumnInfo newColumnInfo) {
-		super("Clone", editor);
+		super(Messages.CloneOperation_0, editor);
 		this.sourceColumnID = sourceColumnID;
 		this.destinationColumn = newColumnInfo;
 	}

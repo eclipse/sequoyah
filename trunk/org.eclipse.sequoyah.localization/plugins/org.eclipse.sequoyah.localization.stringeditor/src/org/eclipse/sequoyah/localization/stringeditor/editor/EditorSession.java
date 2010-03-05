@@ -27,7 +27,7 @@ public class EditorSession
 
     private final IProject project;
 
-    private static final String PROPERTY_GROUP = "org.eclipse.sequoyah.localization.stringeditor";
+    private static final String PROPERTY_GROUP = Messages.EditorSession_0;
 
     public static enum PROPERTY
     {
@@ -61,7 +61,7 @@ public class EditorSession
         }
         catch (CoreException e)
         {
-            BasePlugin.logError("Error loading editor preferences from project: "
+            BasePlugin.logError(Messages.EditorSession_1
                     + project.getName(), e);
 
         }
@@ -80,7 +80,7 @@ public class EditorSession
      */
     public String getProperty(String namespace, PROPERTY p)
     {
-        String qualifier = PROPERTY_GROUP + "." + namespace;
+        String qualifier = PROPERTY_GROUP + "." + namespace; //$NON-NLS-1$
         QualifiedName property = new QualifiedName(qualifier, p.name());
         return session.get(property);
     }
@@ -97,7 +97,7 @@ public class EditorSession
      */
     public void setProperty(String name, PROPERTY p, String value)
     {
-        String qualifier = PROPERTY_GROUP + "." + name;
+        String qualifier = PROPERTY_GROUP + "." + name; //$NON-NLS-1$
         QualifiedName property = new QualifiedName(qualifier, p.name());
         session.put(property, value);
     }
@@ -112,7 +112,7 @@ public class EditorSession
             }
             catch (CoreException e)
             {
-                BasePlugin.logError("Error saving preferences to project: " + project.getName(), e);
+                BasePlugin.logError(Messages.EditorSession_4 + project.getName(), e);
             }
         }
     }
@@ -130,7 +130,7 @@ public class EditorSession
             }
             catch (CoreException e)
             {
-                BasePlugin.logError("Error cleaning preferences of project: " + project.getName(),
+                BasePlugin.logError(Messages.EditorSession_5 + project.getName(),
                         e);
             }
         }

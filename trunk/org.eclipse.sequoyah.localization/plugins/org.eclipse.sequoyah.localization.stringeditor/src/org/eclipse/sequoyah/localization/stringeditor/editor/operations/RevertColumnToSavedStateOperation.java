@@ -48,7 +48,7 @@ public class RevertColumnToSavedStateOperation extends EditorOperation
         }
         catch (IOException e)
         {
-            BasePlugin.logError("Error reverting column: " + actualState.getId(), e);
+            BasePlugin.logError(Messages.RevertColumnToSavedStateOperation_0 + actualState.getId(), e);
         }
         savedState =
                 new ColumnInfo(actualState.getId(), actualState.getTooltip(), getEditorInput()

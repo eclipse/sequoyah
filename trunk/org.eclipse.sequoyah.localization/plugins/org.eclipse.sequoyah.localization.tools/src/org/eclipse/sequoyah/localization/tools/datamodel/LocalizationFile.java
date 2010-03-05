@@ -197,7 +197,7 @@ public class LocalizationFile implements IFilePersistentData
         StringNode result = stringNodesMap.get(key);
         if (result == null)
         {
-            StringNode newNode = new StringNode(key, "");
+            StringNode newNode = new StringNode(key, ""); //$NON-NLS-1$
             newNode.setLocalizationFile(this);
             newNode.setArray(isArray);
             result = this.addStringNode(newNode);
@@ -466,9 +466,9 @@ public class LocalizationFile implements IFilePersistentData
             for (int i = 0; i < thisStringNodes.size(); i++)
             {
                 keyEqual = thisStringNodes.get(i).getKey().equals(otherStringNodes.get(i).getKey());
-                String EOL = System.getProperty("line.separator"); 
+                String EOL = System.getProperty(Messages.LocalizationFile_1); 
                      
-                String fromFile = thisStringNodes.get(i).getValue().replaceAll(EOL, "\n"); 
+                String fromFile = thisStringNodes.get(i).getValue().replaceAll(EOL, Messages.LocalizationFile_2); 
                 valueEqual =
                 	fromFile.equals(otherStringNodes.get(i).getValue());
                 if ((!keyEqual) || (!valueEqual))
@@ -495,7 +495,7 @@ public class LocalizationFile implements IFilePersistentData
         {
             if (node.isArray())
             {
-                if (!node.getValue().equals(""))
+                if (!node.getValue().equals("")) //$NON-NLS-1$
                 {
                     noBlankArrayItems.add(node);
                 }

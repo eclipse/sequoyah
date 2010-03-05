@@ -206,7 +206,7 @@ public class TranslateColumnInputDialog extends InputDialog {
 		// Automatic language ID
 		automaticallyAddLangID = new Button(translationDetailsGroup, SWT.CHECK);
 		automaticallyAddLangID
-				.setText("Automatically add language ID to column name");
+				.setText(Messages.TranslateColumnInputDialog_0);
 		automaticallyAddLangID.setSelection(true);
 
 		createNetworkGroup(languagesComposite);

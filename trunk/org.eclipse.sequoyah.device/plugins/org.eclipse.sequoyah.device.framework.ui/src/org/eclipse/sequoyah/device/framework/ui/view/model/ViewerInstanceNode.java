@@ -46,7 +46,7 @@ public class ViewerInstanceNode extends ViewerAbstractNode
         {
             instanceName = instance.getName();
             String suffix = instance.getNameSuffix();
-            if (suffix != null) instanceName = instanceName + " (" + suffix + ")";
+            if (suffix != null) instanceName = instanceName + Messages.ViewerInstanceNode_0 + suffix + Messages.ViewerInstanceNode_1;
         }
         return instanceName;
     }

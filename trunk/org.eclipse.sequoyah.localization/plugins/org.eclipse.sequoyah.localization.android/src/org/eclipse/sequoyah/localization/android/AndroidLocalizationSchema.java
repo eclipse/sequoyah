@@ -133,17 +133,17 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			 * Iterate through Startup Groups
 			 */
 			Element rootNode = document.getDocumentElement();
-			NodeList languages = rootNode.getElementsByTagName("language");
+			NodeList languages = rootNode.getElementsByTagName(Messages.AndroidLocalizationSchema_0);
 			for (int i = 0; i < languages.getLength(); i++) {
 
 				Element language = (Element) languages.item(i);
-				langIDs.add(language.getAttributeNode("id").getNodeValue());
+				langIDs.add(language.getAttributeNode(Messages.AndroidLocalizationSchema_1).getNodeValue());
 			}
 
 		} catch (Exception e) {
 
 			BasePlugin
-					.logError("Could not load prefered languages for Android Localization Schema");
+					.logError(Messages.AndroidLocalizationSchema_2);
 
 		}
 
@@ -155,7 +155,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 */
 	private final String RESOURCES_FOLDER = "res"; //$NON-NLS-1$
 
-	private final String PREFERED_LANGUAGES_XML_PATH = "resource/prefered_languages.xml";
+	private final String PREFERED_LANGUAGES_XML_PATH = Messages.AndroidLocalizationSchema_3;
 
 	private final String DEFAULT_LOCALE_TOOLTIP = Messages.AndroidLocalizationSchema_Default_Andr_Localization_File_Tooltip;
 
@@ -197,7 +197,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	private String MANDATORY_ID = AndroidLocalizationSchema.LOCALIZATION_FILES_FOLDER;
 
-	private final String QUALIFIER_SEP = "-";
+	private final String QUALIFIER_SEP = "-"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
@@ -209,11 +209,11 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	public String getIDforLanguage(String langID) {
 		String columnID = LOCALIZATION_FILES_FOLDER;
 
-		if (langID.contains("-")) {
-			String[] langParts = langID.split("-");
-			columnID += "-" + langParts[0] + "-" + "r" + langParts[1];
+		if (langID.contains("-")) { //$NON-NLS-1$
+			String[] langParts = langID.split("-"); //$NON-NLS-1$
+			columnID += "-" + langParts[0] + "-" + "r" + langParts[1]; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			columnID += "-" + langID;
+			columnID += "-" + langID; //$NON-NLS-1$
 		}
 
 		return columnID;
@@ -229,7 +229,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	@Override
 	public IStatus isValueValid(String localeID, String key, String value) {
 		Status result = new Status(IStatus.OK,
-				AndroidLocalizationPlugin.PLUGIN_ID, "");
+				AndroidLocalizationPlugin.PLUGIN_ID, ""); //$NON-NLS-1$
 
 		if (localeID.toLowerCase().equals(MANDATORY_ID.toLowerCase())) {
 
@@ -651,29 +651,29 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		BufferedReader reader = null;
 
 		try {
-			file2 = File.createTempFile("temp_localization", "dom");
+			file2 = File.createTempFile(Messages.AndroidLocalizationSchema_12, Messages.AndroidLocalizationSchema_13);
 			FileUtil.copyFile(file1, file2);
 			inputStream = new FileInputStream(file2);
 			fileOutputStream = new FileOutputStream(file1);
 			dataOutput = new DataOutputStream(fileOutputStream);
 			reader = new BufferedReader(new InputStreamReader(inputStream,
-					"UTF-8"));
+					Messages.AndroidLocalizationSchema_14));
 			String line = null;
 
 			if (reader != null) {
 				line = reader.readLine();
 				while (line != null) {
-					line = line.replaceAll("&lt;", "<");
-					line = line.replaceAll("&gt;", ">");
-					line = line.replaceAll("&#13;", "");
-					dataOutput.write(line.getBytes("UTF-8"));
-					String eol = System.getProperty("line.separator");
-					dataOutput.write(eol.getBytes("UTF-8"));
+					line = line.replaceAll(Messages.AndroidLocalizationSchema_15, Messages.AndroidLocalizationSchema_16);
+					line = line.replaceAll(Messages.AndroidLocalizationSchema_17, Messages.AndroidLocalizationSchema_18);
+					line = line.replaceAll(Messages.AndroidLocalizationSchema_19, ""); //$NON-NLS-2$
+					dataOutput.write(line.getBytes(Messages.AndroidLocalizationSchema_21));
+					String eol = System.getProperty(Messages.AndroidLocalizationSchema_22);
+					dataOutput.write(eol.getBytes(Messages.AndroidLocalizationSchema_23));
 					line = reader.readLine();
 				}
 			}
 		} catch (Exception e) {
-			BasePlugin.logError("Error translating file.", e);
+			BasePlugin.logError(Messages.AndroidLocalizationSchema_24, e);
 		} finally {
 
 			try {
@@ -691,14 +691,14 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				}
 			} catch (IOException e) {
 				BasePlugin.logError(
-						"Error cleaning up objects after translation", e);
+						Messages.AndroidLocalizationSchema_25, e);
 			}
 
 			if (dataOutput != null) {
 				try {
 					dataOutput.close();
 				} catch (IOException e) {
-					BasePlugin.logError("Error closing file after translation",
+					BasePlugin.logError(Messages.AndroidLocalizationSchema_26,
 							e);
 				}
 				dataOutput = null;
@@ -1049,10 +1049,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			if (auxNode.getNodeName() != null
 					&& (auxNode.getNodeType() == Node.ELEMENT_NODE)) {
 				NamedNodeMap nodeAttributes = auxNode.getAttributes();
-				String nodeAttributesText = "";
+				String nodeAttributesText = ""; //$NON-NLS-1$
 				for (int i = 0; i < nodeAttributes.getLength(); i++) {
 					Node nodeAttribute = nodeAttributes.item(i);
-					nodeAttributesText += " " + nodeAttribute.toString();
+					nodeAttributesText += " " + nodeAttribute.toString(); //$NON-NLS-1$
 				}
 
 				// case: sibling with formatting node
@@ -1067,7 +1067,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 						valueText.append(auxNode.getTextContent());
 					}
 				}
-				valueText.append("</" + auxNode.getNodeName() + ">");
+				valueText.append(Messages.AndroidLocalizationSchema_31 + auxNode.getNodeName() + Messages.AndroidLocalizationSchema_32);
 			} else {
 				// recursion (base case): simple text in the sibling
 				if (auxNode.getNodeType() != Node.COMMENT_NODE) {
@@ -1110,18 +1110,18 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 						.put(stringArray.getKey(), stringArray);
 			}
 
-			NodeList resourcesList = document.getElementsByTagName("resources");
+			NodeList resourcesList = document.getElementsByTagName(Messages.AndroidLocalizationSchema_33);
 			for (int i = 0; i < resourcesList.getLength(); i++) {
 				Element resource = (Element) resourcesList.item(i);
 				// remove nodes
 				visitToRemoveDOMChildren(document, resource.getFirstChild(),
-						"name", androidLocalizationFile
+						Messages.AndroidLocalizationSchema_34, androidLocalizationFile
 								.getSingleEntryToRemove(),
 						androidLocalizationFile.getArrayEntryToRemove(),
 						androidLocalizationFile.getArrayItemsToRemove());
 				// update nodes
 				visitToUpdateDOMChildren(document, resource.getFirstChild(),
-						"name", singleStringsToUpdateOrAdd,
+						Messages.AndroidLocalizationSchema_35, singleStringsToUpdateOrAdd,
 						arrayStringsToUpdateOrAdd);
 				// add new nodes (append in the end of file)
 				visitToAddDOMChildren(document, singleStringsToUpdateOrAdd,
@@ -1190,7 +1190,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 							if (obj instanceof Element) {
 								Element item = (Element) obj;
 								DecimalFormat formatter = new DecimalFormat(
-										"000");
+										Messages.AndroidLocalizationSchema_36);
 								String virtualKey = keyName + "_"
 										+ formatter.format(itemsIndex);
 								StringNode arrayItem = arrayItemsToRemove
@@ -1388,7 +1388,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 		for (int i = 1; i < segments.length; i++) {
 
-			if (segments[i].equals("")) {
+			if (segments[i].equals("")) { //$NON-NLS-1$
 				// Do nothiing
 			} else if (isCountryCodeSegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttribute.INDEX_COUNTRY_CODE)) {
@@ -1463,7 +1463,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 		LocaleInfo localeInfo = getLocaleInfoFromID(ID);
 		for (LocaleAttribute locAtt : localeInfo.getLocaleAttributes()) {
-			if (locAtt.getDisplayName().equals("Language")) {
+			if (locAtt.getDisplayName().equals(Messages.AndroidLocalizationSchema_39)) {
 				iso639 = locAtt.getFolderValue();
 			}
 		}
@@ -1477,7 +1477,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	private boolean isNetworkCodeSegment(String value) {
-		return value.startsWith("mnc");
+		return value.startsWith(Messages.AndroidLocalizationSchema_40);
 
 	}
 
@@ -1487,53 +1487,53 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	private boolean isRegionSegment(String value) {
-		return ((value.startsWith("r") && (value.length() == 3)));
+		return ((value.startsWith("r") && (value.length() == 3))); //$NON-NLS-1$
 
 	}
 
 	private boolean isOrientationSegment(String value) {
-		return ((value.equalsIgnoreCase("port")
-				|| value.equalsIgnoreCase("land") || value
-				.equalsIgnoreCase("square")));
+		return ((value.equalsIgnoreCase(Messages.AndroidLocalizationSchema_42)
+				|| value.equalsIgnoreCase(Messages.AndroidLocalizationSchema_43) || value
+				.equalsIgnoreCase(Messages.AndroidLocalizationSchema_44)));
 
 	}
 
 	private boolean isPixelDensitySegment(String value) {
-		return (value.endsWith("dpi"));
+		return (value.endsWith(Messages.AndroidLocalizationSchema_45));
 
 	}
 
 	private boolean isTouchTypeSegment(String value) {
-		return ((value.equalsIgnoreCase("notouch")
-				|| value.equalsIgnoreCase("stylus") || value
-				.equalsIgnoreCase("finger")));
+		return ((value.equalsIgnoreCase(Messages.AndroidLocalizationSchema_46)
+				|| value.equalsIgnoreCase(Messages.AndroidLocalizationSchema_47) || value
+				.equalsIgnoreCase(Messages.AndroidLocalizationSchema_48)));
 	}
 
 	private boolean isKeyboardStateSegment(String value) {
-		return ((value.equalsIgnoreCase("keysexposed") || value
-				.equalsIgnoreCase("keyshidden")));
+		return ((value.equalsIgnoreCase(Messages.AndroidLocalizationSchema_49) || value
+				.equalsIgnoreCase(Messages.AndroidLocalizationSchema_50)));
 
 	}
 
 	private boolean isTextInputSegment(String value) {
-		return ((value.equalsIgnoreCase("nokeys")
-				|| value.equalsIgnoreCase("qwerty") || value
-				.equalsIgnoreCase("12key")));
+		return ((value.equalsIgnoreCase(Messages.AndroidLocalizationSchema_51)
+				|| value.equalsIgnoreCase(Messages.AndroidLocalizationSchema_52) || value
+				.equalsIgnoreCase(Messages.AndroidLocalizationSchema_53)));
 
 	}
 
 	private boolean isNavigationSegment(String value) {
-		return ((value.equalsIgnoreCase("dpad")
-				|| value.equalsIgnoreCase("trackball")
-				|| value.equalsIgnoreCase("wheel") || value
-				.equalsIgnoreCase("nonav")));
+		return ((value.equalsIgnoreCase(Messages.AndroidLocalizationSchema_54)
+				|| value.equalsIgnoreCase(Messages.AndroidLocalizationSchema_55)
+				|| value.equalsIgnoreCase(Messages.AndroidLocalizationSchema_56) || value
+				.equalsIgnoreCase(Messages.AndroidLocalizationSchema_57)));
 
 	}
 
 	private boolean isDimensionSegment(String value) {
 		boolean result = false;
-		if (value.contains("x")) {
-			String[] ints = value.split("x");
+		if (value.contains(Messages.AndroidLocalizationSchema_58)) {
+			String[] ints = value.split(Messages.AndroidLocalizationSchema_59);
 			if (ints.length == 2) {
 				result = true;
 			}
@@ -1543,7 +1543,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	private boolean isCountryCodeSegment(String value) {
-		return value.startsWith("mcc");
+		return value.startsWith(Messages.AndroidLocalizationSchema_60);
 
 	}
 

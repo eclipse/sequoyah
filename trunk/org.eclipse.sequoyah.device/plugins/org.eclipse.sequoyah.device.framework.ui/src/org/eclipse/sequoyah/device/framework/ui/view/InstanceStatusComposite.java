@@ -775,7 +775,7 @@ public class InstanceStatusComposite extends Composite
 					public void run()
 					{
 						IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						result[0] = MessageDialog.openQuestion(ww.getShell(), "Instance Removal", "Device Instance '" + instance.getName() + "' will be removed.\nAre you sure?");
+						result[0] = MessageDialog.openQuestion(ww.getShell(), Messages.InstanceStatusComposite_0, Messages.InstanceStatusComposite_1 + instance.getName() + Messages.InstanceStatusComposite_2);
 					}
 				});
 				

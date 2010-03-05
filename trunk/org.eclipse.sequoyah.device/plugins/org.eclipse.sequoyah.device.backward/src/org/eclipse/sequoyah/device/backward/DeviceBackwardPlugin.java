@@ -35,7 +35,7 @@ import org.osgi.framework.BundleContext;
 public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.sequoyah.device.backward";
+	public static final String PLUGIN_ID = Messages.DeviceBackwardPlugin_0;
 
 	// The shared instance
 	private static DeviceBackwardPlugin plugin;
@@ -145,7 +145,7 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 
 			}
 		} catch (Exception e) {
-			BasePlugin.logError("Could not get TmL devices backward status");
+			BasePlugin.logError(Messages.DeviceBackwardPlugin_1);
 		}
 
 		return result;
@@ -159,11 +159,11 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 		FileWriter deviceXmlFileWriter;
 		try {
 			deviceXmlFileWriter = new FileWriter(oldDeviceXmlFileInfo);
-			deviceXmlFileWriter.write(BACKWARD_MARK + "="
+			deviceXmlFileWriter.write(BACKWARD_MARK + "=" //$NON-NLS-1$
 					+ new Date().toString());
 			deviceXmlFileWriter.close();
 		} catch (IOException e) {
-			BasePlugin.logError("Could not set TmL devices backward status");
+			BasePlugin.logError(Messages.DeviceBackwardPlugin_3);
 		}
 
 	}
@@ -192,7 +192,7 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 				addBackwardStatus();
 
 			} catch (Exception e) {
-				BasePlugin.logError("Could not recover TmL devices");
+				BasePlugin.logError(Messages.DeviceBackwardPlugin_4);
 			}
 		}
 

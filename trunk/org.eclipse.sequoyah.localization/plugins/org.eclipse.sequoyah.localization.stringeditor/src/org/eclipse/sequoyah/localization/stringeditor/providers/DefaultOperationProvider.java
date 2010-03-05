@@ -56,7 +56,7 @@ public class DefaultOperationProvider implements IOperationProvider
         InputDialog dialog =
                 new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                         Messages.DefaultOperationProvider_NewColumnTitle,
-                        Messages.DefaultOperationProvider_NewColumnDescription, "NewColumn", //$NON-NLS-2$
+                        Messages.DefaultOperationProvider_NewColumnDescription, Messages.DefaultOperationProvider_0, //$NON-NLS-2$
                         new IInputValidator()
                         {
 
@@ -94,7 +94,7 @@ public class DefaultOperationProvider implements IOperationProvider
                 new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                         Messages.DefaultOperationProvider_NewRowTitle,
                         Messages.DefaultOperationProvider_NewRowDescription,
-                        "NewRow", new IInputValidator() { //$NON-NLS-2$
+                        Messages.DefaultOperationProvider_1, new IInputValidator() { //$NON-NLS-2$
 
                             public String isValid(String newText)
                             {

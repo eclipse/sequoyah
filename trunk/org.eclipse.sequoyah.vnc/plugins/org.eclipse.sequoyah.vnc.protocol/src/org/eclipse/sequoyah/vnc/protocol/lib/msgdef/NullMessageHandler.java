@@ -45,7 +45,7 @@ public final class NullMessageHandler implements IMessageHandler {
 			ProtocolMessage message)
 			throws MessageHandleException {
 
-	    BasePlugin.logDebugMessage("NullMessageHandler","The message was not handled, because its handler is null");
+	    BasePlugin.logDebugMessage(Messages.NullMessageHandler_0,Messages.NullMessageHandler_1);
 		return null;
 	}
 }

@@ -21,11 +21,49 @@ public class Messages extends NLS
     private static final String BUNDLE_NAME =
             "org.eclipse.sequoyah.localization.stringeditor.i18n.messages"; //$NON-NLS-1$
 
-    public static String StringEditorPart_TranslateCellActionName;
+    public static String StringEditorColumnLabelProvider_0;
+
+	public static String StringEditorPart_0;
+
+	public static String StringEditorPart_11;
+
+	public static String StringEditorPart_12;
+
+	public static String StringEditorPart_13;
+
+	public static String StringEditorPart_14;
+
+	public static String StringEditorPart_15;
+
+	public static String StringEditorPart_16;
+
+	public static String StringEditorPart_17;
+
+	public static String StringEditorPart_18;
+
+	public static String StringEditorPart_2;
+
+	public static String StringEditorPart_3;
+
+	public static String StringEditorPart_4;
+
+	public static String StringEditorPart_5;
+
+	public static String StringEditorPart_6;
+
+	public static String StringEditorPart_7;
+
+	public static String StringEditorPart_9;
+
+	public static String StringEditorPart_TranslateCellActionName;
 
     public static String TranslationProgress_Connecting;
 
-    public static String DefaultOperationProvider_NewColumnDescription;
+    public static String DefaultOperationProvider_0;
+
+	public static String DefaultOperationProvider_1;
+
+	public static String DefaultOperationProvider_NewColumnDescription;
 
     public static String DefaultOperationProvider_NewColumnErrorNotEmpty;
 

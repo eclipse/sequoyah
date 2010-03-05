@@ -66,7 +66,7 @@ public class VNCViewerView extends ViewPart {
 	
 	private static int zoomFactor = 1;
 
-	private static String[] currentConnection = {"", ""};
+	private static String[] currentConnection = {"", ""}; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static String currentHost;
 

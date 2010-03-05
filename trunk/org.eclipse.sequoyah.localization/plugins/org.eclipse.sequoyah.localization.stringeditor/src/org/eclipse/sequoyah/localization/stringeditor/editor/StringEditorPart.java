@@ -256,9 +256,9 @@ public class StringEditorPart extends EditorPart
             CellInfo oldCell = theRow.getCells().get(columnID);
             CellInfo newCell = null;
 
-            String EOL = System.getProperty("line.separator");
-            String oldValue = ((oldCell != null) ? oldCell.getValue() : "");
-            String newValue = ((String) value).replaceAll(EOL, "\n");
+            String EOL = System.getProperty(Messages.StringEditorPart_0);
+            String oldValue = ((oldCell != null) ? oldCell.getValue() : ""); //$NON-NLS-1$
+            String newValue = ((String) value).replaceAll(EOL, Messages.StringEditorPart_2);
             if (newValue.equals(oldValue))
             {
                 return;
@@ -470,7 +470,7 @@ public class StringEditorPart extends EditorPart
                                         }
 
                                         EditCellsOperation operation =
-                                                new EditCellsOperation("Translate cells", keys,
+                                                new EditCellsOperation(Messages.StringEditorPart_3, keys,
                                                         columns, oldValues, newValues,
                                                         StringEditorPart.this);
 
@@ -684,8 +684,8 @@ public class StringEditorPart extends EditorPart
             {
                 if (MessageDialog.openQuestion(StringEditorPart.this.getEditorSite().getShell(),
                         Messages.StringEditorPart_RemoveColumnActionName,
-                        Messages.StringEditorPart_RemoveColumnQuestionMessage + " \""
-                                + selectedColumn.getText() + "\"?"))
+                        Messages.StringEditorPart_RemoveColumnQuestionMessage + Messages.StringEditorPart_4
+                                + selectedColumn.getText() + Messages.StringEditorPart_5))
                 {
                     RemoveColumnOperation operation =
                             new RemoveColumnOperation(
@@ -1011,7 +1011,7 @@ public class StringEditorPart extends EditorPart
                                     16));
             okImage =
                     new Image(Display.getDefault(), StringEditorPlugin.imageDescriptorFromPlugin(
-                            StringEditorPlugin.PLUGIN_ID, "icons/obj16_ok.png").getImageData());
+                            StringEditorPlugin.PLUGIN_ID, Messages.StringEditorPart_6).getImageData());
 
         }
         catch (Exception e)
@@ -1127,11 +1127,11 @@ public class StringEditorPart extends EditorPart
         });
 
         Label search =
-                toolkit.createLabel(optionsComposite, Messages.StringEditorPart_SearchLabel + ": ");
+                toolkit.createLabel(optionsComposite, Messages.StringEditorPart_SearchLabel + Messages.StringEditorPart_7);
         layoutData = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
         search.setLayoutData(layoutData);
 
-        searchText = toolkit.createText(optionsComposite, "", SWT.BORDER);
+        searchText = toolkit.createText(optionsComposite, "", SWT.BORDER); //$NON-NLS-1$
         layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
         searchText.setLayoutData(layoutData);
         searchText.addModifyListener(new SearchTextModifyListener());
@@ -1157,11 +1157,11 @@ public class StringEditorPart extends EditorPart
 
         Label filter =
                 toolkit.createLabel(optionsComposite, Messages.StringEditorPart_FilterByKeyLabel
-                        + ": ");
+                        + Messages.StringEditorPart_9);
         layoutData = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
         filter.setLayoutData(layoutData);
 
-        filterByKeyText = toolkit.createText(optionsComposite, "", SWT.BORDER);
+        filterByKeyText = toolkit.createText(optionsComposite, "", SWT.BORDER); //$NON-NLS-1$
         layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
         filterByKeyText.setLayoutData(layoutData);
         filterByKeyText.addModifyListener(new FilterByKeyTextModifyListener());
@@ -1177,7 +1177,7 @@ public class StringEditorPart extends EditorPart
             }
         });
 
-        applyFilterButton = toolkit.createButton(optionsComposite, "Apply", SWT.PUSH);
+        applyFilterButton = toolkit.createButton(optionsComposite, Messages.StringEditorPart_11, SWT.PUSH);
         layoutData = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
         applyFilterButton.setLayoutData(layoutData);
         applyFilterButton.addSelectionListener(new SelectionAdapter()
@@ -1442,7 +1442,7 @@ public class StringEditorPart extends EditorPart
                 }
                 else
                 {
-                    Point size2 = event.gc.textExtent("A");
+                    Point size2 = event.gc.textExtent(Messages.StringEditorPart_12);
                     event.height = size2.y + TEXT_MARGIN;
                 }
             }
@@ -1984,12 +1984,12 @@ public class StringEditorPart extends EditorPart
     private String getChangedColumnNamesString()
     {
 
-        String result = "\n";
+        String result = Messages.StringEditorPart_13;
 
         int i = 1;
         for (String columnName : changedColumns)
         {
-            result += i++ + ") " + columnName + "\n";
+            result += i++ + Messages.StringEditorPart_14 + columnName + Messages.StringEditorPart_15;
         }
 
         return result;
@@ -2026,7 +2026,7 @@ public class StringEditorPart extends EditorPart
             }
             catch (SequoyahException e)
             {
-                BasePlugin.logError("Error adding column: " + info.getId(), e);
+                BasePlugin.logError(Messages.StringEditorPart_16 + info.getId(), e);
             }
         }
 
@@ -2175,7 +2175,7 @@ public class StringEditorPart extends EditorPart
         }
         catch (ExecutionException e)
         {
-            BasePlugin.logError("Error executing editor operation: " + operation.getLabel(), e);
+            BasePlugin.logError(Messages.StringEditorPart_17 + operation.getLabel(), e);
         }
     }
 
@@ -2190,7 +2190,7 @@ public class StringEditorPart extends EditorPart
                 for (IStatus child : status.getChildren())
                 {
                     builder.append(child.getMessage());
-                    builder.append("\n");
+                    builder.append(Messages.StringEditorPart_18);
                 }
             }
             else

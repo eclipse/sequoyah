@@ -97,7 +97,7 @@ public class InstanceEventManager extends EventManager
         
         addListenerObject(listener);
         if (startThread)
-            new Thread(eventNotifierLoop, "Instance Event Manager").start();    
+            new Thread(eventNotifierLoop, Messages.InstanceEventManager_0).start();    
     }
 
     public void removeInstanceListener(IInstanceListener listener)

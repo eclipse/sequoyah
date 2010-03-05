@@ -97,7 +97,7 @@ public class ProjectLocalizationManager {
 			syncDefaultColumn();
 
 		} catch (IOException e) {
-			BasePlugin.logError("Could not load the localization manager: "
+			BasePlugin.logError(Messages.ProjectLocalizationManager_0
 					+ e.getMessage());
 		}
 
@@ -204,7 +204,7 @@ public class ProjectLocalizationManager {
 		try {
 			projectLocalizationSchema.createFile(localizationFile);
 		} catch (SequoyahException e) {
-			BasePlugin.logInfo("Error while creating file");
+			BasePlugin.logInfo(Messages.ProjectLocalizationManager_1);
 		}
 
 		return true;
@@ -231,7 +231,7 @@ public class ProjectLocalizationManager {
 					try {
 						projectLocalizationSchema.updateFile(localizationFile);
 					} catch (SequoyahException e) {
-						BasePlugin.logInfo("Error while updating file");
+						BasePlugin.logInfo(Messages.ProjectLocalizationManager_2);
 					}
 				}
 				/*
@@ -260,7 +260,7 @@ public class ProjectLocalizationManager {
 					}
 
 				} catch (CoreException e) {
-					BasePlugin.logError("Could not delete file: "
+					BasePlugin.logError(Messages.ProjectLocalizationManager_3
 							+ e.getMessage());
 				}
 			}

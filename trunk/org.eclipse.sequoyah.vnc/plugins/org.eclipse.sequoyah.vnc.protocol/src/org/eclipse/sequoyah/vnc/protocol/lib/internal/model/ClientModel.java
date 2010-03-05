@@ -118,11 +118,11 @@ public class ClientModel {
 		int retries  = (retriesObj != null) ? retriesObj : -1;
 		
 		ProtocolHandle handle = new ProtocolHandle();
-		BasePlugin.logDebugMessage("ClientModel","Creating a protocol engine to handle the protocol connection. Generated handle: " + handle + ".");		
+		BasePlugin.logDebugMessage(Messages.ClientModel_0,Messages.ClientModel_1 + handle + ".");		 //$NON-NLS-3$
 		ProtocolEngine eng = new ProtocolEngine(handle, protocolInitializer, allMessages, incomingMessages,
 				outgoingMessages, exceptionHandler, isBigEndianProtocol, false, retries);
 		eng.requestStart(host, port, parameters);
-		BasePlugin.logDebugMessage("ClientModel","Registering the protocol engine at Client Model");
+		BasePlugin.logDebugMessage(Messages.ClientModel_3,Messages.ClientModel_4);
 		runningEngines.put(handle, eng);
 				
 		return handle;
@@ -143,7 +143,7 @@ public class ClientModel {
 						
 			cleanStoppedProtocols();
 			
-			BasePlugin.logDebugMessage("ClientModel","Unregistering the protocol engine from Client Model");
+			BasePlugin.logDebugMessage(Messages.ClientModel_5,Messages.ClientModel_6);
 			runningEngines.remove(handle);
 		}	
 	}
@@ -189,7 +189,7 @@ public class ClientModel {
 	 */
 	public void cleanStoppedProtocols() {
 
-	    BasePlugin.logDebugMessage("ClientModel","Removing all stopped protocol engines from Client Model.");
+	    BasePlugin.logDebugMessage(Messages.ClientModel_7,Messages.ClientModel_8);
 		Set<ProtocolHandle> keys = runningEngines.keySet();
 		for (ProtocolHandle key : keys) {
 			ProtocolEngine aEng = runningEngines.get(key);

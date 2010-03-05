@@ -54,7 +54,7 @@ public class EditCellOperation extends EditorOperation
     public EditCellOperation(String key, String column, CellInfo oldValue, CellInfo newValue,
             StringEditorPart editor)
     {
-        super("Edit Cell", editor);
+        super(Messages.EditCellOperation_0, editor);
         this.key = key;
         this.column = column;
         this.oldValue = oldValue;
@@ -103,7 +103,7 @@ public class EditCellOperation extends EditorOperation
         }
         catch (SequoyahException e)
         {
-            BasePlugin.logError("Error editing cell value: (" + column + ", " + key + ") = "
+            BasePlugin.logError(Messages.EditCellOperation_1 + column + Messages.EditCellOperation_2 + key + Messages.EditCellOperation_3
                     + newValue != null ? newValue.getValue() : null, e);
         }
         getEditor().fireDirtyPropertyChanged();
@@ -139,7 +139,7 @@ public class EditCellOperation extends EditorOperation
         }
         catch (SequoyahException e)
         {
-            BasePlugin.logError("Error undoing cell edition: (" + column + ", " + key + ") = "
+            BasePlugin.logError(Messages.EditCellOperation_4 + column + Messages.EditCellOperation_5 + key + Messages.EditCellOperation_6
                     + oldValue != null ? oldValue.getValue() : null, e);
         }
         getEditor().fireDirtyPropertyChanged();

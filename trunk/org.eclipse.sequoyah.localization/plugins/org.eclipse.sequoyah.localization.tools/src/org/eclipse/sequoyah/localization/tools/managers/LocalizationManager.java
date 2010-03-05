@@ -149,7 +149,7 @@ public class LocalizationManager
             }
             catch (CoreException e)
             {
-                BasePlugin.logError("Could not handle changes in localization file");
+                BasePlugin.logError(Messages.LocalizationManager_0);
             }
 
         }
@@ -264,7 +264,7 @@ public class LocalizationManager
         }
         catch (CoreException e)
         {
-            BasePlugin.logError(this.getClass().getName() + ": Error getting Localization Schema");
+            BasePlugin.logError(this.getClass().getName() + Messages.LocalizationManager_1);
         }
 
         return localizationSchemaForProject;
@@ -410,7 +410,7 @@ public class LocalizationManager
         }
         catch (IOException e)
         {
-            BasePlugin.logError("Could not compare localization file versions");
+            BasePlugin.logError(Messages.LocalizationManager_2);
         }
 
         return result;

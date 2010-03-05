@@ -476,7 +476,7 @@ public class NewRowInputDialog extends Dialog {
 		else {
 			// existing
 			if (this.existingArray.getSelection()) {
-				if (this.arraysCombo.getText().equals("")) {
+				if (this.arraysCombo.getText().equals("")) { //$NON-NLS-1$
 					result = false;
 				}
 				try {

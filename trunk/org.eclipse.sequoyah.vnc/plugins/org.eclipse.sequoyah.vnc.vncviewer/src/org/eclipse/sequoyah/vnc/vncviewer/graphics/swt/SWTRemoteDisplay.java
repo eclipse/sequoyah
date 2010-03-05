@@ -159,9 +159,9 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 						.getProperty(IVNCProperties.REFRESH_DELAY_PERIOD_MS))
 				.longValue();
 
-		log(SWTRemoteDisplay.class).info("Using screen parameters: retries=" + connectionRetries + 
-		        "; zoomFactor=" + zoomFactor + "; firstRefreshDelay(ms)=" + firstRefreshDelayMs + 
-		        "; refreshDelay(ms)=" + refreshDelayPeriodMs + "."); //$NON-NLS-1$
+		log(SWTRemoteDisplay.class).info(Messages.SWTRemoteDisplay_0 + connectionRetries + 
+		        Messages.SWTRemoteDisplay_1 + zoomFactor + Messages.SWTRemoteDisplay_2 + firstRefreshDelayMs + 
+		        "; refreshDelay(ms)=" + refreshDelayPeriodMs + "."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -347,7 +347,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 	}
 
 	synchronized public void stop() {
-	    log(SWTRemoteDisplay.class).info("Stopping SWT remote display.");
+	    log(SWTRemoteDisplay.class).info(Messages.SWTRemoteDisplay_4);
 		setRunning(false);
 
 		refreshTimer.cancel();
@@ -380,7 +380,7 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			}
 		});
 		
-		log(SWTRemoteDisplay.class).info("SWT remote display stopped.");
+		log(SWTRemoteDisplay.class).info(Messages.SWTRemoteDisplay_5);
 
 	}
 
@@ -446,8 +446,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 					.getMouseEventMessage(event);
 			
 
-			Integer x = (Integer) message.getFieldValue("x-position");
-			Integer y = (Integer) message.getFieldValue("y-position");
+			Integer x = (Integer) message.getFieldValue(Messages.SWTRemoteDisplay_6);
+			Integer y = (Integer) message.getFieldValue(Messages.SWTRemoteDisplay_7);
 
 			int mouseX = (int) ((double)x / zoomFactor);
 			int mouseY = (int) ((double)y / zoomFactor); 
@@ -475,8 +475,8 @@ public class SWTRemoteDisplay extends Composite implements IRemoteDisplay {
 			
 			}
 
-			message.setFieldValue("x-position", mouseX);
-			message.setFieldValue("y-position", mouseY);
+			message.setFieldValue(Messages.SWTRemoteDisplay_8, mouseX);
+			message.setFieldValue(Messages.SWTRemoteDisplay_9, mouseY);
 			
 			PluginProtocolActionDelegate.sendMessageToServer(handle, message);
 			//log(SWTRemoteDisplay.class).debug("Sent mouse event"); //$NON-NLS-1$

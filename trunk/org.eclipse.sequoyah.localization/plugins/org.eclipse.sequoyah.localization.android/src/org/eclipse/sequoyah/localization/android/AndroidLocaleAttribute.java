@@ -46,7 +46,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 
 	private int androidType;
 
-	private String stringValue = "";
+	private String stringValue = ""; //$NON-NLS-1$
 
 	protected boolean isSet = false;
 
@@ -57,7 +57,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param androidType
 	 */
 	public AndroidLocaleAttribute(Object value, int androidType) {
-		super("", LocaleAttribute.STRING_TYPE, 0, 0, null, "", "");
+		super("", LocaleAttribute.STRING_TYPE, 0, 0, null, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		this.androidType = androidType;
 		setAndroidValue(value);
 		isSet = false;
@@ -70,7 +70,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param qualifier
 	 */
 	public AndroidLocaleAttribute(String qualifier, int type) {
-		super("", LocaleAttribute.STRING_TYPE, 0, 0, null, "", "");
+		super("", LocaleAttribute.STRING_TYPE, 0, 0, null, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		androidType = type;
 		Object value = getValueAndTypeFromQualifier(qualifier);
@@ -94,7 +94,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @return
 	 */
 	private String getCountryCodeFolder(String value) {
-		return "mcc" + value;
+		return Messages.AndroidLocaleAttribute_7 + value;
 	}
 
 	/***
@@ -114,7 +114,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @return
 	 */
 	private String getNetworkCodeFolder(String value) {
-		return "mnc" + value;
+		return Messages.AndroidLocaleAttribute_8 + value;
 	}
 
 	/***
@@ -124,7 +124,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @return
 	 */
 	private String getPixelFolder(String value) {
-		return value + "dpi";
+		return value + Messages.AndroidLocaleAttribute_9;
 	}
 
 	/***
@@ -134,7 +134,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @return
 	 */
 	private String getRegionCodeFolder(String value) {
-		return "r" + value.toUpperCase();
+		return Messages.AndroidLocaleAttribute_10 + value.toUpperCase();
 	}
 
 	/***
@@ -181,7 +181,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 			break;
 
 		case INDEX_PIXEL_DENSITY:
-			int index = strValue.indexOf("dpi");
+			int index = strValue.indexOf(Messages.AndroidLocaleAttribute_11);
 			result = strValue.substring(0, index);
 			break;
 
@@ -205,7 +205,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 			break;
 
 		case INDEX_SCREEN_DIMENSION:
-			String[] numbers = strValue.split("x");
+			String[] numbers = strValue.split(Messages.AndroidLocaleAttribute_12);
 			int x = Integer.parseInt(numbers[0]);
 			int y = Integer.parseInt(numbers[1]);
 			result = new Dimension(x, y);
@@ -308,7 +308,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setCountryCodeNode(Object value) {
-		displayName = "Country Code";
+		displayName = Messages.AndroidLocaleAttribute_13;
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 3;
 		maximumSize = 3;
@@ -327,14 +327,14 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		if (!(value instanceof Dimension)) {
 			throw new IllegalArgumentException(Messages.Invalid_Andr_Value);
 		}
-		displayName = "Screen Dimension";
+		displayName = Messages.AndroidLocaleAttribute_14;
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 0;
 		maximumSize = 0;
 		allowedValues = null;
 		double y = ((Dimension) value).getWidth();
 		double x = ((Dimension) value).getHeight();
-		displayValue = (int) x + "x" + (int) y;
+		displayValue = (int) x + Messages.AndroidLocaleAttribute_15 + (int) y;
 		folderValue = displayValue;
 	}
 
@@ -379,7 +379,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setKeyboardNode(Object value) {
-		displayName = "Keyboard State";
+		displayName = Messages.AndroidLocaleAttribute_16;
 		type = LocaleAttribute.FIXED_TEXT_TYPE;
 		fixedSize = 0;
 		maximumSize = 0;
@@ -394,7 +394,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setLanguageNode(Object value) {
-		displayName = "Language";
+		displayName = Messages.AndroidLocaleAttribute_17;
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 2;
 		maximumSize = 2;
@@ -410,7 +410,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setNavigationNode(Object value) {
-		displayName = "Navigation Method";
+		displayName = Messages.AndroidLocaleAttribute_18;
 		type = LocaleAttribute.FIXED_TEXT_TYPE;
 		fixedSize = 0;
 		allowedValues = new HashMap<String, String>();
@@ -424,7 +424,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setNetworkCodeNode(Object value) {
-		displayName = "Network Code";
+		displayName = Messages.AndroidLocaleAttribute_19;
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 0;
 		maximumSize = 3;
@@ -440,7 +440,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setOrientationNode(Object value) {
-		displayName = "Screen Orientation";
+		displayName = Messages.AndroidLocaleAttribute_20;
 		type = LocaleAttribute.FIXED_TEXT_TYPE;
 		fixedSize = 0;
 		maximumSize = 0;
@@ -455,7 +455,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setPixelNode(Object value) {
-		displayName = "Pixel Density";
+		displayName = Messages.AndroidLocaleAttribute_21;
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 0;
 		maximumSize = 0;
@@ -471,7 +471,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setRegionNode(Object value) {
-		displayName = "Region";
+		displayName = Messages.AndroidLocaleAttribute_22;
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 2;
 		maximumSize = 2;
@@ -530,7 +530,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setTextInputNode(Object value) {
-		displayName = "Text Input Method";
+		displayName = Messages.AndroidLocaleAttribute_23;
 		type = LocaleAttribute.FIXED_TEXT_TYPE;
 		fixedSize = 0;
 		setValuesBasedOnDisplayValue((String) value);
@@ -543,7 +543,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setTouchNode(Object value) {
-		displayName = "Touch Screen Type";
+		displayName = Messages.AndroidLocaleAttribute_24;
 		type = LocaleAttribute.FIXED_TEXT_TYPE;
 		fixedSize = 0;
 		maximumSize = 0;

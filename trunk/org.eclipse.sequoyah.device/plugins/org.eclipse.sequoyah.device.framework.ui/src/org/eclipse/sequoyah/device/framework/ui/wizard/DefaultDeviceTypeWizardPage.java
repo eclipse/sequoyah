@@ -55,7 +55,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 
 	private static final String PROPERTY_ICON = "icon"; //$NON-NLS-1$
 
-	private String instanceName = "";
+	private String instanceName = DeviceUIResources.DefaultDeviceTypeWizardPage_0;
 	private MobileDeviceType currentDeviceType;
 	private TreeViewer deviceTypesTreeViewer;
 
@@ -174,7 +174,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 				String name = nameText.getText();
 				String errorMessage = null;
 
-				instanceName = "";
+				instanceName = DeviceUIResources.DefaultDeviceTypeWizardPage_1;
 				
 				if (name != null) {
 					//name = name.trim();

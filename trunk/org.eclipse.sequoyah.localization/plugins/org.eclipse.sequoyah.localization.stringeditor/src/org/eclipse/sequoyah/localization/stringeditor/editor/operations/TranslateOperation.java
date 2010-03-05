@@ -32,7 +32,7 @@ public class TranslateOperation extends EditorOperation {
 
 	public TranslateOperation(StringEditorPart editor, String sourceColumnID,
 			ColumnInfo newColumnInfo) {
-		super("Clone", editor);
+		super(Messages.TranslateOperation_0, editor);
 		this.sourceColumnID = sourceColumnID;
 		this.destinationColumn = newColumnInfo;
 	}

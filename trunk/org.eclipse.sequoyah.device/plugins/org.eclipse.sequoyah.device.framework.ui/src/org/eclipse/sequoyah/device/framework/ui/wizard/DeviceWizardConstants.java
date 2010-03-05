@@ -31,7 +31,7 @@ public interface DeviceWizardConstants {
 	 * Extension ID for New Wizard of Emulator Instances
 	 */
 	//public static final String EXTENSION_INSTANCE_ID = "org.eclipse.sequoyah.device.framework.ui.wizard"; //$NON-NLS-1$
-	public static final String EXTENSION_INSTANCE_ID = "org.eclipse.sequoyah.device.framework.ui.newDeviceWizardPages";
+	public static final String EXTENSION_INSTANCE_ID = Messages.DeviceWizardConstants_0;
 
 	public static final String PROPERTIES_FILENAME = "instance.properties"; //$NON-NLS-1$
 	public static final String PROPERTIES_FILENAME_FULL = "/org/eclipse/sequoyah/device/wizard/resources/instance.properties"; //$NON-NLS-1$

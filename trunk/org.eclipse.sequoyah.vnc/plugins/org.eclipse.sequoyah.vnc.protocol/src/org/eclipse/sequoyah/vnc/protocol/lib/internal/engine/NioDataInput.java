@@ -269,7 +269,7 @@ public class NioDataInput implements DataInput
     public String readUTF() throws IOException
     {
         // TODO
-        return "";
+        return Messages.NioDataInput_0;
     }
 
     /*
@@ -389,9 +389,9 @@ public class NioDataInput implements DataInput
                 if ((timeoutEnabled)&&
                         (System.currentTimeMillis() > lastCheckpoint + IN_STREAM_TIMEOUT_MS)) {
                     
-                    BasePlugin.logError("No data arrived through the input stream channel for " + IN_STREAM_TIMEOUT_MS +" milliseconds. Timeout expired.");
+                    BasePlugin.logError(Messages.NioDataInput_1 + IN_STREAM_TIMEOUT_MS +Messages.NioDataInput_2);
                     buffer.flip();
-                    throw new EOFException("Timeout on communication detected!");
+                    throw new EOFException(Messages.NioDataInput_3);
                 }
                 
                 try {

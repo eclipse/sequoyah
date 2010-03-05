@@ -72,7 +72,7 @@ public class InstanceServicesComposite extends Composite {
 	private static final int DEFAULT_BUTTONS_HEIGHT = 30;
 	private static final int MAX_BUTTON_STRING_SIZE = DEFAULT_BUTTONS_WIDTH / 10;
 	private static final int DEFAULT_BUTTON_IMAGE_SIZE = 16;
-	public static final String AVAILABILITY_TOOL_TIP_TEXT = "Filter operations by availability";
+	public static final String AVAILABILITY_TOOL_TIP_TEXT = Messages.InstanceServicesComposite_0;
 	
 	private CLabel label;
 	private ToolBar toolBar;

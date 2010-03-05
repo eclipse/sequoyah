@@ -79,7 +79,7 @@ public class ProtocolActionDelegate {
 			String host, int port,
 			Map<String, Object> parameters) {
 
-	    BasePlugin.logDebugMessage("ProtocolActionDelegate","An user is requesting to start a client protocol. host=" + host + "; port=" + port + ".");
+	    BasePlugin.logDebugMessage(Messages.ProtocolActionDelegate_0,Messages.ProtocolActionDelegate_1 + host + Messages.ProtocolActionDelegate_2 + port + "."); //$NON-NLS-4$
 		ClientModel model = ClientModel.getInstance();
 		return model.requestStartProtocol(allMessages, incomingMessages,
 				outgoingMessages, protocolInitializer, exceptionHandler, isBigEndianProtocol, host, port, parameters);
@@ -118,7 +118,7 @@ public class ProtocolActionDelegate {
 			IProtocolExceptionHandler exceptionHandler,
 			boolean isBigEndianProtocol) {
 
-	    BasePlugin.logDebugMessage("ProtocolActionDelegate","An user is requesting to start a server protocol at port " + portToBind + ".");
+	    BasePlugin.logDebugMessage(Messages.ProtocolActionDelegate_4,Messages.ProtocolActionDelegate_5 + portToBind + "."); //$NON-NLS-3$
 		ServerModel model = ServerModel.getInstance();
 		return model.startListeningToPort(portToBind, allMessages, incomingMessages,
 				outgoingMessages, protocolInitializer, exceptionHandler,
@@ -135,7 +135,7 @@ public class ProtocolActionDelegate {
 	 */
 	public static void requestStopProtocol(ProtocolHandle handle) {
 	    
-	    BasePlugin.logDebugMessage("ProtocolActionDelegate","A user is requesting to stop the protocol identified by " + handle);
+	    BasePlugin.logDebugMessage(Messages.ProtocolActionDelegate_7,Messages.ProtocolActionDelegate_8 + handle);
 		ClientModel clientModel = ClientModel.getInstance();
 		clientModel.requestStopProtocol(handle);
 
@@ -153,7 +153,7 @@ public class ProtocolActionDelegate {
 	 */
 	public static void requestRestartProtocol(ProtocolHandle handle) {
 
-	    BasePlugin.logDebugMessage("ProtocolActionDelegate","An user is requesting to restart the protocol identified by " + handle);
+	    BasePlugin.logDebugMessage(Messages.ProtocolActionDelegate_9,Messages.ProtocolActionDelegate_10 + handle);
 	    
 		ClientModel clientModel = ClientModel.getInstance();
 		clientModel.requestRestartProtocol(handle);

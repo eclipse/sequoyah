@@ -101,7 +101,7 @@ public class StringArray {
 			StringNode[] stringNodes = new StringNode[lastIndex + 1];
 
 			for (int i = 0; i <= lastIndex; i++) {
-				stringNodes[i] = new StringNode("", "");
+				stringNodes[i] = new StringNode("", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			for (Map.Entry<Integer, StringNode> entry : this.values.entrySet()) {
@@ -143,13 +143,13 @@ public class StringArray {
 				// Generate new key
 				StringNode lastNode = this.values.get(this.values.size() - 1);
 				lastNumber = Integer
-						.parseInt(((lastNode.getKey().split("_")[1])));
+						.parseInt(((lastNode.getKey().split(Messages.StringArray_2)[1])));
 			}
 			position = lastNumber + 1;
 		}
 
-		DecimalFormat formatter = new DecimalFormat("000");
-		String virtualKey = this.key + "_"
+		DecimalFormat formatter = new DecimalFormat(Messages.StringArray_3);
+		String virtualKey = this.key + Messages.StringArray_4
 				+ formatter.format(position.intValue());
 
 		newNode = new StringNode(virtualKey, value);
@@ -236,14 +236,14 @@ public class StringArray {
 		boolean result = true;
 
 		try {
-			int separatorIndex = key.lastIndexOf("_");
+			int separatorIndex = key.lastIndexOf(Messages.StringArray_5);
 			String arrayKey = key.substring(0, separatorIndex);
 			String itemPosition = key.substring(separatorIndex + 1, key
 					.length());
-			if ((arrayKey == null) || (arrayKey.equals(""))) {
+			if ((arrayKey == null) || (arrayKey.equals(""))) { //$NON-NLS-1$
 				result = false;
 			}
-			if ((itemPosition == null) || (itemPosition.equals(""))
+			if ((itemPosition == null) || (itemPosition.equals("")) //$NON-NLS-1$
 					|| (itemPosition.length() != 3)) {
 				result = false;
 			}
@@ -266,7 +266,7 @@ public class StringArray {
 		int position = -1;
 
 		try {
-			int separatorIndex = key.lastIndexOf("_");
+			int separatorIndex = key.lastIndexOf(Messages.StringArray_8);
 			position = Integer.parseInt(key.substring(separatorIndex + 1, key
 					.length()));
 		} catch (Exception e) {
@@ -287,7 +287,7 @@ public class StringArray {
 		String result = null;
 
 		try {
-			int separatorIndex = key.lastIndexOf("_");
+			int separatorIndex = key.lastIndexOf(Messages.StringArray_9);
 			result = key.substring(0, separatorIndex);
 		} catch (Exception e) {
 			// do nothing

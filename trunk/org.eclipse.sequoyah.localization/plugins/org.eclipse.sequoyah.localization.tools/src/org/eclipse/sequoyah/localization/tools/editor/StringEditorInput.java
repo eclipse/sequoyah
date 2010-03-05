@@ -301,8 +301,8 @@ public class StringEditorInput extends IStringEditorInput {
 
 		} else {
 			monitor.setCanceled(true);
-			BasePlugin.logError("Error translating from file '" + srcColumnID
-					+ ". File does not exist.");
+			BasePlugin.logError(Messages.StringEditorInput_0 + srcColumnID
+					+ Messages.StringEditorInput_1);
 		}
 
 		return result;
@@ -418,7 +418,7 @@ public class StringEditorInput extends IStringEditorInput {
 			i++;
 			target.addStringNode(newNode);
 			destColumnInfo.addCell(newNode.getKey(), new CellInfo(newNode
-					.getValue(), ""));			
+					.getValue(), ""));			 //$NON-NLS-1$
 		}
 
 		monitor.done();
@@ -631,7 +631,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * @see org.eclipse.ui.IEditorInput#getName()
 	 */
 	public String getName() {
-		String name = "";
+		String name = ""; //$NON-NLS-1$
 		// Human readable name for this editor (for instance,
 		// usually it is the file being edited). For now I'll just
 		// return the same text as the tooltip
@@ -776,7 +776,7 @@ public class StringEditorInput extends IStringEditorInput {
 		if (schema.getDefaultID() != null
 				&& schema.getDefaultID().equals(columnID)) {
 			try {
-				setValue(columnID, key, "");
+				setValue(columnID, key, ""); //$NON-NLS-1$
 			} catch (SequoyahException e) {
 				// do nothing
 			}
@@ -826,7 +826,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 */
 	public IStatus validate() {
 		IStatus result = new Status(Status.OK,
-				LocalizationToolsPlugin.PLUGIN_ID, "");
+				LocalizationToolsPlugin.PLUGIN_ID, ""); //$NON-NLS-1$
 		;
 		// The project is considered as in a warning state if there is no
 		// default localization file

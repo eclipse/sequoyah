@@ -36,16 +36,16 @@ public class TranslatorProvider {
 	/*
 	 * The "localizationSchema" extension point ID
 	 */
-	private final String EXTENSION_ID = "org.eclipse.sequoyah.localization.tools.translator";
+	private final String EXTENSION_ID = Messages.TranslatorProvider_0;
 
 	/*
 	 * Fields in "translator" extension point definition
 	 */
-	private final String EXTENSION_FIELD_NAME = "name";
+	private final String EXTENSION_FIELD_NAME = Messages.TranslatorProvider_1;
 
-	private final String EXTENSION_FIELD_CLASS = "class";
+	private final String EXTENSION_FIELD_CLASS = Messages.TranslatorProvider_2;
 
-	private final String EXTENSION_FIELD_BRANDING_IMG = "brandingImage";
+	private final String EXTENSION_FIELD_BRANDING_IMG = Messages.TranslatorProvider_3;
 
 	/*
 	 * Singleton instance
@@ -101,7 +101,7 @@ public class TranslatorProvider {
 					String brandingImgPath = configElem
 							.getAttribute(EXTENSION_FIELD_BRANDING_IMG);
 					if ((brandingImgPath != null)
-							&& (!brandingImgPath.equals(""))) {
+							&& (!brandingImgPath.equals(""))) { //$NON-NLS-1$
 						String contributor = configElem.getContributor()
 								.getName();
 						Image brandingImg = new Image(Display.getDefault(),
@@ -116,7 +116,7 @@ public class TranslatorProvider {
 
 				} catch (Exception e) {
 					BasePlugin
-							.logError("Error while trying to get translators: "
+							.logError(Messages.TranslatorProvider_5
 									+ e.getMessage());
 				}
 			}

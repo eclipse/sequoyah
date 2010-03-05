@@ -28,19 +28,19 @@ public class TranslationInfo extends ColumnInfo {
 
 	private int type;
 
-	private String toLang = "";
+	private String toLang = ""; //$NON-NLS-1$
 
-	private String toColumn = "";
+	private String toColumn = ""; //$NON-NLS-1$
 
-	private String fromLang = "";
+	private String fromLang = ""; //$NON-NLS-1$
 
 	private String fromWord = null;
 
-	private String fromKey = "";
+	private String fromKey = ""; //$NON-NLS-1$
 
-	private String translator = "";
+	private String translator = ""; //$NON-NLS-1$
 
-	private String toWord = "";
+	private String toWord = ""; //$NON-NLS-1$
 
 	/**
 	 * The constructor

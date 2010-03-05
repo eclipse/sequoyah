@@ -22,11 +22,11 @@ public class LocalizationToolsPlugin extends AbstractUIPlugin
 {
 
     // The plug-in ID
-    public static final String PLUGIN_ID = "org.eclipse.sequoyah.localization.tools";
+    public static final String PLUGIN_ID = Messages.LocalizationToolsPlugin_0;
 
     // The plug-in ID
     public static final String EDITOR_ID =
-            "org.eclipse.sequoyah.localization.tools.extensions.implementation.android.localizationEditor";
+            Messages.LocalizationToolsPlugin_1;
 
     // The shared instance
     private static LocalizationToolsPlugin plugin;

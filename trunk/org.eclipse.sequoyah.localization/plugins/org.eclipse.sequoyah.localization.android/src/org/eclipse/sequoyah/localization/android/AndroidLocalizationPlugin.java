@@ -22,7 +22,7 @@ public class AndroidLocalizationPlugin extends AbstractUIPlugin
 {
 
     // The plug-in ID
-    public static final String PLUGIN_ID = "org.eclipse.sequoyah.localization.android";
+    public static final String PLUGIN_ID = Messages.AndroidLocalizationPlugin_0;
 
     // The shared instance
     private static AndroidLocalizationPlugin plugin;

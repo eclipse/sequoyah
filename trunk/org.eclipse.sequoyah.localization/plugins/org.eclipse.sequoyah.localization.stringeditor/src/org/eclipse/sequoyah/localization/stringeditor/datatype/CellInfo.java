@@ -87,7 +87,7 @@ public class CellInfo {
 	 */
 	@Override
 	public String toString() {
-		return getValue() != null ? getValue() : "";
+		return getValue() != null ? getValue() : ""; //$NON-NLS-1$
 	}
 
 	/*

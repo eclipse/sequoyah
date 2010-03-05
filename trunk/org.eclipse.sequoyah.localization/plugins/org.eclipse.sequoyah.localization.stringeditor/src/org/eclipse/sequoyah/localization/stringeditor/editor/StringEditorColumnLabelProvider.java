@@ -76,7 +76,7 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 				StringBuilder builder = new StringBuilder();
 				for (IStatus child : row.getStatus().getChildren()) {
 					builder.append(child.getMessage());
-					builder.append("\n");
+					builder.append(Messages.StringEditorColumnLabelProvider_0);
 				}
 				comment = builder.toString();
 			}
@@ -85,7 +85,7 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 			CellInfo cell = row.getCells().get(column);
 			if (cell != null && cell.getValue() != null
 					&& cell.getValue().trim().length() > 0) {
-				comment = cell.getComment() != null ? cell.getComment() : "";
+				comment = cell.getComment() != null ? cell.getComment() : ""; //$NON-NLS-1$
 			}
 		}
 		return comment;

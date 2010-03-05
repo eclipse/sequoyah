@@ -131,20 +131,20 @@ public class ServerModel {
 		if ((portToBind <= 0) || (allMessages == null)
 				|| (incomingMessages == null) || (outgoingMessages == null)) {
 		    
-		    BasePlugin.logError("Invalid parameters provided to method");
+		    BasePlugin.logError(Messages.ServerModel_0);
 		    if (exceptionHandler != null) {
 		        exceptionHandler.handleProtocolHandshakeException(handle,     
 		                new ProtocolHandshakeException("Invalid parameters provided to method")); //$NON-NLS-1$)
 		    }
 		}
 
-		BasePlugin.logDebugMessage("ServerModel","Creating a server socket channel to listen to connections at port " + 
-		        portToBind + ". Generated handle: " + handle + ".");        
+		BasePlugin.logDebugMessage(Messages.ServerModel_1,Messages.ServerModel_2 + 
+		        portToBind + Messages.ServerModel_3 + handle + ".");         //$NON-NLS-2$
 		try
         {
             ServerSocketChannel channel = ServerSocketChannel.open();
             channel.socket().bind(new InetSocketAddress(portToBind));
-            BasePlugin.logDebugMessage("ServerModel","Registering needed objects at Server Model");
+            BasePlugin.logDebugMessage(Messages.ServerModel_5,Messages.ServerModel_6);
             ServerProtocolEngineFactory factory = new ServerProtocolEngineFactory(
             		handle, protocolInitializer, allMessages, incomingMessages, outgoingMessages,
             		exceptionHandler, isBigEndianProtocol);
@@ -157,7 +157,7 @@ public class ServerModel {
         }
         catch (IOException e)
         {
-            BasePlugin.logError("Error opening server socket. Cause: " + e.getMessage());
+            BasePlugin.logError(Messages.ServerModel_7 + e.getMessage());
             if (exceptionHandler != null) {
                 exceptionHandler.handleIOException(handle, e);                        
             }
@@ -180,11 +180,11 @@ public class ServerModel {
 	    ServerSocketChannel channel = openedSocketChannels.get(handle);
 	    if (channel != null) {
 	        
-	        BasePlugin.logDebugMessage("ServerModel","Closing server socket channel related to provided handle.");
+	        BasePlugin.logDebugMessage(Messages.ServerModel_8,Messages.ServerModel_9);
 	        try {
                 channel.close();
             } catch (IOException e) {
-                BasePlugin.logError("Error closing server socket. Cause: " + e.getMessage());
+                BasePlugin.logError(Messages.ServerModel_10 + e.getMessage());
                 ServerProtocolEngineFactory factory = engineFactories.get(handle);
                 if (factory != null) {
                     IProtocolExceptionHandler excHandler = factory.getExceptionHandler();
@@ -194,7 +194,7 @@ public class ServerModel {
                 }
             }
 
-	        BasePlugin.logDebugMessage("ServerModel","Unregistering all objects related to provided handle from Server Model");
+	        BasePlugin.logDebugMessage(Messages.ServerModel_11,Messages.ServerModel_12);
 	        Collection<ProtocolEngine> aImplCollection = connectedClients.get(handle);
 	        for (ProtocolEngine aImpl : aImplCollection) {
 	            aImpl.dispose();        
@@ -237,7 +237,7 @@ public class ServerModel {
 	 */
 	public void cleanStoppedProtocols() {
 
-	    BasePlugin.logDebugMessage("ServerModel","Removing all stopped protocol engines from Server Model.");
+	    BasePlugin.logDebugMessage(Messages.ServerModel_13,Messages.ServerModel_14);
 		Set<ProtocolHandle> keys = connectedClients.keySet();
 		for (ProtocolHandle key : keys) {
 			Collection<ProtocolEngine> aImplCollection = connectedClients
@@ -313,7 +313,7 @@ public class ServerModel {
 		 */
 		public ServerDeamon(ProtocolHandle handle, ServerSocketChannel channel,
 				ServerProtocolEngineFactory factory) {
-		    BasePlugin.logDebugMessage("ServerDeamon","Creating a server deamon to listen to connections to port " + 
+		    BasePlugin.logDebugMessage(Messages.ServerModel_15,Messages.ServerModel_16 + 
 		            channel.socket().getLocalPort());
 		    this.handle = handle;
 			this.channel = channel;
@@ -326,13 +326,13 @@ public class ServerModel {
 		 * @see Runnable#run()
 		 */
 		public void run() {
-		    BasePlugin.logDebugMessage("ServerDeamon","Starting the server deamon.");
+		    BasePlugin.logDebugMessage(Messages.ServerModel_17,Messages.ServerModel_18);
 		    try {
 				if ((channel != null) && (factory != null)) {				    
 					while (true) {
 						final SocketChannel sc;
 						try {
-						    BasePlugin.logDebugMessage("ServerDeamon","Listening to incoming connections.");
+						    BasePlugin.logDebugMessage(Messages.ServerModel_19,Messages.ServerModel_20);
 							sc = channel.accept();
 						} catch (IOException e) {
 							// stopListeningToPort closes the server socket and
@@ -343,12 +343,12 @@ public class ServerModel {
 							break;
 						}
 
-						BasePlugin.logInfo("A client has connected to port " + channel.socket().getLocalPort());
-						BasePlugin.logDebugMessage("ServerDeamon","Creating a protocol engine to handle the protocol connection.");
+						BasePlugin.logInfo(Messages.ServerModel_21 + channel.socket().getLocalPort());
+						BasePlugin.logDebugMessage(Messages.ServerModel_22,Messages.ServerModel_23);
 						final ProtocolEngine eng = factory.getServerProtocolEngine();
 						eng.requestStart(sc, null);
 
-						BasePlugin.logDebugMessage("ServerDeamon","Registering the protocol engine at Server Model");
+						BasePlugin.logDebugMessage(Messages.ServerModel_24,Messages.ServerModel_25);
 						Collection<ProtocolEngine> allClients = connectedClients
 								.get(handle);
 						if (allClients == null) {
@@ -360,7 +360,7 @@ public class ServerModel {
 					}					
 				}
 			} finally {
-			    BasePlugin.logDebugMessage("ServerDeamon","Stopping the server deamon.");
+			    BasePlugin.logDebugMessage(Messages.ServerModel_26,Messages.ServerModel_27);
 				try {
 					// Perform the cleanup before finishing the thread
 					// execution. This includes stopping all connections
@@ -370,7 +370,7 @@ public class ServerModel {
 						channel.close();
 					}
 
-					BasePlugin.logDebugMessage("ServerDeamon","Unregistering all objects related to provided handle from Server Model");
+					BasePlugin.logDebugMessage(Messages.ServerModel_28,Messages.ServerModel_29);
 					Collection<ProtocolEngine> allClients = connectedClients.get(handle);
 					for (ProtocolEngine aClient : allClients) {
 						aClient.requestStop();
@@ -382,7 +382,7 @@ public class ServerModel {
 					engineFactories.remove(handle);
 					connectedClients.remove(handle);
 
-					BasePlugin.logInfo("Server deamon stopped.");
+					BasePlugin.logInfo(Messages.ServerModel_30);
 				} catch (IOException e) {
 					IProtocolExceptionHandler exceptionHandler = factory
 							.getExceptionHandler();

@@ -62,7 +62,7 @@ public class TranslatorManager {
 		this.preferencesManager = PreferencesManager.getInstance();
 		this.translators = this.translatorProvider.getTranslators();
 		this.preferencesManager.setDefaultTranslator(this.translators
-				.get("Google Translator"));
+				.get(Messages.TranslatorManager_0));
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class TranslatorManager {
 			translationResults = translator.translate(string, fromLanguage,
 					toLanguage);
 		} catch (Exception e) {
-			BasePlugin.logError("Errow while using translator");
+			BasePlugin.logError(Messages.TranslatorManager_1);
 		}
 
 		return translationResults;
@@ -115,7 +115,7 @@ public class TranslatorManager {
 			translationResults = translator.translateAll(strings, fromLanguage,
 					toLanguage, null);
 		} catch (Exception e) {
-			BasePlugin.logError("Errow while using translator");
+			BasePlugin.logError(Messages.TranslatorManager_2);
 		}
 
 		return translationResults;

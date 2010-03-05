@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
 public class StringEditorPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.sequoyah.localization.stringeditor";
+	public static final String PLUGIN_ID = Messages.StringEditorPlugin_0;
 
 	// The shared instance
 	private static StringEditorPlugin plugin;

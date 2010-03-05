@@ -42,6 +42,10 @@ public class DeviceUIResources extends NLS {
 	public static String SEQUOYAH_Default_Device_Type_Wizard_Page_message;
 	public static String SEQUOYAH_Default_Device_Type_Wizard_Page_name;
 	public static String SEQUOYAH_Default_Device_Type_Wizard_Page_deviceTypes;
+	public static String DefaultDeviceTypeWizardPage_0;
+
+	public static String DefaultDeviceTypeWizardPage_1;
+
 	public static String DefaultDeviceTypeWizardPage_title;
 	public static String DefaultDeviceTypeWizardPage_message;
 	public static String DefaultDeviceTypeWizardPage_name;

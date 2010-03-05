@@ -53,8 +53,8 @@ public class InstanceMgtView extends ViewPart
 	private boolean useDropDown;
 	private String viewLayout;
 	
-	private static final String LAYOUT_HORIZONTAL = "horizontal";
-	private static final String LAYOUT_VERTICAL = "vertical";
+	private static final String LAYOUT_HORIZONTAL = "horizontal"; //$NON-NLS-1$
+	private static final String LAYOUT_VERTICAL = "vertical"; //$NON-NLS-1$
 
 	
     public InstanceMgtView()
@@ -88,12 +88,12 @@ public class InstanceMgtView extends ViewPart
     {
 
     	IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-    	.getExtensionPoint("org.eclipse.sequoyah.device.framework.ui.deviceManagerView");
+    	.getExtensionPoint(Messages.InstanceMgtView_2);
     	IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
     	for(IConfigurationElement configElement : configurationElements) {
-    		String attribute = configElement.getAttribute("useDropDown");
+    		String attribute = configElement.getAttribute(Messages.InstanceMgtView_3);
     		useDropDown = Boolean.parseBoolean(attribute);
-    		viewLayout = configElement.getAttribute("viewLayout");
+    		viewLayout = configElement.getAttribute(Messages.InstanceMgtView_4);
     	}
     	
     	if(LAYOUT_VERTICAL.equals(viewLayout)) {

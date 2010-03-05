@@ -30,7 +30,7 @@ public class VNCProtocol38 extends VNCProtocol {
 	/**
 	 * Constant that represents the RFB protocol version.
 	 */
-	static final String RFB_VERSION = "RFB 003.008\n"; /* //$NON-NLS-1$ //$NON-NLS-1$
+	static final String RFB_VERSION = Messages.VNCProtocol38_0; /* //$NON-NLS-1$ //$NON-NLS-1$
 	 * used to compare the
 	 * implemented version
 	 * with the server

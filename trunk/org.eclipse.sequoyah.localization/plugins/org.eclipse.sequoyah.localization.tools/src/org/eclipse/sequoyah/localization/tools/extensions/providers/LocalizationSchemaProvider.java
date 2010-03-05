@@ -42,18 +42,18 @@ public class LocalizationSchemaProvider {
 	/*
 	 * The "localizationSchema" extension point ID
 	 */
-	private final String EXTENSION_ID = "org.eclipse.sequoyah.localization.tools.localizationSchema";
+	private final String EXTENSION_ID = Messages.LocalizationSchemaProvider_0;
 
 	/*
 	 * Fields in "localizationSchema" extension point definition
 	 */
-	private final String EXTENSION_FIELD_NAME = "name";
+	private final String EXTENSION_FIELD_NAME = Messages.LocalizationSchemaProvider_1;
 
-	private final String EXTENSION_FIELD_NATURE = "nature";
+	private final String EXTENSION_FIELD_NATURE = Messages.LocalizationSchemaProvider_2;
 
-	private final String EXTENSION_FIELD_NATURE_PRECEDENCE = "naturePrecedence";
+	private final String EXTENSION_FIELD_NATURE_PRECEDENCE = Messages.LocalizationSchemaProvider_3;
 
-	private final String EXTENSION_FIELD_CLASS = "class";
+	private final String EXTENSION_FIELD_CLASS = Messages.LocalizationSchemaProvider_4;
 
 	/*
 	 * Singleton instance
