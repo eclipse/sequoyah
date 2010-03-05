@@ -24,7 +24,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.sequoyah.device.service.start.StartServicePlugin;
-import org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramLaunchDelegate;
+
 
 /**
  * This delegate controls the Emulator Instance Launch Configuration. This class
