@@ -107,20 +107,20 @@ public class ProjectLocalizationManager {
 		List<LocalizationFile> localizationFiles = new ArrayList<LocalizationFile>();
 		List<LocalizationFile> notPersisted = new ArrayList<LocalizationFile>();
 		Map<IFile, LocalizationFile> localizationFilesMap = new HashMap<IFile, LocalizationFile>();
-		
+
 		boolean createLocalizationProject = false;
-		if (getLocalizationProject()!=null){			
-			notPersisted = getLocalizationProject().getLocalizationFiles();			
-		}
-		else {
-			//manager is loaded but location project is not updated
-			createLocalizationProject = true;		
+		if (getLocalizationProject() != null) {
+			notPersisted = getLocalizationProject().getLocalizationFiles();
+		} else {
+			// manager is loaded but location project is not updated
+			createLocalizationProject = true;
 		}
 
 		try {
-			Collection<LocalizationFile> loadedLocationFiles = this.projectLocalizationSchema.loadAllFiles(project).values();
-			if (createLocalizationProject){
-								
+			Collection<LocalizationFile> loadedLocationFiles = this.projectLocalizationSchema
+					.loadAllFiles(project).values();
+			if (createLocalizationProject) {
+
 			}
 			localizationFiles.addAll(loadedLocationFiles);
 			for (LocalizationFile file : localizationFiles) {
@@ -143,8 +143,6 @@ public class ProjectLocalizationManager {
 		}
 
 	}
-
-	
 
 	// add missing string nodes from source to destination
 	private void syncNodes(LocalizationFile destination, LocalizationFile source) {
@@ -199,7 +197,8 @@ public class ProjectLocalizationManager {
 	public boolean createOrUpdateFile(LocaleInfo localeInfo,
 			List<StringNode> stringNodes) {
 
-		LocalizationFile localizationFile = getProjectLocalizationSchema().createLocalizationFile(null, localeInfo, stringNodes, null);
+		LocalizationFile localizationFile = getProjectLocalizationSchema()
+				.createLocalizationFile(null, localeInfo, stringNodes, null);
 
 		try {
 			projectLocalizationSchema.createFile(localizationFile);
@@ -243,6 +242,9 @@ public class ProjectLocalizationManager {
 
 			} else {
 				try {
+
+					refreshWorkspace();
+
 					// delete the file on file system
 					localizationFile.getFile().delete(true, null);
 
@@ -259,7 +261,7 @@ public class ProjectLocalizationManager {
 						}
 					}
 
-				} catch (CoreException e) {
+				} catch (Exception e) {
 					BasePlugin.logError(Messages.ProjectLocalizationManager_3
 							+ e.getMessage());
 				}
@@ -276,6 +278,14 @@ public class ProjectLocalizationManager {
 			}
 		}
 
+		refreshWorkspace();
+
+		localizationProject.setDirty(false);
+		return true;
+
+	}
+
+	private void refreshWorkspace() {
 		try {
 			PlatformUI.getWorkbench().getProgressService().runInUI(
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
@@ -300,10 +310,6 @@ public class ProjectLocalizationManager {
 		} catch (InterruptedException e) {
 			// Do nothing
 		}
-
-		localizationProject.setDirty(false);
-		return true;
-
 	}
 
 	/**
@@ -423,16 +429,18 @@ public class ProjectLocalizationManager {
 		return localeInfo;
 
 	}
-	
+
 	/**
-	 * @param localizationProject the localizationProject to set
+	 * @param localizationProject
+	 *            the localizationProject to set
 	 */
 	public void setLocalizationProject(LocalizationProject localizationProject) {
 		this.localizationProject = localizationProject;
 	}
-	
+
 	/**
-	 * @param project the project to set
+	 * @param project
+	 *            the project to set
 	 */
 	public void setProject(IProject project) {
 		this.project = project;
