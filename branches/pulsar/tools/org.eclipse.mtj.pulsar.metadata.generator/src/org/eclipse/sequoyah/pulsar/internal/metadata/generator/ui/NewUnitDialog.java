@@ -37,9 +37,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.sequoyah.pulsar.core.Activator;
+import org.eclipse.sequoyah.pulsar.internal.metadata.generator.Messages;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.IIUDescription;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.IRepositoryDescription;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.IUDescription;
+import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
@@ -59,8 +61,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import sun.security.krb5.internal.crypto.EType;
 
 @SuppressWarnings("restriction")
 public class NewUnitDialog extends StatusDialog {

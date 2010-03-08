@@ -34,8 +34,7 @@ import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.IIUDescrip
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.IRepositoryDescription;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.IUDescription;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.RepositoryDescription;
-
-import sun.security.krb5.internal.crypto.EType;
+import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EType;
 
 /**
  * 

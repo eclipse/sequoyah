@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.sequoyah.pulsar.core.Activator;
+import org.eclipse.sequoyah.pulsar.internal.metadata.generator.Messages;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.GeneratorEngine;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.IIUDescription;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.IRepositoryDescription;

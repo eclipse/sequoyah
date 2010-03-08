@@ -54,8 +54,8 @@ import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.sequoyah.pulsar.core.Activator;
 import org.eclipse.sequoyah.pulsar.internal.core.SDK;
-
-import sun.security.krb5.internal.crypto.EType;
+import org.eclipse.sequoyah.pulsar.internal.metadata.generator.Messages;
+import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EType;
 
 @SuppressWarnings( { "restriction", "unchecked" })
 public class GeneratorEngine implements RepositoryConstants {

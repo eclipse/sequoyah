@@ -23,8 +23,7 @@ import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.equinox.internal.provisional.p2.metadata.ICopyright;
 import org.eclipse.equinox.internal.provisional.p2.metadata.ILicense;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
-
-import sun.security.krb5.internal.crypto.EType;
+import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EType;
 
 @SuppressWarnings("restriction")
 public class IUDescription implements IIUDescription {

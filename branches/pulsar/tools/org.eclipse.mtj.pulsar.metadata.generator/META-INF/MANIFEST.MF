@@ -25,4 +25,4 @@ Export-Package: org.eclipse.sequoyah.pulsar.internal.metadata.generator;x-intern
  org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine;x-friends:="org.eclipse.sequoyah.pulsar.core.tests",
  org.eclipse.sequoyah.pulsar.internal.metadata.generator.ui;x-internal:=true,
  org.eclipse.sequoyah.pulsar.metadata.generator
-Import-Package: sun.security.krb5.internal.crypto
+

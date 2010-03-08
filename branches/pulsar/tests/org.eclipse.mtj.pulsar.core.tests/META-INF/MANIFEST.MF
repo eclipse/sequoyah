@@ -18,6 +18,5 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.sequoyah.pulsar.core.tests,
- org.eclipse.sequoyah.pulsar.core.tests.utils,
- sun.security.krb5.internal.crypto
+ org.eclipse.sequoyah.pulsar.core.tests.utils
 Bundle-Localization: plugin
