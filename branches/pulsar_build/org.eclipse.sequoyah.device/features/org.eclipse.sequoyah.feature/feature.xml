@@ -17,6 +17,14 @@
    </license>
 
    <includes
+         id="org.eclipse.sequoyah.pulsar"
+         version="0.0.0"/>
+   
+   <includes
+         id="org.eclipse.sequoyah.tfm.sign"
+         version="0.0.0"/>
+	
+   <includes
          id="org.eclipse.sequoyah.device.common.feature"
          version="0.0.0"/>
 
