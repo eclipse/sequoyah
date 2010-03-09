@@ -16,4 +16,5 @@ Export-Package: org.eclipse.sequoyah.localization.stringeditor.datatype,
  org.eclipse.sequoyah.localization.stringeditor.editor,
  org.eclipse.sequoyah.localization.stringeditor.editor.input,
  org.eclipse.sequoyah.localization.stringeditor.providers
-Bundle-Vendor: %pluginProvider
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
