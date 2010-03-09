@@ -16,9 +16,9 @@
       [Enter License Description here.]
    </license>
 
-   <includes
+   <!-- includes
          id="org.eclipse.sequoyah.pulsar"
-         version="0.0.0"/>
+         version="0.0.0"/ -->
    
    <includes
          id="org.eclipse.sequoyah.tfm.sign"
