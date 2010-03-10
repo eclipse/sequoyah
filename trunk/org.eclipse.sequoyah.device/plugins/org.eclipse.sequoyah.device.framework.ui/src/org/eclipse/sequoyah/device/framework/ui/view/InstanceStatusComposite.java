@@ -401,15 +401,16 @@ public class InstanceStatusComposite extends Composite
 
             newItem = new MenuItem(menu, SWT.SEPARATOR);
 
-            // menu item "Properties"
-            newItem = new MenuItem(menu, SWT.PUSH);
-            newItem.setText(MENU_PROPERTIES);
-            newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DeviceUIPlugin.ICON_PROPERTY));
-            newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
-            newItem.setEnabled(status.canEditProperties());
-
-            newItem = new MenuItem(menu, SWT.SEPARATOR);
         }
+        
+        // menu item "Properties"
+        newItem = new MenuItem(menu, SWT.PUSH);
+        newItem.setText(MENU_PROPERTIES);
+        newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DeviceUIPlugin.ICON_PROPERTY));
+        newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
+        newItem.setEnabled(status.canEditProperties());
+
+        newItem = new MenuItem(menu, SWT.SEPARATOR);
         
         for (IService service:device.getServices()){
             if (service.isVisible()) {
@@ -526,6 +527,8 @@ public class InstanceStatusComposite extends Composite
 						Rectangle rect = menuButton.getBounds();
 						Point pt = new Point(0, rect.height);
 						pt = menuButton.toDisplay(pt);
+						TreeItem item = tree.getItem(new Point(rect.x, rect.y));
+						tree.setSelection(item);
 						menu.setLocation(pt.x, pt.y);
 						menu.setVisible(true);
 					}
