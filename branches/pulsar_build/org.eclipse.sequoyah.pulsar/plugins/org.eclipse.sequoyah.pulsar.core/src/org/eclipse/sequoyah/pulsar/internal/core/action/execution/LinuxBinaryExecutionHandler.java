@@ -29,7 +29,7 @@ public class LinuxBinaryExecutionHandler extends ExecutionHandler {
      */
     @Override
     public IStatus preExecute() {
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(ActionConstants.PARM_TARGET_DIR, executable.substring(0,
                 executable.lastIndexOf('/')));
         parameters.put(ActionConstants.PARM_TARGET_FILE, executable.substring(

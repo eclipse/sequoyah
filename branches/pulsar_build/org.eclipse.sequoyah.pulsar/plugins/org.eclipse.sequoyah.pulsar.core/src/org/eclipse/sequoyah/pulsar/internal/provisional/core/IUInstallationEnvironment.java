@@ -14,7 +14,7 @@ package org.eclipse.sequoyah.pulsar.internal.provisional.core;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
 /**
  * IUInstallationEnvironment implements the {@link IInstallationEnvironment}
@@ -23,7 +23,6 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
  * 
  * @author David Marques
  */
-@SuppressWarnings("restriction")
 public class IUInstallationEnvironment implements IInstallationEnvironment {
 
     private String arch = IInstallationEnvironment.ALL;

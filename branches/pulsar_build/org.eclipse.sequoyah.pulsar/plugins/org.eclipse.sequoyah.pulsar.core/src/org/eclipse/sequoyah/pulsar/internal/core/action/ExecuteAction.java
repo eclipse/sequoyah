@@ -21,17 +21,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.Util;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.actions.ActionConstants;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IFileArtifactRepository;
-import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.engine.ProvisioningAction;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
+import org.eclipse.equinox.p2.core.ProvisionException;
+import org.eclipse.equinox.p2.engine.spi.ProvisioningAction;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.sequoyah.pulsar.core.Activator;
 import org.eclipse.sequoyah.pulsar.internal.core.Messages;
 import org.eclipse.sequoyah.pulsar.internal.core.action.execution.ExecutionFactory;
 import org.eclipse.sequoyah.pulsar.internal.core.action.execution.ExecutionHandler;
 
-@SuppressWarnings( { "unchecked", "restriction" })
+@SuppressWarnings( { "restriction" })
 public class ExecuteAction extends ProvisioningAction {
 
     public static final String ACTION_EXECUTE = "execute"; //$NON-NLS-1$
@@ -50,22 +50,22 @@ public class ExecuteAction extends ProvisioningAction {
 
         IInstallableUnit iu = (IInstallableUnit) parameters
                 .get(ActionConstants.PARM_IU);
-        if (executable.equals(ActionConstants.PARM_ARTIFACT)) {
-            IArtifactKey artifactKey = iu.getArtifacts()[0];
-
-            IFileArtifactRepository downloadCache;
-            try {
-                downloadCache = Util.getDownloadCacheRepo();
-            } catch (ProvisionException e) {
-                return e.getStatus();
-            }
-            File fileLocation = downloadCache.getArtifactFile(artifactKey);
-            if ((fileLocation == null) || !fileLocation.exists())
-                return Activator.makeErrorStatus(MessageFormat.format(
-                        Messages.ExecuteAction_MissingArtifactError,
-                        artifactKey), null);
-            executable = fileLocation.getAbsolutePath();
-        }
+//        if (executable.equals(ActionConstants.PARM_ARTIFACT)) {
+//            IArtifactKey artifactKey = iu.getArtifacts();
+//
+//            IFileArtifactRepository downloadCache;
+//            try {
+//                downloadCache = Util.getDownloadCacheRepo();
+//            } catch (ProvisionException e) {
+//                return e.getStatus();
+//            }
+//            File fileLocation = downloadCache.getArtifactFile(artifactKey);
+//            if ((fileLocation == null) || !fileLocation.exists())
+//                return Activator.makeErrorStatus(MessageFormat.format(
+//                        Messages.ExecuteAction_MissingArtifactError,
+//                        artifactKey), null);
+//            executable = fileLocation.getAbsolutePath();
+//        }
         try {
             ExecutionHandler handler = ExecutionFactory.getExecutionHandler(
                     System.getProperty("os.name"), executable);

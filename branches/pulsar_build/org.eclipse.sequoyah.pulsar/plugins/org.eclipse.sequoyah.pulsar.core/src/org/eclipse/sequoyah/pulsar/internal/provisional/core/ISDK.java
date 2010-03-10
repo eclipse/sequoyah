@@ -20,13 +20,12 @@ package org.eclipse.sequoyah.pulsar.internal.provisional.core;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.osgi.framework.Version;
 
 /**
  * Represents one SDK that will be presented in the QuickInstall view
  */
-@SuppressWarnings("restriction")
 public interface ISDK extends IAdaptable, IInstallationInfoProvider {
 
     /**

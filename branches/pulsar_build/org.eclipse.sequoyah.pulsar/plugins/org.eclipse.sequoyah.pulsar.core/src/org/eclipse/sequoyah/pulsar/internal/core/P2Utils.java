@@ -15,17 +15,19 @@ package org.eclipse.sequoyah.pulsar.internal.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
 import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
-import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
-import org.eclipse.equinox.internal.provisional.p2.query.Collector;
+import org.eclipse.equinox.p2.core.ProvisionException;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.sequoyah.pulsar.core.Activator;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK;
 
@@ -43,10 +45,9 @@ public class P2Utils {
      */
     public static boolean isInstalled(IInstallableUnit iu) {
         for (IProfile profile : ProvisioningHelper.getProfiles()) {
-            Collector collector = new Collector();
-            profile.available(new InstallableUnitQuery(iu.getId(), iu
-                    .getVersion()), collector, null);
-            if (!collector.isEmpty())
+            IQueryResult<IInstallableUnit> available = profile.available(new InstallableUnitQuery(iu.getId(), iu
+                    .getVersion()), new NullProgressMonitor());
+            if (!available.isEmpty())
                 return true;
         }
         return false;
@@ -63,12 +64,12 @@ public class P2Utils {
         IProfileRegistry profileRegistry = (IProfileRegistry) ServiceHelper
                 .getService(Activator.getContext(), IProfileRegistry.class
                         .getName());
-        Properties properties = new Properties();
+        Map<String, String> propMap = new HashMap<String, String>();
         if (installFolder != null)
-            properties.setProperty(IProfile.PROP_INSTALL_FOLDER, installFolder
+        	propMap.put(IProfile.PROP_INSTALL_FOLDER, installFolder
                     .toOSString());
-        properties.setProperty(PROP_PULSAR_PROFILE, Boolean.TRUE.toString());
-        return profileRegistry.addProfile(id, properties, null);
+        propMap.put(PROP_PULSAR_PROFILE, Boolean.TRUE.toString());
+        return profileRegistry.addProfile(id, propMap);
     }
 
     /**

@@ -113,7 +113,10 @@ public class DefaultSDKRepositoryProvider implements ISDKRepositoryProvider {
 		URL siteUrl = null;
 
 		try {
-			imageUrl = new URL(properties.getProperty(key + INFO_IMAGE_SUFFIX));
+			String property = properties.getProperty(key + INFO_IMAGE_SUFFIX);
+			if(property != null) {
+				imageUrl = new URL(property);
+			}
 		} catch (MalformedURLException e) {
 		}
 		
