@@ -460,7 +460,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		fixedSize = 0;
 		maximumSize = 0;
 		allowedValues = null;
-		setIntValue(value);
+		setStringValue(value);
 		folderValue = getPixelFolder(displayValue);
 	}
 
