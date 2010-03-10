@@ -17,12 +17,14 @@ package org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.equinox.internal.provisional.p2.core.Version;
-import org.eclipse.equinox.internal.provisional.p2.metadata.ICopyright;
-import org.eclipse.equinox.internal.provisional.p2.metadata.ILicense;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
+import org.eclipse.equinox.p2.metadata.ICopyright;
+import org.eclipse.equinox.p2.metadata.ILicense;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EType;
 
 @SuppressWarnings("restriction")
@@ -36,7 +38,7 @@ public class IUDescription implements IIUDescription {
                                       // unit (optional)
     private boolean isSingleton;
     private String unitName; // name property
-    private ILicense unitLicense; // EULA stuff
+    private Collection<ILicense> unitLicense; // EULA stuff
     private ICopyright unitCopyright;
     private boolean isCategory; // whether this is a category IU
     private String categoryName; // category name
@@ -129,15 +131,15 @@ public class IUDescription implements IIUDescription {
     /* (non-Javadoc)
      * @see org.eclipse.pulsar.metadata.generator.engine.IIUDescription#getUnitLicense()
      */
-    public ILicense getUnitLicense() {
+    public Collection<ILicense> getUnitLicense() {
         return unitLicense;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.pulsar.metadata.generator.engine.IIUDescription#setUnitLicense(org.eclipse.equinox.internal.provisional.p2.metadata.ILicense)
      */
-    public void setUnitLicense(ILicense unitLicense) {
-        this.unitLicense = unitLicense;
+    public void setUnitLicenses(Collection<ILicense> licenses) {
+        this.unitLicense = licenses;
     }
 
     /* (non-Javadoc)
@@ -228,8 +230,12 @@ public class IUDescription implements IIUDescription {
     /* (non-Javadoc)
      * @see org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.IIUDescription#setUnitLicense(java.net.URI, java.lang.String)
      */
-    public void setUnitLicense(URI location, String body) {
-        this.unitLicense = MetadataFactory.createLicense(location, body);
+    public void addUnitLicense(URI location, String body) {
+    	if(unitLicense == null)
+    	{
+    		unitLicense = new ArrayList<ILicense>(3);
+    	}
+        unitLicense.add(MetadataFactory.createLicense(location, body));
     }
 
     /* (non-Javadoc)

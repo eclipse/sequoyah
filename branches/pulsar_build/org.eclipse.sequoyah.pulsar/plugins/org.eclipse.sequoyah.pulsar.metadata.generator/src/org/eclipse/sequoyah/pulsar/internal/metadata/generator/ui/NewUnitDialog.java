@@ -25,7 +25,7 @@ import java.util.Collection;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.equinox.internal.provisional.p2.core.Version;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.StatusDialog;
@@ -547,7 +547,7 @@ public class NewUnitDialog extends StatusDialog {
                 URI uri = null;
                 if (licenseURL.length() > 0)
                     uri = new URL(licenseURL).toURI();
-                unit.setUnitLicense(uri, licenseBody);
+                unit.addUnitLicense(uri, licenseBody);
             } catch (Exception e) {
                 Activator.logError(Messages.NewUnitDialog_SetUnitLicenseError,
                         e);

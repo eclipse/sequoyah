@@ -85,18 +85,13 @@ public class P2InstallerUI implements IInstallerUI {
         final InstallableUnit[] ius = getInstallableUnits(sdkImpl);
         final URI artifactsUri = sdkImpl.getRepository().getArtifactsURI();
         final URI metadataUri = sdkImpl.getRepository().getMetadataURI();
-//        ProvisioningHelper.addArtifactRepository(artifactsUri);
-//        ProvisioningHelper.addMetadataRepository(metadataUri);
         
-        MultiStatus status = getStatus();
-        final String id = getProfileID();
         final ProvisioningUI defaultUI = ProvisioningUI.getDefaultUI();
 		ProvisioningSession session = defaultUI.getSession();
 		session.getArtifactRepositoryManager().addRepository(artifactsUri);
 		session.getMetadataRepositoryManager().addRepository(metadataUri);
 		
         final InstallOperation operation = new InstallOperation(session, ius);
-        ProfileChangeRequest profileChangeRequest = operation.getProfileChangeRequest();
         Job job = new Job("Preparing") {
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus resolveStatus = operation.resolveModal(monitor);
@@ -124,17 +119,13 @@ public class P2InstallerUI implements IInstallerUI {
                 }
         	}
         });
-//        operationRunner.schedule(provisioningJob, StatusManager.SHOW);
         
     }
 
     public void runUninstaller(final Shell parentShell, ISDK sdk)
             throws CoreException {
-        final String id = getProfileID();
         SDK sdkImpl = (SDK) sdk.getAdapter(SDK.class);
         final InstallableUnit[] ius = getInstallableUnits(sdkImpl);
-        final MultiStatus additionalStatus = getStatus();
-        final ProfileChangeRequest[] request = new ProfileChangeRequest[1];
 
         final ProvisioningUI defaultUI = ProvisioningUI.getDefaultUI();
 		ProvisioningSession session = defaultUI.getSession();
@@ -148,10 +139,6 @@ public class P2InstallerUI implements IInstallerUI {
 		};
 		job.schedule();
         
-//        ProvisioningJob provisioningJob = operation.getProvisioningJob(new NullProgressMonitor());
-
-//        ProvisioningOperationRunner operationRunner = new ProvisioningOperationRunner(defaultUI);
-//        operationRunner.schedule(provisioningJob, StatusManager.SHOW);
 		job.addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				final IProvisioningPlan plan = operation.getProvisioningPlan();
@@ -192,25 +179,13 @@ public class P2InstallerUI implements IInstallerUI {
             ProvisioningHelper.addArtifactRepository(repository.getArtifactsURI());
             i++;
         }
-
-        /*
-         * The call to ProvisioningUtil.refreshMetadataRepositories() and
-         * refreshArtifactRepositories() discards any cached state held by the
-         * repository manager and reloads the repository contents.
-         */
-//        	ProvisioningHelper.getMetadataRepositories();
-//        	ProvisioningHelper.getArtifactRepositories();
-//            ProvisioningUtil.refreshMetadataRepositories(metadataURIs,
-//                    new NullProgressMonitor());
-//            ProvisioningUtil.refreshArtifactRepositories(artifactsURIs,
-//                    new NullProgressMonitor());
     }
 
     private ProfileChangeRequest getProfileChangeRequest(
             IInstallableUnit[] ius, String targetProfileId, MultiStatus status,
             IProgressMonitor monitor) {
-        SubMonitor sub = SubMonitor.convert(monitor, ""
-                /*ProvUIMessages.ProfileChangeRequestBuildingRequest*/, 1);
+        SubMonitor sub = SubMonitor.convert(monitor, 
+                "", 1);
         ProfileChangeRequest request = null;
         try {
             request = ProfileChangeRequest.createByProfileId(targetProfileId);

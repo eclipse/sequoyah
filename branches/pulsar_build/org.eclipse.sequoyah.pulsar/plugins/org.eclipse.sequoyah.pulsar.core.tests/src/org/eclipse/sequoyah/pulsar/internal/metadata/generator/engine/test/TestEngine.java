@@ -27,7 +27,8 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.equinox.internal.provisional.p2.core.Version;
+import org.eclipse.equinox.p2.metadata.ILicense;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.sequoyah.pulsar.core.tests.Activator;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.GeneratorEngine;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine.IIUDescription;
@@ -194,7 +195,7 @@ public class TestEngine extends TestCase {
 		iuDesc.setUnitName("Test zip");
 		iuDesc.setUnitVersion(Version.createOSGi(1,0,0));
 		iuDesc.setUnitCopyright(new URI("http://www.example.com/copyright"), "[Enter Copyright Description here.]");
-		iuDesc.setUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
+		iuDesc.addUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
 		iuDesc.setUnitDocumentationURL(new URL("http://www.yahoo.com"));
 		
 		desc.addIUDescription(iuDesc);
@@ -208,7 +209,7 @@ public class TestEngine extends TestCase {
 		iuDesc.setUnitName("Test exe");
 		iuDesc.setUnitVersion(Version.createOSGi(1,0,0));
 		iuDesc.setUnitCopyright(new URI("http://www.example.com/copyright"), "[Enter Copyright Description here.]");
-		iuDesc.setUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
+		iuDesc.addUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
 		
 		desc.addIUDescription(iuDesc);
 		
@@ -222,7 +223,7 @@ public class TestEngine extends TestCase {
 		iuDesc.setUnitName("Test zip and exe");
 		iuDesc.setUnitVersion(Version.createOSGi(1,0,0));
 		iuDesc.setUnitCopyright(new URI("http://www.example.com/copyright"), "[Enter Copyright Description here.]");
-		iuDesc.setUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
+		iuDesc.addUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
 		
 		desc.addIUDescription(iuDesc);
 
@@ -255,8 +256,11 @@ public class TestEngine extends TestCase {
 				assertEquals(Version.createOSGi(1,0,0).toString(), iuDesc.getUnitVersion().toString());
 				assertEquals("[Enter Copyright Description here.]", iuDesc.getUnitCopyright().getBody());
 				assertEquals("http://www.example.com/copyright", iuDesc.getUnitCopyright().getLocation().toString());
-				assertEquals("[Enter License Description here.]", iuDesc.getUnitLicense().getBody());
-				assertEquals("http://www.example.com/license", iuDesc.getUnitLicense().getLocation().toString());
+				Collection<ILicense> unitLicenses = iuDesc.getUnitLicense();
+				for(ILicense license : unitLicenses) {
+					assertEquals("[Enter License Description here.]", license.getBody());
+					assertEquals("http://www.example.com/license", license.getLocation().toString());
+				}
 				assertEquals(new URL("http://www.yahoo.com"), iuDesc.getUnitDocumentationURL());
 			} else if (iuDesc.getArtifactId().equalsIgnoreCase("Text.exe")) {
 				assertEquals("Test.exe", iuDesc.getArtifactId());
@@ -270,8 +274,11 @@ public class TestEngine extends TestCase {
 				assertEquals(Version.createOSGi(1,0,0).toString(), iuDesc.getUnitVersion().toString());
 				assertEquals("[Enter Copyright Description here.]", iuDesc.getUnitCopyright().getBody());
 				assertEquals("http://www.example.com/copyright", iuDesc.getUnitCopyright().getLocation().toString());
-				assertEquals("[Enter License Description here.]", iuDesc.getUnitLicense().getBody());
-				assertEquals("http://www.example.com/license", iuDesc.getUnitLicense().getLocation().toString());
+				Collection<ILicense> unitLicenses = iuDesc.getUnitLicense();
+				for(ILicense license : unitLicenses) {
+					assertEquals("[Enter License Description here.]", license.getBody());
+					assertEquals("http://www.example.com/license", license.getLocation().toString());
+				}
 				assertNull(iuDesc.getUnitDocumentationURL());
 			} else if (iuDesc.getArtifactId().equalsIgnoreCase("Test.exe.zip")) {
 				assertEquals("Test.exe.zip", iuDesc.getArtifactId());
@@ -284,8 +291,11 @@ public class TestEngine extends TestCase {
 				assertEquals(Version.createOSGi(1,0,0).toString(), iuDesc.getUnitVersion().toString());
 				assertEquals("[Enter Copyright Description here.]", iuDesc.getUnitCopyright().getBody());
 				assertEquals("http://www.example.com/copyright", iuDesc.getUnitCopyright().getLocation().toString());
-				assertEquals("[Enter License Description here.]", iuDesc.getUnitLicense().getBody());
-				assertEquals("http://www.example.com/license", iuDesc.getUnitLicense().getLocation().toString());
+				Collection<ILicense> unitLicenses = iuDesc.getUnitLicense();
+				for(ILicense license : unitLicenses) {
+					assertEquals("[Enter License Description here.]", license.getBody());
+					assertEquals("http://www.example.com/license", license.getLocation().toString());
+				}
 				assertNull(iuDesc.getUnitDocumentationURL());
 			} else {
 				assertTrue("unknown artifactId: " + iuDesc.getArtifactId(), true);
@@ -317,7 +327,7 @@ public class TestEngine extends TestCase {
 		iuDesc.setUnitName("Test zip");
 		iuDesc.setUnitVersion(Version.createOSGi(1,0,0));
 		iuDesc.setUnitCopyright(new URI("http://www.example.com/copyright"), "[Enter Copyright Description here.]");
-		iuDesc.setUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
+		iuDesc.addUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
 		iuDesc.setUnitDocumentationURL(new URL("http://www.yahoo.com"));
 		
 		desc.addIUDescription(iuDesc);
@@ -331,7 +341,7 @@ public class TestEngine extends TestCase {
 		iuDesc.setUnitName("Test exe");
 		iuDesc.setUnitVersion(Version.createOSGi(1,0,0));
 		iuDesc.setUnitCopyright(new URI("http://www.example.com/copyright"), "[Enter Copyright Description here.]");
-		iuDesc.setUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
+		iuDesc.addUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
 		
 		desc.addIUDescription(iuDesc);
 		
@@ -345,7 +355,7 @@ public class TestEngine extends TestCase {
 		iuDesc.setUnitName("Test zip and exe");
 		iuDesc.setUnitVersion(Version.createOSGi(1,0,0));
 		iuDesc.setUnitCopyright(new URI("http://www.example.com/copyright"), "[Enter Copyright Description here.]");
-		iuDesc.setUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
+		iuDesc.addUnitLicense(new URI("http://www.example.com/license"), "[Enter License Description here.]");
 		
 		desc.addIUDescription(iuDesc);
 
@@ -378,8 +388,11 @@ public class TestEngine extends TestCase {
 				assertEquals(Version.createOSGi(1,0,0).toString(), iuDesc.getUnitVersion().toString());
 				assertEquals("[Enter Copyright Description here.]", iuDesc.getUnitCopyright().getBody());
 				assertEquals("http://www.example.com/copyright", iuDesc.getUnitCopyright().getLocation().toString());
-				assertEquals("[Enter License Description here.]", iuDesc.getUnitLicense().getBody());
-				assertEquals("http://www.example.com/license", iuDesc.getUnitLicense().getLocation().toString());
+				Collection<ILicense> unitLicenses = iuDesc.getUnitLicense();
+				for(ILicense license : unitLicenses) {
+					assertEquals("[Enter License Description here.]", license.getBody());
+					assertEquals("http://www.example.com/license", license.getLocation().toString());
+				}
 				assertEquals(new URL("http://www.yahoo.com"), iuDesc.getUnitDocumentationURL());
 			} else if (iuDesc.getArtifactId().equalsIgnoreCase("Text.exe")) {
 				assertEquals("Test.exe", iuDesc.getArtifactId());
@@ -393,8 +406,11 @@ public class TestEngine extends TestCase {
 				assertEquals(Version.createOSGi(1,0,0).toString(), iuDesc.getUnitVersion().toString());
 				assertEquals("[Enter Copyright Description here.]", iuDesc.getUnitCopyright().getBody());
 				assertEquals("http://www.example.com/copyright", iuDesc.getUnitCopyright().getLocation().toString());
-				assertEquals("[Enter License Description here.]", iuDesc.getUnitLicense().getBody());
-				assertEquals("http://www.example.com/license", iuDesc.getUnitLicense().getLocation().toString());
+				Collection<ILicense> unitLicenses = iuDesc.getUnitLicense();
+				for(ILicense license : unitLicenses) {
+					assertEquals("[Enter License Description here.]", license.getBody());
+					assertEquals("http://www.example.com/license", license.getLocation().toString());
+				}
 				assertNull(iuDesc.getUnitDocumentationURL());
 			} else if (iuDesc.getArtifactId().equalsIgnoreCase("Test.exe.zip")) {
 				assertEquals("Test.exe.zip", iuDesc.getArtifactId());
@@ -407,8 +423,11 @@ public class TestEngine extends TestCase {
 				assertEquals(Version.createOSGi(1,0,0).toString(), iuDesc.getUnitVersion().toString());
 				assertEquals("[Enter Copyright Description here.]", iuDesc.getUnitCopyright().getBody());
 				assertEquals("http://www.example.com/copyright", iuDesc.getUnitCopyright().getLocation().toString());
-				assertEquals("[Enter License Description here.]", iuDesc.getUnitLicense().getBody());
-				assertEquals("http://www.example.com/license", iuDesc.getUnitLicense().getLocation().toString());
+				Collection<ILicense> unitLicenses = iuDesc.getUnitLicense();
+				for(ILicense license : unitLicenses) {
+					assertEquals("[Enter License Description here.]", license.getBody());
+					assertEquals("http://www.example.com/license", license.getLocation().toString());
+				}
 				assertNull(iuDesc.getUnitDocumentationURL());
 			} else {
 				assertTrue("unknown artifactId: " + iuDesc.getArtifactId(), true);

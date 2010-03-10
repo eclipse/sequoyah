@@ -26,20 +26,20 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.sequoyah.pulsar.core.Activator;
+import org.eclipse.sequoyah.pulsar.core.tests.utils.TestUtils;
+import org.eclipse.sequoyah.pulsar.core.tests.utils.TestUtils.Condition;
+import org.eclipse.sequoyah.pulsar.internal.core.DefaultSDKRepositoryProvider;
+import org.eclipse.sequoyah.pulsar.internal.core.P2Utils;
+import org.eclipse.sequoyah.pulsar.internal.core.SDK;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDKCategory;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDKRepository;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDKRepositoryProvider;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.QuickInstallCore;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EState;
-import org.eclipse.sequoyah.pulsar.internal.core.DefaultSDKRepositoryProvider;
-import org.eclipse.sequoyah.pulsar.internal.core.P2Utils;
-import org.eclipse.sequoyah.pulsar.internal.core.SDK;
-import org.eclipse.sequoyah.pulsar.core.Activator;
-import org.eclipse.sequoyah.pulsar.core.tests.utils.TestUtils;
-import org.eclipse.sequoyah.pulsar.core.tests.utils.TestUtils.Condition;
 import org.osgi.framework.Version;
 
 /**

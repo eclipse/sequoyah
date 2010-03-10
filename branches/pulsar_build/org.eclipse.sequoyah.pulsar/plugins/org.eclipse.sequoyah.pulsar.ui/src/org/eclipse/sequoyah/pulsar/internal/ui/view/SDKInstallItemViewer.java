@@ -211,10 +211,10 @@ public class SDKInstallItemViewer extends Composite {
             }
 
             private void openSDKProperties(SDK sdk) {
-//                PropertyDialogAction dialog = new PropertyDialogAction(
-//                        new ShellProvider(getShell()), new IUSelectionProvider(
-//                                sdk.getInstallableUnit()));
-//                dialog.run();
+                PropertyDialogAction dialog = new PropertyDialogAction(
+                        new ShellProvider(getShell()), new IUSelectionProvider(
+                                sdk.getInstallableUnit()));
+                dialog.run();
             }
         });
     }

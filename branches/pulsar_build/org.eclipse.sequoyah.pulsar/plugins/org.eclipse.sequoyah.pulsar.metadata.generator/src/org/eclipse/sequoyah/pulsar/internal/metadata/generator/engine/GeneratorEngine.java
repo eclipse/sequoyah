@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -34,22 +36,24 @@ import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
 import org.eclipse.equinox.internal.p2.core.helpers.OrderedProperties;
 import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
 import org.eclipse.equinox.internal.p2.metadata.ArtifactKey;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactDescriptor;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepository;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.core.Version;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
-import org.eclipse.equinox.internal.provisional.p2.metadata.ITouchpointData;
-import org.eclipse.equinox.internal.provisional.p2.metadata.ITouchpointInstruction;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.repository.IRepository;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.ILicense;
+import org.eclipse.equinox.p2.metadata.IProvidedCapability;
+import org.eclipse.equinox.p2.metadata.ITouchpointData;
+import org.eclipse.equinox.p2.metadata.ITouchpointInstruction;
+import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.p2.query.Collector;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.sequoyah.pulsar.core.Activator;
@@ -132,10 +136,10 @@ public class GeneratorEngine implements RepositoryConstants {
             repoDesc.setArtifactLocation(new Path(output.substring(
                     beginIndex + 1, endIndex)));
         }
-        Collector ius = ProvisioningHelper.getInstallableUnits(uriDir,
+        IQueryResult<IInstallableUnit> ius = ProvisioningHelper.getInstallableUnits(uriDir,
                 InstallableUnitQuery.ANY, new NullProgressMonitor());
-        for (IInstallableUnit iu : (Collection<IInstallableUnit>) ius
-                .toCollection()) {
+        Set<IInstallableUnit> iusSet = ius.toSet();
+        for (IInstallableUnit iu : iusSet) {
             IIUDescription iuDesc = new IUDescription();
             iuDesc.setUnitId(iu.getId());
             iuDesc.setUnitVersion(iu.getVersion());
@@ -162,8 +166,8 @@ public class GeneratorEngine implements RepositoryConstants {
                 iuDesc.setArtifactType(EType.EXECUTABLE);
             }
             if (iuDesc.getArtifactType().equals(EType.ZIP_ARCHIVE)) {
-                ITouchpointData[] touchpointData = iu.getTouchpointData();
-                ITouchpointInstruction inst = touchpointData[0]
+                List<ITouchpointData> touchpointData = iu.getTouchpointData();
+                ITouchpointInstruction inst = touchpointData.get(0)
                         .getInstruction(INSTALL_TOUCHPOINT_KEY);
                 String instBody = inst.getBody();
                 if (instBody.startsWith(UNZIPEXE_TOUCHPOINT_DATA_PREFIX)) {
@@ -186,12 +190,12 @@ public class GeneratorEngine implements RepositoryConstants {
                     }
                 }
             }
-            IArtifactKey[] arts = iu.getArtifacts();
+            IArtifactKey[] arts = (IArtifactKey[]) iu.getArtifacts().toArray();
             iuDesc.setArtifactId(arts[0].getId());
             iuDesc.setArtifactVersion(arts[0].getVersion());
 
             iuDesc.setUnitCopyright(iu.getCopyright());
-            iuDesc.setUnitLicense(iu.getLicense());
+            iuDesc.setUnitLicenses(iu.getLicenses());
             repoDesc.addIUDescription(iuDesc);
         }
         return repoDesc;
@@ -333,7 +337,7 @@ public class GeneratorEngine implements RepositoryConstants {
 
                 // Eula stuff
                 if (newIuDesc.getUnitLicense() != null)
-                    p2IuDesc.setLicense(newIuDesc.getUnitLicense());
+                    p2IuDesc.setLicenses((ILicense[]) newIuDesc.getUnitLicense().toArray());
                 if (newIuDesc.getUnitCopyright() != null)
                     p2IuDesc.setCopyright(newIuDesc.getUnitCopyright());
 

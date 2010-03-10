@@ -17,11 +17,12 @@ package org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.equinox.internal.provisional.p2.core.Version;
-import org.eclipse.equinox.internal.provisional.p2.metadata.ICopyright;
-import org.eclipse.equinox.internal.provisional.p2.metadata.ILicense;
+import org.eclipse.equinox.p2.metadata.ICopyright;
+import org.eclipse.equinox.p2.metadata.ILicense;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EType;
 
 /**
@@ -83,12 +84,12 @@ public interface IIUDescription {
     /**
      * @return the unitLicense
      */
-    public ILicense getUnitLicense();
+    public Collection<ILicense> getUnitLicense();
 
     /**
-     * @param unitLicense the unitLicense to set
+     * @param collection the unitLicense to set
      */
-    public void setUnitLicense(ILicense unitLicense);
+    public void setUnitLicenses(Collection<ILicense> licenses);
 
     /**
      * 
@@ -96,7 +97,7 @@ public interface IIUDescription {
      *            or <code>null</code>
      * @param body the license body, cannot be <code>null</code>
      */
-    public void setUnitLicense(URI location, String body);
+    public void addUnitLicense(URI location, String body);
 
     /**
      * @return the unitCopyright
