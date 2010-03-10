@@ -16,7 +16,7 @@ package org.eclipse.sequoyah.pulsar.internal.ui.view;
 
 import java.net.URL;
 
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -48,7 +48,6 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
  * 
  * @author David Marques
  */
-@SuppressWarnings("restriction")
 public class SDKInstallItemViewer extends Composite {
 
     private class IUSelectionProvider implements ISelectionProvider {
@@ -212,10 +211,10 @@ public class SDKInstallItemViewer extends Composite {
             }
 
             private void openSDKProperties(SDK sdk) {
-                PropertyDialogAction dialog = new PropertyDialogAction(
-                        new ShellProvider(getShell()), new IUSelectionProvider(
-                                sdk.getInstallableUnit()));
-                dialog.run();
+//                PropertyDialogAction dialog = new PropertyDialogAction(
+//                        new ShellProvider(getShell()), new IUSelectionProvider(
+//                                sdk.getInstallableUnit()));
+//                dialog.run();
             }
         });
     }

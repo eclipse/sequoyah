@@ -18,12 +18,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.management.Query;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.query.MatchQuery;
-import org.eclipse.equinox.internal.provisional.p2.query.Query;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.query.Collector;
+import org.eclipse.equinox.p2.query.IQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.MatchQuery;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.IInstallationInfo;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK;
@@ -47,16 +50,16 @@ public class SDKRepository implements ISDKRepository {
     @SuppressWarnings("unchecked")
     public Collection<ISDK> getSDKs(IProgressMonitor monitor) {
         Collection<ISDK> sdks = new ArrayList<ISDK>();
-        Collector installableUnits = ProvisioningHelper.getInstallableUnits(
+        
+        IQueryResult<IInstallableUnit> installableUnits = ProvisioningHelper.getInstallableUnits(
                 getMetadataURI(), getSDKQuery(), monitor);
-        for (IInstallableUnit iu : (Collection<IInstallableUnit>) installableUnits
-                .toCollection()) {
+        for (IInstallableUnit iu : installableUnits.unmodifiableSet()) {
             sdks.add(new SDK(this, iu));
         }
         return sdks;
     }
 
-    private Query getSDKQuery() {
+    private IQuery getSDKQuery() {
         return new MatchQuery() {
             @Override
             public boolean isMatch(Object candidate) {

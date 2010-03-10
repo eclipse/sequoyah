@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.equinox.internal.p2.ui.ProvUIActivator;
-import org.eclipse.equinox.internal.provisional.p2.ui.ProvUIImages;
+import org.eclipse.equinox.internal.p2.ui.ProvUIImages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TreeNode;

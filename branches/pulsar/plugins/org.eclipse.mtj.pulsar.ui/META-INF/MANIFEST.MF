@@ -28,3 +28,5 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.sequoyah.pulsar,
  org.eclipse.sequoyah.pulsar.internal.ui;x-internal:=true,
  org.eclipse.sequoyah.pulsar.internal.ui.view;x-internal:=true
+Import-Package: org.eclipse.equinox.internal.p2.operations,
+ org.eclipse.equinox.p2.operations

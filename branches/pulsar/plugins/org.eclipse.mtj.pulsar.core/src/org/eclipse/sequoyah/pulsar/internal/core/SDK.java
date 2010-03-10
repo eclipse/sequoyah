@@ -23,7 +23,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.sequoyah.pulsar.core.Activator;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.IInstallationEnvironment;
@@ -31,9 +31,9 @@ import org.eclipse.sequoyah.pulsar.internal.provisional.core.IInstallationInfo;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDKCategory;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.IUInstallationEnvironment;
+import org.osgi.framework.Filter;
 import org.osgi.framework.Version;
 
-@SuppressWarnings("restriction")
 public class SDK extends PlatformObject implements ISDK {
 
     public static final String PROP_TYPE = "org.eclipse.pulsar.type"; //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class SDK extends PlatformObject implements ISDK {
     }
 
     public Version getVersion() {
-        return org.eclipse.equinox.internal.provisional.p2.core.Version
+        return org.eclipse.equinox.p2.metadata.Version
                 .toOSGiVersion(iu.getVersion());
     }
 
@@ -181,7 +181,10 @@ public class SDK extends PlatformObject implements ISDK {
         public IInstallationEnvironment getTargetEnvironment() {
             IInstallableUnit iu = sdk.getInstallableUnit();
             if (iu != null) {
-                return new IUInstallationEnvironment(iu.getFilter());
+                Filter filter = iu.getFilter();
+                if(filter != null) {
+                	return new IUInstallationEnvironment(filter.toString());
+                }
             }
             return null;
         }
