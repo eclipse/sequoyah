@@ -24,7 +24,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.sequoyah.device.service.start.StartServicePlugin;
-import org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramLaunchDelegate;
+
 
 
 /**
@@ -36,7 +36,6 @@ import org.eclipse.ui.externaltools.internal.program.launchConfigurations.Progra
  * 
  */
 
-@SuppressWarnings("restriction")
 public class DeviceInstanceLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
 
 	public static final String ATTR_LOCATION = StartServicePlugin.PLUGIN_ID + ".ATTR_LOCATION";
