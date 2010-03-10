@@ -16,15 +16,15 @@
       [Enter License Description here.]
    </license>
 
-   <!-- includes
-         id="org.eclipse.sequoyah.pulsar"
-         version="0.0.0"/ -->
-   
    <includes
-         id="org.eclipse.sequoyah.tfm.sign"
+         id="org.eclipse.sequoyah.pulsar"
          version="0.0.0"/>
-	
+   
    <!-- includes
+         id="org.eclipse.sequoyah.tfm.sign"
+         version="0.0.0"/ -->
+	
+   <includes
          id="org.eclipse.sequoyah.device.common.feature"
          version="0.0.0"/>
 
@@ -58,6 +58,6 @@
 
    <includes
          id="org.eclipse.sequoyah.vnc.vncviewer.feature"
-         version="0.0.0"/ -->
+         version="0.0.0"/>
 
 </feature>
