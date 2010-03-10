@@ -72,9 +72,9 @@ public class DeviceLauncherManager {
 			ILaunchConfigurationWorkingCopy copy;
 			copy = type.newInstance(null, name);
 			copy.setAttribute(ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE,ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE_VALUE);
-			copy.setAttribute(IExternalToolConstants.ATTR_LOCATION, launcher.getLocation());
-			copy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS,launcher.getToolArguments());
-			copy.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY,launcher.getWorkingDirectory());			
+			copy.setAttribute(DeviceInstanceLaunchConfigurationDelegate.ATTR_LOCATION, launcher.getLocation());
+			copy.setAttribute(DeviceInstanceLaunchConfigurationDelegate.ATTR_TOOL_ARGUMENTS,launcher.getToolArguments());
+			copy.setAttribute(DeviceInstanceLaunchConfigurationDelegate.ATTR_WORKING_DIRECTORY,launcher.getWorkingDirectory());			
 			ILaunchConfiguration config = copy.doSave();
 			
 			File file = new File(launcher.getFileId());
