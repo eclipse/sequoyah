@@ -20,16 +20,19 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
-import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
+import org.eclipse.equinox.internal.p2.core.DefaultAgentProvider;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.sequoyah.pulsar.core.Activator;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * A class of utilities for P2 common operations
@@ -44,14 +47,23 @@ public class P2Utils {
      * @return
      */
     public static boolean isInstalled(IInstallableUnit iu) {
-        for (IProfile profile : ProvisioningHelper.getProfiles()) {
-            IQueryResult<IInstallableUnit> available = profile.available(new InstallableUnitQuery(iu.getId(), iu
-                    .getVersion()), new NullProgressMonitor());
+    	IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(iu.getId(), iu.getVersion());
+    	BundleContext context = Activator.getContext();
+    	IProvisioningAgent agent = getProvisioningAgent(context);
+		IProfileRegistry profileRegistry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+        for (IProfile profile : profileRegistry.getProfiles()) {
+        	IQueryResult<IInstallableUnit> available = profile.query(query, new NullProgressMonitor());
             if (!available.isEmpty())
                 return true;
         }
         return false;
     }
+
+	public static ServiceReference getProvisiningAgentReference(
+			BundleContext context) {
+		ServiceReference serviceReference = context.getServiceReference(IProvisioningAgent.SERVICE_NAME);
+		return serviceReference;
+	}
 
     /**
      * @param id
@@ -61,9 +73,9 @@ public class P2Utils {
      */
     public static IProfile createProfile(String id, IPath installFolder)
             throws ProvisionException {
-        IProfileRegistry profileRegistry = (IProfileRegistry) ServiceHelper
-                .getService(Activator.getContext(), IProfileRegistry.class
-                        .getName());
+    	BundleContext context = Activator.getContext();
+    	IProvisioningAgent agent = getProvisioningAgent(context);
+    	IProfileRegistry profileRegistry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
         Map<String, String> propMap = new HashMap<String, String>();
         if (installFolder != null)
         	propMap.put(IProfile.PROP_INSTALL_FOLDER, installFolder
@@ -76,9 +88,9 @@ public class P2Utils {
      * @param id
      */
     public static void deleteProfile(String id) {
-        IProfileRegistry profileRegistry = (IProfileRegistry) ServiceHelper
-                .getService(Activator.getContext(), IProfileRegistry.class
-                        .getName());
+    	BundleContext context = Activator.getContext();
+    	IProvisioningAgent agent = getProvisioningAgent(context);
+    	IProfileRegistry profileRegistry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
         profileRegistry.removeProfile(id);
     }
 
@@ -111,12 +123,22 @@ public class P2Utils {
      * @return
      */
     public static Collection<IProfile> getProfiles() {
+    	BundleContext context = Activator.getContext();
+    	IProvisioningAgent agent = getProvisioningAgent(context);
+		IProfileRegistry profileRegistry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
         Collection<IProfile> profiles = new ArrayList<IProfile>();
-        for (IProfile profile : ProvisioningHelper.getProfiles()) {
+        for (IProfile profile : profileRegistry.getProfiles()) {
             if (isSupportedProfile(profile))
                 profiles.add(profile);
         }
 
         return profiles;
     }
+
+	public static IProvisioningAgent getProvisioningAgent(BundleContext context) {
+		DefaultAgentProvider agentProvider = new DefaultAgentProvider();
+        agentProvider.activate(context);
+        IProvisioningAgent agent = agentProvider.createAgent(null);
+		return agent;
+	}
 }

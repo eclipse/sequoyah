@@ -20,9 +20,11 @@ import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.equinox.internal.p2.core.DefaultAgentProvider;
 import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
 import org.eclipse.equinox.internal.provisional.p2.director.IDirector;
 import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.ProvisioningContext;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -39,10 +41,14 @@ public class TestUtils {
 		ProfileChangeRequest changeRequest = new ProfileChangeRequest(profile);
 		changeRequest.addInstallableUnits(new IInstallableUnit[] { iu });
 		URI[] muris = { metadataURI };
-		ProvisioningContext context = new ProvisioningContext(muris);
+		BundleContext bundleContext = Activator.getDefault().getBundle().getBundleContext();
+		DefaultAgentProvider agentProvider = new DefaultAgentProvider();
+        agentProvider.activate(bundleContext);
+        IProvisioningAgent agent = agentProvider.createAgent(null);
+		ProvisioningContext context = new ProvisioningContext(agent);
+		context.setMetadataRepositories(muris);
 		URI[] auris = { artifactsURI };
         context.setArtifactRepositories(auris);
-        BundleContext bundleContext = Activator.getDefault().getBundle().getBundleContext();
         IDirector director = 
         	(IDirector) ServiceHelper.getService(bundleContext, IDirector.class.getName());
         return director.provision(changeRequest, context, null);

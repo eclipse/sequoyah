@@ -32,22 +32,22 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.internal.p2.artifact.repository.simple.SimpleArtifactRepository;
-import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
 import org.eclipse.equinox.internal.p2.core.helpers.OrderedProperties;
 import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
 import org.eclipse.equinox.internal.p2.metadata.ArtifactKey;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.ILicense;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.metadata.ITouchpointData;
 import org.eclipse.equinox.p2.metadata.ITouchpointInstruction;
+import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.metadata.Version;
-import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
-import org.eclipse.equinox.p2.query.Collector;
+import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.IRepository;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
@@ -57,6 +57,7 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.sequoyah.pulsar.core.Activator;
+import org.eclipse.sequoyah.pulsar.internal.core.P2Utils;
 import org.eclipse.sequoyah.pulsar.internal.core.SDK;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.Messages;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EType;
@@ -112,11 +113,13 @@ public class GeneratorEngine implements RepositoryConstants {
             throw new Exception(Messages.GeneratorEngine_ArtifactsDoesNotExist);
         }
         URI uriDir = dir.toURI();
+        
+        IProvisioningAgent agent = P2Utils.getProvisioningAgent(Activator.getContext());
+        IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+		IMetadataRepository metaRepo = metadataManager.loadRepository(uriDir, new NullProgressMonitor());
 
-        IMetadataRepository metaRepo = ProvisioningHelper
-                .getMetadataRepository(uriDir);
-        IArtifactRepository artiRepo = ProvisioningHelper
-                .getArtifactRepository(uriDir);
+		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+		IArtifactRepository artiRepo = artifactManager.loadRepository(uriDir, new NullProgressMonitor());
         IRepositoryDescription repoDesc = new RepositoryDescription();
         OrderedProperties props = (OrderedProperties) metaRepo.getProperties();
         if (props.getProperty(IRepository.PROP_COMPRESSED).equalsIgnoreCase(
@@ -136,8 +139,10 @@ public class GeneratorEngine implements RepositoryConstants {
             repoDesc.setArtifactLocation(new Path(output.substring(
                     beginIndex + 1, endIndex)));
         }
-        IQueryResult<IInstallableUnit> ius = ProvisioningHelper.getInstallableUnits(uriDir,
-                InstallableUnitQuery.ANY, new NullProgressMonitor());
+        
+        IQuery<IInstallableUnit> query = QueryUtil.createIUAnyQuery();
+
+        IQueryResult<IInstallableUnit> ius = metadataManager.query(query, new NullProgressMonitor());
         Set<IInstallableUnit> iusSet = ius.toSet();
         for (IInstallableUnit iu : iusSet) {
             IIUDescription iuDesc = new IUDescription();
@@ -166,7 +171,7 @@ public class GeneratorEngine implements RepositoryConstants {
                 iuDesc.setArtifactType(EType.EXECUTABLE);
             }
             if (iuDesc.getArtifactType().equals(EType.ZIP_ARCHIVE)) {
-                List<ITouchpointData> touchpointData = iu.getTouchpointData();
+                List<ITouchpointData> touchpointData = (List<ITouchpointData>) iu.getTouchpointData();
                 ITouchpointInstruction inst = touchpointData.get(0)
                         .getInstruction(INSTALL_TOUCHPOINT_KEY);
                 String instBody = inst.getBody();
@@ -238,10 +243,9 @@ public class GeneratorEngine implements RepositoryConstants {
         delete(file);
 
         URI uriDir = dir.toURI();
-        IMetadataRepositoryManager repoManager = (IMetadataRepositoryManager) ServiceHelper
-                .getService(Activator.getContext(),
-                        IMetadataRepositoryManager.class.getName());
-        IMetadataRepository repo = repoManager.createRepository(uriDir, desc
+        IProvisioningAgent agent = P2Utils.getProvisioningAgent(Activator.getContext());
+        IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+        IMetadataRepository repo = metadataManager.createRepository(uriDir, desc
                 .getMetadataRepoName(),
                 IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY,
                 new OrderedProperties());
@@ -367,7 +371,9 @@ public class GeneratorEngine implements RepositoryConstants {
                 // add this IU
                 IInstallableUnit iu = MetadataFactory
                         .createInstallableUnit(p2IuDesc);
-                repo.addInstallableUnits(new IInstallableUnit[] { iu });
+                Collection<IInstallableUnit> ius = new ArrayList(1);
+                ius.add(iu);
+                repo.addInstallableUnits(ius);
             }
         }
     }
@@ -385,10 +391,9 @@ public class GeneratorEngine implements RepositoryConstants {
         delete(file);
 
         URI uriDir = dir.toURI();
-        IArtifactRepositoryManager repoManager = (IArtifactRepositoryManager) ServiceHelper
-                .getService(Activator.getContext(),
-                        IArtifactRepositoryManager.class.getName());
-        IArtifactRepository repo = repoManager.createRepository(uriDir, desc
+        IProvisioningAgent agent = P2Utils.getProvisioningAgent(Activator.getContext());
+		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) agent .getService(IArtifactRepositoryManager.SERVICE_NAME);
+        IArtifactRepository repo = artifactManager.createRepository(uriDir, desc
                 .getArtifactRepoName(),
                 IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY,
                 new OrderedProperties());

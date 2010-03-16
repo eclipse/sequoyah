@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.sequoyah.pulsar.core.Activator;
 import org.eclipse.sequoyah.pulsar.core.tests.utils.TestUtils;
@@ -40,7 +41,6 @@ import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDKRepository;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDKRepositoryProvider;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.QuickInstallCore;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EState;
-import org.osgi.framework.Version;
 
 /**
  *

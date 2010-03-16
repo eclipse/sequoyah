@@ -13,7 +13,7 @@
 
 package org.eclipse.sequoyah.pulsar.internal.metadata.generator.engine;
 
-import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.sequoyah.pulsar.internal.core.SDK;
 
 /**
@@ -30,7 +30,7 @@ public interface RepositoryConstants {
     public static final String INSTALL_TOUCHPOINT_KEY = "install"; //$NON-NLS-1$
     public static final String UNZIP_ARTIFACT_CLASSIFIER = "unzip"; //$NON-NLS-1$
     public static final String EXE_ARTIFACT_CLASSIFIER = "exe"; //$NON-NLS-1$
-    public static final String NAME_PROP = InstallableUnit.PROP_NAME;
+    public static final String NAME_PROP = IInstallableUnit.PROP_NAME;
     public static final String PROP_CATEGORY = SDK.PROP_CATEGORY;
     public static final String PROP_DOC_URL = SDK.PROP_DOC_URL;
     public static final String PULSAR_PROP = "pulsar"; //$NON-NLS-1$

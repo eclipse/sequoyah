@@ -21,7 +21,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.osgi.framework.Version;
+import org.eclipse.equinox.p2.metadata.Version;
 
 /**
  * Represents one SDK that will be presented in the QuickInstall view

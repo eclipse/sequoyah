@@ -25,31 +25,30 @@ import java.util.Collection;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
-import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
-import org.eclipse.equinox.internal.p2.operations.PlanAnalyzer;
 import org.eclipse.equinox.internal.p2.ui.IProvHelpContextIds;
 import org.eclipse.equinox.internal.p2.ui.dialogs.PreselectedIUInstallWizard;
 import org.eclipse.equinox.internal.p2.ui.dialogs.ProvisioningWizardDialog;
 import org.eclipse.equinox.internal.p2.ui.dialogs.UninstallWizard;
-import org.eclipse.equinox.internal.p2.ui.sdk.ProvSDKUIActivator;
-import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProvisioningPlan;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.operations.InstallOperation;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
+import org.eclipse.equinox.p2.operations.RepositoryTracker;
 import org.eclipse.equinox.p2.operations.UninstallOperation;
+import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.equinox.p2.ui.LoadMetadataRepositoryJob;
-import org.eclipse.equinox.p2.ui.Policy;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -82,14 +81,17 @@ public class P2InstallerUI implements IInstallerUI {
     public void runInstaller(final Shell parentShell, ISDK sdk)
             throws CoreException {
         SDK sdkImpl = (SDK) sdk.getAdapter(SDK.class);
-        final InstallableUnit[] ius = getInstallableUnits(sdkImpl);
+        final Collection<IInstallableUnit> ius = getInstallableUnits(sdkImpl);
         final URI artifactsUri = sdkImpl.getRepository().getArtifactsURI();
         final URI metadataUri = sdkImpl.getRepository().getMetadataURI();
         
         final ProvisioningUI defaultUI = ProvisioningUI.getDefaultUI();
 		ProvisioningSession session = defaultUI.getSession();
-		session.getArtifactRepositoryManager().addRepository(artifactsUri);
-		session.getMetadataRepositoryManager().addRepository(metadataUri);
+		IProvisioningAgent agent = session.getProvisioningAgent();
+		IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+		metadataManager.addRepository(metadataUri);
+		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+		artifactManager.addRepository(artifactsUri);
 		
         final InstallOperation operation = new InstallOperation(session, ius);
         Job job = new Job("Preparing") {
@@ -125,7 +127,7 @@ public class P2InstallerUI implements IInstallerUI {
     public void runUninstaller(final Shell parentShell, ISDK sdk)
             throws CoreException {
         SDK sdkImpl = (SDK) sdk.getAdapter(SDK.class);
-        final InstallableUnit[] ius = getInstallableUnits(sdkImpl);
+        final Collection<IInstallableUnit> ius = getInstallableUnits(sdkImpl);
 
         final ProvisioningUI defaultUI = ProvisioningUI.getDefaultUI();
 		ProvisioningSession session = defaultUI.getSession();
@@ -174,54 +176,37 @@ public class P2InstallerUI implements IInstallerUI {
          * URLs
          */
         int i = 0;
+        final ProvisioningUI defaultUI = ProvisioningUI.getDefaultUI();
+    	RepositoryTracker repositoryTracker = defaultUI.getRepositoryTracker();
         for (ISDKRepository repository : repositories) {
-            ProvisioningHelper.addMetadataRepository(repository.getMetadataURI());
-            ProvisioningHelper.addArtifactRepository(repository.getArtifactsURI());
+        	URI[] locations = new URI[] {repository.getMetadataURI(), repository.getArtifactsURI()};
+			repositoryTracker.refreshRepositories(locations , defaultUI.getSession(), new NullProgressMonitor());
             i++;
         }
-    }
-
-    private ProfileChangeRequest getProfileChangeRequest(
-            IInstallableUnit[] ius, String targetProfileId, MultiStatus status,
-            IProgressMonitor monitor) {
-        SubMonitor sub = SubMonitor.convert(monitor, 
-                "", 1);
-        ProfileChangeRequest request = null;
-        try {
-            request = ProfileChangeRequest.createByProfileId(targetProfileId);
-            request.removeInstallableUnits(ius);
-
-            String key = getPolicy().getVisibleInstalledIUQuery().getId();
-            for (int i = 0; i < ius.length; i++)
-                request.removeInstallableUnitProfileProperty(ius[i], key);
-        } finally {
-            sub.done();
-        }
-        return request;
     }
 
     private URI getMetadataURI(SDK sdk) {
         return sdk.getRepository().getMetadataURI();
     }
 
-    private InstallableUnit[] getInstallableUnits(SDK sdk) {
+    private Collection<IInstallableUnit> getInstallableUnits(SDK sdk) {
         IInstallableUnit iu = sdk.getInstallableUnit();
-        InstallableUnitQuery query = new InstallableUnitQuery(iu.getId(), iu.getVersion());
-        IQueryResult<IInstallableUnit> installableUnits = ProvisioningHelper.getInstallableUnits(
-                getMetadataURI(sdk), query, new NullProgressMonitor());
-        return (InstallableUnit[]) installableUnits
-                .toArray(InstallableUnit.class);
-    }
-
-    private Policy getPolicy() {
-        return null /*ProvisioningHelper.get*/;
-    }
-
-    private String getProfileID() throws ProvisionException {
-        return ProvSDKUIActivator.getDefault().getProvisioningUI().getProfileId();
-    }
-
-    private MultiStatus getStatus() {
-        return PlanAnalyzer.getProfileChangeAlteredStatus();
+        
+        final ProvisioningUI defaultUI = ProvisioningUI.getDefaultUI();
+        ProvisioningSession session = defaultUI.getSession();
+        IProvisioningAgent agent = session.getProvisioningAgent();
+        IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+        
+        IMetadataRepository repository = null;
+        IQueryResult<IInstallableUnit> queryResult = null;
+		try {
+			repository = manager.loadRepository(getMetadataURI(sdk), new NullProgressMonitor());
+			IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(iu.getId(), iu.getVersion());
+			queryResult = repository.query(query, new NullProgressMonitor());
+		} catch (ProvisionException e) {
+		} catch (OperationCanceledException e) {
+		}
+        
+        return queryResult.toSet();
     }
 }

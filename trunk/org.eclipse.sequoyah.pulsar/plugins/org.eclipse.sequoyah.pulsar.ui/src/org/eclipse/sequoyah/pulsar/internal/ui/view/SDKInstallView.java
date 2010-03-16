@@ -563,7 +563,6 @@ public class SDKInstallView extends ViewPart {
     private void addProvisioningListener() {
         listener = new StructuredViewerProvisioningListener(viewer,
                 StructuredViewerProvisioningListener.PROV_EVENT_PROFILE) {
-            @Override
             protected void profileChanged(String profileId) {
                 Display.getDefault().asyncExec(new Runnable() {
                     public void run() {

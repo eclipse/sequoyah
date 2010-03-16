@@ -18,19 +18,24 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.management.Query;
-
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.query.Collector;
+import org.eclipse.equinox.p2.metadata.expression.ExpressionUtil;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
-import org.eclipse.equinox.p2.query.MatchQuery;
+import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.sequoyah.pulsar.core.Activator;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.IInstallationInfo;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDKRepository;
+import org.osgi.framework.BundleContext;
 
 @SuppressWarnings("restriction")
 public class SDKRepository implements ISDKRepository {
@@ -47,29 +52,34 @@ public class SDKRepository implements ISDKRepository {
         this.artifactsUri = artifactsUri;
     }
 
-    @SuppressWarnings("unchecked")
     public Collection<ISDK> getSDKs(IProgressMonitor monitor) {
         Collection<ISDK> sdks = new ArrayList<ISDK>();
         
-        IQueryResult<IInstallableUnit> installableUnits = ProvisioningHelper.getInstallableUnits(
-                getMetadataURI(), getSDKQuery(), monitor);
-        for (IInstallableUnit iu : installableUnits.unmodifiableSet()) {
-            sdks.add(new SDK(this, iu));
+        BundleContext context = Activator.getContext();
+        IProvisioningAgent agent = P2Utils.getProvisioningAgent(context);
+        
+        IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+
+        IMetadataRepository repository = null;
+        IQueryResult<IInstallableUnit> queryResult = null;
+        try {
+        	repository = manager.loadRepository(getMetadataURI(), new NullProgressMonitor());
+        	IQuery<IInstallableUnit> query = getSDKQuery();
+        	queryResult = repository.query(query, monitor);
+        } catch (ProvisionException e) {
+		} catch (OperationCanceledException e) {
+		}
+        
+        if(queryResult != null) {
+        	for (IInstallableUnit iu : queryResult.toUnmodifiableSet()) {
+        		sdks.add(new SDK(this, iu));
+        	}
         }
         return sdks;
     }
 
-    private IQuery getSDKQuery() {
-        return new MatchQuery() {
-            @Override
-            public boolean isMatch(Object candidate) {
-                if (candidate instanceof IInstallableUnit) {
-                    IInstallableUnit iu = (IInstallableUnit) candidate;
-                    return iu.getProperty(SDK.PROP_TYPE) != null;
-                }
-                return false;
-            }
-        };
+    private IQuery<IInstallableUnit> getSDKQuery() {
+		return QueryUtil.createMatchQuery(IInstallableUnit.class, ExpressionUtil.parse("properties[$0] != $1") , SDK.PROP_TYPE, null);
     }
 
     public URI getMetadataURI() {
