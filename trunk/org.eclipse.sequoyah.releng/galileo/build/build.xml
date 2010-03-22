@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="MOTODEV Studio for Android" default="generate.release.artifacts">
+<project name="Sequoyah" default="generate.release.artifacts">
 
 	<description>
-     This Build file generates the Studio Android Product using PDE + P2 infraestructure
-     USAGE:
-     ant generate.release.artifacts [to generate Release Artifacts]
-     ant generate.release.artifacts -Dmotodev.storepass=[storepass] -Dmotodev.keypass=[keypass] [to build the product signing the features and plugins]
-    </description>
+		This Build file generates Sequoyah's plugins and features using PDE + P2 infraestructure
+       </description>
 
 	<!-- define timestamp for build -->
 	<tstamp>
-		<format property="timestamp" pattern="yyyyMMddhhmm" />
+		<format property="timestamp" pattern="yyyyMMdd-hhmm" />
 	</tstamp>
 
 	<!-- define basic properties -->
@@ -47,6 +44,7 @@
 			2 Fetch phase: fetching elements from SVN
 			###################################
 		</echo>
+
 		<!-- path and typedef necessary for checking out SVN repo -->
 		<path id="svnant.classpath">
 		<fileset dir="${BUILD_BASE_PATH}/svnant/svnant-1.3.0/lib/">
@@ -67,17 +65,40 @@
 		<mkdir dir="${buildDirectory}" />
 
 		<svn javahl="false">
-			<checkout url="${svnrepo}/trunk" destPath="${SOURCE_DIR}" />
+			<checkout url="${svnrepo}/branches/stable" destPath="${SOURCE_DIR}" />
 		</svn>
 
 		<copy todir="${buildDirectory}">
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.device/" includes="**" />
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.localization/" includes="**" />
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.vnc/" includes="**" />
+			<!-- fileset dir="${SOURCE_DIR}/org.eclipse.tfm.sign/" includes="**" / -->
 		</copy>
 		<move todir="${buildDirectory}/plugins">
 			<fileset dir="${buildDirectory}/examples/" includes="**" />
 		</move>
+
+		<echo level="info">
+			###################################
+			3 buildID phase: writing about.mappings
+			###################################
+		</echo>
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+			<classpath>
+				<pathelement location="${BUILD_BASE_PATH}/antcontrib/ant-contrib-1.0b3.jar"/>
+			</classpath>
+		</taskdef>
+		<for param="file">
+			<path>
+				<dirset dir="${buildDirectory}/plugins">
+					<include name="org.eclipse.sequoyah.*" />
+				</dirset>
+			</path>
+			<sequential>
+				<echo message="[${timestamp}] file=@{file}/about.mappings" />
+				<echo message="0=${timestamp}" file="@{file}/about.mappings" />				
+			</sequential>
+		</for>
 	</target>
 
 	<target name="clearSettings">
@@ -100,7 +121,7 @@
 	<target name="build.pde" unless="publish">
 		<echo level="info">
 			###################################
-			3a PDE Build
+			4a PDE Build
 			###################################
 		</echo>
 		<antcall target="clearSettings" />
@@ -132,7 +153,7 @@
 	<target name="build.pde.publish" if="publish">
 		<echo level="info">
 			###################################
-			3b PDE Build Publish
+			4b PDE Build Publish
 			###################################
 		</echo>
 		<antcall target="clearSettings" />

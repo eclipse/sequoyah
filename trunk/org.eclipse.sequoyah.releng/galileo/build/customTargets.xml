@@ -152,15 +152,14 @@
 	<target name="postBuild">
 		<antcall target="gatherLogs" />
 		<property name="fileName" value="${topLevelElementId}_Incubation_${buildType}_${buildId}_${timestamp}" />
-		<property name="updateSite" value="/home/data/httpd/download.eclipse.org/sequoyah/updates/0.5"/>
-		<property name="downloadSite" value="/home/data/httpd/download.eclipse.org/sequoyah/downloads/drops/0.5"/>
+		<property name="updateSite" value="/home/data/httpd/download.eclipse.org/sequoyah/updates/0.5_stable"/>
+		<property name="downloadSite" value="/home/data/httpd/download.eclipse.org/sequoyah/downloads/drops/0.5_stable"/>
 		<property name="stagingHome" value="/home/data/httpd/download-staging.priv" />
 		<property name="projectPath" value="dsdp/sequoyah" />
 		<property name="buildServerUser" value="${env.USER}@build.eclipse.org" />
 		<property name="stagingDirectory" value="${stagingHome}/${projectPath}" />
 		<property name="stagingDirectoryOutput" value="${stagingDirectory}/0.5-out" />
-		<!-- property name="mailStatus" value="nomail" / -->
-		<property name="mailStatus" value="kpqb38@motorola.com" />
+		<property name="mailStatus" value="nomail" />
 
 		<!-- Rename zip file -->
 		<move file="${buildDirectory}/${buildLabel}/${topLevelElementId}-${buildId}-group.group.group.zip"
@@ -208,7 +207,7 @@
 	</target>
 
 	<target name="publishUpdateSite" if="publish">
-		<property name="updateSite" value="/home/data/httpd/download.eclipse.org/sequoyah/updates/0.5"/>
+		<property name="updateSite" value="/home/data/httpd/download.eclipse.org/sequoyah/updates/0.5_stable"/>
 
 		<echo message="Deleting old update site..." />
 		<delete dir="${updateSite}/features"/>
