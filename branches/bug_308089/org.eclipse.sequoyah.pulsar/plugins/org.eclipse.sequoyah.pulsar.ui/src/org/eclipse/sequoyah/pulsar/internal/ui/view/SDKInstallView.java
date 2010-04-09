@@ -23,8 +23,6 @@
 package org.eclipse.sequoyah.pulsar.internal.ui.view;
 
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -47,7 +45,6 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.sequoyah.pulsar.Activator;
-import org.eclipse.sequoyah.pulsar.internal.core.P2Utils;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -172,14 +169,7 @@ public class SDKInstallView extends ViewPart {
         layout.marginWidth = 0x00;
         parent.setLayout(layout);
 
-		viewer = new CatalogViewer(getCatalog(), getSite(), getSite().getWorkbenchWindow(), getConfiguration()) {
-			protected java.util.Set<String> getInstalledFeatures(IProgressMonitor monitor) throws InterruptedException {
-				Set<String> installedFeatures = new HashSet<String>(super.getInstalledFeatures(monitor));
-				// add installed sdks
-				installedFeatures.addAll(P2Utils.getInstalledFeatureIds(monitor));	
-				return installedFeatures;
-			};
-		};
+		viewer = new CatalogViewer(getCatalog(), getSite(), getSite().getWorkbenchWindow(), getConfiguration());
 		viewer.createControl(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(viewer.getControl());
 
