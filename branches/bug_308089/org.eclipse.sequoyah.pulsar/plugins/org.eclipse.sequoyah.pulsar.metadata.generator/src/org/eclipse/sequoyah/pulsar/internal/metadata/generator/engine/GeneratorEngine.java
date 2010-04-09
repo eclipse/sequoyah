@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +34,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.internal.p2.artifact.repository.simple.SimpleArtifactRepository;
 import org.eclipse.equinox.internal.p2.core.helpers.OrderedProperties;
-import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
 import org.eclipse.equinox.internal.p2.metadata.ArtifactKey;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
@@ -43,8 +43,8 @@ import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.metadata.ITouchpointData;
 import org.eclipse.equinox.p2.metadata.ITouchpointInstruction;
 import org.eclipse.equinox.p2.metadata.MetadataFactory;
-import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
@@ -62,10 +62,12 @@ import org.eclipse.sequoyah.pulsar.internal.core.SDK;
 import org.eclipse.sequoyah.pulsar.internal.metadata.generator.Messages;
 import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EType;
 
-@SuppressWarnings( { "restriction", "unchecked" })
+@SuppressWarnings( { "restriction" })
 public class GeneratorEngine implements RepositoryConstants {
 
-    private static boolean delete(File file) {
+    private static final String FEATURE_GROUP_ID_SUFFIX = ".feature.group"; //$NON-NLS-1$
+
+	private static boolean delete(File file) {
         if (!file.exists())
             return true;
         return file.delete();
@@ -265,9 +267,12 @@ public class GeneratorEngine implements RepositoryConstants {
             while (iterator.hasNext()) {
                 InstallableUnitDescription p2IuDesc = new MetadataFactory.InstallableUnitDescription();
                 IIUDescription newIuDesc = iterator.next();
+                
+                p2IuDesc.setProperty(InstallableUnitDescription.PROP_TYPE_GROUP, Boolean.TRUE.toString());
 
                 // IU Id, version
-                p2IuDesc.setId(newIuDesc.getUnitId());
+                String id = ensureGroupId(newIuDesc);
+				p2IuDesc.setId(id);
                 p2IuDesc.setVersion(newIuDesc.getUnitVersion());
                 p2IuDesc.setSingleton(newIuDesc.isSingleton());
 
@@ -333,8 +338,7 @@ public class GeneratorEngine implements RepositoryConstants {
                         .createTouchpointData(touchpointData));
 
                 // Self capability Provides
-                IProvidedCapability cap = PublisherHelper.createSelfCapability(
-                        newIuDesc.getUnitId(), newIuDesc.getUnitVersion());
+                IProvidedCapability cap = PublisherHelper.createSelfCapability(id, newIuDesc.getUnitVersion());
                 Collection<IProvidedCapability> capColl = new ArrayList<IProvidedCapability>();
                 capColl.add(cap);
                 p2IuDesc.addProvidedCapabilities(capColl);
@@ -369,14 +373,18 @@ public class GeneratorEngine implements RepositoryConstants {
                 }
 
                 // add this IU
-                IInstallableUnit iu = MetadataFactory
-                        .createInstallableUnit(p2IuDesc);
-                Collection<IInstallableUnit> ius = new ArrayList(1);
-                ius.add(iu);
-                repo.addInstallableUnits(ius);
+                IInstallableUnit iu = MetadataFactory.createInstallableUnit(p2IuDesc);
+                repo.addInstallableUnits(Collections.singletonList(iu));
             }
         }
     }
+
+	private static String ensureGroupId(IIUDescription newIuDesc) {
+		String id = newIuDesc.getUnitId();
+		if (!id.endsWith(FEATURE_GROUP_ID_SUFFIX))
+			id += FEATURE_GROUP_ID_SUFFIX;
+		return id;
+	}
 
     private static void createArtifactRepository(IPath location,
             IRepositoryDescription desc) throws Exception {
