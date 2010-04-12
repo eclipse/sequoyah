@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -76,7 +76,7 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 				StringBuilder builder = new StringBuilder();
 				for (IStatus child : row.getStatus().getChildren()) {
 					builder.append(child.getMessage());
-					builder.append(Messages.StringEditorColumnLabelProvider_0);
+					builder.append("\n"); //$NON-NLS-1$
 				}
 				comment = builder.toString();
 			}

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart;
 
@@ -44,7 +43,7 @@ public class AddColumnOperation extends EditorOperation {
 	 */
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {		
+			throws ExecutionException {
 		return redo(monitor, info);
 	}
 
@@ -74,7 +73,7 @@ public class AddColumnOperation extends EditorOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		getEditor().removeColumn(columnInfo.getId());
-		getEditor().getEditorViewer().refresh();		
+		getEditor().getEditorViewer().refresh();
 		return Status.OK_STATUS;
 	}
 

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,7 +21,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
@@ -361,11 +360,11 @@ public class NewRowInputDialog extends Dialog {
 
 		LocalizationProject localizationProject = null;
 		try {
-			localizationProject = LocalizationManager
-					.getInstance().getProjectLocalizationManager(project, false)
+			localizationProject = LocalizationManager.getInstance()
+					.getProjectLocalizationManager(project, false)
 					.getLocalizationProject();
 		} catch (IOException e) {
-		
+
 		}
 
 		Set<StringArray> allStringArrays = localizationProject

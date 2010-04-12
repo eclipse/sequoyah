@@ -35,17 +35,17 @@ public class ProjectPreferencesManager {
 	/*
 	 * The default language of this project
 	 */
-	private final String DEFAULT_LANGUAGE = Messages.ProjectPreferencesManager_0;
+	private final String DEFAULT_LANGUAGE = "en"; //$NON-NLS-1$
 
 	private Map<String, String> defaultLanguageForColumn = new HashMap<String, String>();
 
 	private IPreferenceStore preferenceStore = null;
 
-	private final String PREFERENCE_KEY_SUFFIX = Messages.ProjectPreferencesManager_1;
+	private final String PREFERENCE_KEY_SUFFIX = "_DEFAULTLANGUAGES"; //$NON-NLS-1$
 
-	private final String NODE_SEPARATOR = Messages.ProjectPreferencesManager_2;
+	private final String NODE_SEPARATOR = ","; //$NON-NLS-1$
 
-	private final String FIELD_SEPARATOR = Messages.ProjectPreferencesManager_3;
+	private final String FIELD_SEPARATOR = ":"; //$NON-NLS-1$
 
 	private ProjectLocalizationManager projectLocalizationManager;
 

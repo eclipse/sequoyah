@@ -13,7 +13,6 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.datamodel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,34 +25,34 @@ import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
 import org.w3c.dom.Document;
 
 /**
- * This class represents a real Android localization file in the project 
- * and contains information about XML file saved
- *
+ * This class represents a real Android localization file in the project and
+ * contains information about XML file saved
+ * 
  */
 public class AndroidLocalizationFile extends LocalizationFile {
 
 	/**
-	 * Saved XML (it is used not to lose comments on updates) 
+	 * Saved XML (it is used not to lose comments on updates)
 	 */
 	private Document savedXMLDocument = null;
 
 	/**
-	 * Kept to remove a single entry
-	 * to be removed from savedXMLDocument in the next save action
+	 * Kept to remove a single entry to be removed from savedXMLDocument in the
+	 * next save action
 	 */
-	private Map<String, StringNode> singleEntryToRemove = new HashMap<String,StringNode>();
-	
+	private Map<String, StringNode> singleEntryToRemove = new HashMap<String, StringNode>();
+
 	/**
-	 * Kept to remove only one item inside array
-	 * to be removed from savedXMLDocument in the next save action
+	 * Kept to remove only one item inside array to be removed from
+	 * savedXMLDocument in the next save action
 	 */
-	private Map<String,StringNode> arrayItemsToRemove = new HashMap<String,StringNode>();
-	
+	private Map<String, StringNode> arrayItemsToRemove = new HashMap<String, StringNode>();
+
 	/**
-	 * Kept to remove an entire array
-	 * to be removed from savedXMLDocument in the next save action
+	 * Kept to remove an entire array to be removed from savedXMLDocument in the
+	 * next save action
 	 */
-	private Map<String,StringArray> arrayEntryToRemove = new HashMap<String,StringArray>(); 
+	private Map<String, StringArray> arrayEntryToRemove = new HashMap<String, StringArray>();
 
 	/**
 	 * 
@@ -64,8 +63,8 @@ public class AndroidLocalizationFile extends LocalizationFile {
 	 */
 	public AndroidLocalizationFile(IFile file, LocaleInfo localeInfo,
 			List<StringNode> stringNodes, List<StringArray> stringArrays) {
-		super(file, localeInfo, stringNodes, stringArrays);		
-	}	
+		super(file, localeInfo, stringNodes, stringArrays);
+	}
 
 	/**
 	 * @return the savedXMLDocument
@@ -75,42 +74,40 @@ public class AndroidLocalizationFile extends LocalizationFile {
 	}
 
 	/**
-	 * @param savedXMLDocument the savedXMLDocument to set
+	 * @param savedXMLDocument
+	 *            the savedXMLDocument to set
 	 */
 	public void setSavedXMLDocument(Document savedXMLDocument) {
 		this.savedXMLDocument = savedXMLDocument;
 	}
-	
+
 	/**
 	 * @see org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile#removeStringNode(org.eclipse.sequoyah.localization.tools.datamodel.StringNode)
 	 */
 	@Override
 	public void removeStringNode(StringNode stringNode) {
-		 if (getStringNodes().contains(stringNode))
-	        {
-			 	getStringNodes().remove(stringNode);
-	            getStringNodesMap().remove(stringNode.getKey());
-	            this.setDirty(true);
-	            // check if it's is an array
-	            if (stringNode.isArray())
-	            {
-	                stringNode.getStringArray().removeValue(stringNode);
-	                if (stringNode.getStringArray().getValues().size() == 0)
-	                {
-	                    this.getStringArrays().remove(stringNode.getStringArray());
-	                	//mark entire array entry to be removed
-	                    arrayEntryToRemove.put(stringNode.getStringArray().getKey(), stringNode.getStringArray());
-	                }
-	                else {
-	                	//mark item array to be removed	                	
-	                	arrayItemsToRemove.put(stringNode.getKey(), stringNode);
-	                }
-	            }
-	            else {
-	            	//mark single entry to be removed
-	            	singleEntryToRemove.put(stringNode.getKey(), stringNode);	            
-	            }
-	        }
+		if (getStringNodes().contains(stringNode)) {
+			getStringNodes().remove(stringNode);
+			getStringNodesMap().remove(stringNode.getKey());
+			this.setDirty(true);
+			// check if it's is an array
+			if (stringNode.isArray()) {
+				stringNode.getStringArray().removeValue(stringNode);
+				if (stringNode.getStringArray().getValues().size() == 0) {
+					this.getStringArrays().remove(stringNode.getStringArray());
+					// mark entire array entry to be removed
+					arrayEntryToRemove.put(
+							stringNode.getStringArray().getKey(), stringNode
+									.getStringArray());
+				} else {
+					// mark item array to be removed
+					arrayItemsToRemove.put(stringNode.getKey(), stringNode);
+				}
+			} else {
+				// mark single entry to be removed
+				singleEntryToRemove.put(stringNode.getKey(), stringNode);
+			}
+		}
 	}
 
 	/**

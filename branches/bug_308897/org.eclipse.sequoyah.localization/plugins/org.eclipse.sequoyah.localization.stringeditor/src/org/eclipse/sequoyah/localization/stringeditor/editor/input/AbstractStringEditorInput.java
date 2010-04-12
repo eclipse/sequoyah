@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,7 +10,8 @@
  * 
  * Contributors:
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
- * Marcel Gorri (Eldorado) - Adapting localization framework for automatic translations 
+ * Marcel Gorri (Eldorado) - Adapting localization framework for automatic translations
+ * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/make this editor a multipage one 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.stringeditor.editor.input;
 
@@ -29,10 +30,13 @@ import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 
-public abstract class IStringEditorInput implements IEditorInput {
+public abstract class AbstractStringEditorInput implements IEditorInput {
 
 	private List<IInputChangeListener> inputChangeListeners = new ArrayList<IInputChangeListener>();
+
+	private List<IEditorChangeListener> fileChangeListeners = new ArrayList<IEditorChangeListener>();
 
 	public abstract void init(IProject project) throws Exception;
 
@@ -252,15 +256,82 @@ public abstract class IStringEditorInput implements IEditorInput {
 	}
 
 	/**
-	 * Notify a change in the editor input
+	 * Notify a change in the editor input to the editor part
 	 * 
 	 * @param columnID
 	 *            the column that changed
 	 */
-	public void notifyInputChange(String columnID) {
-		for (IInputChangeListener inputChangeListeener : inputChangeListeners) {
-			inputChangeListeener.columnChanged(columnID);
+	public void notifyInputChanged(String columnID) {
+		for (IInputChangeListener inputChangeListener : inputChangeListeners) {
+			inputChangeListener.columnChanged(columnID);
 		}
 	}
 
+	/**
+	 * Add a listener that will be notified when there is a change in the editor
+	 * input
+	 * 
+	 * @param inputChangeListener
+	 *            IInputChangeListener object
+	 */
+	public void addEditorChangeListener(
+			IEditorChangeListener inputChangeListener) {
+		if (!fileChangeListeners.contains(inputChangeListener)) {
+			fileChangeListeners.add(inputChangeListener);
+		}
+	}
+
+	/**
+	 * Remove a listener from the list of listeners which are notified when
+	 * there is a change in the editor input
+	 * 
+	 * @param inputChangeListener
+	 *            IInputChangeListener object
+	 */
+	public void removeEditorChangeListener(
+			IEditorChangeListener inputChangeListener) {
+		fileChangeListeners.remove(inputChangeListener);
+	}
+
+	/**
+	 * Notify a change in the editor input to the editor part
+	 * 
+	 * @param columnID
+	 *            the column that changed
+	 */
+	public void notifyEditorChanged(IEditorInput fileChanged, String newContent) {
+		for (IEditorChangeListener fileChangeListener : fileChangeListeners) {
+			fileChangeListener.editorContentChanged(fileChanged, newContent);
+		}
+	}
+
+	/**
+	 * Get the list of files used by this input. This list will be used to
+	 * populate the text pages of the editor If these input files are not
+	 * visible/editable through a text editor return null
+	 * 
+	 * @return the list of files used by the editor or null if you don't want to
+	 *         show text pages (or if your files aren't text one)
+	 */
+	public abstract List<IFile> getFiles();
+
+	/**
+	 * Get the source page name for the given file.
+	 * 
+	 * @param file
+	 * @return the name of the page to the file
+	 */
+	public abstract String getSourcePageNameForFile(IFile file);
+
+	/**
+	 * Get the content of this input associated with the editor input At this
+	 * time the content of the "UI" page and the source page may differ, so the
+	 * input shall give their current state as text to set to the source editor.
+	 * NOTE: This method will only be called if source pages exists
+	 * 
+	 * @param editorInput
+	 *            the input associated with the source editor
+	 * @return the String representation of the actual input state
+	 */
+	public abstract String getContentForFileAsText(IFileEditorInput editorInput);
 }

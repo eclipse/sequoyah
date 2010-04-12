@@ -20,29 +20,9 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 
 public class AndroidLocaleAttribute extends LocaleAttribute {
 
-	public final static int INDEX_COUNTRY_CODE = 0;
-
-	public final static int INDEX_NETWORK_CODE = 1;
-
-	public final static int INDEX_LANGUAGE = 2;
-
-	public final static int INDEX_REGION = 3;
-
-	public final static int INDEX_SCREEN_ORIENTATION = 4;
-
-	public final static int INDEX_PIXEL_DENSITY = 5;
-
-	public final static int INDEX_TOUCH_TYPE = 6;
-
-	public final static int INDEX_KEYBOARD_STATE = 7;
-
-	public final static int INDEX_TEXT_INPUT_METHOD = 8;
-
-	public final static int INDEX_NAVIGATION_METHOD = 9;
-
-	public final static int INDEX_SCREEN_DIMENSION = 10;
-
-	public final static int INDEX_COUNT = 11;
+	public enum AndroidLocaleAttributes {
+		COUNTRY_CODE, NETWORK_CODE, LANGUAGE, REGION, SCREEN_SIZE, SCREEN_ORIENTATION, PIXEL_DENSITY, TOUCH_TYPE, KEYBOARD_STATE, TEXT_INPUT_METHOD, NAVIGATION_METHOD, SCREEN_DIMENSION, API_VERSION, COUNT
+	};
 
 	private int androidType;
 
@@ -94,7 +74,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @return
 	 */
 	private String getCountryCodeFolder(String value) {
-		return Messages.AndroidLocaleAttribute_7 + value;
+		return "mcc" + value; //$NON-NLS-1$
 	}
 
 	/***
@@ -114,7 +94,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @return
 	 */
 	private String getNetworkCodeFolder(String value) {
-		return Messages.AndroidLocaleAttribute_8 + value;
+		return "mnc" + value; //$NON-NLS-1$
 	}
 
 	/***
@@ -124,7 +104,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @return
 	 */
 	private String getPixelFolder(String value) {
-		return value + Messages.AndroidLocaleAttribute_9;
+		return value + "dpi"; //$NON-NLS-1$
 	}
 
 	/***
@@ -134,7 +114,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @return
 	 */
 	private String getRegionCodeFolder(String value) {
-		return Messages.AndroidLocaleAttribute_10 + value.toUpperCase();
+		return "r" + value.toUpperCase(); //$NON-NLS-1$
 	}
 
 	/***
@@ -159,57 +139,43 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	private Object getValueAndTypeFromQualifier(String strValue) {
 		Object result = null;
 
-		switch (androidType) {
-		case INDEX_COUNTRY_CODE:
+		if (androidType == AndroidLocaleAttributes.COUNTRY_CODE.ordinal()) {
 			result = strValue.substring(3);
-			break;
-
-		case INDEX_NETWORK_CODE:
+		} else if (androidType == AndroidLocaleAttributes.NETWORK_CODE
+				.ordinal()) {
 			result = strValue.substring(3);
-			break;
-
-		case INDEX_LANGUAGE:
+		} else if (androidType == AndroidLocaleAttributes.LANGUAGE.ordinal()) {
 			result = strValue;
-			break;
-
-		case INDEX_REGION:
+		} else if (androidType == AndroidLocaleAttributes.REGION.ordinal()) {
 			result = strValue.substring(1);
-			break;
-
-		case INDEX_SCREEN_ORIENTATION:
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_SIZE.ordinal()) {
 			result = strValue;
-			break;
-
-		case INDEX_PIXEL_DENSITY:
-			int index = strValue.indexOf(Messages.AndroidLocaleAttribute_11);
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_ORIENTATION
+				.ordinal()) {
+			result = strValue;
+		} else if (androidType == AndroidLocaleAttributes.PIXEL_DENSITY
+				.ordinal()) {
+			int index = strValue.indexOf("dpi"); //$NON-NLS-1$
 			result = strValue.substring(0, index);
-			break;
-
-		case INDEX_TOUCH_TYPE:
+		} else if (androidType == AndroidLocaleAttributes.TOUCH_TYPE.ordinal()) {
 			result = strValue;
-			break;
-
-		case INDEX_KEYBOARD_STATE:
+		} else if (androidType == AndroidLocaleAttributes.KEYBOARD_STATE
+				.ordinal()) {
 			result = strValue;
-			break;
-
-		default:
-			break;
-
-		case INDEX_TEXT_INPUT_METHOD:
+		} else if (androidType == AndroidLocaleAttributes.TEXT_INPUT_METHOD
+				.ordinal()) {
 			result = strValue;
-			break;
-
-		case INDEX_NAVIGATION_METHOD:
+		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_METHOD
+				.ordinal()) {
 			result = strValue;
-			break;
-
-		case INDEX_SCREEN_DIMENSION:
-			String[] numbers = strValue.split(Messages.AndroidLocaleAttribute_12);
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_DIMENSION
+				.ordinal()) {
+			String[] numbers = strValue.split("x"); //$NON-NLS-1$
 			int x = Integer.parseInt(numbers[0]);
 			int y = Integer.parseInt(numbers[1]);
 			result = new Dimension(x, y);
-			break;
+		} else if (androidType == AndroidLocaleAttributes.API_VERSION.ordinal()) {
+			result = strValue.substring(1);
 		}
 
 		return result;
@@ -239,54 +205,42 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	public void setAndroidValue(Object value) {
-		switch (androidType) {
-		case INDEX_COUNTRY_CODE:
+
+		if (androidType == AndroidLocaleAttributes.COUNTRY_CODE.ordinal()) {
 			setCountryCodeNode(value);
-			break;
-
-		case INDEX_NETWORK_CODE:
+		} else if (androidType == AndroidLocaleAttributes.NETWORK_CODE
+				.ordinal()) {
 			setNetworkCodeNode(value);
-			break;
-
-		case INDEX_LANGUAGE:
+		} else if (androidType == AndroidLocaleAttributes.LANGUAGE.ordinal()) {
 			setLanguageNode(value);
-			break;
-
-		case INDEX_REGION:
+		} else if (androidType == AndroidLocaleAttributes.REGION.ordinal()) {
 			setRegionNode(value);
-			break;
-
-		case INDEX_SCREEN_ORIENTATION:
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_SIZE.ordinal()) {
+			setScreenSizeNode(value);
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_ORIENTATION
+				.ordinal()) {
 			setOrientationNode(value);
-			break;
-
-		case INDEX_PIXEL_DENSITY:
+		} else if (androidType == AndroidLocaleAttributes.PIXEL_DENSITY
+				.ordinal()) {
 			setPixelNode(value);
-			break;
-
-		case INDEX_TOUCH_TYPE:
+		} else if (androidType == AndroidLocaleAttributes.TOUCH_TYPE.ordinal()) {
 			setTouchNode(value);
-			break;
-
-		case INDEX_KEYBOARD_STATE:
+		} else if (androidType == AndroidLocaleAttributes.KEYBOARD_STATE
+				.ordinal()) {
 			setKeyboardNode(value);
-			break;
-
-		case INDEX_TEXT_INPUT_METHOD:
+		} else if (androidType == AndroidLocaleAttributes.TEXT_INPUT_METHOD
+				.ordinal()) {
 			setTextInputNode(value);
-			break;
-
-		case INDEX_NAVIGATION_METHOD:
+		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_METHOD
+				.ordinal()) {
 			setNavigationNode(value);
-			break;
-
-		case INDEX_SCREEN_DIMENSION:
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_DIMENSION
+				.ordinal()) {
 			setDimensionNode(value);
-			break;
-
-		default:
+		} else if (androidType == AndroidLocaleAttributes.API_VERSION.ordinal()) {
+			setAPIVersionNode(value);
+		} else {
 			throw new IllegalArgumentException(Messages.Unknown_Andr_Type);
-
 		}
 		isSet = true;
 	}
@@ -308,7 +262,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setCountryCodeNode(Object value) {
-		displayName = Messages.AndroidLocaleAttribute_13;
+		displayName = "Country Code"; //$NON-NLS-1$
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 3;
 		maximumSize = 3;
@@ -327,15 +281,24 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		if (!(value instanceof Dimension)) {
 			throw new IllegalArgumentException(Messages.Invalid_Andr_Value);
 		}
-		displayName = Messages.AndroidLocaleAttribute_14;
+		displayName = "Screen Dimension"; //$NON-NLS-1$
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 0;
 		maximumSize = 0;
 		allowedValues = null;
 		double y = ((Dimension) value).getWidth();
 		double x = ((Dimension) value).getHeight();
-		displayValue = (int) x + Messages.AndroidLocaleAttribute_15 + (int) y;
+		displayValue = (int) x + "x" + (int) y; //$NON-NLS-1$
 		folderValue = displayValue;
+	}
+
+	private void setScreenSizeNode(Object value) {
+		displayName = "Screen Size"; //$NON-NLS-1$
+		type = LocaleAttribute.FIXED_TEXT_TYPE;
+		fixedSize = 0;
+		maximumSize = 0;
+		allowedValues = new HashMap<String, String>();
+		setStringValue(value);
 	}
 
 	/**
@@ -379,7 +342,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setKeyboardNode(Object value) {
-		displayName = Messages.AndroidLocaleAttribute_16;
+		displayName = "Keyboard State"; //$NON-NLS-1$
 		type = LocaleAttribute.FIXED_TEXT_TYPE;
 		fixedSize = 0;
 		maximumSize = 0;
@@ -394,7 +357,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setLanguageNode(Object value) {
-		displayName = Messages.AndroidLocaleAttribute_17;
+		displayName = "Language"; //$NON-NLS-1$
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 2;
 		maximumSize = 2;
@@ -410,7 +373,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setNavigationNode(Object value) {
-		displayName = Messages.AndroidLocaleAttribute_18;
+		displayName = "Navigation Method"; //$NON-NLS-1$
 		type = LocaleAttribute.FIXED_TEXT_TYPE;
 		fixedSize = 0;
 		allowedValues = new HashMap<String, String>();
@@ -424,7 +387,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setNetworkCodeNode(Object value) {
-		displayName = Messages.AndroidLocaleAttribute_19;
+		displayName = "Network Code"; //$NON-NLS-1$
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 0;
 		maximumSize = 3;
@@ -439,8 +402,24 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * 
 	 * @param value
 	 */
+	private void setAPIVersionNode(Object value) {
+		displayName = "API Version"; //$NON-NLS-1$
+		type = LocaleAttribute.STRING_TYPE;
+		fixedSize = 0;
+		maximumSize = 3;
+		allowedValues = null;
+		setIntValue(value);
+		folderValue = displayValue;
+	}
+
+	/**
+	 * Sets the type and values of this attribute according to the object
+	 * received.
+	 * 
+	 * @param value
+	 */
 	private void setOrientationNode(Object value) {
-		displayName = Messages.AndroidLocaleAttribute_20;
+		displayName = "Screen Orientation"; //$NON-NLS-1$
 		type = LocaleAttribute.FIXED_TEXT_TYPE;
 		fixedSize = 0;
 		maximumSize = 0;
@@ -455,7 +434,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setPixelNode(Object value) {
-		displayName = Messages.AndroidLocaleAttribute_21;
+		displayName = "Pixel Density"; //$NON-NLS-1$
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 0;
 		maximumSize = 0;
@@ -471,7 +450,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setRegionNode(Object value) {
-		displayName = Messages.AndroidLocaleAttribute_22;
+		displayName = "Region"; //$NON-NLS-1$
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 2;
 		maximumSize = 2;
@@ -530,7 +509,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setTextInputNode(Object value) {
-		displayName = Messages.AndroidLocaleAttribute_23;
+		displayName = "Text Input Method"; //$NON-NLS-1$
 		type = LocaleAttribute.FIXED_TEXT_TYPE;
 		fixedSize = 0;
 		setValuesBasedOnDisplayValue((String) value);
@@ -543,7 +522,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 */
 	private void setTouchNode(Object value) {
-		displayName = Messages.AndroidLocaleAttribute_24;
+		displayName = "Touch Screen Type"; //$NON-NLS-1$
 		type = LocaleAttribute.FIXED_TEXT_TYPE;
 		fixedSize = 0;
 		maximumSize = 0;

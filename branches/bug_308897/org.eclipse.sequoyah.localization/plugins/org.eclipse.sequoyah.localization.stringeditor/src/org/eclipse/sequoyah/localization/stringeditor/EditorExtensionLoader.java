@@ -22,166 +22,147 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
-import org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput;
+import org.eclipse.sequoyah.localization.stringeditor.editor.input.AbstractStringEditorInput;
 import org.eclipse.sequoyah.localization.stringeditor.providers.ContentProvider;
 import org.eclipse.sequoyah.localization.stringeditor.providers.DefaultOperationProvider;
 import org.eclipse.sequoyah.localization.stringeditor.providers.ICellValidator;
 import org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider;
 
-public class EditorExtensionLoader
-{
+public class EditorExtensionLoader {
 
-    private static final String EXTENSION_POINT_ID = Messages.EditorExtensionLoader_0;
+	private static final String EXTENSION_POINT_ID = Messages.EditorExtensionLoader_0;
 
-    private static final String PROVIDER_ELEMENT_ID = Messages.EditorExtensionLoader_1;
+	private static final String PROVIDER_ELEMENT_ID = Messages.EditorExtensionLoader_1;
 
-    private static final String PROVIDER_EDITOR_CONTEXT_HELP_ID = Messages.EditorExtensionLoader_2;
+	private static final String PROVIDER_EDITOR_CONTEXT_HELP_ID = Messages.EditorExtensionLoader_2;
 
-    private static final String PROVIDER_EDITOR_INPUT_ID = Messages.EditorExtensionLoader_3;
+	private static final String PROVIDER_EDITOR_INPUT_ID = Messages.EditorExtensionLoader_3;
 
-    private static final String PROVIDER_OPERATION_PROV_ID = Messages.EditorExtensionLoader_4;
+	private static final String PROVIDER_OPERATION_PROV_ID = Messages.EditorExtensionLoader_4;
 
-    private static final String PROVIDER_CELL_VALIDATOR_ID = Messages.EditorExtensionLoader_5;
+	private static final String PROVIDER_CELL_VALIDATOR_ID = Messages.EditorExtensionLoader_5;
 
-    private final Map<IFile, IConfigurationElement> knownProviders;
+	private final Map<IFile, IConfigurationElement> knownProviders;
 
-    private final List<IConfigurationElement> availableElements;
+	private final List<IConfigurationElement> availableElements;
 
-    private static EditorExtensionLoader instance;
+	private static EditorExtensionLoader instance;
 
-    private EditorExtensionLoader()
-    {
-        knownProviders = new HashMap<IFile, IConfigurationElement>();
-        availableElements = new ArrayList<IConfigurationElement>();
-        loadExtensions();
-    }
+	private EditorExtensionLoader() {
+		knownProviders = new HashMap<IFile, IConfigurationElement>();
+		availableElements = new ArrayList<IConfigurationElement>();
+		loadExtensions();
+	}
 
-    /**
-     * Load the extensions for the editor input extension point
-     */
-    private void loadExtensions()
-    {
+	/**
+	 * Load the extensions for the editor input extension point
+	 */
+	private void loadExtensions() {
 
-        IConfigurationElement[] elements =
-                Platform.getExtensionRegistry().getConfigurationElementsFor(
-                        StringEditorPlugin.PLUGIN_ID, EXTENSION_POINT_ID);
-        for (IConfigurationElement element : elements)
-        {
-            if (element.getName().equals(PROVIDER_ELEMENT_ID))
-            {
-                availableElements.add(element);
-            }
-        }
-    }
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(StringEditorPlugin.PLUGIN_ID,
+						EXTENSION_POINT_ID);
+		for (IConfigurationElement element : elements) {
+			if (element.getName().equals(PROVIDER_ELEMENT_ID)) {
+				availableElements.add(element);
+			}
+		}
+	}
 
-    /**
-     * Return the available editor input for a given nature
-     * 
-     * @param nature
-     *            the nature
-     * @return the editor content provider
-     */
-    public ContentProvider getContentProviderForFileInput(IFile file)
-    {
+	/**
+	 * Return the available editor input for a given nature
+	 * 
+	 * @param nature
+	 *            the nature
+	 * @return the editor content provider
+	 */
+	public ContentProvider getContentProviderForFileInput(IFile file) {
 
-        ContentProvider provider = null;
-        IConfigurationElement iConfigurationElement = knownProviders.get(file);
-        if (iConfigurationElement == null)
-        {
-            iConfigurationElement = searchElementForFile(file);
-        }
-        if (iConfigurationElement != null)
-        {
-            provider = createContentProviderFromElement(iConfigurationElement);
-        }
+		ContentProvider provider = null;
+		IConfigurationElement iConfigurationElement = knownProviders.get(file);
+		if (iConfigurationElement == null) {
+			iConfigurationElement = searchElementForFile(file);
+		}
+		if (iConfigurationElement != null) {
+			provider = createContentProviderFromElement(iConfigurationElement);
+		}
 
-        return provider;
-    }
+		return provider;
+	}
 
-    private IConfigurationElement searchElementForFile(IFile file)
-    {
-        IConfigurationElement elementResult = null;
+	private IConfigurationElement searchElementForFile(IFile file) {
+		IConfigurationElement elementResult = null;
 
-        int i = 0;
-        while (elementResult == null && i < availableElements.size())
-        {
-            IConfigurationElement element = availableElements.get(i);
-            ContentProvider prov = createContentProviderFromElement(element);
-            if (prov.getEditorInput().canHandle(file))
-            {
-                elementResult = element;
-                knownProviders.put(file, element);
-                prov = null;
-            }
-            i++;
-        }
-        return elementResult;
-    }
+		int i = 0;
+		while (elementResult == null && i < availableElements.size()) {
+			IConfigurationElement element = availableElements.get(i);
+			ContentProvider prov = createContentProviderFromElement(element);
+			if (prov.getEditorInput().canHandle(file)) {
+				elementResult = element;
+				knownProviders.put(file, element);
+				prov = null;
+			}
+			i++;
+		}
+		return elementResult;
+	}
 
-    private static ContentProvider createContentProviderFromElement(IConfigurationElement element)
-    {
-        ContentProvider contentProvider = null;
-        String contextHelpID = null;
-        Object inputClazz = null;
-        Object opClazz = null;
-        Object cellValidator = null;
+	private static ContentProvider createContentProviderFromElement(
+			IConfigurationElement element) {
+		ContentProvider contentProvider = null;
+		String contextHelpID = null;
+		Object inputClazz = null;
+		Object opClazz = null;
+		Object cellValidator = null;
 
-        try
-        {
-            inputClazz = element.createExecutableExtension(PROVIDER_EDITOR_INPUT_ID);
+		try {
+			inputClazz = element
+					.createExecutableExtension(PROVIDER_EDITOR_INPUT_ID);
 
-            opClazz = element.createExecutableExtension(PROVIDER_OPERATION_PROV_ID);
-            cellValidator = element.createExecutableExtension(PROVIDER_CELL_VALIDATOR_ID);
-            contextHelpID = element.getAttribute(PROVIDER_EDITOR_CONTEXT_HELP_ID);
+			opClazz = element
+					.createExecutableExtension(PROVIDER_OPERATION_PROV_ID);
+			cellValidator = element
+					.createExecutableExtension(PROVIDER_CELL_VALIDATOR_ID);
+			contextHelpID = element
+					.getAttribute(PROVIDER_EDITOR_CONTEXT_HELP_ID);
 
-        }
-        catch (CoreException e)
-        {
-            BasePlugin.logWarning(Messages.EditorExtensionLoader_6
-                    + element.getDeclaringExtension().getUniqueIdentifier()
-                    + Messages.EditorExtensionLoader_7);
-        }
-        IStringEditorInput input = null;
-        IOperationProvider provider = null;
-        ICellValidator validator = null;
+		} catch (CoreException e) {
+			BasePlugin.logWarning(Messages.EditorExtensionLoader_6
+					+ element.getDeclaringExtension().getUniqueIdentifier()
+					+ Messages.EditorExtensionLoader_7);
+		}
+		AbstractStringEditorInput input = null;
+		IOperationProvider provider = null;
+		ICellValidator validator = null;
 
-        if (inputClazz instanceof IStringEditorInput)
-        {
-            input = (IStringEditorInput) inputClazz;
-        }
-        if (opClazz instanceof IOperationProvider)
-        {
-            provider = (IOperationProvider) opClazz;
-        }
-        else
-        {
-            provider = new DefaultOperationProvider();
-        }
-        if (cellValidator instanceof ICellValidator)
-        {
-            validator = (ICellValidator) cellValidator;
-        }
-        if (input != null)
-        {
-            contentProvider =
-                    new ContentProvider(input, provider, validator, contextHelpID.length() > 0
-                            ? contextHelpID : null);
-        }
-        return contentProvider;
-    }
+		if (inputClazz instanceof AbstractStringEditorInput) {
+			input = (AbstractStringEditorInput) inputClazz;
+		}
+		if (opClazz instanceof IOperationProvider) {
+			provider = (IOperationProvider) opClazz;
+		} else {
+			provider = new DefaultOperationProvider();
+		}
+		if (cellValidator instanceof ICellValidator) {
+			validator = (ICellValidator) cellValidator;
+		}
+		if (input != null) {
+			contentProvider = new ContentProvider(input, provider, validator,
+					contextHelpID.length() > 0 ? contextHelpID : null);
+		}
+		return contentProvider;
+	}
 
-    /**
-     * Get a instance of this loader
-     * 
-     * @return
-     */
-    public final static EditorExtensionLoader getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new EditorExtensionLoader();
-        }
-        return instance;
-    }
+	/**
+	 * Get a instance of this loader
+	 * 
+	 * @return
+	 */
+	public final static EditorExtensionLoader getInstance() {
+		if (instance == null) {
+			instance = new EditorExtensionLoader();
+		}
+		return instance;
+	}
 
 }

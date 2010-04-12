@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -29,54 +29,49 @@ import org.eclipse.sequoyah.localization.tools.managers.ProjectLocalizationManag
  * Validate a cell value according to the localization schema rules.
  * 
  */
-public class CellValidator implements ICellValidator
-{
+public class CellValidator implements ICellValidator {
 
-    /*
-     * The Project Localization Manager used as a source to get all information
-     * provided by this class
-     */
-    private static ProjectLocalizationManager projectLocalizationManager = null;
+	/*
+	 * The Project Localization Manager used as a source to get all information
+	 * provided by this class
+	 */
+	private static ProjectLocalizationManager projectLocalizationManager = null;
 
-    /**
-     * Instantiate the Project Localization Manager
-     * 
-     * @throws SequoyahException
-     */
-    public void init(IProject project) throws SequoyahException
-    {
-        try {
-			projectLocalizationManager =
-			        LocalizationManager.getInstance().getProjectLocalizationManager(project, true);
+	/**
+	 * Instantiate the Project Localization Manager
+	 * 
+	 * @throws SequoyahException
+	 */
+	public void init(IProject project) throws SequoyahException {
+		try {
+			projectLocalizationManager = LocalizationManager.getInstance()
+					.getProjectLocalizationManager(project, true);
 		} catch (IOException e) {
-			
+
 		}
-        if (projectLocalizationManager == null)
-        {
+		if (projectLocalizationManager == null) {
 
-            Status status =
-                    new Status(Status.ERROR, LocalizationToolsPlugin.PLUGIN_ID,
-                            Messages.StringEditorInput_ErrorInitializingEditor);
-            throw new SequoyahException(new SequoyahExceptionStatus(status));
-        }
-    }
+			Status status = new Status(Status.ERROR,
+					LocalizationToolsPlugin.PLUGIN_ID,
+					Messages.StringEditorInput_ErrorInitializingEditor);
+			throw new SequoyahException(new SequoyahExceptionStatus(status));
+		}
+	}
 
-    /**
-     * Creates a new CellValidator instance
-     */
-    public CellValidator()
-    {
-        // Do nothing
-    }
+	/**
+	 * Creates a new CellValidator instance
+	 */
+	public CellValidator() {
+		// Do nothing
+	}
 
-    /**
-     * Return the validation status of a cell. A cell will be considered invalid
-     * only if it is empty and it belongs to the default
-     */
-    public IStatus isCellValid(String columnID, String key, String value)
-    {
-        return projectLocalizationManager.getProjectLocalizationSchema().isValueValid(columnID,
-                key, value);
-    }
+	/**
+	 * Return the validation status of a cell. A cell will be considered invalid
+	 * only if it is empty and it belongs to the default
+	 */
+	public IStatus isCellValid(String columnID, String key, String value) {
+		return projectLocalizationManager.getProjectLocalizationSchema()
+				.isValueValid(columnID, key, value);
+	}
 
 }

@@ -92,6 +92,7 @@ public class EditCellsOperation extends EditorOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// FIXME: Undo in inverse order
 		for (EditCellOperation cellOperation : this.editCellOperations) {
 			cellOperation.undo(monitor, info);
 		}

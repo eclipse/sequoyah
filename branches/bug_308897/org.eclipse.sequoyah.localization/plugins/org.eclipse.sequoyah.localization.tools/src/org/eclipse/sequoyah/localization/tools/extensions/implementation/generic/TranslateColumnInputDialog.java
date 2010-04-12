@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -159,7 +159,7 @@ public class TranslateColumnInputDialog extends InputDialog {
 		translatorText.setText(Messages.Translator_Text);
 
 		translatorsCombo = LanguagesUtil
-				.createTranslatorsCombo((Composite) translationDetailsGroup);
+				.createTranslatorsCombo(translationDetailsGroup);
 		translatorsCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 2, 1));
 		translatorsCombo.addSelectionListener(listener);
@@ -205,8 +205,7 @@ public class TranslateColumnInputDialog extends InputDialog {
 
 		// Automatic language ID
 		automaticallyAddLangID = new Button(translationDetailsGroup, SWT.CHECK);
-		automaticallyAddLangID
-				.setText(Messages.TranslateColumnInputDialog_0);
+		automaticallyAddLangID.setText(Messages.TranslateColumnInputDialog_0);
 		automaticallyAddLangID.setSelection(true);
 
 		createNetworkGroup(languagesComposite);
