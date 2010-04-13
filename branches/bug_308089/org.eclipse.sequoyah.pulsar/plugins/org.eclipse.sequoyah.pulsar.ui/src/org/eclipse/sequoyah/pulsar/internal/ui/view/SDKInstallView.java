@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.p2.discovery.Catalog;
 import org.eclipse.equinox.internal.p2.discovery.DiscoveryCore;
 import org.eclipse.equinox.internal.p2.discovery.compatibility.BundleDiscoveryStrategy;
+import org.eclipse.equinox.internal.p2.discovery.compatibility.RemoteBundleDiscoveryStrategy;
 import org.eclipse.equinox.internal.p2.ui.discovery.DiscoveryUi;
 import org.eclipse.equinox.internal.p2.ui.discovery.wizards.CatalogConfiguration;
 import org.eclipse.equinox.internal.p2.ui.discovery.wizards.CatalogViewer;
@@ -195,11 +196,9 @@ public class SDKInstallView extends ViewPart {
 		// look for descriptors from installed bundles
 		catalog.getDiscoveryStrategies().add(new BundleDiscoveryStrategy());
 
-		// TODO look for remote descriptor
-		// FIXME add correct URL to remote directory
-//		RemoteBundleDiscoveryStrategy remoteDiscoveryStrategy = new RemoteBundleDiscoveryStrategy();
-//		remoteDiscoveryStrategy.setDirectoryUrl("http://www.eclipse.org/sequoyah/pulsar/directory.xml");
-//		catalog.getDiscoveryStrategies().add(remoteDiscoveryStrategy);
+		RemoteBundleDiscoveryStrategy remoteDiscoveryStrategy = new RemoteBundleDiscoveryStrategy();
+		remoteDiscoveryStrategy.setDirectoryUrl("http://download.eclipse.org/sequoyah/pulsar/discovery.xml");
+		catalog.getDiscoveryStrategies().add(remoteDiscoveryStrategy);
 
 		return catalog;
 	}
