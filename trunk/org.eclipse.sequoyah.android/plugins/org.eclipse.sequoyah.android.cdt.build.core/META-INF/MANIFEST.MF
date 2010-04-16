@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CDT Android Core
+Bundle-SymbolicName: org.eclipse.sequoyah.android.cdt.build.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.sequoyah.android.cdt.internal.build.core.Activator
+Bundle-Vendor: Eclipse CDT
+Require-Bundle: org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.sequoyah.android.cdt.build.core
