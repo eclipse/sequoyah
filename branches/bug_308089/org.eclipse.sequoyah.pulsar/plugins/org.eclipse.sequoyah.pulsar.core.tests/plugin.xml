@@ -19,7 +19,7 @@
          </group>
       </connectorCategory>
       <connectorDescriptor
-            categoryId="Tests.pulsar"
+            categoryId="Tests.pulsar.nokia"
             description="Nokia delivers devices based on three platforms: the S60 platform, the Series 40 platform, and the maemo(tm) platform. This platform approach ensures a consistent set of APIs and content technologies across millions of devices. It simplifies development by ensuring that the applications or content you build for a specific version of a platform will run on all devices built on that version."
             groupId="Tests.pulsar"
             id="Series_40_6th_Edition_SDK_v1_0_en.feature.group"

@@ -23,6 +23,12 @@
       <discovery label="%updateSiteName" url="http://download.eclipse.org/dsdp/sequoyah/updates/1.0.1/stable/"/>
    </url>
 
+   <requires>
+      <import plugin="org.eclipse.equinox.p2.discovery"/>
+      <import plugin="org.eclipse.equinox.p2.discovery.compatibility"/>
+      <import plugin="org.eclipse.equinox.p2.ui.discovery"/>
+   </requires>
+
    <plugin
          id="org.eclipse.sequoyah.pulsar.core"
          download-size="0"
