@@ -113,7 +113,9 @@ public class AddNativeNDKPage extends WizardPage {
 			setErrorMessage(null);
 		else
 			setErrorMessage("Invalid Android NDK location");
-		getWizard().getContainer().updateButtons();
+		
+		if (getWizard().getContainer().getCurrentPage() != null)
+			getWizard().getContainer().updateButtons();
 	}
 	
 	// TODO this should go away once we get this into the build env

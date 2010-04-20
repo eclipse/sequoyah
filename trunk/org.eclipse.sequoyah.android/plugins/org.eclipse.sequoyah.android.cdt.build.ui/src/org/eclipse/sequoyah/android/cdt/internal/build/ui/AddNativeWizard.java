@@ -184,7 +184,7 @@ public class AddNativeWizard extends Wizard {
 					else if (Platform.OS_LINUX.equals(os))
 						host = "linux-x86";
 					else if (Platform.OS_MACOSX.equals(os))
-						host = "mac"; // TODO check this
+						host = "darwin-x86"; // TODO check this
 					map.put("host", host);
 					
 					IPath templatePath = new Path("templates/Makefile");
