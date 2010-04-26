@@ -24,11 +24,9 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.equinox.p2.discovery"/>
-      <import plugin="org.eclipse.equinox.p2.discovery.compatibility"/>
-      <import plugin="org.eclipse.equinox.p2.ui.discovery"/>
+      <import feature="org.eclipse.equinox.p2.discovery.feature" version="1.0.0" match="equivalent"/>
    </requires>
-
+   
    <plugin
          id="org.eclipse.sequoyah.pulsar.core"
          download-size="0"
