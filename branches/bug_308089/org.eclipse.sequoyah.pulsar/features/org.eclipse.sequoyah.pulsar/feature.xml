@@ -24,9 +24,9 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.equinox.p2.discovery.feature" version="1.0.0" match="equivalent"/>
+      <import feature="org.eclipse.equinox.p2.discovery.feature" version="1.0.0.N20100423-2000" match="greaterOrEqual"/>
    </requires>
-   
+
    <plugin
          id="org.eclipse.sequoyah.pulsar.core"
          download-size="0"
