@@ -18,63 +18,63 @@
  *  Henrique Magalhaes (Motorola) - Fixing update repository problem.
  *  Euclides Neto (Motorola) - Changed the method to refresh instead of remove SDK repositories.
  *  Euclides Neto (Motorola) - Adding SDK Category description support.
+ *  Daniel Franco (Eldorado) - [308089] Adding SDK Uninstall support.
+ *  Daniel Pastore (Eldorado) - [308089] Adding SDK Uninstall support.
  */
 
 package org.eclipse.sequoyah.pulsar.internal.ui.view;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.internal.p2.ui.ProvUI;
-import org.eclipse.equinox.internal.p2.ui.viewers.StructuredViewerProvisioningListener;
+import org.eclipse.equinox.internal.p2.core.DefaultAgentProvider;
+import org.eclipse.equinox.internal.p2.discovery.Catalog;
+import org.eclipse.equinox.internal.p2.discovery.DiscoveryCore;
+import org.eclipse.equinox.internal.p2.discovery.compatibility.BundleDiscoveryStrategy;
+import org.eclipse.equinox.internal.p2.discovery.compatibility.RemoteBundleDiscoveryStrategy;
+import org.eclipse.equinox.internal.p2.discovery.model.CatalogItem;
+import org.eclipse.equinox.internal.p2.ui.discovery.DiscoveryUi;
+import org.eclipse.equinox.internal.p2.ui.discovery.wizards.CatalogConfiguration;
+import org.eclipse.equinox.internal.p2.ui.discovery.wizards.CatalogViewer;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.operations.UninstallOperation;
+import org.eclipse.equinox.p2.query.IQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.ui.LoadMetadataRepositoryJob;
+import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeColumnViewerLabelProvider;
-import org.eclipse.jface.viewers.TreeNode;
-import org.eclipse.jface.viewers.TreeNodeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.TreeViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.sequoyah.pulsar.Activator;
-import org.eclipse.sequoyah.pulsar.internal.provisional.core.IInstallationInfoProvider;
-import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK;
-import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDKCategory;
-import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDKRepository;
-import org.eclipse.sequoyah.pulsar.internal.provisional.core.QuickInstallCore;
-import org.eclipse.sequoyah.pulsar.internal.provisional.core.ISDK.EState;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.sequoyah.pulsar.internal.ui.UninstallDialog;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.framework.BundleContext;
 
 @SuppressWarnings("restriction")
 public class SDKInstallView extends ViewPart {
@@ -89,21 +89,38 @@ public class SDKInstallView extends ViewPart {
         }
 
         protected boolean updateSelection(IStructuredSelection selection) {
-            boolean toReturn = false;
-            // Just enable the action if the SDK state is not INSTALLED
-            if (getSelectedSDK() != null) {
-                toReturn = !getSelectedSDK().getState()
-                        .equals(EState.INSTALLED);
-            }
-            return toReturn;
+        	return selection != null && !selection.isEmpty();
         }
 
         @Override
         public void run() {
-            installSelectedSDK();
+        	DiscoveryUi.install(viewer.getCheckedItems(), new ProgressMonitorDialog(getSite().getShell()));
         }
     }
+    
+	private static IProfile getProfile(String profileId)
+    {
+        IProfileRegistry profileRegistry = getProfileRegistry();
+        return profileRegistry.getProfile(profileId);
+    }
 
+    public static IProfileRegistry getProfileRegistry()
+    {
+        BundleContext context = Activator.getContext();
+        IProvisioningAgent agent = getProvisioningAgent(context);
+        IProfileRegistry profileRegistry =
+                (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+        return profileRegistry;
+    }
+	    
+    private static IProvisioningAgent getProvisioningAgent(BundleContext context)
+    {
+        DefaultAgentProvider agentProvider = new DefaultAgentProvider();
+        agentProvider.activate(context);
+        IProvisioningAgent agent = agentProvider.createAgent(null);
+        return agent;
+    }
+	    
     private class UninstallAction extends BaseSelectionListenerAction {
 
         protected UninstallAction() {
@@ -112,23 +129,46 @@ public class SDKInstallView extends ViewPart {
             setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
                     .getImageDescriptor(ISharedImages.IMG_ETOOL_DELETE));
         }
-
+        
         protected boolean updateSelection(IStructuredSelection selection) {
-            boolean toReturn = false;
-            // Just enable the action if the SDK state is INSTALLED
-            if (getSelectedSDK() != null) {
-                toReturn = getSelectedSDK().getState().equals(EState.INSTALLED);
-            }
-            return toReturn;
+        	return !getInstalledItems(viewer.getCatalog()).isEmpty();
         }
 
         @Override
         public void run() {
-            uninstallSelectedSDK();
+        	Set<CatalogItem> inst = getInstalledItems(viewer.getCatalog());
+        	if (inst.isEmpty()) {
+        		return;
+        	}
+        	
+        	Object[] installedItems = (inst.toArray());
+        	UninstallDialog uninstallDialog = new UninstallDialog(new Shell(), installedItems);
+        	int status = uninstallDialog.open();
+        	
+        	if (status == 0) {
+        		Object[] selectedItems = (uninstallDialog.getSelected().toArray());        		
+        		
+            	final ProvisioningUI defaultUI = ProvisioningUI.getDefaultUI();
+        		LoadMetadataRepositoryJob loadMetadaJob = new LoadMetadataRepositoryJob(defaultUI);
+        		IProfile profile = getProfile(defaultUI.getProfileId());
+        		
+        		HashSet<IQuery<IInstallableUnit>> queries = new HashSet<IQuery<IInstallableUnit>>();
+            	for (Object o : selectedItems) {
+            		CatalogItem selected = (CatalogItem) o;
+            		IQuery<IInstallableUnit> ius = QueryUtil.createIUQuery(((CatalogItem)selected).getId());
+            		queries.add(ius);            		
+            	}
+        		
+        		IQuery<IInstallableUnit> compoundedIUs = QueryUtil.createCompoundQuery(queries, false);        		
+        		IQueryResult<IInstallableUnit> iusCollection = profile.query(compoundedIUs, new NullProgressMonitor());
+        		final UninstallOperation operation = defaultUI.getUninstallOperation(iusCollection.toSet(), null);
+        		IStatus operationStatus = operation.resolveModal(new NullProgressMonitor());    		
+        		final int uninstallWizard = defaultUI.openUninstallWizard(iusCollection.toSet(), operation, loadMetadaJob);
+        	}
         }
     }
 
-    private class RefreshAction extends BaseSelectionListenerAction {
+    private class RefreshAction extends Action {
 
         protected RefreshAction() {
             super(Messages.SDKInstallView_RefreshActionLabel);
@@ -153,19 +193,15 @@ public class SDKInstallView extends ViewPart {
         }
 
         protected boolean updateSelection(IStructuredSelection selection) {
-            boolean toReturn = false;
-            // Just enable the action if the SDK state is INSTALLED
-            if (getSelectedSDK() != null) {
-                toReturn = getSelectedSDK().getState().equals(EState.INSTALLED);
-            }
-            return toReturn;
+        	return ((selection != null) && (!selection.isEmpty()));
         }
 
         @Override
         public void run() {
-            PreferenceDialog dialog = PreferencesUtil
-                    .createPreferenceDialogOn(
-                            viewer.getTree().getShell(),
+        	// TODO implement using ListDialog to select sdk and then get details?
+
+        	PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(
+                            viewer.getControl().getShell(),
                             "org.eclipse.sequoyah.ui.preferences.deviceManagementPreferencePage", //$NON-NLS-1$
                             new String[] { "org.eclipse.sequoyah.ui.preferences.deviceManagementPreferencePage" }, //$NON-NLS-1$
                             null);
@@ -189,18 +225,11 @@ public class SDKInstallView extends ViewPart {
         return image;
     }
 
-    private TreeViewer viewer;
+    private CatalogViewer viewer;
     private InstallAction installAction;
     private RefreshAction refreshAction;
     private DetailsAction detailsAction;
     private UninstallAction uninstallAction;
-
-    private Action doubleClickAction;
-    private StructuredViewerProvisioningListener listener;
-    private SDKInstallItemViewer itemViewer;
-
-    public SDKInstallView() {
-    }
 
     @Override
     public void createPartControl(Composite parent) {
@@ -209,213 +238,75 @@ public class SDKInstallView extends ViewPart {
         layout.marginWidth = 0x00;
         parent.setLayout(layout);
 
-        viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-        Tree tree = viewer.getTree();
-        tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-        TreeViewerColumn installersColumn = new TreeViewerColumn(viewer,
-                SWT.LEFT);
-        Display display = getViewSite().getShell().getDisplay();
-        installersColumn.setLabelProvider(new TreeColumnViewerLabelProvider(
-                new InstallersLabelProvider(display)));
-        installersColumn.getColumn().setText(
-                Messages.SDKInstallView_InstallersColLabel);
-
-        TreeViewerColumn statusColumn = new TreeViewerColumn(viewer, SWT.LEFT);
-        statusColumn.setLabelProvider(new StatusLabelProvider());
-        statusColumn.getColumn()
-                .setText(Messages.SDKInstallView_StatusColLabel);
-
-        TreeViewerColumn versionColumn = new TreeViewerColumn(viewer, SWT.LEFT);
-        versionColumn.setLabelProvider(new VersionLabelProvider());
-        versionColumn.getColumn().setText(Messages.SDKInstallView_VersionLabel);
-
-        viewer.setContentProvider(new TreeNodeContentProvider());
-        viewer.getTree().setHeaderVisible(true);
-        viewer.setSorter(new ViewerSorter() {
-            @Override
-            public int compare(Viewer viewer, Object e1, Object e2) {
-                return getTreeNodeDisplayName(e1).compareToIgnoreCase(
-                        getTreeNodeDisplayName(e2));
-            }
-        });
-        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
-                installAction.selectionChanged(event);
-                detailsAction.selectionChanged(event);
-                uninstallAction.selectionChanged(event);
-                updateSDKItemViewer();
-            }
-        });
-        viewer.addFilter(new InstallationEnvironmentFilter());
+		viewer = new CatalogViewer(getCatalog(), getSite(), getSite().getWorkbenchWindow(), getConfiguration());
+		viewer.createControl(parent);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(viewer.getControl());
 
         // Updates the view with available SDKs
         refreshSDKs();
 
         makeActions();
-        hookDoubleClickAction();
         contributeToActionBars();
-        addProvisioningListener();
+        
     }
 
-    /**
+	private CatalogConfiguration getConfiguration() {
+		CatalogConfiguration configuration = new CatalogConfiguration();
+		configuration.setShowTagFilter(false);
+		return configuration;
+	}
+
+	private Catalog getCatalog() {
+		Catalog catalog = new Catalog();
+		catalog.setEnvironment(DiscoveryCore.createEnvironment());
+		catalog.setVerifyUpdateSiteAvailability(false);
+
+		// look for descriptors from installed bundles
+		catalog.getDiscoveryStrategies().add(new BundleDiscoveryStrategy());
+
+		RemoteBundleDiscoveryStrategy remoteDiscoveryStrategy = new RemoteBundleDiscoveryStrategy();
+		//XML file with remote bundles directories
+		remoteDiscoveryStrategy.setDirectoryUrl("http://download.eclipse.org/sequoyah/pulsar/discovery.xml");//$NON-NLS-1$
+		catalog.getDiscoveryStrategies().add(remoteDiscoveryStrategy);
+
+		return catalog;
+	}
+	
+	/**
+	 * Returns a set with the Installed SDKs
+	 * 
+	 * @param catalog
+	 * @return Set<CatalogItem> selected
+	 */
+	private Set<CatalogItem> getInstalledItems(Catalog catalog)
+	{
+		Set<CatalogItem> selected = new HashSet<CatalogItem>();
+		for (Object descriptor : catalog.getItems().toArray()) {
+			if (descriptor instanceof CatalogItem) {
+				if (((CatalogItem) descriptor).isInstalled())
+					selected.add((CatalogItem) descriptor);
+			}
+		}
+
+		return selected;
+	}
+
+	/**
      * Refreshes the SDKs list on Mobile SDKs view.
      */
     protected void refreshSDKs() {
         Job job = new Job(Messages.SDKInstallView_UpdatingInstallersJobTitle) {
             @Override
             public IStatus run(IProgressMonitor monitor) {
-                refreshSDKRepositories();
-                final TreeNode[] treeNodes = createTreeNodes(monitor);
                 Display.getDefault().asyncExec(new Runnable() {
                     public void run() {
-                        viewer.getTree().removeAll();
-                        viewer.setInput(treeNodes);
-                        viewer.expandAll();
-                        packColumns();
+                        viewer.updateCatalog();
                     }
                 });
                 return Status.OK_STATUS;
             }
         };
         job.schedule();
-    }
-
-    /**
-     * Removes all sdk repositories.
-     */
-    private void refreshSDKRepositories() {
-        P2InstallerUI installer = (P2InstallerUI) P2InstallerUI.getInstance();
-        installer.refreshSDKRepositories(QuickInstallCore.getInstance()
-                .getSDKRepositories());
-    }
-
-    /**
-     * Updates the {@link SDKInstallItemViewer} instance contents.
-     */
-    private void updateSDKItemViewer() {
-        Composite main = this.viewer.getTree().getParent();
-        if (main == null) {
-            return;
-        }
-
-        Object item = this.getSelectedItem();
-        if (item != null) {
-            if (itemViewer == null || itemViewer.isDisposed()) {
-                itemViewer = new SDKInstallItemViewer(main);
-                GridData gridData = new GridData(SWT.FILL, SWT.FILL, false,
-                        true);
-                gridData.minimumWidth = 350;
-                gridData.widthHint = 350;
-                itemViewer.setLayoutData(gridData);
-            }
-            ISDKInstallItemLabelProvider labelProvider = getLabelProvider(item);
-            itemViewer.setLabelProvider(labelProvider);
-            itemViewer.setInput(item);
-        } else {
-            if (itemViewer != null && !itemViewer.isDisposed()) {
-                itemViewer.dispose();
-            }
-        }
-        main.layout(true);
-    }
-
-    /**
-     * Gets an {@link ISDKInstallItemLabelProvider} instance for the specified
-     * {@link Object} in order to display it into the
-     * {@link SDKInstallItemViewer}.
-     * 
-     * @param item target object.
-     * @return an {@link ISDKInstallItemLabelProvider} instance.
-     */
-    private ISDKInstallItemLabelProvider getLabelProvider(Object item) {
-        ISDKInstallItemLabelProvider result = null;
-        if (item instanceof IInstallationInfoProvider) {
-            result = new InstallationInfoLabelProvider();
-        }
-        return result;
-    }
-
-    private TreeNode[] createTreeNodes(IProgressMonitor monitor) {
-        Collection<TreeNode> treeNodes = new ArrayList<TreeNode>();
-        Collection<ISDKRepository> repositories = QuickInstallCore
-                .getInstance().getSDKRepositories();
-        monitor.beginTask("", repositories.size()); //$NON-NLS-1$
-        monitor.subTask(Messages.SDKInstallView_GettingRepoInfoMessage);
-        for (ISDKRepository repository : repositories) {
-            treeNodes.add(createRepositoryTreeNode(repository, monitor));
-        }
-        monitor.done();
-        return (TreeNode[]) treeNodes.toArray(new TreeNode[treeNodes.size()]);
-    }
-
-    private TreeNode createRepositoryTreeNode(ISDKRepository repository,
-            IProgressMonitor monitor) {
-        // create a new repository node
-        TreeNode repositoryNode = new TreeNode(repository);
-        // a map of categories to sdks in that category
-        Map<ISDKCategory, Collection<ISDK>> categoryToSDKListMap = new LinkedHashMap<ISDKCategory, Collection<ISDK>>();
-        // the current child list for the repository node
-        Collection<TreeNode> childList = new ArrayList<TreeNode>();
-        // pass through sdks, adding uncategorized sdk and category lists
-        Collection<ISDK> sdks = repository.getSDKs(monitor);
-        for (ISDK sdk : sdks) {
-            ISDKCategory category = sdk.getCategory();
-            if (category != null) {
-                if (!categoryToSDKListMap.containsKey(category))
-                    categoryToSDKListMap.put(category, new ArrayList<ISDK>());
-                categoryToSDKListMap.get(category).add(sdk);
-            } else {
-                addNewTreeNode(childList, repositoryNode, sdk);
-            }
-        }
-        // pass through category lists, adding categorized sdks
-        for (ISDKCategory category : categoryToSDKListMap.keySet()) {
-            TreeNode categoryNode = addNewTreeNode(childList, repositoryNode,
-                    category);
-            Collection<ISDK> childSdks = categoryToSDKListMap.get(category);
-            Collection<TreeNode> sdkNodes = new ArrayList<TreeNode>();
-            for (ISDK sdk : childSdks) {
-                addNewTreeNode(sdkNodes, categoryNode, sdk);
-            }
-            categoryNode.setChildren((TreeNode[]) sdkNodes
-                    .toArray(new TreeNode[sdkNodes.size()]));
-        }
-
-        repositoryNode.setChildren((TreeNode[]) childList
-                .toArray(new TreeNode[childList.size()]));
-
-        monitor.worked(1);
-        return repositoryNode;
-    }
-
-    private static TreeNode addNewTreeNode(Collection<TreeNode> nodes,
-            TreeNode parentNode, Object data) {
-        TreeNode node = new TreeNode(data);
-        node.setParent(parentNode);
-        if (nodes != null)
-            nodes.add(node);
-        return node;
-    }
-
-    private String getTreeNodeDisplayName(Object treeNode) {
-        Object element = ((TreeNode) treeNode).getValue();
-        if (element instanceof ISDKCategory) {
-            return ((ISDKCategory) element).getName();
-        } else if (element instanceof ISDK) {
-            return ((ISDK) element).getName();
-        } else if (element instanceof String) {
-            return (String) element;
-        }
-
-        return ""; //$NON-NLS-1$
-    }
-
-    private void packColumns() {
-        TreeColumn[] columns = viewer.getTree().getColumns();
-        for (TreeColumn column : columns) {
-            column.pack();
-        }
     }
 
     private void contributeToActionBars() {
@@ -440,150 +331,27 @@ public class SDKInstallView extends ViewPart {
 
     private void makeActions() {
         installAction = new InstallAction();
-        installAction.setEnabled(getSelectedSDK() != null);
+        installAction.selectionChanged(viewer.getSelection());
 
         detailsAction = new DetailsAction();
-        detailsAction.setEnabled(getSelectedSDK() != null);
 
         uninstallAction = new UninstallAction();
-        uninstallAction.setEnabled(getSelectedSDK() != null);
 
         refreshAction = new RefreshAction();
-        refreshAction.setEnabled(true);
 
-        doubleClickAction = new Action() {
-            public void run() {
-                installSelectedSDK();
-            }
-        };
+		viewer.addSelectionChangedListener(installAction);
+		viewer.addSelectionChangedListener(detailsAction);
+		viewer.addSelectionChangedListener(uninstallAction);
     }
-
-    /**
-     * Gets the selected item {@link Object}.
-     * 
-     * @return selected object or null if selection is empty.
-     */
-    private Object getSelectedItem() {
-        Object result = null;
-
-        TreeNode node = getSelectedNode();
-        if (node != null) {
-            Object object = node.getValue();
-            if (object instanceof String) {
-                TreeNode root = getRootParentNode(node);
-                if (root.getValue() instanceof ISDKRepository) {
-                    result = root.getValue();
-                }
-            } else {
-                result = node.getValue();
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Gets the root {@link TreeNode} for the specified {@link TreeNode}
-     * instance.
-     * 
-     * @param node target node.
-     * @return root parent node.
-     */
-    private TreeNode getRootParentNode(TreeNode node) {
-        TreeNode result = node;
-        if (node.getParent() != null) {
-            result = getRootParentNode(node.getParent());
-        }
-        return result;
-    }
-
-    private ISDK getSelectedSDK() {
-        ISDK result = null;
-        TreeNode node = getSelectedNode();
-        if (node != null) {
-            Object object = node.getValue();
-            if (object instanceof ISDK) {
-                result = (ISDK) object;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Gets the current selected {@link TreeNode} instance.
-     * 
-     * @return {@link TreeNode} instance.
-     */
-    private TreeNode getSelectedNode() {
-        TreeNode result = null;
-        ISelection selection = viewer.getSelection();
-        if (!selection.isEmpty()) {
-            Object selectedElement = ((IStructuredSelection) selection)
-                    .getFirstElement();
-            if (selectedElement instanceof TreeNode) {
-                result = (TreeNode) selectedElement;
-            }
-        }
-        return result;
-    }
-
-    protected void installSelectedSDK() {
-        ISDK sdk = getSelectedSDK();
-        if (sdk != null) {
-            try {
-                QuickInstallCore.getInstance().installSDK(getSite().getShell(),
-                        sdk, P2InstallerUI.getInstance());
-            } catch (CoreException e) {
-                org.eclipse.sequoyah.pulsar.core.Activator.logError(
-                        Messages.SDKInstallView_InstallError, e);
-            }
-        }
-    }
-
-    protected void uninstallSelectedSDK() {
-        ISDK sdk = getSelectedSDK();
-        if (sdk != null) {
-            try {
-                QuickInstallCore.getInstance().uninstallSDK(
-                        getSite().getShell(), sdk, P2InstallerUI.getInstance());
-            } catch (CoreException e) {
-                org.eclipse.sequoyah.pulsar.core.Activator.logError(
-                        Messages.SDKInstallView_UninstallError, e);
-            }
-        }
-    }
-
-    private void hookDoubleClickAction() {
-        viewer.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
-                doubleClickAction.run();
-            }
-        });
-    }
-
-    private void addProvisioningListener() {
-        listener = new StructuredViewerProvisioningListener(viewer,
-                StructuredViewerProvisioningListener.PROV_EVENT_PROFILE) {
-            protected void profileChanged(String profileId) {
-                Display.getDefault().asyncExec(new Runnable() {
-                    public void run() {
-                        viewer.refresh();
-                    }
-                });
-            }
-        };
-        ProvUI.addProvisioningListener(listener);
-    }
-
-    private void removeProvisioningListener() {
-        ProvUI.removeProvisioningListener(listener);
-    }
-
+    
     public void dispose() {
-        removeProvisioningListener();
+		viewer.removeSelectionChangedListener(installAction);
+		viewer.removeSelectionChangedListener(detailsAction);
+		viewer.removeSelectionChangedListener(uninstallAction);
         super.dispose();
     }
 
     @Override
-    public void setFocus() {
-    }
+	public void setFocus() {
+	}
 }

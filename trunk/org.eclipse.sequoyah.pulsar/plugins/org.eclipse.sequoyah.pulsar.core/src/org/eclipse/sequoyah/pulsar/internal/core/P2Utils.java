@@ -16,9 +16,13 @@ package org.eclipse.sequoyah.pulsar.internal.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.equinox.internal.p2.core.DefaultAgentProvider;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
@@ -140,5 +144,19 @@ public class P2Utils {
         agentProvider.activate(context);
         IProvisioningAgent agent = agentProvider.createAgent(null);
 		return agent;
+	}
+	
+	public static Set<String> getInstalledFeatureIds(IProgressMonitor monitor) {
+		Set<String> ids = new HashSet<String>();
+    	BundleContext context = Activator.getContext();
+    	IProvisioningAgent agent = getProvisioningAgent(context);
+		IProfileRegistry profileRegistry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+		IProfile profile = profileRegistry.getProfile(IProfileRegistry.SELF);
+		IQuery<IInstallableUnit> query = QueryUtil.createMatchQuery("properties['org.eclipse.pulsar.type'] != null");
+		IQueryResult<IInstallableUnit> result = profile.query(query, monitor);
+		for (Iterator<IInstallableUnit> iterator = result.iterator(); iterator.hasNext();) {
+			ids.add(iterator.next().getId());
+		}
+		return ids;
 	}
 }

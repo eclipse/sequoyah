@@ -7,4 +7,35 @@
             class="org.eclipse.sequoyah.pulsar.core.tests.utils.TestSDKRepositoryProvider">
       </provider>
    </extension>
+
+   <extension
+         point="org.eclipse.mylyn.discovery.core.connectorDiscovery">
+      <connectorCategory
+            description="Nokia Test Category"
+            id="Tests.pulsar.nokia"
+            name="Nokia SDKs">
+         <group
+               id="Tests.pulsar">
+         </group>
+      </connectorCategory>
+      <connectorDescriptor
+            categoryId="Tests.pulsar.nokia"
+            description="Nokia delivers devices based on three platforms: the S60 platform, the Series 40 platform, and the maemo(tm) platform. This platform approach ensures a consistent set of APIs and content technologies across millions of devices. It simplifies development by ensuring that the applications or content you build for a specific version of a platform will run on all devices built on that version."
+            groupId="Tests.pulsar"
+            id="Series_40_6th_Edition_SDK_v1_0_en.feature.group"
+            kind="task"
+            license="EPL 1.0"
+            name="Series_40_6th_Edition_SDK_v1_0_en"
+            provider="Nokia"
+            siteUrl="http://tools.ext.nokia.com/pulsar/">
+         <icon
+               image32="icons/icon.GIF">
+         </icon>
+         <overview
+               screenshot="icons/logo_forumnokia.gif"
+               summary="This is the installation package for Series 40 6th Edition SDK v1.0. The Series 40 platform SDKs enable you to quickly and efficiently create and test Java(tm) applications, as well as browser content, multimedia messaging service (MMS) content, and, where supported, Adobe Flash Lite content and applications. To facilitate this, each SDK includes an emulator, Java APIs, documentation, code examples, and debugging tools. These tools are then combined with your favourite IDE to create, compile, and package applications and content. Testing can then be conducted on a PC using an emulator. "
+               url="http://www.forum.nokia.com/">
+         </overview>
+      </connectorDescriptor>
+   </extension>
 </plugin>
