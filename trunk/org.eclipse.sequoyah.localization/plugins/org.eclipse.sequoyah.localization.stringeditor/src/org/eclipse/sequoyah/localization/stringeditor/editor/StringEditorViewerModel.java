@@ -219,13 +219,22 @@ public class StringEditorViewerModel {
 			}
 		}
 
-		Iterator<RowInfo> it = rowsMap.values().iterator();
+		Map<String, RowInfo> rowsMapClone = new HashMap<String, RowInfo>(
+				rowsMap);
+		Iterator<RowInfo> it = rowsMapClone.values().iterator();
 		while (it.hasNext()) {
 			RowInfo row = it.next();
 			row.removeCell(column);
+			if (isEmptyRow(row)) {
+				removeRow(row.getKey());
+			}
 		}
 
 		notifyListeners();
+	}
+
+	private boolean isEmptyRow(RowInfo row) {
+		return row.getCells().size() == 0;
 	}
 
 	public void removeRow(String key) {

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,14 +12,14 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.stringeditor.providers;
 
-import org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput;
+import org.eclipse.sequoyah.localization.stringeditor.editor.input.AbstractStringEditorInput;
 
 /**
  * This class gives editor its input and operation provider
  */
 public class ContentProvider {
 
-	private final IStringEditorInput editorInput;
+	private final AbstractStringEditorInput editorInput;
 
 	private final IOperationProvider operationProvider;
 
@@ -34,7 +34,7 @@ public class ContentProvider {
 	 * @param opProvider
 	 * @param validator
 	 */
-	public ContentProvider(IStringEditorInput input,
+	public ContentProvider(AbstractStringEditorInput input,
 			IOperationProvider opProvider, ICellValidator validator,
 			String contextHelpID) {
 		this.editorInput = input;
@@ -43,7 +43,7 @@ public class ContentProvider {
 		this.contextHelpID = contextHelpID;
 	}
 
-	public IStringEditorInput getEditorInput() {
+	public AbstractStringEditorInput getEditorInput() {
 		return editorInput;
 	}
 

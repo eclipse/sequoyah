@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -118,15 +118,19 @@ public abstract class ILocalizationSchema {
 	public abstract Map<LocaleInfo, IFile> getLocalizationFiles(IProject project);
 
 	/**
-	 * [Factory Method] Instantiate and return the object specific to one technology
+	 * [Factory Method] Instantiate and return the object specific to one
+	 * technology
+	 * 
 	 * @param file
 	 * @param localeInfo
 	 * @param stringNodes
 	 * @param stringArrays
 	 * @return
 	 */
-	public abstract LocalizationFile createLocalizationFile(IFile file, LocaleInfo localeInfo, List<StringNode> stringNodes, List<StringArray> stringArrays);
-	
+	public abstract LocalizationFile createLocalizationFile(IFile file,
+			LocaleInfo localeInfo, List<StringNode> stringNodes,
+			List<StringArray> stringArrays);
+
 	/**
 	 * Read the given localization file and return its <key>:<value> pairs,
 	 * which need to be encapsulated in a LocalizationFile object
@@ -138,6 +142,21 @@ public abstract class ILocalizationSchema {
 	 * @throws IOException
 	 */
 	public abstract LocalizationFile loadFile(IFile file) throws IOException;
+
+	/**
+	 * Update the content of the Localization File. This method will be used
+	 * when changes are made inside editors, but not notified by the input and
+	 * the content is not yet saved
+	 * 
+	 * @param localizationFile
+	 *            the localization file to be updated
+	 * @param content
+	 *            the string representation of the content
+	 * @throws SequoyahException
+	 */
+	public abstract void updateLocalizationFileContent(
+			LocalizationFile localizationFile, String content)
+			throws SequoyahException;
 
 	/**
 	 * Read all localization files in a project
@@ -381,5 +400,7 @@ public abstract class ILocalizationSchema {
 		// implemented
 		return null;
 	}
+
+	public abstract String getLocalizationFileContent(LocalizationFile locFile);
 
 }

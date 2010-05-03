@@ -1,4 +1,5 @@
 /********************************************************************************
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,7 +10,7 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
- *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
@@ -162,7 +163,7 @@ public class LocalizationFile implements IFilePersistentData {
 	 * @return the StringNode which represents the key passed as a parameter
 	 */
 	public StringNode getStringNodeByKey(String key) {
-		// TODO: tirar false
+		// TODO: remove false
 		boolean isArray = false;
 		for (StringArray stringArray : this.getLocalizationProject()
 				.getAllStringArrays()) {
@@ -187,7 +188,7 @@ public class LocalizationFile implements IFilePersistentData {
 	public StringNode getStringNodeByKey(String key, boolean isArray) {
 		StringNode result = stringNodesMap.get(key);
 		if (result == null) {
-			StringNode newNode = new StringNode(key, "");
+			StringNode newNode = new StringNode(key, ""); //$NON-NLS-1$
 			newNode.setLocalizationFile(this);
 			newNode.setArray(isArray);
 			result = this.addStringNode(newNode);
@@ -202,6 +203,8 @@ public class LocalizationFile implements IFilePersistentData {
 	 *            the list of StringNodes which are part of the file
 	 */
 	public void setStringNodes(List<StringNode> stringNodes) {
+		this.stringNodes.clear();
+		stringNodesMap.clear();
 		for (StringNode stringNode : stringNodes) {
 			this.stringNodesMap.put(stringNode.getKey(), stringNode);
 			stringNode.setLocalizationFile(this);
@@ -218,6 +221,8 @@ public class LocalizationFile implements IFilePersistentData {
 	 */
 	public void setStringArrays(List<StringArray> stringArrays) {
 		if (stringArrays != null) {
+			this.stringArrays.clear();
+			this.stringArrays.clear();
 			for (StringArray stringArray : stringArrays) {
 				List<StringNode> stringNodes = stringArray.getValues();
 				for (StringNode stringNode : stringNodes) {
@@ -422,7 +427,7 @@ public class LocalizationFile implements IFilePersistentData {
 			// skip blank array items
 			List<StringNode> thisStringNodes = removeBlankArrayItems(stringNodes);
 			List<StringNode> otherStringNodes = removeBlankArrayItems(locFileStringNodes);
-			
+
 			Collections.sort(thisStringNodes);
 			Collections.sort(otherStringNodes);
 
@@ -431,10 +436,13 @@ public class LocalizationFile implements IFilePersistentData {
 			} else {
 				boolean keyEqual, valueEqual;
 				for (int i = 0; i < thisStringNodes.size(); i++) {
-					keyEqual = thisStringNodes.get(i).getKey().equals(otherStringNodes.get(i).getKey());
-					String EOL = System.getProperty("line.separator");
-					String fromFile = thisStringNodes.get(i).getValue().replaceAll(EOL, "\n");
-					valueEqual = fromFile.equals(otherStringNodes.get(i).getValue());
+					keyEqual = thisStringNodes.get(i).getKey().equals(
+							otherStringNodes.get(i).getKey());
+					String EOL = System.getProperty("line.separator"); //$NON-NLS-1$
+					String fromFile = thisStringNodes.get(i).getValue()
+							.replaceAll(EOL, "\n"); //$NON-NLS-1$
+					valueEqual = fromFile.equals(otherStringNodes.get(i)
+							.getValue());
 					if ((!keyEqual) || (!valueEqual)) {
 						result = false;
 						break;
@@ -457,7 +465,7 @@ public class LocalizationFile implements IFilePersistentData {
 
 		for (StringNode node : nodes) {
 			if (node.isArray()) {
-				if (!node.getValue().equals("")) {
+				if (!node.getValue().equals("")) { //$NON-NLS-1$
 					noBlankArrayItems.add(node);
 				}
 			} else {

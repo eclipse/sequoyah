@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -42,18 +42,18 @@ public class LocalizationSchemaProvider {
 	/*
 	 * The "localizationSchema" extension point ID
 	 */
-	private final String EXTENSION_ID = Messages.LocalizationSchemaProvider_0;
+	private final String EXTENSION_ID = "org.eclipse.sequoyah.localization.tools.localizationSchema"; //$NON-NLS-1$
 
 	/*
 	 * Fields in "localizationSchema" extension point definition
 	 */
-	private final String EXTENSION_FIELD_NAME = Messages.LocalizationSchemaProvider_1;
+	private final String EXTENSION_FIELD_NAME = "name"; //$NON-NLS-1$
 
-	private final String EXTENSION_FIELD_NATURE = Messages.LocalizationSchemaProvider_2;
+	private final String EXTENSION_FIELD_NATURE = "nature"; //$NON-NLS-1$
 
-	private final String EXTENSION_FIELD_NATURE_PRECEDENCE = Messages.LocalizationSchemaProvider_3;
+	private final String EXTENSION_FIELD_NATURE_PRECEDENCE = "naturePrecedence"; //$NON-NLS-1$
 
-	private final String EXTENSION_FIELD_CLASS = Messages.LocalizationSchemaProvider_4;
+	private final String EXTENSION_FIELD_CLASS = "class"; //$NON-NLS-1$
 
 	/*
 	 * Singleton instance

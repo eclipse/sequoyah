@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -28,121 +28,109 @@ import org.eclipse.ui.PlatformUI;
  * This class provides a basic implementation of the {@link IOperationProvider}
  * It only opens a input dialog for user input
  */
-public class DefaultOperationProvider implements IOperationProvider
-{
+public class DefaultOperationProvider implements IOperationProvider {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
-     * #init(org.eclipse .core.resources.IProject)
-     */
-    public void init(IProject project) throws Exception
-    {
-        // nothing
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
+	 * #init(org.eclipse .core.resources.IProject)
+	 */
+	public void init(IProject project) throws Exception {
+		// nothing
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
-     * #getNewColumn()
-     */
-    public ColumnInfo getNewColumn()
-    {
-        ColumnInfo newColumn = null;
-        InputDialog dialog =
-                new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                        Messages.DefaultOperationProvider_NewColumnTitle,
-                        Messages.DefaultOperationProvider_NewColumnDescription, Messages.DefaultOperationProvider_0, //$NON-NLS-2$
-                        new IInputValidator()
-                        {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
+	 * #getNewColumn()
+	 */
+	public ColumnInfo getNewColumn() {
+		ColumnInfo newColumn = null;
+		InputDialog dialog = new InputDialog(PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getShell(),
+				Messages.DefaultOperationProvider_NewColumnTitle,
+				Messages.DefaultOperationProvider_NewColumnDescription,
+				Messages.DefaultOperationProvider_NewColumnDefault, //$NON-NLS-2$
+				new IInputValidator() {
 
-                            public String isValid(String newText)
-                            {
-                                String errorMessage = null;
-                                if (newText.length() == 0)
-                                {
-                                    errorMessage =
-                                            Messages.DefaultOperationProvider_NewColumnErrorNotEmpty;
-                                }
-                                return errorMessage;
-                            }
-                        });
+					public String isValid(String newText) {
+						String errorMessage = null;
+						if (newText.length() == 0) {
+							errorMessage = Messages.DefaultOperationProvider_NewColumnErrorNotEmpty;
+						}
+						return errorMessage;
+					}
+				});
 
-        if (dialog.open() == IDialogConstants.OK_ID)
-        {
-            newColumn = new ColumnInfo(dialog.getValue(), dialog.getValue(), null, true);
-        }
+		if (dialog.open() == IDialogConstants.OK_ID) {
+			newColumn = new ColumnInfo(dialog.getValue(), dialog.getValue(),
+					null, true);
+		}
 
-        return newColumn;
-    }
+		return newColumn;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
-     * #getNewRow()
-     */
-    public RowInfo[] getNewRow()
-    {
-        RowInfo[] newRow = null;
-        InputDialog dialog =
-                new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                        Messages.DefaultOperationProvider_NewRowTitle,
-                        Messages.DefaultOperationProvider_NewRowDescription,
-                        Messages.DefaultOperationProvider_1, new IInputValidator() { //$NON-NLS-2$
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
+	 * #getNewRow()
+	 */
+	public RowInfo[] getNewRow() {
+		RowInfo[] newRow = null;
+		InputDialog dialog = new InputDialog(PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getShell(),
+				Messages.DefaultOperationProvider_NewRowTitle,
+				Messages.DefaultOperationProvider_NewRowDescription,
+				Messages.DefaultOperationProvider_NewRowDefault,
+				new IInputValidator() { //$NON-NLS-2$
 
-                            public String isValid(String newText)
-                            {
-                                String errorMessage = null;
-                                if (newText.length() == 0)
-                                {
-                                    errorMessage =
-                                            Messages.DefaultOperationProvider_NewRowErrorNotEmpty;
-                                }
-                                return errorMessage;
-                            }
-                        });
+					public String isValid(String newText) {
+						String errorMessage = null;
+						if (newText.length() == 0) {
+							errorMessage = Messages.DefaultOperationProvider_NewRowErrorNotEmpty;
+						}
+						return errorMessage;
+					}
+				});
 
-        if (dialog.open() == IDialogConstants.OK_ID)
-        {
-            newRow = new RowInfo[1];
-            newRow[0] = new RowInfo(dialog.getValue(), false, null);
-        }
+		if (dialog.open() == IDialogConstants.OK_ID) {
+			newRow = new RowInfo[1];
+			newRow[0] = new RowInfo(dialog.getValue(), false, null);
+		}
 
-        return newRow;
-    }
+		return newRow;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
-     * #getTranslatedColumnInfo()
-     */
-    public TranslationInfo getTranslatedColumnInfo(String selectedColumn)
-    {
-        // Needs to be implemented by subclasses if automatic translation is
-        // required
-        return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
+	 * #getTranslatedColumnInfo()
+	 */
+	public TranslationInfo getTranslatedColumnInfo(String selectedColumn) {
+		// Needs to be implemented by subclasses if automatic translation is
+		// required
+		return null;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
-     * #getTranslatedColumnsInfo()
-     */
-    public TranslationInfo[] getTranslatedColumnsInfo(String selectedColumn, String[] selectedKeys,
-            String[] selectedCells, TableColumn[] columns)
-    {
-        // Needs to be implemented by subclasses if automatic translation is
-        // required
-        return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
+	 * #getTranslatedColumnsInfo()
+	 */
+	public TranslationInfo[] getTranslatedColumnsInfo(String selectedColumn,
+			String[] selectedKeys, String[] selectedCells, TableColumn[] columns) {
+		// Needs to be implemented by subclasses if automatic translation is
+		// required
+		return null;
+	}
 }

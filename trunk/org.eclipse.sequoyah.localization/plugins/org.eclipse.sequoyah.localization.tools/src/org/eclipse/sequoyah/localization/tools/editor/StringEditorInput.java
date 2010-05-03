@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Marcelo Marzola Bossoni (Eldorado) - Bug (289282) - NullPointer adding keyNullPointer adding key
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Matheus Tait Lima (Eldorado) - Bug [300351] - Optimizing performance when translating a whole column at once
+ * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/provide implementation to the new methods
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
@@ -27,6 +28,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -39,7 +41,8 @@ import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
-import org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput;
+import org.eclipse.sequoyah.localization.stringeditor.editor.input.AbstractStringEditorInput;
+import org.eclipse.sequoyah.localization.stringeditor.editor.input.IEditorChangeListener;
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
@@ -53,6 +56,8 @@ import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.sequoyah.localization.tools.managers.ProjectLocalizationManager;
 import org.eclipse.sequoyah.localization.tools.managers.TranslatorManager;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager.IFileChangeListener;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
 /***
@@ -62,15 +67,15 @@ import org.eclipse.ui.IPersistableElement;
  * localization files.
  * 
  */
-public class StringEditorInput extends IStringEditorInput {
+public class StringEditorInput extends AbstractStringEditorInput {
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #getTitle()
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #getTitle()
 	 */
+	@Override
 	public String getTitle() {
 		return projectLocalizationManager.getLocalizationProject().getProject()
 				.getName();
@@ -90,7 +95,29 @@ public class StringEditorInput extends IStringEditorInput {
 		}
 
 		public void fileChanged(IFile file) {
-			notifyInputChange(getColumnID(file));
+			notifyInputChanged(getColumnID(file));
+		}
+	};
+
+	private final IEditorChangeListener editorChangeListener = new IEditorChangeListener() {
+
+		public void editorContentChanged(IEditorInput input, String newContent) {
+			IFileEditorInput fileInput = input instanceof IFileEditorInput ? (IFileEditorInput) input
+					: null;
+			if (fileInput != null) {
+				LocalizationFile locFile = projectLocalizationManager
+						.getLocalizationProject().getLocalizationFile(
+								fileInput.getFile());
+				try {
+					projectLocalizationManager.getProjectLocalizationSchema()
+							.updateLocalizationFileContent(locFile, newContent);
+					notifyInputChanged(getColumnID(locFile.getFile()));
+				} catch (SequoyahException e) {
+					BasePlugin.logError(
+							"Impossible to update file content for file: "
+									+ locFile.getFile().getFullPath(), e);
+				}
+			}
 		}
 	};
 
@@ -102,10 +129,11 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #addRow(org .eclipse.sequoyah.stringeditor.datatype.RowInfo)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #addRow(org
+	 * .eclipse.sequoyah.stringeditor.datatype.RowInfo)
 	 */
+	@Override
 	public RowInfo addRow(RowInfo row) {
 
 		RowInfo rowInfo = row;
@@ -138,8 +166,8 @@ public class StringEditorInput extends IStringEditorInput {
 			LocaleInfo info = schema.getLocaleInfoFromID(column);
 			LocalizationFile file = projectLocalizationManager
 					.getLocalizationProject().getLocalizationFile(info);
-			String value = ((CellInfo) cells.get(column)).getValue();
-			String comment = ((CellInfo) cells.get(column)).getComment();
+			String value = (cells.get(column)).getValue();
+			String comment = (cells.get(column)).getComment();
 			StringNode newNode = new StringNode(key, value);
 			newNode.setArray(isArray);
 			StringNodeComment commentNode = new StringNodeComment();
@@ -165,10 +193,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #removeRow (java.lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #removeRow (java.lang.String)
 	 */
+	@Override
 	public void removeRow(String key) {
 		List<LocalizationFile> files = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFiles();
@@ -186,29 +214,32 @@ public class StringEditorInput extends IStringEditorInput {
 	 * 
 	 * @throws SequoyahException
 	 * 
-	 * @see org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput#init(org.eclipse.core.resources.IProject)
+	 * @see org.eclipse.sequoyah.localization.stringeditor.editor.input.AbstractStringEditorInput#init(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	public void init(final IProject project) throws SequoyahException {
 		try {
-			projectLocalizationManager = LocalizationManager.getInstance().getProjectLocalizationManager(project, true);
-	
+			projectLocalizationManager = LocalizationManager.getInstance()
+					.getProjectLocalizationManager(project, true);
+
 			LocalizationManager.getInstance().addFileChangeListener(
 					fileChangeListener);
-	
+
+			addEditorChangeListener(editorChangeListener);
+
 			if (projectLocalizationManager == null) {
-	
+
 				Status status = new Status(Status.ERROR,
 						LocalizationToolsPlugin.PLUGIN_ID,
 						Messages.StringEditorInput_ErrorInitializingEditor);
 				throw new SequoyahException(new SequoyahExceptionStatus(status));
 			}
-		}
-		catch (IOException ioe){			
+		} catch (IOException ioe) {
 			Status status = new Status(Status.ERROR,
 					LocalizationToolsPlugin.PLUGIN_ID,
 					Messages.StringEditorInput_FileMalformed);
 			throw new SequoyahException(new SequoyahExceptionStatus(status));
-		}		
+		}
 	}
 
 	private String getColumnID(IFile file) {
@@ -218,10 +249,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #getColumns()
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #getColumns()
 	 */
+	@Override
 	public List<ColumnInfo> getColumns() {
 		List<LocalizationFile> files = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFiles();
@@ -263,10 +294,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #translate (java.lang.String, TranslatedColumnInfo)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #translate (java.lang.String, TranslatedColumnInfo)
 	 */
+	@Override
 	public boolean translateColumn(String srcColumnID,
 			TranslationInfo destColumnInfo, IProgressMonitor monitor) {
 
@@ -286,14 +317,17 @@ public class StringEditorInput extends IStringEditorInput {
 			String path = schema.getPathFromLocaleInfo(infoTarget);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(
 					new Path(path));
-			LocalizationFile newFile = projectLocalizationManager.getProjectLocalizationSchema().createLocalizationFile(file, infoTarget, (List<StringNode>) new ArrayList<StringNode>(), null);
+			LocalizationFile newFile = projectLocalizationManager
+					.getProjectLocalizationSchema()
+					.createLocalizationFile(file, infoTarget,
+							new ArrayList<StringNode>(), null);
 			newFile.setLocalizationProject(projectLocalizationManager
-					.getLocalizationProject());			
+					.getLocalizationProject());
 
 			result = translateColumn(existingFile, newFile, destColumnInfo,
 					monitor);
 
-			if (result){
+			if (result) {
 				projectLocalizationManager.getLocalizationProject()
 						.addLocalizationFile(newFile);
 				newFile.setDirty(true);
@@ -301,8 +335,8 @@ public class StringEditorInput extends IStringEditorInput {
 
 		} else {
 			monitor.setCanceled(true);
-			BasePlugin.logError(Messages.StringEditorInput_0 + srcColumnID
-					+ Messages.StringEditorInput_1);
+			BasePlugin.logError("Error translating from file '" + srcColumnID //$NON-NLS-1$
+					+ ". File does not exist."); //$NON-NLS-1$
 		}
 
 		return result;
@@ -314,16 +348,15 @@ public class StringEditorInput extends IStringEditorInput {
 	 * @param monitor
 	 * @return
 	 */
+	@Override
 	public boolean translateCells(String srcColumnID,
 			TranslationInfo[] newColumnsInfo, IProgressMonitor monitor) {
 
-		
-
 		try {
-			
+
 			monitor.beginTask(Messages.TranslationProgress_Connecting,
 					newColumnsInfo.length);
-			
+
 			ITranslator translator = TranslatorManager.getInstance()
 					.getTranslatorByName(newColumnsInfo[0].getTranslator());
 
@@ -339,16 +372,17 @@ public class StringEditorInput extends IStringEditorInput {
 			}
 
 			monitor.beginTask(Messages.TranslationProgress_FetchingInformation,
-					100);						
+					100);
 			List<TranslationResult> translationResults = translator
 					.translateAll(words, fromLanguages, toLanguages, monitor);
 
 			int i = 0;
 			monitor.done();
-			
-			monitor.beginTask(Messages.ParsingAnswer,
-					newColumnsInfo.length*3);					
-			
+
+			monitor
+					.beginTask(Messages.ParsingAnswer,
+							newColumnsInfo.length * 3);
+
 			for (TranslationInfo translationInfo : newColumnsInfo) {
 				monitor.worked(1);
 				String translatedString = translationResults.get(i++)
@@ -364,7 +398,6 @@ public class StringEditorInput extends IStringEditorInput {
 			return false;
 		}
 
-		
 		return true;
 	}
 
@@ -383,42 +416,42 @@ public class StringEditorInput extends IStringEditorInput {
 		ArrayList<String> strings = new ArrayList<String>();
 		for (Iterator<StringNode> iterator = originalNodes.iterator(); iterator
 				.hasNext();) {
-			StringNode originalNode = (StringNode) iterator.next();
+			StringNode originalNode = iterator.next();
 			strings.add(originalNode.getValue());
 			monitor.worked(1);
 		}
 		monitor.done();
-		
+
 		List<TranslationResult> translationResults;
 		try {
 			ITranslator translator = TranslatorManager.getInstance()
 					.getTranslatorByName(destColumnInfo.getTranslator());
-			monitor
-					.beginTask(Messages.TranslationProgress_FetchingInformation, 100);
+			monitor.beginTask(Messages.TranslationProgress_FetchingInformation,
+					100);
 			translationResults = translator.translateAll(strings,
-					destColumnInfo.getFromLang(), destColumnInfo.getToLang(), monitor);
+					destColumnInfo.getFromLang(), destColumnInfo.getToLang(),
+					monitor);
 		} catch (Exception e) {
 			BasePlugin.logError(e.getMessage());
 			monitor.setCanceled(true);
 			return false;
 		}
 		monitor.done();
-		
-		int i = 0;		
-		monitor.beginTask(Messages.ParsingAnswer, translationResults.size());		
+
+		int i = 0;
+		monitor.beginTask(Messages.ParsingAnswer, translationResults.size());
 		for (Iterator<TranslationResult> iterator = translationResults
 				.iterator(); iterator.hasNext();) {
 			monitor.worked(1);
-			TranslationResult translationResult = (TranslationResult) iterator
-					.next();
+			TranslationResult translationResult = iterator.next();
 			String translatedString = translationResult.getTranslatedWord();
-			StringNode newNode = new StringNode(
-					originalNodes.get(i).getKey(), translatedString);
+			StringNode newNode = new StringNode(originalNodes.get(i).getKey(),
+					translatedString);
 			newNode.setArray(originalNodes.get(i).isArray());
 			i++;
 			target.addStringNode(newNode);
 			destColumnInfo.addCell(newNode.getKey(), new CellInfo(newNode
-					.getValue(), ""));			 //$NON-NLS-1$
+					.getValue(), "")); //$NON-NLS-1$
 		}
 
 		monitor.done();
@@ -428,10 +461,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #addColumn (java.lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #addColumn (java.lang.String)
 	 */
+	@Override
 	public void addColumn(String ID) {
 
 		ILocalizationSchema schema = projectLocalizationManager
@@ -446,7 +479,9 @@ public class StringEditorInput extends IStringEditorInput {
 			String path = schema.getPathFromLocaleInfo(info);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(
 					new Path(path));
-			LocalizationFile newFile = projectLocalizationManager.getProjectLocalizationSchema().createLocalizationFile(file, info,(List<StringNode>) new ArrayList<StringNode>(), null);
+			LocalizationFile newFile = projectLocalizationManager
+					.getProjectLocalizationSchema().createLocalizationFile(
+							file, info, new ArrayList<StringNode>(), null);
 			newFile.setLocalizationProject(projectLocalizationManager
 					.getLocalizationProject());
 			newFile.setDirty(true);
@@ -461,10 +496,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #removeColumn (java.lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #removeColumn (java.lang.String)
 	 */
+	@Override
 	public void removeColumn(String columnID) {
 		LocaleInfo locale = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
@@ -477,10 +512,11 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #setValue (java.lang.String, java.lang.String, java.lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #setValue (java.lang.String, java.lang.String,
+	 * java.lang.String)
 	 */
+	@Override
 	public void setValue(String columnID, String key, String value)
 			throws SequoyahException {
 
@@ -500,10 +536,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #getValue (java.lang.String, java.lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #getValue (java.lang.String, java.lang.String)
 	 */
+	@Override
 	public CellInfo getValue(String columnID, String key) {
 		LocaleInfo localeInfo = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
@@ -518,14 +554,15 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #getValues (java.lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #getValues (java.lang.String)
 	 */
+	@Override
 	public Map<String, CellInfo> getValues(String columnID) {
 		LocaleInfo localeInfo = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
 		Map<String, CellInfo> keyValueMap = new HashMap<String, CellInfo>();
+		keyValueMap.keySet();
 		LocalizationFile localizationFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(localeInfo);
 		List<StringNode> stringNodes = localizationFile.getStringNodes();
@@ -546,6 +583,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * @seeorg.eclipse.sequoyah.stringeditor.editor.input.IStringEditorInput#
 	 * getAvailableKeysForColumn(java.lang.String)
 	 */
+	@Override
 	public List<CellInfo> getAvailableKeysForColumn(String columnID) {
 		LocaleInfo localeInfo = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
@@ -566,10 +604,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #canSave()
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #canSave()
 	 */
+	@Override
 	public boolean canSave() {
 		return true;
 	}
@@ -577,23 +615,23 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #save()
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #save()
 	 */
+	@Override
 	public boolean save() {
-		boolean result = projectLocalizationManager.saveProject();			
+		boolean result = projectLocalizationManager.saveProject();
 		return result;
-		
+
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #isDirty()
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		boolean returnValue = false;
 		if (projectLocalizationManager != null) {
@@ -667,6 +705,7 @@ public class StringEditorInput extends IStringEditorInput {
 	 * @seeorg.eclipse.sequoyah.stringeditor.editor.input.IStringEditorInput#
 	 * canRevertByColumn()
 	 */
+	@Override
 	public boolean canRevertByColumn() {
 		return true;
 	}
@@ -674,10 +713,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #revert()
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #revert()
 	 */
+	@Override
 	public boolean revert() {
 		LocalizationManager.getInstance().unloadProjectLocalizationManager(
 				projectLocalizationManager.getLocalizationProject()
@@ -687,7 +726,7 @@ public class StringEditorInput extends IStringEditorInput {
 					projectLocalizationManager.getLocalizationProject()
 							.getProject(), false);
 		} catch (IOException e) {
-			
+
 		}
 		return true;
 	}
@@ -695,10 +734,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #revert(java .lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #revert(java .lang.String)
 	 */
+	@Override
 	public boolean revert(String columnID) throws IOException {
 
 		boolean found = false;
@@ -739,10 +778,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #dispose()
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (projectLocalizationManager != null) {
 			LocalizationManager.getInstance().removeFileChangeListener(
@@ -753,18 +792,18 @@ public class StringEditorInput extends IStringEditorInput {
 			projectLocalizationManager = null;
 		}
 	}
-	
-	public static void stopListening(){
-		
-	} 
+
+	public static void stopListening() {
+
+	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #removeCell (java.lang.String, java.lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #removeCell (java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void removeCell(String key, String columnID) {
 		ILocalizationSchema schema = projectLocalizationManager
 				.getProjectLocalizationSchema();
@@ -789,10 +828,11 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #setCellTooltip (java.lang.String, java.lang.String, java.lang.String)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #setCellTooltip (java.lang.String, java.lang.String,
+	 * java.lang.String)
 	 */
+	@Override
 	public void setCellTooltip(String columnID, String key, String tooltip)
 			throws SequoyahException {
 		if (projectLocalizationManager == null) {
@@ -820,10 +860,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #validate()
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #validate()
 	 */
+	@Override
 	public IStatus validate() {
 		IStatus result = new Status(Status.OK,
 				LocalizationToolsPlugin.PLUGIN_ID, ""); //$NON-NLS-1$
@@ -857,10 +897,10 @@ public class StringEditorInput extends IStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.editor.input.IStringEditorInput
-	 * #canHandle (org.eclipse.core.resources.IFile)
+	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * IStringEditorInput #canHandle (org.eclipse.core.resources.IFile)
 	 */
+	@Override
 	public boolean canHandle(IFile file) {
 		boolean canHandle = false;
 		ILocalizationSchema localizationSchema = LocalizationManager
@@ -871,4 +911,29 @@ public class StringEditorInput extends IStringEditorInput {
 		return canHandle;
 	}
 
+	@Override
+	public List<IFile> getFiles() {
+		List<IFile> files = new ArrayList<IFile>();
+		for (LocalizationFile locFile : projectLocalizationManager
+				.getLocalizationProject().getLocalizationFiles()) {
+			files.add(locFile.getFile());
+		}
+		return files;
+	}
+
+	@Override
+	public String getSourcePageNameForFile(IFile file) {
+		IPath filePath = file.getFullPath();
+		return filePath.segment(filePath.segmentCount() - 2)
+				+ "/" + filePath.lastSegment(); //$NON-NLS-1$
+	}
+
+	@Override
+	public String getContentForFileAsText(IFileEditorInput editorInput) {
+		LocalizationFile locFile = projectLocalizationManager
+				.getLocalizationProject().getLocalizationFile(
+						editorInput.getFile());
+		return projectLocalizationManager.getProjectLocalizationSchema()
+				.getLocalizationFileContent(locFile);
+	}
 }

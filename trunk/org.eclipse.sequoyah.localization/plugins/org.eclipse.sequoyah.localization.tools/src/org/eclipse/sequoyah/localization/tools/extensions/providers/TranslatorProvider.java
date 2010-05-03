@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -36,16 +36,16 @@ public class TranslatorProvider {
 	/*
 	 * The "localizationSchema" extension point ID
 	 */
-	private final String EXTENSION_ID = Messages.TranslatorProvider_0;
+	private final String EXTENSION_ID = "org.eclipse.sequoyah.localization.tools.translator"; //$NON-NLS-1$
 
 	/*
 	 * Fields in "translator" extension point definition
 	 */
-	private final String EXTENSION_FIELD_NAME = Messages.TranslatorProvider_1;
+	private final String EXTENSION_FIELD_NAME = "name"; //$NON-NLS-1$
 
-	private final String EXTENSION_FIELD_CLASS = Messages.TranslatorProvider_2;
+	private final String EXTENSION_FIELD_CLASS = "class"; //$NON-NLS-1$
 
-	private final String EXTENSION_FIELD_BRANDING_IMG = Messages.TranslatorProvider_3;
+	private final String EXTENSION_FIELD_BRANDING_IMG = "brandingImage "; //$NON-NLS-1$
 
 	/*
 	 * Singleton instance
@@ -116,7 +116,7 @@ public class TranslatorProvider {
 
 				} catch (Exception e) {
 					BasePlugin
-							.logError(Messages.TranslatorProvider_5
+							.logError("Error while trying to get translators: " //$NON-NLS-1$
 									+ e.getMessage());
 				}
 			}
