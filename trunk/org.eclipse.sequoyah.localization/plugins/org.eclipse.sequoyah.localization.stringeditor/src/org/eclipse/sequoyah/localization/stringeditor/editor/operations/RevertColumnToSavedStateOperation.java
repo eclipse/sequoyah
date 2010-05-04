@@ -43,7 +43,7 @@ public class RevertColumnToSavedStateOperation extends EditorOperation {
 		try {
 			getEditorInput().revert(actualState.getId());
 		} catch (IOException e) {
-			BasePlugin.logError(Messages.RevertColumnToSavedStateOperation_0
+			BasePlugin.logError("Error reverting column: " //$NON-NLS-1$
 					+ actualState.getId(), e);
 		}
 		savedState = new ColumnInfo(actualState.getId(), actualState

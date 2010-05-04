@@ -1079,7 +1079,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			if (resourcesList.getLength() == 0) {
 				Element resources = document.createElement(XML_RESOURCES_TAG);
 				document.appendChild(resources);
-				resourcesList = document.getElementsByTagName("resources");
+				resourcesList = document.getElementsByTagName("resources"); //$NON-NLS-1$
 			}
 			for (int i = 0; i < resourcesList.getLength(); i++) {
 				Element resource = (Element) resourcesList.item(i);
@@ -1585,13 +1585,13 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	private boolean isScreenSizeSegment(String value) {
-		return value.equalsIgnoreCase("large")
-				|| value.equalsIgnoreCase("normal")
-				|| value.equalsIgnoreCase("small");
+		return value.equalsIgnoreCase("large") //$NON-NLS-1$
+				|| value.equalsIgnoreCase("normal") //$NON-NLS-1$
+				|| value.equalsIgnoreCase("small"); //$NON-NLS-1$
 	}
 
 	private boolean isAPIVersionSegment(String value) {
-		return value.startsWith("v");
+		return value.startsWith("v"); //$NON-NLS-1$
 	}
 
 	/*
@@ -1737,13 +1737,13 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		try {
 			builder = factory.newDocumentBuilder();
 			ByteArrayInputStream byteInputStream = new ByteArrayInputStream(
-					content.getBytes("UTF-8"));
+					content.getBytes("UTF-8")); //$NON-NLS-1$
 			Document document = builder.parse(byteInputStream);
 			updateLocalizationFileContent(localizationFile, document);
 		} catch (Exception e) {
 			SequoyahExceptionStatus status = new SequoyahExceptionStatus(
 					IStatus.ERROR, AndroidLocalizationPlugin.PLUGIN_ID, 0,
-					"Impossible to update the localization file content for file: "
+					Messages.AndroidLocalizationSchema_6
 							+ localizationFile.getFile().getFullPath(), e);
 			throw new SequoyahException(status);
 		}

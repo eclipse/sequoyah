@@ -88,12 +88,12 @@ public class InstanceMgtView extends ViewPart
     {
 
     	IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
-    	.getExtensionPoint(Messages.InstanceMgtView_2);
+    	.getExtensionPoint("org.eclipse.sequoyah.device.framework.ui.deviceManagerView");//$NON-NLS-1$
     	IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
     	for(IConfigurationElement configElement : configurationElements) {
-    		String attribute = configElement.getAttribute(Messages.InstanceMgtView_3);
+    		String attribute = configElement.getAttribute("useDropDown");//$NON-NLS-1$
     		useDropDown = Boolean.parseBoolean(attribute);
-    		viewLayout = configElement.getAttribute(Messages.InstanceMgtView_4);
+    		viewLayout = configElement.getAttribute("viewLayout");//$NON-NLS-1$
     	}
     	
     	if(LAYOUT_VERTICAL.equals(viewLayout)) {

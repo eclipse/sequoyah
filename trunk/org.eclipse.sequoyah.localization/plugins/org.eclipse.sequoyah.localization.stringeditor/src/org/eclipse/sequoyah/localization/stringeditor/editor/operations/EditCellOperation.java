@@ -97,9 +97,9 @@ public class EditCellOperation extends EditorOperation {
 		} catch (SequoyahException e) {
 			BasePlugin
 					.logError(
-							Messages.EditCellOperation_1 + column
-									+ Messages.EditCellOperation_2 + key
-									+ Messages.EditCellOperation_3 + newValue != null ? newValue
+							"Error editing cell value: (" + column //$NON-NLS-1$
+									+ ", " + key //$NON-NLS-1$
+									+ ") =" + newValue != null ? newValue //$NON-NLS-1$
 									.getValue()
 									: null, e);
 		}
@@ -131,9 +131,9 @@ public class EditCellOperation extends EditorOperation {
 		} catch (SequoyahException e) {
 			BasePlugin
 					.logError(
-							Messages.EditCellOperation_4 + column
-									+ Messages.EditCellOperation_5 + key
-									+ Messages.EditCellOperation_6 + oldValue != null ? oldValue
+							"Error undoing cell edition: (" + column //$NON-NLS-1$
+									+ ", " + key //$NON-NLS-1$
+									+ ") =" + oldValue != null ? oldValue //$NON-NLS-1$
 									.getValue()
 									: null, e);
 		}

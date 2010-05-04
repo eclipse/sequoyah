@@ -30,10 +30,10 @@ import org.eclipse.swt.graphics.Image;
 
 public class MobileDeviceType implements IDeviceType {
 	
-	private static final String ELEMENT_DEVICE = Messages.MobileDeviceType_0;
-	private static final String ATR_ICON = Messages.MobileDeviceType_1;
-	private static final String ATR_IS_PERSISTENT = Messages.MobileDeviceType_2;
-	private static final String ATR_SUPPORTS_USER_INSTANCES = Messages.MobileDeviceType_3;
+	private static final String ELEMENT_DEVICE = "deviceType";//$NON-NLS-1$
+	private static final String ATR_ICON = "icon";//$NON-NLS-1$
+	private static final String ATR_IS_PERSISTENT = "isPersistent";//$NON-NLS-1$
+	private static final String ATR_SUPPORTS_USER_INSTANCES = "supportsUserInstances";//$NON-NLS-1$
 	
 	
 	private static final String PROPERTY_ICON = "icon"; //$NON-NLS-1$

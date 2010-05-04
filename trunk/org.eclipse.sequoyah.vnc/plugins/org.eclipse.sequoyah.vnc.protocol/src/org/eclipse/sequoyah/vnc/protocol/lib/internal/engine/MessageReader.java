@@ -103,7 +103,7 @@ class MessageReader
                 readFilterMessageDef(in, messageDataDef, message, null, -1, eng);
             }
         } else {
-            BasePlugin.logWarning(Messages.MessageReader_0);
+            BasePlugin.logWarning("The code does not identify an incomming message. It will not be ignored.");//$NON-NLS-1$
         }
         
         return message;
@@ -223,7 +223,7 @@ class MessageReader
         } else {
             // The definition of this fixed data does not contain all
             // information it should have.
-            BasePlugin.logError(Messages.MessageReader_1);
+            BasePlugin.logError("The field name was not provided by the message definition.");//$NON-NLS-1$
             throw new InvalidDefinitionException(
                     "Incomplete fixed data element"); //$NON-NLS-1$
         }
@@ -286,7 +286,7 @@ class MessageReader
                 in.readFully(valueArray);
             } catch (IOException e) {
                 // The input stream is probably broken
-                BasePlugin.logWarning(Messages.MessageReader_2);
+                BasePlugin.logWarning("An IOException was detected while reading the variable size field. Requesting restart.");//$NON-NLS-1$
                 eng.requestRestart();
                 throw e;
             }         
@@ -306,14 +306,14 @@ class MessageReader
             } catch (UnsupportedEncodingException e) {
                 // If the encoding provided is not supported, that means
                 // that the message definition is incorrect.
-                BasePlugin.logError(Messages.MessageReader_3);
+                BasePlugin.logError("An invalid charset name was provided for the field.");//$NON-NLS-1$
                 throw new InvalidDefinitionException(
                         "Invalid charset name provided at message definition", e); //$NON-NLS-1$
             }
         } else {
             // The definition of this fixed data does not contain all
             // information it should have.
-            BasePlugin.logError(Messages.MessageReader_4);
+            BasePlugin.logError("The field name was not provided by the message definition.");//$NON-NLS-1$
             throw new InvalidDefinitionException(
                     "Incomplete fixed data element"); //$NON-NLS-1$
         }
@@ -372,7 +372,7 @@ class MessageReader
             }
         } catch (IOException e) {
             // The input stream is probably broken
-            BasePlugin.logWarning(Messages.MessageReader_5);
+            BasePlugin.logWarning("An IOException was thrown by the raw field handler. A restart is being requested.");//$NON-NLS-1$
             eng.requestRestart();
             throw e;
         }
@@ -438,7 +438,7 @@ class MessageReader
             // If the number of iterations is not defined, than raise a protocol
             // exception to warn the caller that this it provided an invalid
             // message object to this method.
-            BasePlugin.logError(Messages.MessageReader_6);
+            BasePlugin.logError("It was not possible to determine how many iterations are expected.");//$NON-NLS-1$
             throw new InvalidInputStreamDataException(
                     "Iterate on field value is not numeric"); //$NON-NLS-1$
         }
@@ -522,13 +522,13 @@ class MessageReader
                 // Throw
                 // an exception to warn the caller that it provided an invalid
                 // parameter.
-                BasePlugin.logError(Messages.MessageReader_7);
+                BasePlugin.logError("It is not possible to read the number, because it doesn't have a supported field size.");//$NON-NLS-1$
                 throw new InvalidInputStreamDataException(
                         "Unrecognized field size"); //$NON-NLS-1$
             }
         } catch (IOException e) {
             // The input stream is probably broken
-            BasePlugin.logWarning(Messages.MessageReader_8);
+            BasePlugin.logWarning("An IOException was detected while reading from input stream. Requesting a restart.");//$NON-NLS-1$
             eng.requestRestart();
             throw e;
         }

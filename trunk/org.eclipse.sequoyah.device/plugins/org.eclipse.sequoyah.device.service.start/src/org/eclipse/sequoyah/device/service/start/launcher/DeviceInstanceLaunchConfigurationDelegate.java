@@ -38,25 +38,25 @@ import org.eclipse.sequoyah.device.service.start.StartServicePlugin;
 
 public class DeviceInstanceLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
 
-	public static final String ATTR_LOCATION = StartServicePlugin.PLUGIN_ID + ".ATTR_LOCATION";
-	public static final String ATTR_TOOL_ARGUMENTS = StartServicePlugin.PLUGIN_ID + ".ATTR_TOOL_ARGUMENTS";
-	public static final String ATTR_WORKING_DIRECTORY = StartServicePlugin.PLUGIN_ID + ".ATTR_WORKING_DIRECTORY";
+	public static final String ATTR_LOCATION = StartServicePlugin.PLUGIN_ID + ".ATTR_LOCATION"; //$NON-NLS-1$
+	public static final String ATTR_TOOL_ARGUMENTS = StartServicePlugin.PLUGIN_ID + ".ATTR_TOOL_ARGUMENTS"; //$NON-NLS-1$
+	public static final String ATTR_WORKING_DIRECTORY = StartServicePlugin.PLUGIN_ID + ".ATTR_WORKING_DIRECTORY"; //$NON-NLS-1$
 	
 	public void launch(ILaunchConfiguration configuration, String mode,
 			ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		
-		String location = configuration.getAttribute(ATTR_LOCATION, "");
+		String location = configuration.getAttribute(ATTR_LOCATION, ""); //$NON-NLS-1$
 		List<String> args = new ArrayList<String>();
 		args.add(location);
-		String toolArgs = configuration.getAttribute(ATTR_TOOL_ARGUMENTS, "");
+		String toolArgs = configuration.getAttribute(ATTR_TOOL_ARGUMENTS, ""); //$NON-NLS-1$
 		if (toolArgs.trim().length()>0) {
-			String[] splitedArgs = toolArgs.trim().split(" ");
+			String[] splitedArgs = toolArgs.trim().split(" "); //$NON-NLS-1$
 			for (String arg : splitedArgs) {
 				args.add(arg);
 			}
 		}
 		ProcessBuilder pb = new ProcessBuilder(args);
-		pb.directory(new File(configuration.getAttribute(ATTR_WORKING_DIRECTORY, "")));
+		pb.directory(new File(configuration.getAttribute(ATTR_WORKING_DIRECTORY, ""))); //$NON-NLS-1$
 		try {
 			Process p = pb.start();
 		} catch (IOException e) {

@@ -25,7 +25,7 @@ import org.eclipse.sequoyah.device.framework.statemachine.StateMachineHandler;
 
 public abstract class AbstractMobileInstance implements IInstance {
 
-	private static final String VALID_INSTANCE_REGEXP = Messages.AbstractMobileInstance_0;
+	private static final String VALID_INSTANCE_REGEXP = "([a-z]|[A-Z]|[0-9]|\\.|_|-)+";//$NON-NLS-1$
 	protected String id;
 	private String name;
 	private String nameSuffix;

@@ -96,13 +96,14 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 				bean
 						.setProtocolInitSeed((IProtocolHandshake) initSeedObj);
 			} else {
-			    BasePlugin.logError(Messages.ProtocolExtensionsReader_0 + 
-			            protocolId + Messages.ProtocolExtensionsReader_1);
+			    BasePlugin.logError("The protocol identified by " + //$NON-NLS-1$
+			            protocolId + " has not declared a valid handshake.");//$NON-NLS-1$
 				throw new MalformedProtocolExtensionException(
 						"The protocol has not declared a valid handshake"); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
-            BasePlugin.logError(Messages.ProtocolExtensionsReader_2 + protocolId + Messages.ProtocolExtensionsReader_3);
+            BasePlugin.logError("It was not possible to create a handshake object for the protocol identified by " + //$NON-NLS-1$
+            		protocolId + ".");//$NON-NLS-1$
 			throw new MalformedProtocolExtensionException(e.getMessage(), e);
 		}
 
@@ -355,7 +356,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	            Object aObject = protocolMsgConf
 	            .createExecutableExtension(PROTOCOL_MESSAGE_HANDLER_ATTR);
 	            if (!(aObject instanceof IMessageHandler)) {
-	                BasePlugin.logError(Messages.ProtocolExtensionsReader_4);
+	                BasePlugin.logError("Error at message declaration. The message handler must be an instance of IMessageHandler.");//$NON-NLS-1$
 	                throw new MalformedProtocolExtensionException(
 	                    "Error at message declaration. The message handler must be an instance of IMessageHandler"); //$NON-NLS-1$
 	            } else {
@@ -416,7 +417,8 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 	        //BasePlugin.logDebugMessage("ProtocolExtensionsReader","Read message definition for " + id + ". code=" + code);
 	    } catch (CoreException e) {
 	        // Skip the erroneous message
-	        BasePlugin.logWarning(Messages.ProtocolExtensionsReader_5 + id + Messages.ProtocolExtensionsReader_6);
+	        BasePlugin.logWarning("There is an error at the declaration of message " + //$NON-NLS-1$
+	        		id + ". Skipping it.");//$NON-NLS-1$
 	    }			
 	}
 
@@ -512,7 +514,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 					.createExecutableExtension(PROTOCOL_MESSAGE_RAW_DATA_EXECUTABLE_ATTR);
 					
 			if (!(aObject instanceof IRawDataHandler)) {
-			    BasePlugin.logError(Messages.ProtocolExtensionsReader_7);
+			    BasePlugin.logError("The raw data handler specified does not implement IRawDataHandler.");//$NON-NLS-1$
 				throw new MalformedProtocolExtensionException(
 						"Error at message declaration. The raw data handler must be an instance of IRawDataHandler"); //$NON-NLS-1$
 			} else {
@@ -561,7 +563,7 @@ public class ProtocolExtensionsReader implements IExtensionConstants {
 		} else {
 			// If it is an unknown field (different from fixed, variable, raw
 			// data reader/writer, iteratable block)
-		    BasePlugin.logError(Messages.ProtocolExtensionsReader_8);
+		    BasePlugin.logError("Unkown data element.");//$NON-NLS-1$
 			throw new MalformedProtocolExtensionException("Unkown data element"); //$NON-NLS-1$
 		}
 

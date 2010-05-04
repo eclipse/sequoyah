@@ -22,6 +22,8 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.sequoyah.localization.android.i18n.messages"; //$NON-NLS-1$
 
+	public static String AndroidLocalizationSchema_6;
+
 	public static String AndroidLocalizationSchema_Default_Andr_Localization_File_Tooltip;
 
 	public static String AndroidLocalizationSchema_Exception_CouldNotLoadFile;

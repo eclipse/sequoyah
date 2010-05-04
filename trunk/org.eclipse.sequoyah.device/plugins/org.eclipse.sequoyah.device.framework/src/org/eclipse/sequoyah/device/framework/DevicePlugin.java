@@ -65,7 +65,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 
 	public static final Properties DEFAULT_PROPERTIES = new Properties();
 	
-	private static final String DEVICE_XML_LOCATION = Messages.DevicePlugin_0;
+	private static final String DEVICE_XML_LOCATION = "DeviceXMLLocation";//non-//$NON-NLS-1$
 	
 	private static final String TML_DEVICE_DATAFILE = "sequoyah_devices.xml"; //$NON-NLS-1$
 	
@@ -188,7 +188,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 		protected File fileFromLocation(Location location){
 			if (location == null) return null;
 			URL configURL = location.getURL();
-			if ((configURL != null) && (configURL.getProtocol().startsWith(Messages.DevicePlugin_1))) {
+			if ((configURL != null) && (configURL.getProtocol().startsWith("file"))) {//non-//$NON-NLS-1$
 				return new File(configURL.getFile(), PLUGIN_ID);
 			}
 			else return null;

@@ -1140,7 +1140,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 				addPage(inputFile);
 			} catch (PartInitException e) {
 				BasePlugin.logError(
-						"Impossible to add a new page to the String Editor", e);
+						"Impossible to add a new page to the String Editor", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -2239,7 +2239,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 				addPage(file);
 			} catch (PartInitException e) {
 				BasePlugin.logError(
-						"Impossible to add a new page to the String Editor", e);
+						"Impossible to add a new page to the String Editor", e); //$NON-NLS-1$
 			}
 		}
 	}

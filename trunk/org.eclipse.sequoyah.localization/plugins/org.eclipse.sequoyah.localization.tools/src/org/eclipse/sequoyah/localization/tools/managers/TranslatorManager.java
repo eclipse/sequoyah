@@ -87,7 +87,7 @@ public class TranslatorManager {
 			translationResults = translator.translate(string, fromLanguage,
 					toLanguage);
 		} catch (Exception e) {
-			BasePlugin.logError("Errow while using translator"); //$NON-NLS-1$
+			BasePlugin.logError("Error while using translator"); //$NON-NLS-1$
 		}
 
 		return translationResults;
@@ -115,7 +115,7 @@ public class TranslatorManager {
 			translationResults = translator.translateAll(strings, fromLanguage,
 					toLanguage, null);
 		} catch (Exception e) {
-			BasePlugin.logError("Errow while using translator"); //$NON-NLS-1$
+			BasePlugin.logError("Error while using translator"); //$NON-NLS-1$
 		}
 
 		return translationResults;

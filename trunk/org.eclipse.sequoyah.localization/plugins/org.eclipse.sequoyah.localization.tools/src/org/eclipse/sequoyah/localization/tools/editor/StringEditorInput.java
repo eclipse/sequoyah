@@ -114,7 +114,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 					notifyInputChanged(getColumnID(locFile.getFile()));
 				} catch (SequoyahException e) {
 					BasePlugin.logError(
-							"Impossible to update file content for file: "
+							"Impossible to update file content for file: " //$NON-NLS-1$
 									+ locFile.getFile().getFullPath(), e);
 				}
 			}

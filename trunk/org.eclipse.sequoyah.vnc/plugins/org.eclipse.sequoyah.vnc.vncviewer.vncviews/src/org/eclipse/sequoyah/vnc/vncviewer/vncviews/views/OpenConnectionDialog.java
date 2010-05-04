@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.Text;
 public class OpenConnectionDialog extends Dialog {
 
 	private static final String DIALOG_TITLE = Messages.OpenConnectionDialog_0;
-	private static final String DEFAULT_PORT = Messages.OpenConnectionDialog_1;
+	private static final String DEFAULT_PORT = "5900"; //$NON-NLS-1$
 	
 	private Text hostText;
 	private Text portText;
@@ -168,7 +168,7 @@ public class OpenConnectionDialog extends Dialog {
 			final boolean isBypassProxy;
 			
 			public ConnectJob(String host,int port,String password,String version,boolean isBypassProxy){
-				super(Messages.OpenConnectionDialog_2+host+Messages.OpenConnectionDialog_3+port);
+				super(Messages.OpenConnectionDialog_1+host+":"+port); //$NON-NLS-2$
 				this.host=host;
 				this.port=port;
 				this.password=password;
@@ -178,7 +178,7 @@ public class OpenConnectionDialog extends Dialog {
 			}
 
 			public IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask(Messages.OpenConnectionDialog_4, 2);
+					monitor.beginTask(Messages.OpenConnectionDialog_2, 2);
 					if(VNCViewerView.getSWTRemoteDisplay().isActive()){
 						if(isStopExistingClient()){
 							VNCViewerView.stop();
@@ -193,7 +193,7 @@ public class OpenConnectionDialog extends Dialog {
 						}
 					}
 					
-					if(!isStepNeeded(monitor, Messages.OpenConnectionDialog_5)){
+					if(!isStepNeeded(monitor, Messages.OpenConnectionDialog_3)){
 						return Status.CANCEL_STATUS;
 					}
 			
@@ -234,7 +234,7 @@ public class OpenConnectionDialog extends Dialog {
 							  Messages.OpenConnectionDialog_6,
 							  null,
 							  Messages.OpenConnectionDialog_7 + VNCViewerView.getCurrentHost()
-							                             + Messages.OpenConnectionDialog_8 + VNCViewerView.getCurrentPort() + Messages.OpenConnectionDialog_9,
+							                             + ":" + VNCViewerView.getCurrentPort() + "?", //$NON-NLS-1$ //$NON-NLS-2$
 							  MessageDialog.QUESTION,
 							  new String[]{Messages.OpenConnectionDialog_10,Messages.OpenConnectionDialog_11},
 							  0);

@@ -30,17 +30,17 @@ import org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvid
 
 public class EditorExtensionLoader {
 
-	private static final String EXTENSION_POINT_ID = Messages.EditorExtensionLoader_0;
+	private static final String EXTENSION_POINT_ID = "contentprovider";//$NON-NLS-1$
 
-	private static final String PROVIDER_ELEMENT_ID = Messages.EditorExtensionLoader_1;
+	private static final String PROVIDER_ELEMENT_ID = "provider";//$NON-NLS-1$
 
-	private static final String PROVIDER_EDITOR_CONTEXT_HELP_ID = Messages.EditorExtensionLoader_2;
+	private static final String PROVIDER_EDITOR_CONTEXT_HELP_ID = "contextHelpID";//$NON-NLS-1$
 
-	private static final String PROVIDER_EDITOR_INPUT_ID = Messages.EditorExtensionLoader_3;
+	private static final String PROVIDER_EDITOR_INPUT_ID = "editorInput";//$NON-NLS-1$
 
-	private static final String PROVIDER_OPERATION_PROV_ID = Messages.EditorExtensionLoader_4;
+	private static final String PROVIDER_OPERATION_PROV_ID = "operationsProvider";//$NON-NLS-1$
 
-	private static final String PROVIDER_CELL_VALIDATOR_ID = Messages.EditorExtensionLoader_5;
+	private static final String PROVIDER_CELL_VALIDATOR_ID = "cellValidator";//$NON-NLS-1$
 
 	private final Map<IFile, IConfigurationElement> knownProviders;
 
@@ -127,9 +127,9 @@ public class EditorExtensionLoader {
 					.getAttribute(PROVIDER_EDITOR_CONTEXT_HELP_ID);
 
 		} catch (CoreException e) {
-			BasePlugin.logWarning(Messages.EditorExtensionLoader_6
+			BasePlugin.logWarning("No operation provider found for " //$NON-NLS-1$
 					+ element.getDeclaringExtension().getUniqueIdentifier()
-					+ Messages.EditorExtensionLoader_7);
+					+ ". Using a default operation provider."); //$NON-NLS-1$
 		}
 		AbstractStringEditorInput input = null;
 		IOperationProvider provider = null;

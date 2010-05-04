@@ -28,7 +28,8 @@ public class EclipsePropertiesFileHandler implements IPropertiesFileHandler {
 	
 	public Properties loadPropertiesFile(String fileAddress) {
 
-	    log(EclipsePropertiesFileHandler.class).info(Messages.EclipsePropertiesFileHandler_0 + fileAddress);
+	    log(EclipsePropertiesFileHandler.class).
+	    	info("Loading VNC properties from " + fileAddress); //$NON-NLS-1$
 		Properties properties = new Properties(); 
 		Bundle pluginBundle = VNCViewerPlugin.getDefault().getBundle();
 		URL vncViewerConf = pluginBundle.getResource(fileAddress);
@@ -38,8 +39,8 @@ public class EclipsePropertiesFileHandler implements IPropertiesFileHandler {
 			properties.load(vncViewerConfStream);
 		} catch (IOException e) {
 			// TODO handle properly
-		    log(EclipsePropertiesFileHandler.class).error(Messages.EclipsePropertiesFileHandler_1 + 
-		            e.getMessage());
+		    log(EclipsePropertiesFileHandler.class).
+		    	error("IOException while loading VNC properties. Cause: " + e.getMessage()); //$NON-NLS-1$
 			e.printStackTrace();
 		}
 		

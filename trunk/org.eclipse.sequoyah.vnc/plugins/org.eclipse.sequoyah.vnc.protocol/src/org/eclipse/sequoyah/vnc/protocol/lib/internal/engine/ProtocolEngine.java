@@ -206,7 +206,7 @@ public class ProtocolEngine {
 			IProtocolExceptionHandler exceptionHandler,
 			boolean isBigEndianProtocol, boolean isServer, int retries) {
 
-	    BasePlugin.logDebugMessage(Messages.ProtocolEngine_0,Messages.ProtocolEngine_1);
+	    BasePlugin.logDebugMessage("ProtocolEngine","A protocol engine is being created.");//$NON-NLS-1$ //$NON-NLS-2$
 		this.handle = handle;
 		this.initProcedure = initProcedure;
 		this.messageDefCollection = messageDefCollection;
@@ -219,7 +219,7 @@ public class ProtocolEngine {
 		this.retries = this.retriesMax;
 		
 		engineEventCounter++;
-		(new Thread(eventHandler, Messages.ProtocolEngine_2
+		(new Thread(eventHandler, "Protocol Event Handler-"//$NON-NLS-1$
 				+ engineEventCounter)).start();
 	}
 
@@ -227,7 +227,7 @@ public class ProtocolEngine {
 	 * Guarantees that all threads associated to this engine instance are stopped
 	 */
 	public void dispose() {
-	    BasePlugin.logInfo(Messages.ProtocolEngine_3);
+	    BasePlugin.logInfo("The protocol engine is being disposed.");//$NON-NLS-1$
 	    if (consumer != null) {
 	        consumer.stopConsumer();
 	        consumer = null;
@@ -318,7 +318,7 @@ public class ProtocolEngine {
 	 */
 	private void doStartProtocol() throws ProtocolHandshakeException, IOException {
 	    if (!isRunning()) {
-	        BasePlugin.logInfo(Messages.ProtocolEngine_4);
+	        BasePlugin.logInfo("Starting protocol.");//$NON-NLS-1$
 	        if (sockChannel == null) {
 	            
 	            // TODO: Verify how proxy based connections will behave with NIO channels
@@ -362,22 +362,22 @@ public class ProtocolEngine {
 	            } else {
 	                initProcedure.clientHandshake(handle, in, out, parameters);
 	            }
-	            BasePlugin.logInfo(Messages.ProtocolEngine_5);
+	            BasePlugin.logInfo("Handshake is finished.");//$NON-NLS-1$
 
 	            // After all initialization is done, start the consumer thread,
 	            // which will listen to the input stream to collect any byte that arrive
 	            consumer = new Consumer();
 	            consumerCounter++;
-	            Thread consumerThread = new Thread(consumer, Messages.ProtocolEngine_6
+	            Thread consumerThread = new Thread(consumer, "Consumer-"//$NON-NLS-1$
 	                    + consumerCounter);
 	            consumerThread.start();
 
 	            retries = retriesMax;
 	            connectionSerialNumber++;
 	        } else {
-	            BasePlugin.logWarning(Messages.ProtocolEngine_7);
+	            BasePlugin.logWarning("Handshake handler is not available. No handshake performed.");//$NON-NLS-1$
 	        }
-	        BasePlugin.logInfo(Messages.ProtocolEngine_8);
+	        BasePlugin.logInfo("Protocol started.");//$NON-NLS-1$
 	    }
 	}
 
@@ -396,7 +396,7 @@ public class ProtocolEngine {
 	 */
 	private void doStopProtocol() throws IOException {
 	    if (isConnected()) {
-	        BasePlugin.logInfo(Messages.ProtocolEngine_9);
+	        BasePlugin.logInfo("Stopping protocol.");//$NON-NLS-1$
 	        if (consumer != null) {
 	            consumer.stopConsumer();
 	            consumer = null;
@@ -416,7 +416,7 @@ public class ProtocolEngine {
 	            out.close();
 	            out = null;
 	        }
-	        BasePlugin.logInfo(Messages.ProtocolEngine_10); 
+	        BasePlugin.logInfo("Protocol stopped."); //$NON-NLS-1$
 	    }
 	}
 
@@ -504,7 +504,7 @@ public class ProtocolEngine {
 		 */
 		public void run() {
 
-		    BasePlugin.logInfo(Messages.ProtocolEngine_11);
+		    BasePlugin.logInfo("Starting consumer.");//$NON-NLS-1$
 		    long code = 0;
 			isRunning = true;
 			// Executes the monitoring while the consumer is not stopped.
@@ -564,19 +564,20 @@ public class ProtocolEngine {
 	                    // Handle exception only if the IOException was not caused
 	                    // by protocol disconnection                    
 	                    if (isRunning) {
-	                        BasePlugin.logError(Messages.ProtocolEngine_12);
+	                        BasePlugin.logError("Socket disconnection was detected. Stopping consumer.");//$NON-NLS-1$
 	                        isRunning = false;
 	                        if (exceptionHandler != null) {
-	                            BasePlugin.logInfo(Messages.ProtocolEngine_13);
+	                            BasePlugin.logInfo("An user exception handler is available. Delegating exception to the handler.");//$NON-NLS-1$
 	                            exceptionHandler.handleIOException(handle, e);
 	                        }
 	                    }
 	                } catch (Exception e) {
-	                    BasePlugin.logError(Messages.ProtocolEngine_14 + e.getMessage());
+	                    BasePlugin.logError("A protocol related error happened. Stopping consumer. Cause: " //$NON-NLS-1$
+	                    		+ e.getMessage());
 	                    isRunning = false;
 
 	                    if (exceptionHandler != null) {
-	                        BasePlugin.logInfo(Messages.ProtocolEngine_15);
+	                        BasePlugin.logInfo("An user exception handler is available. Delegating exception to the handler.");//$NON-NLS-1$
 	                        
 	                        // Delegate the exception to user
 	                        if (e instanceof ProtocolHandshakeException) {
@@ -610,7 +611,7 @@ public class ProtocolEngine {
 				} 
 			}
 			
-			BasePlugin.logInfo(Messages.ProtocolEngine_16);
+			BasePlugin.logInfo("Consumer stopped.");//$NON-NLS-1$
 		}
 
 		/**
@@ -618,7 +619,7 @@ public class ProtocolEngine {
 		 * executing the consumer code will finish.
 		 */
 		public void stopConsumer() {
-		    BasePlugin.logDebugMessage(Messages.ProtocolEngine_17,Messages.ProtocolEngine_18);
+		    BasePlugin.logDebugMessage("Consumer","Stopping consumer");//$NON-NLS-1$ //$NON-NLS-2$
 			isRunning = false;
 		}
 
@@ -686,7 +687,7 @@ public class ProtocolEngine {
 		 *      from the message queue and send it.
 		 */
 		public void run() {
-		    BasePlugin.logInfo(Messages.ProtocolEngine_19);
+		    BasePlugin.logInfo("Starting engine event handler.");//$NON-NLS-1$
 		    ProtocolMessage messageToSend = null;
 			while (isRunning) {
 			    
@@ -749,7 +750,7 @@ public class ProtocolEngine {
 	                                } catch (Exception e) {
 	                                    retries--;
 	                                    if (retries < 0) {
-	                                        BasePlugin.logError(Messages.ProtocolEngine_20);
+	                                        BasePlugin.logError("Number of connection retries exceeded the limit.");//$NON-NLS-1$
 	                                        retries = retriesMax;
 	                                        throw e; //$NON-NLS-1$ //$NON-NLS-2$
 	                                    } 
@@ -822,7 +823,7 @@ public class ProtocolEngine {
 			    }
 			}
 			
-			BasePlugin.logInfo(Messages.ProtocolEngine_21);
+			BasePlugin.logInfo("Engine event handler stopped.");//$NON-NLS-1$
 		}
 
 		/**
@@ -847,7 +848,7 @@ public class ProtocolEngine {
 			//if ((lastRestartGrantedTime == -1)
 			//		|| (System.currentTimeMillis() - lastRestartGrantedTime > RESTART_REQUESTS_DELAY)) {
 			    synchronized (messagesToSend) {
-			        BasePlugin.logDebugMessage(Messages.ProtocolEngine_22,Messages.ProtocolEngine_23);
+			        BasePlugin.logDebugMessage("EngineEventHandler","A restart was requested.");//$NON-NLS-1$ //$NON-NLS-2$
 			        restartRequested = true;
 			        //lastRestartGrantedTime = System.currentTimeMillis();
 			        messagesToSend.notify();
@@ -881,8 +882,8 @@ public class ProtocolEngine {
 		public void requestStart(SocketChannel channel, String host, int port,
 				int timeout, Map<?, ?> parameters) {
 		    synchronized (messagesToSend) {
-		        BasePlugin.logDebugMessage(Messages.ProtocolEngine_24,Messages.ProtocolEngine_25 + 
-		                host + Messages.ProtocolEngine_26 + port + Messages.ProtocolEngine_27 + (channel != null ? Messages.ProtocolEngine_28 : Messages.ProtocolEngine_29));
+		        BasePlugin.logDebugMessage("EngineEventHandler","A start was requested. Host=" + //$NON-NLS-1$ //$NON-NLS-2$
+		                host + "; Port=" + port + "; Channel=" + (channel != null ? "available" : "none"));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		        nextChannel = channel;
 		        nextHost = host;
 		        nextPort = port;
@@ -898,7 +899,7 @@ public class ProtocolEngine {
 		 */
 		public void requestStop() {
 		    synchronized (messagesToSend) {
-		        BasePlugin.logDebugMessage(Messages.ProtocolEngine_30,Messages.ProtocolEngine_31);
+		        BasePlugin.logDebugMessage("EngineEventHandler","A stop was requested.");//$NON-NLS-1$ //$NON-NLS-2$
 		        stopRequested = true;
 		        messagesToSend.notify();
 		    }
@@ -909,7 +910,7 @@ public class ProtocolEngine {
 		 * method shall only be called when the protocol engine will be disposed
 		 */
 		public void stopEventHandler() {
-		    BasePlugin.logDebugMessage(Messages.ProtocolEngine_32,Messages.ProtocolEngine_33);
+		    BasePlugin.logDebugMessage("EngineEventHandler","Stopping engine event handler.");//$NON-NLS-1$ //$NON-NLS-2$
 			isRunning = false;
 	         synchronized (messagesToSend) {
 	             messagesToSend.notify();

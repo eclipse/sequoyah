@@ -50,13 +50,13 @@ public class FramebufferUpdateHandler implements IMessageHandler {
 	        int minY = painter.getHeight();
 	        int maxX = 0;
 	        int maxY = 0;
-	        int numRect = (Integer) message.getFieldValue(Messages.FramebufferUpdateHandler_0);
+	        int numRect = (Integer) message.getFieldValue("numberOfRectangles"); //$NON-NLS-1$
 	        
 	        for (int rect = 0; rect < numRect; rect++) {
-	            int rectX1 = (Integer) message.getFieldValue(Messages.FramebufferUpdateHandler_1, Messages.FramebufferUpdateHandler_2, rect);
-	            int rectY1 = (Integer) message.getFieldValue(Messages.FramebufferUpdateHandler_3, Messages.FramebufferUpdateHandler_4, rect);
-	            int rectX2 = rectX1 + ((Integer) message.getFieldValue(Messages.FramebufferUpdateHandler_5, Messages.FramebufferUpdateHandler_6, rect));
-	            int rectY2 = rectY1 + ((Integer) message.getFieldValue(Messages.FramebufferUpdateHandler_7, Messages.FramebufferUpdateHandler_8, rect));
+	            int rectX1 = (Integer) message.getFieldValue("x-position", "rectangle", rect); //$NON-NLS-1$ //$NON-NLS-2$
+	            int rectY1 = (Integer) message.getFieldValue("y-position", "rectangle", rect); //$NON-NLS-1$ //$NON-NLS-2$
+	            int rectX2 = rectX1 + ((Integer) message.getFieldValue("width", "rectangle", rect)); //$NON-NLS-1$ //$NON-NLS-2$
+	            int rectY2 = rectY1 + ((Integer) message.getFieldValue("height", "rectangle", rect)); //$NON-NLS-1$ //$NON-NLS-2$
 
 	            minX = Math.min(minX, rectX1);
 	            minY = Math.min(minY, rectY1);
