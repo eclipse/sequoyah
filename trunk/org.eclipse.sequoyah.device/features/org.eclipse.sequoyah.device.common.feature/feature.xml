@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.sequoyah.device.common.feature"
       label="%featureName"
-      version="0.5.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.sequoyah.device.common.utilities">
 
