@@ -145,7 +145,7 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 
 			}
 		} catch (Exception e) {
-			BasePlugin.logError("Could not get TmL devices backward status"); //$NON-NLS-1$
+			BasePlugin.logError(Messages.DeviceBackwardPlugin_1);
 		}
 
 		return result;
@@ -163,7 +163,7 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 					+ new Date().toString());
 			deviceXmlFileWriter.close();
 		} catch (IOException e) {
-			BasePlugin.logError("Could not set TmL devices backward status"); //$NON-NLS-1$
+			BasePlugin.logError(Messages.DeviceBackwardPlugin_3);
 		}
 
 	}
@@ -192,7 +192,7 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 				addBackwardStatus();
 
 			} catch (Exception e) {
-				BasePlugin.logError("Could not recover TmL devices"); //$NON-NLS-1$
+				BasePlugin.logError(Messages.DeviceBackwardPlugin_4);
 			}
 		}
 
