@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -53,9 +53,8 @@ public class EditorSession {
 
 			session = new EditorSession(editorProperties, project);
 		} catch (CoreException e) {
-			BasePlugin.logError(
-					"Error loading editor preferences from project: " //$NON-NLS-1$
-							+ project.getName(), e);
+			BasePlugin
+					.logError(Messages.EditorSession_1 + project.getName(), e);
 
 		}
 
@@ -98,7 +97,7 @@ public class EditorSession {
 			try {
 				project.setPersistentProperty(key, session.get(key));
 			} catch (CoreException e) {
-				BasePlugin.logError("Error saving preferences to project: " //$NON-NLS-1$
+				BasePlugin.logError(Messages.EditorSession_4
 						+ project.getName(), e);
 			}
 		}
@@ -112,7 +111,7 @@ public class EditorSession {
 			try {
 				project.setPersistentProperty(key, null);
 			} catch (CoreException e) {
-				BasePlugin.logError("Error cleaning preferences of project: " //$NON-NLS-1$
+				BasePlugin.logError(Messages.EditorSession_5
 						+ project.getName(), e);
 			}
 		}
