@@ -168,7 +168,7 @@ public class OpenConnectionDialog extends Dialog {
 			final boolean isBypassProxy;
 			
 			public ConnectJob(String host,int port,String password,String version,boolean isBypassProxy){
-				super(Messages.OpenConnectionDialog_1+host+":"+port); //$NON-NLS-2$
+				super(Messages.OpenConnectionDialog_1+host+":"+port); //$NON-NLS-2$ //$NON-NLS-1$
 				this.host=host;
 				this.port=port;
 				this.password=password;

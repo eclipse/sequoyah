@@ -80,7 +80,7 @@ public class ProtocolActionDelegate {
 			Map<String, Object> parameters) {
 
 	    BasePlugin.logDebugMessage("ProtocolActionDelegate","An user is requesting to start a client protocol. host= " //$NON-NLS-1$ //$NON-NLS-2$
-	    		+ host + "; port=" + port + "."); //$NON-NLS-4$ //$NON-NLS-1$ //$NON-NLS-2$
+	    		+ host + "; port=" + port + "."); //$NON-NLS-4$ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-2$
 		ClientModel model = ClientModel.getInstance();
 		return model.requestStartProtocol(allMessages, incomingMessages,
 				outgoingMessages, protocolInitializer, exceptionHandler, isBigEndianProtocol, host, port, parameters);
@@ -120,7 +120,7 @@ public class ProtocolActionDelegate {
 			boolean isBigEndianProtocol) {
 
 	    BasePlugin.logDebugMessage("ProtocolActionDelegate", //$NON-NLS-1$
-	    		"An user is requesting to start a server protocol at port " + portToBind + "."); //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$
+	    		"An user is requesting to start a server protocol at port " + portToBind + "."); //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-2$
 		ServerModel model = ServerModel.getInstance();
 		return model.startListeningToPort(portToBind, allMessages, incomingMessages,
 				outgoingMessages, protocolInitializer, exceptionHandler,

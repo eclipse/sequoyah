@@ -119,7 +119,7 @@ public class ClientModel {
 		
 		ProtocolHandle handle = new ProtocolHandle();
 		BasePlugin.logDebugMessage("ClientModel", //$NON-NLS-1$
-				"Creating a protocol engine to handle the protocol connection. Generated handle: " + handle + ".");		 //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$
+				"Creating a protocol engine to handle the protocol connection. Generated handle: " + handle + ".");		 //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-2$
 		ProtocolEngine eng = new ProtocolEngine(handle, protocolInitializer, allMessages, incomingMessages,
 				outgoingMessages, exceptionHandler, isBigEndianProtocol, false, retries);
 		eng.requestStart(host, port, parameters);
