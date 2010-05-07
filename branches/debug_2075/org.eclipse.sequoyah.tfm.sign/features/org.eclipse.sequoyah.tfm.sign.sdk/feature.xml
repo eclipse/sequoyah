@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.sequoyah.tfm.sign.sdk"
+      label="%featureName"
+      version="1.0.0.qualifier"
+      provider-name="%providerName">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <includes
+         id="org.eclipse.sequoyah.tfm.sign"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.sequoyah.tfm.sign.source"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.sequoyah.tfm.sing.doc.isv"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
