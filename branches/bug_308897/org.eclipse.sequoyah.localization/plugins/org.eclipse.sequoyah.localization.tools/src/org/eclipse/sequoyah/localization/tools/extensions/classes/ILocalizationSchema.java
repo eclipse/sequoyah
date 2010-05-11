@@ -403,4 +403,21 @@ public abstract class ILocalizationSchema {
 
 	public abstract String getLocalizationFileContent(LocalizationFile locFile);
 
+	/**
+	 * Get the column id to be shown for a certain localeinfo
+	 * 
+	 * @param info
+	 *            : the locale info
+	 * @return the String representation of column id
+	 */
+	public abstract String getColumnIDFromLocaleInfo(LocaleInfo info);
+
+	/**
+	 * Get the source page name for a given localization file
+	 * 
+	 * @param locFile
+	 * @return
+	 */
+	public abstract String getSourcePageNameForFile(LocalizationFile locFile);
+
 }

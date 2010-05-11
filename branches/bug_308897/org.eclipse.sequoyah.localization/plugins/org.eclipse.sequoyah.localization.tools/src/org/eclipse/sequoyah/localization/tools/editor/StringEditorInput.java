@@ -28,7 +28,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -243,7 +242,10 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	}
 
 	private String getColumnID(IFile file) {
-		return file.getFullPath().removeLastSegments(1).lastSegment();
+		LocaleInfo info = projectLocalizationManager.getLocaleInfoForFile(file);
+
+		return projectLocalizationManager.getProjectLocalizationSchema()
+				.getColumnIDFromLocaleInfo(info);
 	}
 
 	/*
@@ -812,7 +814,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.getLocalizationProject().getLocalizationFile(locale);
 
 		// avoid total key deletion
-		if (schema.getDefaultID() != null
+		if ((schema.getDefaultID() != null)
 				&& schema.getDefaultID().equals(columnID)) {
 			try {
 				setValue(columnID, key, ""); //$NON-NLS-1$
@@ -923,9 +925,10 @@ public class StringEditorInput extends AbstractStringEditorInput {
 
 	@Override
 	public String getSourcePageNameForFile(IFile file) {
-		IPath filePath = file.getFullPath();
-		return filePath.segment(filePath.segmentCount() - 2)
-				+ "/" + filePath.lastSegment(); //$NON-NLS-1$
+		LocalizationFile locFile = projectLocalizationManager
+				.getLocalizationProject().getLocalizationFile(file);
+		return projectLocalizationManager.getProjectLocalizationSchema()
+				.getSourcePageNameForFile(locFile);
 	}
 
 	@Override

@@ -407,7 +407,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 							.equalsIgnoreCase(AndroidLocalizationSchema.LOCALIZATION_FILES_FOLDER))) {
 				LocalizationFile file = manager.getLocalizationProject()
 						.getLocalizationFile(info);
-				if (file != null && !file.isToBeDeleted()) {
+				if ((file != null) && !file.isToBeDeleted()) {
 					result = Messages.AndroidNewColumnProvider_Dialog_FileAlreadyExists;
 				}
 			} else {
@@ -1010,7 +1010,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		while (auxNode != null) {
 			// according to Android documentation it allows only <b>, <i>, <u>
 			// formatting. However, we preserve any tags the user has included
-			if (auxNode.getNodeName() != null
+			if ((auxNode.getNodeName() != null)
 					&& (auxNode.getNodeType() == Node.ELEMENT_NODE)) {
 				NamedNodeMap nodeAttributes = auxNode.getAttributes();
 				String nodeAttributesText = ""; //$NON-NLS-1$
@@ -1253,8 +1253,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 									.getValues();
 							int itemsIndex = 0;
 							int nodesIndex = 0;
-							while (itemsIndex < items.getLength()
-									&& nodesIndex < nodes.size()) {
+							while ((itemsIndex < items.getLength())
+									&& (nodesIndex < nodes.size())) {
 								Object obj = items.item(itemsIndex);
 								if (obj instanceof Element) {
 									Element item = (Element) obj;
@@ -1425,8 +1425,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.REGION.ordinal()));
 			} else if (isScreenSizeSegment(segments[i])
-					&& lastQualifier < AndroidLocaleAttributes.SCREEN_SIZE
-							.ordinal()) {
+					&& (lastQualifier < AndroidLocaleAttributes.SCREEN_SIZE
+							.ordinal())) {
 				lastQualifier = AndroidLocaleAttributes.SCREEN_SIZE.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.SCREEN_SIZE.ordinal()));
@@ -1748,5 +1748,28 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			throw new SequoyahException(status);
 		}
 
+	}
+
+	@Override
+	public String getColumnIDFromLocaleInfo(LocaleInfo lang) {
+		String result;
+		if (lang.getLocaleAttributes().size() > 0) {
+			// There are qualifiers to concatenate in the folder name
+			result = LOCALIZATION_FILES_FOLDER + QUALIFIER_SEP
+					+ getLocaleID(lang);
+		} else {
+			// It is a default location file (no language qualifier)
+			result = LOCALIZATION_FILES_FOLDER;
+
+		}
+		return result;
+	}
+
+	@Override
+	public String getSourcePageNameForFile(LocalizationFile locFile) {
+		String result;
+		result = getColumnIDFromLocaleInfo(locFile.getLocaleInfo())
+				+ File.separator + LOCALIZATION_FILE_NAME;
+		return result;
 	}
 }
