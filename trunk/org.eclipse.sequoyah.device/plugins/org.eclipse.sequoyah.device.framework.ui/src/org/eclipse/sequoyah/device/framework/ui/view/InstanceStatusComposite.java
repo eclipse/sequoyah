@@ -127,13 +127,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class InstanceStatusComposite extends Composite
 {
-	private static final String MENU_DELETE = "Delete"; //$NON-NLS-1$
-	private static final String MENU_PROPERTIES = "Properties"; //$NON-NLS-1$
-	private static final String MENU_NEW = "New...";  //$NON-NLS-1$
-	private static final String TOOLBAR_NEW_TOOLTIP = "New Device"; //$NON-NLS-1$
-	private static final String TOOLBAR_DIALOG_MESSAGE = "Select a Device to open the Creation Wizard :"; //$NON-NLS-1$
-	private static final String ERROR_DIALOG_TITLE = "Error"; //$NON-NLS-1$
-	private static final String ERROR_NO_WIZARD_MESSAGE = "No wizard found for Device "; //$NON-NLS-1$
+	private static final String MENU_DELETE = Messages.InstanceStatusComposite_3; 
+	private static final String MENU_PROPERTIES = Messages.InstanceStatusComposite_4; 
+	private static final String MENU_NEW = Messages.InstanceStatusComposite_5;  
+	private static final String TOOLBAR_NEW_TOOLTIP = Messages.InstanceStatusComposite_6;
+	private static final String TOOLBAR_DIALOG_MESSAGE = Messages.InstanceStatusComposite_7;
+	private static final String ERROR_DIALOG_TITLE = Messages.InstanceStatusComposite_8; 
+	private static final String ERROR_NO_WIZARD_MESSAGE = Messages.InstanceStatusComposite_9; 
 	private static final int DEFAULT_MENU_IMAGE_SIZE = 16;
 
 

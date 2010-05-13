@@ -65,8 +65,8 @@ public class InstanceServicesComposite extends Composite {
 	private static int buttonsOrienation = SWT.HORIZONTAL;
 	private IInstance instance = null;
 	
-	private static final String SERVICES_LABEL = "Operations"; //$NON-NLS-1$
-	private static final String SERVICES_FILTERED_LABEL = "Operations (filtered)"; //$NON-NLS-1$
+	private static final String SERVICES_LABEL = Messages.InstanceServicesComposite_1; 
+	private static final String SERVICES_FILTERED_LABEL = Messages.InstanceServicesComposite_2; 
 	private static final String NO_LABEL = ""; //$NON-NLS-1$
 	private static final int DEFAULT_BUTTONS_WIDTH = 120;
 	private static final int DEFAULT_BUTTONS_HEIGHT = 30;
@@ -83,14 +83,14 @@ public class InstanceServicesComposite extends Composite {
 	{
 		public ServicesFilterAction()
 		{
-			super("filter"); //$NON-NLS-1$
+			super(Messages.InstanceServicesComposite_3); 
 			
 			PlatformUI.getPreferenceStore().setDefault(DeviceUIPlugin.SERVICE_BUTTONS_ORIENTATION_PREFERENCE , SWT.HORIZONTAL);
 	    	PlatformUI.getPreferenceStore().setDefault(DeviceUIPlugin.FILTER_SERVICE_BY_AVAILABILITY_PREFERENCE , false);
 
 			showAllServices = !PlatformUI.getPreferenceStore().getBoolean(DeviceUIPlugin.FILTER_SERVICE_BY_AVAILABILITY_PREFERENCE);
 			
-			setToolTipText(AVAILABILITY_TOOL_TIP_TEXT); //$NON-NLS-1$
+			setToolTipText(AVAILABILITY_TOOL_TIP_TEXT); 
 			setChecked(!showAllServices);
 			setImageDescriptor(DeviceUIPlugin.getDefault().getImageDescriptor(DeviceUIPlugin.ICON_FILTER));
 		}
@@ -117,11 +117,11 @@ public class InstanceServicesComposite extends Composite {
 	{
 	    public ServicesOrientationAction()
 	    {
-	        super("orientation"); //$NON-NLS-1$
+	        super(Messages.InstanceServicesComposite_4); 
 	        
 	        buttonsOrienation = PlatformUI.getPreferenceStore().getInt(DeviceUIPlugin.SERVICE_BUTTONS_ORIENTATION_PREFERENCE);
 	        
-	        setToolTipText("Toggle vertical/horizontal orientation"); //$NON-NLS-1$
+	        setToolTipText(Messages.InstanceServicesComposite_5); 
 	        if (buttonsOrienation ==  SWT.HORIZONTAL)
             {
                 setImageDescriptor(DeviceUIPlugin.getDefault().getImageDescriptor(DeviceUIPlugin.ICON_HORIZONTAL));
@@ -190,7 +190,7 @@ public class InstanceServicesComposite extends Composite {
 	private void createToolbarArea()
 	{
 		label= new CLabel(viewForm, SWT.NONE);
-		label.setText("Services"); //$NON-NLS-1$
+		label.setText(Messages.InstanceServicesComposite_6); 
 		viewForm.setTopLeft(label);
 		toolBar= new ToolBar(viewForm, SWT.FLAT | SWT.WRAP);
 		viewForm.setTopCenter(toolBar);
