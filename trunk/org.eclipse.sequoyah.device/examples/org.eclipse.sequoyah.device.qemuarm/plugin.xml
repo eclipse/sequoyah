@@ -3,7 +3,7 @@
 <plugin>
    <extension
          id="qemuarmDevice"
-         name="qemuarmDevice"
+         name="%extension.name"
          point="org.eclipse.sequoyah.device.framework.deviceTypes">
        <deviceType
             handler="org.eclipse.sequoyah.device.qemuarm.handler.QEmuARMDeviceHandler"
@@ -11,7 +11,7 @@
             id="org.eclipse.sequoyah.device.qemuarm.qemuarmDevice"
             isAbstract="false"
             isPersistent="true"
-            label="QEmuARM Mobile Device"
+            label="%deviceType.label"
             name="QEmuARM Mobile Device"
             superClass="org.eclipse.sequoyah.device.qemu.abstract"/>
    </extension>

@@ -71,6 +71,9 @@
                <documentation>
                   Label of the deviceType. Will be shown in the UI when device types are displayed.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -78,6 +81,9 @@
                <documentation>
                   description of the deviceType
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="handler" type="string" use="required">

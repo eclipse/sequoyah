@@ -4,12 +4,12 @@
    <extension
          point="org.eclipse.sequoyah.device.framework.deviceTypes">
       <deviceType
-            description="Abstract device for QEMU"
+            description="%deviceType.description"
             handler="org.eclipse.sequoyah.device.qemu.handler.QEmuGenericDeviceHandler"
             id="org.eclipse.sequoyah.device.qemu.abstract"
             isAbstract="true"
             isPersistent="true"
-            label="Abstract QEMU device"
+            label="%deviceType.label"
             name="Abstract QEMU device"
             superClass="org.eclipse.sequoyah.device.emulator">
          <property
@@ -20,7 +20,7 @@
    </extension>
    <extension
          id="org.eclipse.sequoyah.device.qemu.abstract"
-         name="startService"
+         name="%extension.name"
          point="org.eclipse.sequoyah.device.framework.serviceDefinition">
       <service
            id="org.eclipse.sequoyah.device.service.start.startService">
@@ -33,7 +33,7 @@
    </extension>
    <extension
          id="org.eclipse.sequoyah.device.qemu.abstract"
-         name="stopService"
+         name="%extension.name.0"
          point="org.eclipse.sequoyah.device.framework.serviceDefinition">
       <service
             id="org.eclipse.sequoyah.device.service.stop.stopService">
@@ -53,7 +53,7 @@
 
           id="org.eclipse.sequoyah.device.qemu.abstract"
 
-          name="vncViewerService"
+          name="%extension.name.1"
 
           point="org.eclipse.sequoyah.device.framework.serviceDefinition">
 
@@ -78,7 +78,7 @@
 
           id="org.eclipse.sequoyah.device.qemu.abstract"
 
-          name="unplugVncViewerService"
+          name="%extension.name.2"
 
           point="org.eclipse.sequoyah.device.framework.serviceDefinition">
 
@@ -100,15 +100,15 @@
     
    <extension
          id="generic"
-         name="generic"
+         name="%extension.name.3"
          point="org.eclipse.sequoyah.device.framework.deviceTypes">
       <deviceType
-            description="generic device for QEMU"
+            description="%deviceType.description.0"
             handler="org.eclipse.sequoyah.device.qemu.handler.QEmuGenericDeviceHandler"
             id="org.eclipse.sequoyah.device.qemu.generic"
             isAbstract="false"
             isPersistent="true"
-            label="Generic QEMU device"
+            label="%deviceType.label.0"
             name="Generic QEMU device"
             superClass="org.eclipse.sequoyah.device.qemu.abstract">
          <property
