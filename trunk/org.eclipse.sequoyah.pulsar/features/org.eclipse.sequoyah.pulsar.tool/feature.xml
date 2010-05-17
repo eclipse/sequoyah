@@ -2,10 +2,10 @@
 <feature
       id="org.eclipse.sequoyah.pulsar.tool"
       label="Eclipse Pulsar Tooling  Feature"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="Eclipse.org - Pulsar">
 
-   <description url="http://www.example.com/description">
+   <description>
       Provides Tools for Pulsar
    </description>
 

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.sequoyah.pulsar.test"
       label="Eclipse Pulsar Tests"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="Eclipse.org - Pulsar">
 
    <description>
