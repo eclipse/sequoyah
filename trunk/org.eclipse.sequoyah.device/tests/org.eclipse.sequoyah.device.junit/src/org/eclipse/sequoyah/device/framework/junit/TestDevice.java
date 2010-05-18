@@ -9,6 +9,8 @@
  * 
  * Contributors:
  * Contributor (Company) - Bug [NUMBER] - Bug Description
+ * 
+ * For more information and instructions of how to run this test, please refer to http://wiki.eclipse.org/Sequoyah/unit_test
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.junit;
