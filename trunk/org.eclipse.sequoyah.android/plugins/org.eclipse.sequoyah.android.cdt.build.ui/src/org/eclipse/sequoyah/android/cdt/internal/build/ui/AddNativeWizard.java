@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
+import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
+import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -19,6 +22,8 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -112,6 +117,16 @@ public class AddNativeWizard extends Wizard {
 				String libFolderName = "libs";
 				IToolChain toolChain = null;
 				
+				// host to be used to find the toolchain
+				String os = Platform.getOS();
+				String host = null;
+				if (Platform.OS_WIN32.equals(os))
+					host = "windows"; // TODO check this
+				else if (Platform.OS_LINUX.equals(os))
+					host = "linux-x86";
+				else if (Platform.OS_MACOSX.equals(os))
+					host = "darwin-x86"; // TODO check this
+				
 				// Convert to CDT project
 				CCorePlugin.getDefault().createCDTProject(project.getDescription(), project, monitor);
 				CCProjectNature.addCCNature(project, new SubProgressMonitor(monitor, 1));
@@ -132,7 +147,17 @@ public class AddNativeWizard extends Wizard {
 				projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 							
 				pdMgr.setProjectDescription(project, projDesc);
-					
+				
+				// Set up scanner discovery
+				ICfgScannerConfigBuilderInfo2Set infoSet
+					= CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(config);
+				Map<CfgInfoContext, IScannerConfigBuilderInfo2> infoMap = infoSet.getInfoMap();
+				IScannerConfigBuilderInfo2 buildInfo = infoMap.get(new CfgInfoContext(config));
+				buildInfo.setAutoDiscoveryEnabled(true);
+	            buildInfo.setBuildOutputParserEnabled(true);
+				buildInfo.setSelectedProfileId("org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
+				buildInfo.save();
+
 				// Create the source and output folders
 				IFolder sourceFolder = project.getFolder(sourceFolderName);
 				if (!sourceFolder.exists())
@@ -176,15 +201,6 @@ public class AddNativeWizard extends Wizard {
 					map.put("arch", architecture);
 					map.put("gccVer", gccVer);
 					map.put("androidVer", androidVer);
-					
-					String os = Platform.getOS();
-					String host = null;
-					if (Platform.OS_WIN32.equals(os))
-						host = "windows"; // TODO check this
-					else if (Platform.OS_LINUX.equals(os))
-						host = "linux-x86";
-					else if (Platform.OS_MACOSX.equals(os))
-						host = "darwin-x86"; // TODO check this
 					map.put("host", host);
 					
 					IPath templatePath = new Path("templates/Makefile");
