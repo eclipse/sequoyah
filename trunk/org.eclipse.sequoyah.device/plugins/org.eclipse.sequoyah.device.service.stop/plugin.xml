@@ -11,7 +11,7 @@
             handler="org.eclipse.sequoyah.device.service.stop.handler.StopServiceHandler"
             icon="icons/full/obj16/stop.png"
             id="org.eclipse.sequoyah.device.service.stop.stopService"
-            name="Stop"
+            name="%serviceName"
             provider="Eclipse.org"
             version="0.2.0"
             visible="true">

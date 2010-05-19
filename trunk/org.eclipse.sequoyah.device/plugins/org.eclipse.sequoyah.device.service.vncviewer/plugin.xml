@@ -11,7 +11,7 @@
             handler="org.eclipse.sequoyah.device.service.vncviewer.handler.VNCViewerServiceHandler"
             icon="icons/full/obj16/vnc.gif"
             id="org.eclipse.sequoyah.device.service.vncviewer.vncViewerService"
-            name="Connect VNC"
+            name="%serviceName1"
             provider="Eclipse.org"
             version="0.2.0"
             visible="true">
@@ -27,7 +27,7 @@
             handler="org.eclipse.sequoyah.device.service.vncviewer.handler.UnplugVNCViewerServiceHandler"
             icon="icons/full/obj16/vnc.gif"
             id="org.eclipse.sequoyah.device.service.vncviewer.unplugVncViewerService"
-            name="Disconnect VNC"
+            name="%serviceName2"
             provider="Eclipse.org"
             version="0.2.0"
             visible="true">
