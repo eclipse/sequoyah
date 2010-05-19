@@ -56,9 +56,9 @@ public class DefaultDeviceTypeMenuWizardPage extends WizardPage {
 	
 	protected DefaultDeviceTypeMenuWizardPage(String pageName,String currentDeviceTypeId) {
 		super(pageName);
-		setTitle(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_title); //$NON-NLS-1$
+		setTitle(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_title);
 	
-		setMessage(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_message); //$NON-NLS-1$
+		setMessage(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_message);
 	
 		for (Object device:DeviceTypeRegistry.getInstance().getDeviceTypes().toArray()) {
 			if (((IDeviceType)device).getId().equals(currentDeviceTypeId)) {
@@ -76,7 +76,7 @@ public class DefaultDeviceTypeMenuWizardPage extends WizardPage {
 	
 		// new name label
 		Label label = new Label(container, SWT.NONE);
-		label.setText(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_name); //$NON-NLS-1$
+		label.setText(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_name);
 		label.setFont(container.getFont());
 	
 		nameText = new Text(container, SWT.BORDER);
@@ -131,7 +131,8 @@ public class DefaultDeviceTypeMenuWizardPage extends WizardPage {
 	private void createDeviceTypesArea(Composite parent) {
 	
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_deviceTypes+" "+currentDeviceType.getLabel()); //$NON-NLS-1$
+		label.setText(DeviceUIResources.SEQUOYAH_Default_Device_Type_Wizard_Page_deviceTypes 
+				+ " " + currentDeviceType.getLabel()); //$NON-NLS-1$
 		label.setFont(parent.getFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;

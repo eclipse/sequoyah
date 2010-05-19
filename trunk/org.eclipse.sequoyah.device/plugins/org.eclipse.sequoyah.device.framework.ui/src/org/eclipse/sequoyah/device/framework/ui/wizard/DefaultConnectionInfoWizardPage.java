@@ -45,8 +45,8 @@ public class DefaultConnectionInfoWizardPage extends WizardPage implements
 
 	public DefaultConnectionInfoWizardPage() {
 		super("$qemu_basic_info$"); //$NON-NLS-1$
-		setTitle(DeviceUIResources.ConnectionInfoWizardPage_title); //$NON-NLS-1$
-		setMessage(DeviceUIResources.ConnectionInfoWizardPage_message); //$NON-NLS-1$
+		setTitle(DeviceUIResources.ConnectionInfoWizardPage_title);
+		setMessage(DeviceUIResources.ConnectionInfoWizardPage_message);
 	}
 
 	public void createControl(Composite parent) {
@@ -56,7 +56,7 @@ public class DefaultConnectionInfoWizardPage extends WizardPage implements
 		container.setFont(parent.getFont());
 
 		Label label = new Label(container, SWT.NONE);
-		label.setText(DeviceUIResources.ConnectionInfoWizardPage_Host); //$NON-NLS-1$
+		label.setText(DeviceUIResources.ConnectionInfoWizardPage_Host);
 		label.setFont(container.getFont());
 
 		hostText = new Text(container, SWT.BORDER);
@@ -74,7 +74,7 @@ public class DefaultConnectionInfoWizardPage extends WizardPage implements
 		});
 
 		label = new Label(container, SWT.NONE);
-		label.setText(DeviceUIResources.ConnectionInfoWizardPage_Port); //$NON-NLS-1$
+		label.setText(DeviceUIResources.ConnectionInfoWizardPage_Port);
 		label.setFont(container.getFont());
 
 		portText = new Text(container, SWT.BORDER);
@@ -92,7 +92,7 @@ public class DefaultConnectionInfoWizardPage extends WizardPage implements
 		});
 
 		label = new Label(container, SWT.NONE);
-		label.setText(DeviceUIResources.ConnectionInfoWizardPage_Display); //$NON-NLS-1$
+		label.setText(DeviceUIResources.ConnectionInfoWizardPage_Display);
 		label.setFont(container.getFont());
 
 		displayText = new Text(container, SWT.BORDER);
