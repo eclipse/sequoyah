@@ -249,8 +249,8 @@ public class InstanceStatusComposite extends Composite
 		tree.setLayout(layout);
 		tree.setHeaderVisible(true);
 
-		createColumn("Devices", 10); //$NON-NLS-1$
-		createColumn("Status", 9); //$NON-NLS-1$
+		createColumn(Messages.InstanceStatusComposite_10, 10);
+		createColumn(Messages.InstanceStatusComposite_11, 9);
 
 		InstanceMgtViewLabelProvider labelProvider = new InstanceMgtViewLabelProvider();
 		viewer.setLabelProvider(labelProvider);

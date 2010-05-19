@@ -21,6 +21,8 @@ public class Messages extends NLS {
 	public static String InstanceStatusComposite_7;
 	public static String InstanceStatusComposite_8;
 	public static String InstanceStatusComposite_9;
+	public static String InstanceStatusComposite_10;
+	public static String InstanceStatusComposite_11;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
