@@ -2,40 +2,50 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="true"
-            id="org.eclipse.sequoyah.android.cdt.build.ui.objectContribution"
-            objectClass="org.eclipse.core.resources.IProject">
-         <menu
-               id="com.android.ide.eclipse.adt.AndroidNature"
-               label="Android Tools"
-               path="additions">
-            <separator
-                  name="group4">
-            </separator>
-         </menu>
-         <visibility>
-            <and>
-               <objectState
-                     name="projectNature"
-                     value="com.android.ide.eclipse.adt.AndroidNature">
-               </objectState>
-               <not>
-                  <objectState
-                        name="projectNature"
-                        value="org.eclipse.cdt.core.cnature">
-                  </objectState>
-               </not>
-            </and>
-         </visibility>
-         <action
-               class="org.eclipse.sequoyah.android.cdt.internal.build.ui.AddNativeSupport"
-               id="org.eclipse.sequoyah.android.cdt.build.ui.addNativeSupport"
-               label="Add Native Support..."
-               menubarPath="com.android.ide.eclipse.adt.AndroidTools/group4">
-         </action>
-      </objectContribution>
+         point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
+      <toolChain
+            archList="all"
+            configurationEnvironmentSupplier="org.eclipse.sequoyah.android.cdt.internal.build.core.AndroidEnvironmentSupplier"
+            id="com.android.toolchain.gcc"
+            name="Android GCC"
+            osList="all"
+            superClass="cdt.managedbuild.toolchain.gnu.base"
+            supportsManagedBuild="false">
+         <targetPlatform
+		       id="com.android.targetPlatform"
+		       name="Android Platform"
+               binaryParser="org.eclipse.cdt.core.ELF"
+		       osList="all"
+		       archList="all">
+         </targetPlatform>
+         <builder
+               cleanBuildTarget="clean"
+               command="ndk-build"
+               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser"
+               id="com.android.builder"
+               incrementalBuildTarget="V=1">
+		 </builder>
+	 	 <tool
+               id="com.android.tool.compiler.g++"
+               name="Android G++"
+               superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
+            <inputType
+                  id="com.android.tool.compiler.g++.input"
+                  scannerConfigDiscoveryProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
+                  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input">
+            </inputType>                          
+         </tool>
+         <tool
+               id="com.android.tool.compiler.c"
+               name="Android GCC"
+               superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
+            <inputType
+                  id="com.android.tool.compiler.c.input"
+                  scannerConfigDiscoveryProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
+                  superClass="cdt.managedbuild.tool.gnu.c.compiler.input">
+            </inputType>                          
+		 </tool>
+      </toolChain>
    </extension>
 
 </plugin>

@@ -3,15 +3,18 @@
  */
 package org.eclipse.sequoyah.android.cdt.build.core;
 
-import java.io.File;
+import org.eclipse.core.resources.IProject;
+
 
 /**
  * Service for getting information about the Android NDK.
  */
 public interface INDKService {
 
-	File getNDKLocation();
+	String getNDKLocation();
 	
-	void setNDKLocation(File location);
+	void setNDKLocation(String location);
+	
+	void addNativeSupport(IProject project, String libraryName);
 	
 }

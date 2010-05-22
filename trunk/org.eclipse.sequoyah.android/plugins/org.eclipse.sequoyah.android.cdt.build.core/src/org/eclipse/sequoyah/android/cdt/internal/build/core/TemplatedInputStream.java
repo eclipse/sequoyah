@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.eclipse.sequoyah.android.cdt.build.ui;
+package org.eclipse.sequoyah.android.cdt.internal.build.core;
 
 import java.io.IOException;
 import java.io.InputStream;

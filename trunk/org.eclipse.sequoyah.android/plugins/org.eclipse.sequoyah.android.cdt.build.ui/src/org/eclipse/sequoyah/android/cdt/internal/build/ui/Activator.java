@@ -41,8 +41,8 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getService(Class<T> clazz) {
-		BundleContext context = getBundle().getBundleContext();
+	public static <T> T getService(Class<T> clazz) {
+		BundleContext context = plugin.getBundle().getBundleContext();
 		ServiceReference ref = context.getServiceReference(clazz.getName());
 		try{
 			return (ref != null) ? (T)context.getService(ref) : null;
