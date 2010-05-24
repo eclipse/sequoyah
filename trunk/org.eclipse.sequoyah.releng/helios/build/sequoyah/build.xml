@@ -18,13 +18,18 @@
 	<property file="${BUILD_DIR}/build.properties" />
 	
 
-	<property name="eclipse.base" value="${BUILD_BASE_PATH}/eclipse2/eclipse" />
+	<property name="eclipse.base" value="${BUILD_BASE_PATH}/eclipse" />
+
 	<!-- property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.v20100118.jar" />
 	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.v20100123-1019" / -->
-	<property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.N20100314-2000.jar" />
-	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.N20100314-2000" />
+	<!-- property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.N20100314-2000.jar" />
+	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.N20100314-2000" / -->
 
-	<property name="forceContextQualifier" value="${buildType}${timestamp}_incubation" />
+	<property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.v20100307.jar" />
+	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.v20100311-1400" />
+	
+
+	<property name="forceContextQualifier" value="${buildType}${timestamp}" />
 
 	<!-- clean output directory -->
 	<target name="clean">
@@ -70,8 +75,10 @@
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.device/" includes="**" />
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.localization/" includes="**" />
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.vnc/" includes="**" />
+			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah/" includes="**" />
+			<!-- fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.android/" includes="**" / -->
 			<!-- fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.tfm.sign/" includes="**" / -->
-			<!-- fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.pulsar/" includes="**" / -->
+
 		</copy>
 		<move todir="${buildDirectory}/plugins">
 			<fileset dir="${buildDirectory}/examples/" includes="**" />
@@ -112,7 +119,7 @@
 		</delete>
 	</target>
 
-	<target name="generate.release.artifacts" depends="clean, init, build.pde" description="Generate Release Artifacts">
+	<target name="generate.release.artifacts" depends="clean, init, build.pde, build.pde.publish" description="Generate Release Artifacts">
 		<echo level="info">
 			###################################
 			BUILD COMPLETELY DONE
@@ -120,10 +127,42 @@
 		</echo>
 	</target>
 
-	<target name="build.pde">
+	<target name="build.pde" unless="publish">
 		<echo level="info">
 			###################################
-			4 PDE Build
+			4a PDE Build
+			###################################
+		</echo>
+		<antcall target="clearSettings" />
+		<echo level="info">
+			Using qualifier: ${forceContextQualifier}
+			Using timestamp: ${timestamp}
+		</echo>
+		<echo level="info">
+			Calling antRunner with the following arguments: 
+			-buildfile ${eclipse.base}/plugins/${eclipse.base.pde}/scripts/build.xml 
+			-Dbuilder=${BUILD_DIR}
+			-DBUILD_BASE_PATH=${BUILD_BASE_PATH}
+			-Dtimestamp=${timestamp}
+			-DforceContextQualifier=${forceContextQualifier}
+		</echo>
+		<java failonerror="true" jar="${eclipse.base}/plugins/${eclipse.base.launcher}" fork="true">
+			<arg value="-application" />
+			<arg value="org.eclipse.ant.core.antRunner" />
+			<arg value="-buildfile" />
+			<arg value="${eclipse.base}/plugins/${eclipse.base.pde}/scripts/build.xml" />
+			<arg value="-Dbuilder=${BUILD_DIR}" />
+			<arg value="-DBUILD_BASE_PATH=${BUILD_BASE_PATH}" />
+			<arg value="-DBUILD_DIR=${BUILD_DIR}" />
+			<arg value="-Dtimestamp=${timestamp}" />
+			<arg value="-DforceContextQualifier=${forceContextQualifier}" />
+		</java>
+	</target>
+
+	<target name="build.pde.publish" if="publish">
+		<echo level="info">
+			###################################
+			4b PDE Build Publish
 			###################################
 		</echo>
 		<antcall target="clearSettings" />
@@ -153,4 +192,5 @@
 			<arg value="-Dpublish=${publish}" />
 		</java>
 	</target>
+
 </project>
