@@ -29,7 +29,7 @@ public class DeviceUIResources extends NLS {
 
 	
 
-	private static String BUNDLE_NAME = "org.eclipse.sequoyah.device.framework.ui.deviceUIResources";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.sequoyah.device.framework.ui.DeviceUIResources";//$NON-NLS-1$
 
 	public static String SEQUOYAH_Device_Plugin_Name;
 	public static String SEQUOYAH_Error;
