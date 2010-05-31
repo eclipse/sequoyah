@@ -25,7 +25,7 @@ public class AndroidEnvironmentSupplier implements
 		}
 
 		public String getValue() {
-			return Activator.getService(INDKService.class).getNDKLocation();
+			return CorePlugin.getService(INDKService.class).getNDKLocation();
 		}
 
 		public int getOperation() {

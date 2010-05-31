@@ -69,7 +69,7 @@ public class AddNativeProjectPage extends WizardPage {
 		});
 		validateNDKLocation();
 		
-		String ndkLocDir = Activator.getService(INDKService.class).getNDKLocation();
+		String ndkLocDir = UIPlugin.getService(INDKService.class).getNDKLocation();
 		if (ndkLocDir != null)
 			location.setText(ndkLocDir);
 		

@@ -29,7 +29,7 @@ public class AddNativeWizard extends Wizard
         this.project = project;
 
         setWindowTitle("Add Android Native Support");
-        setDialogSettings(Activator.getDefault().getDialogSettings());
+        setDialogSettings(UIPlugin.getDefault().getDialogSettings());
     }
 
     @Override
@@ -55,7 +55,7 @@ public class AddNativeWizard extends Wizard
         }
         catch (WorkbenchException e)
         {
-            Activator.getDefault().getLog().log(e.getStatus());
+            UIPlugin.getDefault().getLog().log(e.getStatus());
         }
 
         // Grab the data from the pages
@@ -67,11 +67,11 @@ public class AddNativeWizard extends Wizard
         }
         catch (CoreException e)
         {
-            Activator.getDefault().getLog().log(e.getStatus());
+            UIPlugin.getDefault().getLog().log(e.getStatus());
         }
 
         // Save the NDK location
-        INDKService ndkService = Activator.getService(INDKService.class);
+        INDKService ndkService = UIPlugin.getService(INDKService.class);
         ndkService.setNDKLocation(projectPage.getNDKLocation());
 
         // Add the native support

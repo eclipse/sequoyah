@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.sequoyah.android.cdt.internal.build.core.Activator;
+import org.eclipse.sequoyah.android.cdt.internal.build.core.CorePlugin;
 import org.eclipse.sequoyah.android.cdt.internal.build.core.TemplatedInputStream;
 
 /**
@@ -34,7 +34,7 @@ public class NDKUtils
      */
     public static void setNDKLocation(String location)
     {
-        INDKService ndkService = Activator.getService(INDKService.class);
+        INDKService ndkService = CorePlugin.getService(INDKService.class);
         ndkService.setNDKLocation(location);
     }
 
@@ -68,7 +68,7 @@ public class NDKUtils
                     Map<String, String> map = new HashMap<String, String>();
                     map.put("lib", libName);
 
-                    URL makefileURL = Activator.getFile(new Path("templates/Android.mk"));
+                    URL makefileURL = CorePlugin.getFile(new Path("templates/Android.mk"));
                     makefileIn = makefileURL.openStream();
                     templateIn = new TemplatedInputStream(makefileIn, map);
 
@@ -96,7 +96,7 @@ public class NDKUtils
                 }
                 catch (IOException e)
                 {
-                    throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e
+                    throw new CoreException(new Status(IStatus.ERROR, CorePlugin.PLUGIN_ID, e
                             .getLocalizedMessage(), e));
                 }
                 finally
@@ -126,7 +126,7 @@ public class NDKUtils
         }
         catch (CoreException e)
         {
-            Activator.getDefault().getLog().log(e.getStatus());
+            CorePlugin.getDefault().getLog().log(e.getStatus());
         }
     }
 }
