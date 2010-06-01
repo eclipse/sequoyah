@@ -32,17 +32,17 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private boolean isCygwinPathValid = true;
 
-    private final String pathPrefix;
+    private static String pathPrefix;
 
     private NDKPreferencePage preferencePage;
 
-    private final String WINDOWS = "windows";
+    private final static String WINDOWS = "windows";
 
-    private final String LINUX = "linux";
+    private final static String LINUX = "linux";
 
-    private final String MAC = "darwin";
+    private final static String MAC = "darwin";
 
-    private final String BIN_DIR = "bin";
+    private final static String BIN_DIR = "bin";
 
     // Text constants
     private final String UI_PREFERENCES_NDK_PATH_LABEL = "NDK Location"; //$NON-NLS-N$
@@ -50,7 +50,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
     private final String UI_PREFERENCES_NDK_INVALID_PATH_ERROR_MSG = "Invalid path for NDK"; //$NON-NLS-N$
 
     //search for windows folder
-    private FileFilter winFilter = new FileFilter()
+    private static FileFilter winFilter = new FileFilter()
     {
         public boolean accept(File file)
         {
@@ -59,7 +59,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
     };
 
     //search for linux folder
-    private FileFilter linuxFilter = new FileFilter()
+    private static FileFilter linuxFilter = new FileFilter()
     {
         public boolean accept(File file)
         {
@@ -68,7 +68,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
     };
 
     //search for mac folder
-    private FileFilter macFilter = new FileFilter()
+    private static FileFilter macFilter = new FileFilter()
     {
         public boolean accept(File file)
         {
@@ -77,7 +77,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
     };
 
     //search for arm-eabi folder
-    private FileFilter armFilter = new FileFilter()
+    private static FileFilter armFilter = new FileFilter()
     {
         public boolean accept(File file)
         {
@@ -86,7 +86,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
     };
 
     //search for bin folder
-    private FileFilter binFilter = new FileFilter()
+    private static FileFilter binFilter = new FileFilter()
     {
         public boolean accept(File file)
         {
@@ -95,7 +95,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
     };
 
     //search for gcc executable
-    private FileFilter gccFilter = new FileFilter()
+    private static FileFilter gccFilter = new FileFilter()
     {
         public boolean accept(File file)
         {
@@ -153,11 +153,10 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
      *
      * @return
      */
-    private boolean validateNDKDirectory()
+    public static boolean validateNDKDirectory(String path)
     {
 
         boolean isValid = true;
-        String path = directoryEditorNDK.getStringValue().trim();
 
         if (path.length() > 0)
         {
@@ -211,7 +210,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
      * @param osFolder
      * @return
      */
-    private boolean gccExists(File osFolder)
+    private static boolean gccExists(File osFolder)
     {
         boolean returnValue = false;
         //arm folder
@@ -298,7 +297,8 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
         //validate path as user types or select a folder
         public void modifyText(ModifyEvent e)
         {
-            isNDKPathValid = validateNDKDirectory();
+        	String path = directoryEditorNDK.getStringValue().trim();
+            isNDKPathValid = validateNDKDirectory(path);
             //error message handling
             if (!isNDKPathValid)
             {

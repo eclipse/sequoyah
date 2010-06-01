@@ -24,7 +24,7 @@ public class AddNativeWizard extends Wizard {
 		this.project = project;
 		
 		setWindowTitle(Messages.AddNativeWizard_native_wizard_title);
-		setDialogSettings(Activator.getDefault().getDialogSettings());
+		setDialogSettings(UIPlugin.getDefault().getDialogSettings());
 	}
 	
 	@Override

@@ -6,6 +6,7 @@ package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 import java.io.File;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -240,17 +241,22 @@ public class AddNativeProjectPage extends WizardPage {
 			final String libraryName = getLibraryName();
 
 			// Save the NDK location
-			INDKService ndkService = Activator.getService(INDKService.class);
+			INDKService ndkService = UIPlugin.getService(INDKService.class);
 			ndkService.setNDKLocation(getNDKLocation());
 
 			// Add the native support
 			ndkService.addNativeSupport(project, libraryName);
 			
-    		project.setPersistentProperty(UIPlugin.libName, libraryName);
+    		try {
+				project.setPersistentProperty(INDKService.libName, libraryName);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} 
 		catch (WorkbenchException e) 
 		{
-			Activator.getDefault().getLog().log(e.getStatus());
+			UIPlugin.getDefault().getLog().log(e.getStatus());
 			success = false;
 		}
 		return success;
