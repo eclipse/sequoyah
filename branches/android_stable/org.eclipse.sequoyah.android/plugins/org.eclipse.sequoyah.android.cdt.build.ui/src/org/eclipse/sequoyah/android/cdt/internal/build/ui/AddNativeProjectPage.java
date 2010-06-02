@@ -259,7 +259,7 @@ public class AddNativeProjectPage extends WizardPage
             INDKService ndkService = UIPlugin.getService(INDKService.class);
             ndkService.setNDKLocation(getNDKLocation());
 
-            if (!libraryName.isEmpty())
+            if (libraryName.length() != 0)
             {
                 // Add the native support
                 ndkService.addNativeSupport(project, libraryName);
