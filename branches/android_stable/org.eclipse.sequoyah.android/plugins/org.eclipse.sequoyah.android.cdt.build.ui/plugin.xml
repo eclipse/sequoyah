@@ -45,5 +45,13 @@
             name="%androidNDKPreferencesPageName">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.eclipse.sequoyah.android.cdt.internal.build.ui.NDKPropertyPage"
+            id="org.eclipse.sequoyah.android.cdt.build.ui.NDKPropertiesPage"
+            name="%androidNDKPropertiesPageName">
+      </page>
+   </extension>
 
 </plugin>

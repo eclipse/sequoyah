@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * DESCRIPTION: 
@@ -112,7 +113,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
     public NDKPreferencePage()
     {
         preferencePage = this;
-        setPreferenceStore(UIPlugin.getDefault().getPreferenceStore());
+        setPreferenceStore(PlatformUI.getPreferenceStore());
 
         if (Platform.getOS().equals(Platform.OS_WIN32))
         {
