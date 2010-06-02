@@ -33,8 +33,6 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
 
     private boolean isCygwinPathValid = true;
 
-    private static String pathPrefix;
-
     private NDKPreferencePage preferencePage;
 
     private final static String WINDOWS = "windows";
@@ -110,10 +108,9 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
         }
     };
 
-    public NDKPreferencePage()
+    private static String getPathPrefix()
     {
-        preferencePage = this;
-        setPreferenceStore(PlatformUI.getPreferenceStore());
+        String pathPrefix;
 
         if (Platform.getOS().equals(Platform.OS_WIN32))
         {
@@ -124,6 +121,15 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
         {
             pathPrefix = "/" + "build" + "/" + "prebuilt";
         }
+        return pathPrefix;
+
+    }
+
+    public NDKPreferencePage()
+    {
+        preferencePage = this;
+        setPreferenceStore(PlatformUI.getPreferenceStore());
+
     }
 
     @Override
@@ -171,7 +177,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
             if (isValid)
             {
                 // <ndk_root>/build/prebuilt
-                path += pathPrefix;
+                path += getPathPrefix();
                 File preBuiltFolder = new File(path);
                 if (preBuiltFolder.exists())
                 {
@@ -190,7 +196,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
                         OSList = preBuiltFolder.listFiles(macFilter);
                     }
                     //check gcc executable
-                    if (OSList != null && OSList.length > 0)
+                    if ((OSList != null) && (OSList.length > 0))
                     {
                         isValid = gccExists(OSList[0]);
                     }
@@ -298,7 +304,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
         //validate path as user types or select a folder
         public void modifyText(ModifyEvent e)
         {
-        	String path = directoryEditorNDK.getStringValue().trim();
+            String path = directoryEditorNDK.getStringValue().trim();
             isNDKPathValid = validateNDKDirectory(path);
             //error message handling
             if (!isNDKPathValid)

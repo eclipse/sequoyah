@@ -39,10 +39,17 @@ public class NDKPropertyPage extends PropertyPage implements IWorkbenchPropertyP
         IProjectNature nature = null;
         IAdaptable apt = getElement();
         //get selected project
-        if (apt instanceof IJavaProject)
+        if (apt instanceof IProject)
         {
-            IJavaProject resource = (IJavaProject) getElement();
-            project = resource.getProject();
+            if (apt instanceof IJavaProject)
+            {
+                IJavaProject resource = (IJavaProject) getElement();
+                project = resource.getProject();
+            }
+            else
+            {
+                project = (IProject) apt;
+            }
 
             try
             {

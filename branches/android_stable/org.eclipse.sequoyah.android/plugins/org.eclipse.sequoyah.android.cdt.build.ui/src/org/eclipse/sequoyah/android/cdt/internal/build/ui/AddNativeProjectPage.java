@@ -33,7 +33,6 @@ public class AddNativeProjectPage extends WizardPage
     @Override
     public boolean canFlipToNextPage()
     {
-
         return false;
     }
 
@@ -127,7 +126,6 @@ public class AddNativeProjectPage extends WizardPage
                         String path =
                                 PlatformUI.getPreferenceStore().getString(
                                         UIPlugin.NDK_LOCATION_PREFERENCE);
-                        location.setText(path);
                         location.update();
 
                         if (!isNDKLocationValid())
@@ -177,13 +175,13 @@ public class AddNativeProjectPage extends WizardPage
             {
                 if (!isLibraryNameValid())
                 {
-                    setErrorMessage(Messages.AddNativeProjectPage_empty_library_name_msg); //$NON-NLS-1$
+                	setErrorMessage(Messages.AddNativeProjectPage_empty_library_name_msg);
                 }
-                else if (!isNDKLocationValid())
-                {
-                    setErrorMessage(Messages.AddNativeProjectPage_ndk_invalid_path_msg); //$NON-NLS-1$
-                }
-                else
+				else if(!isNDKLocationValid())
+        		{
+                	setErrorMessage(Messages.AddNativeProjectPage_ndk_invalid_path_msg);
+        		}
+                else 
                 {
                     setErrorMessage(null);
                 }
@@ -204,20 +202,19 @@ public class AddNativeProjectPage extends WizardPage
         return null;
     }
 
-    //true when valid ndk path is set and library name specified
-    @Override
-    public boolean isPageComplete()
-    {
-        boolean isComplete = false;
-
-        if (isNDKLocationValid() && isLibraryNameValid())
-        {
-            isComplete = true;
-        }
-
-        return isComplete;
-    }
-
+	//true when valid ndk path is set and library name specified
+	@Override
+	public boolean isPageComplete() {
+		boolean isComplete = false;
+		
+		if(isNDKLocationValid() && isLibraryNameValid())
+		{
+			isComplete = true;
+		}
+		
+		return isComplete;
+	}
+	
     public boolean isNDKLocationValid()
     {
         boolean isValid = true;
