@@ -126,11 +126,12 @@ public class AddNativeProjectPage extends WizardPage
                         String path =
                                 PlatformUI.getPreferenceStore().getString(
                                         UIPlugin.NDK_LOCATION_PREFERENCE);
+                        location.setText(path);
                         location.update();
 
                         if (!isNDKLocationValid())
                         {
-                            setErrorMessage(Messages.AddNativeProjectPage_ndk_invalid_path_msg); //$NON-NLS-1$
+                            setErrorMessage(Messages.AddNativeProjectPage_ndk_invalid_path_msg);
                         }
                         else if (!isLibraryNameValid())
                         {
@@ -166,7 +167,7 @@ public class AddNativeProjectPage extends WizardPage
 
         if (!isLibraryNameValid())
         {
-            setErrorMessage(Messages.AddNativeProjectPage_empty_library_name_msg); //$NON-NLS-1$
+            setErrorMessage(Messages.AddNativeProjectPage_empty_library_name_msg);
         }
 
         libraryText.addListener(SWT.Modify, new Listener()
