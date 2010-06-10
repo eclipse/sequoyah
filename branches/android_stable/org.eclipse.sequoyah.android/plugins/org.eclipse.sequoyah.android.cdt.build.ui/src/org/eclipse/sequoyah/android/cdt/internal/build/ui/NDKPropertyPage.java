@@ -23,6 +23,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * This class represents the properties page for Android NDK.
  * It gives the user the option to set gcc version, platform, 
  * source object and library paths.
+ * @author Carlos Alberto Souto Junior
  * */
 public class NDKPropertyPage extends PropertyPage implements IWorkbenchPropertyPage
 {
@@ -39,27 +40,24 @@ public class NDKPropertyPage extends PropertyPage implements IWorkbenchPropertyP
         IProjectNature nature = null;
         IAdaptable apt = getElement();
         //get selected project
-        if (apt instanceof IProject)
+        if (apt instanceof IJavaProject)
         {
-            if (apt instanceof IJavaProject)
-            {
-                IJavaProject resource = (IJavaProject) getElement();
-                project = resource.getProject();
-            }
-            else
-            {
-                project = (IProject) apt;
-            }
+            IJavaProject resource = (IJavaProject) getElement();
+            project = resource.getProject();
+        }
+        else if (apt instanceof IProject)
+        {
+            project = (IProject) apt;
+        }
 
-            try
-            {
-                nature = project.getNature("org.eclipse.cdt.core.cnature");
-            }
-            catch (CoreException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        try
+        {
+            nature = project.getNature("org.eclipse.cdt.core.cnature");
+        }
+        catch (CoreException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
         Composite main = new Composite(parent, SWT.FILL);

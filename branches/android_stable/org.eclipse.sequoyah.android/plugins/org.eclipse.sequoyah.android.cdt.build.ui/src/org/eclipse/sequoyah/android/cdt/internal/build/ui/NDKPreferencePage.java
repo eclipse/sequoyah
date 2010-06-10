@@ -22,6 +22,7 @@ import org.eclipse.ui.PlatformUI;
  * DESCRIPTION: 
  * This class represents the preference page for Android NDK.
  * It gives the user the option to set NDK and Cygwin (windows only) paths.
+ * @author Carlos Alberto Souto Junior
  * */
 
 public class NDKPreferencePage extends PreferencePage implements IWorkbenchPreferencePage
@@ -30,8 +31,6 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
     private DirectoryFieldEditor directoryEditorNDK;
 
     private boolean isNDKPathValid = true;
-
-    private boolean isCygwinPathValid = true;
 
     private NDKPreferencePage preferencePage;
 
@@ -111,7 +110,6 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
     private static String getPathPrefix()
     {
         String pathPrefix;
-
         if (Platform.getOS().equals(Platform.OS_WIN32))
         {
             pathPrefix = "\\" + "build" + "\\" + "prebuilt";
@@ -277,7 +275,7 @@ public class NDKPreferencePage extends PreferencePage implements IWorkbenchPrefe
         boolean canReturn = true;
 
         //cannot finish with invalid values
-        if (!isCygwinPathValid || !isNDKPathValid)
+        if (!isNDKPathValid)
         {
             canReturn = false;
         }

@@ -24,7 +24,7 @@ import org.eclipse.sequoyah.android.cdt.internal.build.core.TemplatedInputStream
 
 /**
  * Class that provide utility methods
- * @author cwhm38
+ * @author Thiago Faustini Junqueira
  */
 public class NDKUtils
 {
@@ -96,8 +96,8 @@ public class NDKUtils
                 }
                 catch (IOException e)
                 {
-                    throw new CoreException(new Status(IStatus.ERROR, CorePlugin.PLUGIN_ID, e
-                            .getLocalizedMessage(), e));
+                    throw new CoreException(new Status(IStatus.ERROR, CorePlugin.PLUGIN_ID,
+                            e.getLocalizedMessage(), e));
                 }
                 finally
                 {

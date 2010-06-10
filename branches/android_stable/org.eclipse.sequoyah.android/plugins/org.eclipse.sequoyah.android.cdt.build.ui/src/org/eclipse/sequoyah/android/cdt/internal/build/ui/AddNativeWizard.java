@@ -5,9 +5,7 @@ package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.sequoyah.android.cdt.build.core.INDKService;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.WorkbenchException;
 
 /**
  * @author dschaefer
