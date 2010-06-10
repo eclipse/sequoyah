@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Doug Schaefer (WRS) - Initial API and implementation
+ * Carlos Alberto Souto Junior - Further improvements in the Wizard
  *******************************************************************************/
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
@@ -22,32 +23,45 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * 
  */
-public class AddNativeSupport implements IObjectActionDelegate {
+public class AddNativeSupport implements IObjectActionDelegate
+{
 
-	private IWorkbenchPart targetPart;
-	private IProject project;
-	
-	public void run(IAction action) {
-		// Run the wizard
-		AddNativeWizard wizard = new AddNativeWizard(targetPart.getSite().getWorkbenchWindow(), project);
-		WizardDialog dialog = new WizardDialog(targetPart.getSite().getShell(), wizard);
-		dialog.open();
-	}
+    private IWorkbenchPart targetPart;
 
-	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			Object selected = ((IStructuredSelection)selection).getFirstElement();
-			if (selected instanceof IProject)
-				project = (IProject)selected;
-			else if (selected instanceof PlatformObject) {
-				project = (IProject)((PlatformObject)selected).getAdapter(IProject.class);
-			} else
-				project = null;
-		}
-	}
+    private IProject project;
 
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		this.targetPart = targetPart;
-	}
+    public void run(IAction action)
+    {
+        // Run the wizard
+        AddNativeWizard wizard =
+                new AddNativeWizard(targetPart.getSite().getWorkbenchWindow(), project);
+        WizardDialog dialog = new WizardDialog(targetPart.getSite().getShell(), wizard);
+        dialog.open();
+    }
+
+    public void selectionChanged(IAction action, ISelection selection)
+    {
+        if (selection instanceof IStructuredSelection)
+        {
+            Object selected = ((IStructuredSelection) selection).getFirstElement();
+            if (selected instanceof IProject)
+            {
+                project = (IProject) selected;
+            }
+            else if (selected instanceof PlatformObject)
+            {
+                project = (IProject) ((PlatformObject) selected).getAdapter(IProject.class);
+            }
+            else
+            {
+                project = null;
+            }
+        }
+    }
+
+    public void setActivePart(IAction action, IWorkbenchPart targetPart)
+    {
+        this.targetPart = targetPart;
+    }
 
 }

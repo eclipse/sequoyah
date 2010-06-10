@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.sequoyah.android.cdt.build.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.sequoyah.android.cdt.internal.build.core.Activator
+Bundle-Activator: org.eclipse.sequoyah.android.cdt.internal.build.core.CorePlugin
 Bundle-Vendor: %provider
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.6.0",

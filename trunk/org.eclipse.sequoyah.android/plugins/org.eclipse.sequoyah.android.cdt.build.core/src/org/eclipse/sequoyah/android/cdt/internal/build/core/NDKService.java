@@ -55,16 +55,16 @@ public class NDKService implements INDKService {
 	private static final String NDK_LOCATION = "ndkLocation";
 	
 	public String getNDKLocation() {
-		return Activator.getPreferenceStore().get(NDK_LOCATION, null);
+		return CorePlugin.getPreferenceStore().get(NDK_LOCATION, null);
 	}
 
 	public void setNDKLocation(String location) {
-		IEclipsePreferences prefs = new InstanceScope().getNode(Activator.PLUGIN_ID);
+		IEclipsePreferences prefs = new InstanceScope().getNode(CorePlugin.PLUGIN_ID);
 		prefs.put(NDK_LOCATION, location);
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
-			Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e));
+			CorePlugin.getDefault().getLog().log(new Status(IStatus.ERROR, CorePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
 		}
 	}
 
@@ -127,7 +127,7 @@ public class NDKService implements INDKService {
 					Map<String, String> map = new HashMap<String, String>();
 					map.put("lib", libraryName);
 					
-					URL makefileURL = Activator.getFile(new Path("templates/Android.mk"));
+					URL makefileURL = CorePlugin.getFile(new Path("templates/Android.mk"));
 					InputStream makefileIn = makefileURL.openStream();
 					InputStream templateIn = new TemplatedInputStream(makefileIn, map);
 
@@ -137,14 +137,14 @@ public class NDKService implements INDKService {
 					
 						// Copy over initial source file
 						// TODO we should allow C or C++ files
-						URL srcURL = Activator.getFile(new Path("templates/template.cpp"));
+						URL srcURL = CorePlugin.getFile(new Path("templates/template.cpp"));
 						InputStream srcIn = srcURL.openStream();
 						IFile srcFile = sourceFolder.getFile(libraryName + ".cpp");
 						if (!srcFile.exists())
 							srcFile.create(srcIn, true, monitor);
 					}
 				} catch (IOException e) {
-					throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e));
+					throw new CoreException(new Status(IStatus.ERROR, CorePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
 				} 
 			}
 		};
@@ -153,7 +153,7 @@ public class NDKService implements INDKService {
 		try {
 			workspace.run(op, workspace.getRoot(), 0, null);
 		} catch (CoreException e) {
-			Activator.getDefault().getLog().log(e.getStatus());
+			CorePlugin.getDefault().getLog().log(e.getStatus());
 		}
 	}
 	

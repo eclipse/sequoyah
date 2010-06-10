@@ -17,20 +17,20 @@ import org.osgi.framework.ServiceReference;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends Plugin {
-
-	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.sequoyah.android.cdt.build.core"; //$NON-NLS-1$
-
-	// The shared instance
-	private static Activator plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public Activator() {
-	}
-
+public class CorePlugin extends Plugin {
+	 
+ 	// The plug-in ID
+ 	public static final String PLUGIN_ID = "org.eclipse.sequoyah.android.cdt.build.core"; //$NON-NLS-1$
+ 
+ 	// The shared instance
+	private static CorePlugin plugin;
+ 	
+ 	/**
+ 	 * The constructor
+ 	 */
+	public CorePlugin() {
+ 	}
+ 
 	public void start(BundleContext context) throws Exception {
 		// register the NDK service
 		context.registerService(INDKService.class.getName(), new NDKService(), null);
@@ -48,7 +48,7 @@ public class Activator extends Plugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static CorePlugin getDefault() {
 		return plugin;
 	}
 
