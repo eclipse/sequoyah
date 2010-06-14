@@ -11,6 +11,7 @@
  * Contributors:
  * Mauren Brenner (Eldorado) - Bug [274503] - Add suffix to the instance name
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Flavio Vantin  (Eldorado) - Bug [315851] Making generic the separator text between name and suffix.
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.view.model;
@@ -46,7 +47,10 @@ public class ViewerInstanceNode extends ViewerAbstractNode
         {
             instanceName = instance.getName();
             String suffix = instance.getNameSuffix();
-            if (suffix != null) instanceName = instanceName + "\\ (" + suffix + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            if (suffix != null) {
+                instance.setSeparator("");
+                instanceName = instanceName + instance.getSeparator() + " (" + suffix + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            }
         }
         return instanceName;
     }

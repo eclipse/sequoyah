@@ -14,6 +14,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271682] - Default Wizard Page accepting invalid names
  * Mauren Brenner (Eldorado) - Bug [274503] - Added name suffix along with getter and setter methods
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Flavio Vantin (Eldorado) - Bug [315851] Implemented methods to get and set the separator between name and suffix.
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.model;
@@ -28,6 +29,7 @@ public abstract class AbstractMobileInstance implements IInstance {
 	private static final String VALID_INSTANCE_REGEXP = "([a-z]|[A-Z]|[0-9]|\\.|_|-)+";//$NON-NLS-1$
 	protected String id;
 	private String name;
+	private String separator = "\\";
 	private String nameSuffix;
 	private String deviceId;
 	private Properties properties;
@@ -101,6 +103,23 @@ public abstract class AbstractMobileInstance implements IInstance {
 	public void setNameSuffix(String suffix) {
 		nameSuffix = suffix;
 	}
+	
+	/**
+	 * Retrieves the text that separates the name and suffix.
+	 */
+    public String getSeparator()
+    {
+        return separator;
+    }
+    
+    /**
+     * Sets the text that separates the name and suffix.
+     * @param suffix - The name suffix.
+     */
+    public void setSeparator(String separator)
+    {
+        this.separator = separator;
+    }
 
 	/**
 	 * Retrieves the device id.
