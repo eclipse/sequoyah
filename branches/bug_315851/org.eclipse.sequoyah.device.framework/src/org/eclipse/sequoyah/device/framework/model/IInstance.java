@@ -13,6 +13,7 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
  * Mauren Brenner (Eldorado) - Bug [274503] - Added methods to get and set the name suffix
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Flavio Vantin (Eldorado) - Bug [xxxxxx] Added methods to get and set the separator between name and suffix.
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.model;
@@ -40,4 +41,6 @@ public interface IInstance extends IAdaptable {
 	public void setProperties(Properties properties);
 	public String getNameSuffix();
 	public void setNameSuffix(String suffix);
+	public String getSeparator();
+	public void setSeparator(String separator);
 }
