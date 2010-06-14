@@ -14,6 +14,7 @@
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Matheus Tait Lima (Eldorado) - Bug [300351] - Optimizing performance when translating a whole column at once
  * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/provide implementation to the new methods
+ * Fabricio Violin (Eldorado) - Bug [316029] - Fix array behavior when switching between tabs
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
@@ -46,6 +47,7 @@ import org.eclipse.sequoyah.localization.stringeditor.editor.input.IEditorChange
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNodeComment;
 import org.eclipse.sequoyah.localization.tools.datamodel.TranslationResult;
@@ -573,6 +575,19 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			}
 			keyValueMap.put(stringNode.getKey(), new CellInfo(stringNode
 					.getValue(), comment));
+		}
+		
+		List<StringArray> stringArrays = localizationFile.getStringArrays();
+		for (StringArray stringArray : stringArrays) {
+			for(StringNode stringNode : stringArray.getValues())
+			{
+				String comment = ""; //$NON-NLS-1$
+				if (stringNode.getStringNodeComment() != null) {
+					comment = stringNode.getStringNodeComment().getComment();
+				}
+				keyValueMap.put(stringNode.getKey(), new CellInfo(stringNode
+						.getValue(), comment));
+			}
 		}
 		return keyValueMap;
 	}
