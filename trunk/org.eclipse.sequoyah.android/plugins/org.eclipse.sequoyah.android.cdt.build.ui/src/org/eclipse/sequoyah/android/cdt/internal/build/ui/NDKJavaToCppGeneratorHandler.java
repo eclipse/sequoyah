@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -216,7 +215,7 @@ public class NDKJavaToCppGeneratorHandler extends AbstractHandler implements IHa
                 {
                     String title = Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_FILES_ERROR;
                     MessageUtils.showErrorDialog(title, e.getLocalizedMessage());
-                    BasePlugin.logError(title, e);
+                    UIPlugin.log(title, e);
                 }
             }
         }

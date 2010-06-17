@@ -18,12 +18,12 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -155,8 +155,8 @@ public class NDKJavaToCppGenerator
 
     private void messageWhenJavaSdkNotFound()
     {
-        BasePlugin
-                .logError("Java SDK not found. It is required to run application to generate C source and header based on Java class");
+        UIPlugin
+                .log(IStatus.ERROR, "Java SDK not found. It is required to run application to generate C source and header based on Java class");
     }
 
     /**
@@ -193,7 +193,7 @@ public class NDKJavaToCppGenerator
                 {
                     String title = Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_FILES_ERROR;
                     MessageUtils.showErrorDialog(title, e.getLocalizedMessage());
-                    BasePlugin.logError(title, e);
+                    UIPlugin.log(title, e);
                 }
 
             }
@@ -222,7 +222,7 @@ public class NDKJavaToCppGenerator
                             + project.getLocation().toOSString() + File.separator + BIN_FOLDER_NAME
                             + " -verbose " + classPackage + classname;
         }
-        BasePlugin.logInfo("Executing cmd:" + cmd);
+        UIPlugin.log(IStatus.INFO, "Executing cmd:" + cmd);
         Runtime.getRuntime().exec(cmd, null, destinationDir);
 
     }
@@ -334,7 +334,7 @@ public class NDKJavaToCppGenerator
                             }
                             else
                             {
-                                BasePlugin.logWarning("Method does not have right parameter type: "
+                                UIPlugin.log(IStatus.WARNING, "Method does not have right parameter type: "
                                         + parameterTypeAndName);
                             }
                         }
@@ -618,7 +618,7 @@ public class NDKJavaToCppGenerator
         }
         else
         {
-            BasePlugin.logWarning("Method does not have right returnType - signature: "
+            UIPlugin.log(IStatus.WARNING, "Method does not have right returnType - signature: "
                     + methodString);
         }
     }
@@ -667,7 +667,7 @@ public class NDKJavaToCppGenerator
                 {
                     cmd = jdkFile.getAbsolutePath() + File.separator + "javac" + " -version";
                 }
-                BasePlugin.logInfo("Executing cmd:" + cmd);
+                UIPlugin.log(IStatus.INFO, "Executing cmd:" + cmd);
 
                 try
                 {
@@ -676,8 +676,7 @@ public class NDKJavaToCppGenerator
                 catch (IOException e)
                 {
                     result = false;
-                    BasePlugin.logError("Error while checking for JDK existence.", e);
-
+                    UIPlugin.log("Error while checking for JDK existence.", e);
                 }
 
             }
