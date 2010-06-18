@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Marcel Gorri (Eldorado) -  Add method to retrieve ISO639 lang ID
  * Paulo Faria (Eldorado) - Add method to retrieve formatted (bold, underline, italics) string
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save
+ * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
 
@@ -985,7 +986,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			Document document = builder.parse(new File(file.getLocation()
 					.toString()));
 			localizationFile = new AndroidLocalizationFile(file, localeInfo,
-					new ArrayList<StringNode>(), null);
+					new ArrayList<StringNode>(), new ArrayList<StringArray>());
 			updateLocalizationFileContent(localizationFile, document);
 
 		} catch (Exception e) {
@@ -1721,8 +1722,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			stringArrays.add(stringArray);
 		}
 
-		localizationFile.setStringArrays(stringArrays);
 		localizationFile.setStringNodes(stringNodes);
+		localizationFile.setStringArrays(stringArrays);
 
 		((AndroidLocalizationFile) localizationFile)
 				.setSavedXMLDocument(document);
