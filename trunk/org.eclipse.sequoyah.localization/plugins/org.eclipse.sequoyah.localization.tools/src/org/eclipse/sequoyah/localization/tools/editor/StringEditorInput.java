@@ -15,6 +15,7 @@
  * Matheus Tait Lima (Eldorado) - Bug [300351] - Optimizing performance when translating a whole column at once
  * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/provide implementation to the new methods
  * Fabricio Violin (Eldorado) - Bug [316029] - Fix array behavior when switching between tabs
+ * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
@@ -561,12 +562,14 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	 */
 	@Override
 	public Map<String, CellInfo> getValues(String columnID) {
+		
 		LocaleInfo localeInfo = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
 		Map<String, CellInfo> keyValueMap = new HashMap<String, CellInfo>();
 		keyValueMap.keySet();
 		LocalizationFile localizationFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(localeInfo);
+		//get string nodes values
 		List<StringNode> stringNodes = localizationFile.getStringNodes();
 		for (StringNode stringNode : stringNodes) {
 			String comment = ""; //$NON-NLS-1$
@@ -577,18 +580,6 @@ public class StringEditorInput extends AbstractStringEditorInput {
 					.getValue(), comment));
 		}
 		
-		List<StringArray> stringArrays = localizationFile.getStringArrays();
-		for (StringArray stringArray : stringArrays) {
-			for(StringNode stringNode : stringArray.getValues())
-			{
-				String comment = ""; //$NON-NLS-1$
-				if (stringNode.getStringNodeComment() != null) {
-					comment = stringNode.getStringNodeComment().getComment();
-				}
-				keyValueMap.put(stringNode.getKey(), new CellInfo(stringNode
-						.getValue(), comment));
-			}
-		}
 		return keyValueMap;
 	}
 

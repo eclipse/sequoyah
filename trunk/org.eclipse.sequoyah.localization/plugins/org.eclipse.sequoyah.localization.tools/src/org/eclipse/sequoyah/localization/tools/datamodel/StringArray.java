@@ -142,8 +142,7 @@ public class StringArray {
 			if (this.values.size() > 0) {
 				// Generate new key
 				StringNode lastNode = this.values.get(this.values.size() - 1);
-				lastNumber = Integer
-						.parseInt(((lastNode.getKey().split("_")[1]))); //$NON-NLS-1$
+				lastNumber = StringArray.findItemPosition(lastNode.getKey());
 			}
 			position = lastNumber + 1;
 		}
