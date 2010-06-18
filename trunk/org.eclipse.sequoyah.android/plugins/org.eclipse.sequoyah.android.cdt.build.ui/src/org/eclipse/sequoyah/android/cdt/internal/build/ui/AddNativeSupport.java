@@ -12,6 +12,7 @@
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -32,11 +33,24 @@ public class AddNativeSupport implements IObjectActionDelegate
 
     public void run(IAction action)
     {
-        // Run the wizard
-        AddNativeWizard wizard =
-                new AddNativeWizard(targetPart.getSite().getWorkbenchWindow(), project);
-        WizardDialog dialog = new WizardDialog(targetPart.getSite().getShell(), wizard);
-        dialog.open();
+        // check windows project location restrictions (cygwin does not work for project with
+        // whitespaces on its path)
+        if (Platform.getOS().equals(Platform.OS_WIN32)
+                && project.getLocation().toOSString().contains(" "))
+        {
+            MessageUtils.showErrorDialog(
+                    Messages.AddNativeProjectAction_InvalidProjectLocation_Title, Messages.bind(
+                            Messages.AddNativeProjectAction_InvalidProjectLocation_Message, project
+                                    .getLocation().toOSString()));
+        }
+        else
+        {
+            // Run the wizard
+            AddNativeWizard wizard =
+                    new AddNativeWizard(targetPart.getSite().getWorkbenchWindow(), project);
+            WizardDialog dialog = new WizardDialog(targetPart.getSite().getShell(), wizard);
+            dialog.open();
+        }
     }
 
     public void selectionChanged(IAction action, ISelection selection)

@@ -4,8 +4,15 @@
  */
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -248,35 +255,59 @@ public class AddNativeProjectPage extends WizardPage
         libraryText.update();
     }
 
-    public boolean performFinish(IWorkbenchWindow window, IProject project)
+    public boolean performFinish(IWorkbenchWindow window, IProject project, IProgressMonitor monitor)
     {
         boolean success = true;
         try
         {
+            // get monitor
+            SubMonitor subMonitor = SubMonitor.convert(monitor, 10);
+
+            subMonitor.beginTask(Messages.AddNativeProjectPage__Message_AddingNativeSupport, 10);
+            
             // Switch to the C perspective
 
             // Grab the data from the pages
             final String libraryName = getLibraryName();
 
+            subMonitor.worked(2);
+            
             // Save the NDK location
             INDKService ndkService = UIPlugin.getService(INDKService.class);
+            subMonitor.worked(1);
             ndkService.setNDKLocation(getNDKLocation());
+            subMonitor.worked(6);
 
             if (libraryName.length() != 0)
             {
                 // Add the native support
                 ndkService.addNativeSupport(project, libraryName);
-                window.getWorkbench().showPerspective("org.eclipse.cdt.ui.CPerspective", window); //$NON-NLS-1 //$NON-NLS-1$
+                if (MessageDialog.openQuestion(getShell(),
+                        Messages.AddNativeProjectPage_ChangePerspectiveDialogTitle,
+                        Messages.AddNativeProjectPage_ChangePerspectiveDialogQuestion))
+                {
+                    window.getWorkbench()
+                            .showPerspective("org.eclipse.cdt.ui.CPerspective", window); //$NON-NLS-1 //$NON-NLS-1$ //$NON-NLS-1$
+                }
             }
             try
             {
                 project.setPersistentProperty(INDKService.libName, libraryName);
+                IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
+                IConfiguration configs[] = buildInfo.getManagedProject().getConfigurations();
+                
+                if (Platform.getOS().equals(Platform.OS_WIN32))
+                {
+                    configs[0].setBuildCommand("bash " + getNDKLocation() + "\\ndk-build"); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                subMonitor.worked(1);
+
 
             }
             catch (CoreException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                UIPlugin.getDefault().getLog().log(e.getStatus());
+                success = false;
             }
         }
         catch (WorkbenchException e)

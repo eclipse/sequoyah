@@ -28,10 +28,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.cdt.core" version="5.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.core" version="7.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.ui" version="7.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sequoyah.android.cdt.build.core"/>
+      <import feature="org.eclipse.cdt" version="7.0.0" match="equivalent"/>
    </requires>
 
    <plugin

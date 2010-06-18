@@ -28,6 +28,8 @@ import org.eclipse.sequoyah.android.cdt.internal.build.core.TemplatedInputStream
  */
 public class NDKUtils
 {
+    public static final String DEFAULT_JNI_FOLDER_NAME = "jni";
+
     /**
      * Auxiliary method to set the NDK location in the Sequoyah framework
      * @param location - NDK location
@@ -52,7 +54,7 @@ public class NDKUtils
             {
                 // Create the source folders, if necessary. 
                 // Shouldn't be the case, but you never know what the user is up to.
-                IFolder sourceFolder = project.getFolder("jni");
+                IFolder sourceFolder = project.getFolder(DEFAULT_JNI_FOLDER_NAME);
 
                 if (!sourceFolder.exists())
                 {

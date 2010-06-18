@@ -12,16 +12,21 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.sequoyah.android.cdt.build.core.NDKUtils;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -30,6 +35,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
@@ -114,7 +120,19 @@ public class NDKJavaToCppGeneratorHandler extends AbstractHandler implements IHa
 
         packageDialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
         packageDialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
-
+        
+        if (project != null)
+        {
+            IResource jniFolder = project.findMember(NDKUtils.DEFAULT_JNI_FOLDER_NAME);
+            if (jniFolder != null)
+            {
+                packageDialog.setInitialSelection(jniFolder);
+            }
+            else
+            {
+                packageDialog.setInitialSelection(project);
+            }
+        }
         //filter extensions
         packageDialog.addFilter(new ViewerFilter()
         {
@@ -168,62 +186,90 @@ public class NDKJavaToCppGeneratorHandler extends AbstractHandler implements IHa
      * @param folderChosen
      * @param javaFile
      */
-    private void generateJniSourceFiles(String folderChosen, ICompilationUnit javaFile)
+    private void generateJniSourceFiles(final String folderChosen,final ICompilationUnit javaFile)
     {
-        if (NDKJavaToCppGenerator.checkJavaSdkExistence())
+        // Use the progess service to execute the runnable
+        IProgressService service = PlatformUI.getWorkbench().getProgressService();
+        try
         {
-            if (folderChosen != null)
+            service.run(true, false, new IRunnableWithProgress()
             {
-                IResource file;
-                try
+                public void run(IProgressMonitor monitor)
                 {
-                    file = javaFile.getCorrespondingResource();
-                    IProject project = file.getProject();
-                    //need to get selected java resource
-                    int index = file.getName().indexOf(file.getFileExtension());
-                    //remove .java 
-                    String classname = file.getName().substring(0, index - 1);
-
-                    //need to get selected java parent folder
-                    String classPackage = "";
-                    String fullPathToClass = file.getLocation().toOSString();
-                    int indexLinuxMac = fullPathToClass.indexOf("src/");
-                    if (indexLinuxMac > 0)
+                    if (monitor == null)
                     {
-                        classPackage =
-                                fullPathToClass.substring(indexLinuxMac + 4,
-                                        fullPathToClass.length());
+                        monitor = new NullProgressMonitor();
                     }
-                    int indexWin = file.getLocation().toOSString().indexOf("src\\");
-                    if (indexWin > 0)
-                    {
-                        classPackage =
-                                fullPathToClass.substring(indexWin + 4, fullPathToClass.length());
-                    }
-                    classPackage = classPackage.replace(classname + ".java", "");
-                    classPackage = classPackage.replace(File.separator, ".");
-                    String outputDirectory =
-                            folderChosen != null ? folderChosen : file.getParent().getLocation()
-                                    .toOSString();
-                    NDKJavaToCppGenerator androidNDKJavaToCppGenerator =
-                            new NDKJavaToCppGenerator(project, classname, classPackage,
-                                    outputDirectory);
+                    monitor.beginTask(Messages.JNI_C_FILES_CREATION_MONITOR_TASK_NAME, 100);
 
-                    androidNDKJavaToCppGenerator.generateCppSourceAndHeader();
+                    if (NDKJavaToCppGenerator.checkJavaSdkExistence())
+                    {
+                        if (folderChosen != null)
+                        {
+                            IResource file;
+                            try
+                            {
+                                file = javaFile.getCorrespondingResource();
+                                IProject project = file.getProject();
+                                //need to get selected java resource
+                                int index = file.getName().indexOf(file.getFileExtension());
+                                //remove .java 
+                                String classname = file.getName().substring(0, index - 1);
+
+                                //need to get selected java parent folder
+                                String classPackage = "";
+                                String fullPathToClass = file.getLocation().toOSString();
+                                int indexLinuxMac = fullPathToClass.indexOf("src/");
+                                if (indexLinuxMac > 0)
+                                {
+                                    classPackage =
+                                            fullPathToClass.substring(indexLinuxMac + 4,
+                                                    fullPathToClass.length());
+                                }
+                                int indexWin = file.getLocation().toOSString().indexOf("src\\");
+                                if (indexWin > 0)
+                                {
+                                    classPackage =
+                                            fullPathToClass.substring(indexWin + 4,
+                                                    fullPathToClass.length());
+                                }
+                                classPackage = classPackage.replace(classname + ".java", "");
+                                classPackage = classPackage.replace(File.separator, ".");
+                                String outputDirectory =
+                                        folderChosen != null ? folderChosen : file.getParent()
+                                                .getLocation().toOSString();
+                                monitor.worked(10);
+                                NDKJavaToCppGenerator androidNDKJavaToCppGenerator =
+                                        new NDKJavaToCppGenerator(project, classname, classPackage,
+                                                outputDirectory);
+
+                                androidNDKJavaToCppGenerator
+                                        .generateCppSourceAndHeader(new SubProgressMonitor(monitor,
+                                                90));
+                            }
+                            catch (Exception e)
+                            {
+                                String title =
+                                        Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_FILES_ERROR;
+                                MessageUtils.showErrorDialog(title, e.getLocalizedMessage());
+                                UIPlugin.log(title, e);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        monitor.worked(100);
+                        // Inform the user that he needs the Java SDK to perform this operation
+                        MessageUtils.showErrorDialog(Messages.ERR_JNI_JDK_Not_Found_Dialog_Title,
+                                Messages.ERR_JNI_JDK_Not_Found);
+                    }
+                    monitor.done();
                 }
-                catch (Exception e)
-                {
-                    String title = Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_FILES_ERROR;
-                    MessageUtils.showErrorDialog(title, e.getLocalizedMessage());
-                    UIPlugin.log(title, e);
-                }
-            }
+            });
         }
-        else
+        catch (Exception e)
         {
-            // Inform the user that he needs the Java SDK to perform this operation
-            MessageUtils.showErrorDialog(Messages.ERR_JNI_JDK_Not_Found_Dialog_Title,
-                    Messages.ERR_JNI_JDK_Not_Found);
+            // do nothing
         }
     }
 }

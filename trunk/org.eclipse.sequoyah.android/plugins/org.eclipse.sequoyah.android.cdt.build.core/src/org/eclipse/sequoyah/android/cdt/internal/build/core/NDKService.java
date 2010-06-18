@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.sequoyah.android.cdt.build.core.INDKService;
+import org.eclipse.sequoyah.android.cdt.build.core.NDKUtils;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -96,7 +97,7 @@ public class NDKService implements INDKService {
 				pdMgr.setProjectDescription(project, projDesc);
 				
 				// Create the source and output folders
-				IFolder sourceFolder = project.getFolder("jni");
+				IFolder sourceFolder = project.getFolder(NDKUtils.DEFAULT_JNI_FOLDER_NAME);
 				if (!sourceFolder.exists())
 					sourceFolder.create(true, true, monitor);
 				IPathEntry sourceEntry = CoreModel.newSourceEntry(sourceFolder.getFullPath());

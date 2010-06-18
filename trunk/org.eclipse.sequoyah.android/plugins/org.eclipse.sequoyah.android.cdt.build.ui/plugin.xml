@@ -40,6 +40,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+     		category="com.android.ide.eclipse.preferences.main"
             class="org.eclipse.sequoyah.android.cdt.internal.build.ui.NDKPreferencePage"
             id="org.eclipse.sequoyah.android.cdt.build.ui.NDKPreferencePage"
             name="%androidNDKPreferencesPageName">
@@ -51,6 +52,10 @@
             class="org.eclipse.sequoyah.android.cdt.internal.build.ui.NDKPropertyPage"
             id="org.eclipse.sequoyah.android.cdt.build.ui.NDKPropertiesPage"
             name="%androidNDKPropertiesPageName">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.core.cnature">
+       	 </filter>
       </page>
    </extension>
    <extension
@@ -81,23 +86,29 @@
       <template
             autoinsert="true"
             contextTypeId="java-members"
-            description="template that creates the basic functor for a ndk native call"
+           description="basic method declaration for native call"
             id="org.eclipse.sequoyah.android.nativeMethodTemplate"
             name="native method">
          <pattern>
-            ${visibility} native ${return_type} ${method_name}(${arguments});
+            /**
+* Native Method declaration stub. To generate the corresponding C code
+* choose &quot;Source &gt; Generate C  files from Java Class&quot; 
+*/
+${visibility} native ${returnType} ${methodName}(${arguments});
          </pattern>
       </template>
       <template
             autoinsert="true"
             contextTypeId="java-members"
-            description="Add an pre-compiled Android Native Lib"
+            description="Pre-compiled Android Native Lib loading statement"
             id="org.eclipse.sequoyah.android.nativeLibTemplate"
             name="load native lib">
          <pattern>
             static{
 
-	System.loadLibrary("${libName}");
+	//Native library linking directive. Change the libname to the native library name without the lib 
+	//prefix and the .so suffix
+ 	System.loadLibrary(&quot;${libName}&quot;);
 
 }
          </pattern>

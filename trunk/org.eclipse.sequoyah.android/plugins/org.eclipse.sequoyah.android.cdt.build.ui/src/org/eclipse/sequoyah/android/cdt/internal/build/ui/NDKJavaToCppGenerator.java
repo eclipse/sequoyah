@@ -3,10 +3,13 @@ package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +22,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -166,38 +170,37 @@ public class NDKJavaToCppGenerator
      * @throws CoreException 
      * @throws InterruptedException 
      */
-    public void generateCppSourceAndHeader()
+    public void generateCppSourceAndHeader(IProgressMonitor monitor)
     {
-        Display.getDefault().asyncExec(new Runnable()
+        try
         {
-            public void run()
+            if (monitor == null)
             {
-
-                try
-                {
-                    NullProgressMonitor monitor = new NullProgressMonitor();
-                    monitor.beginTask(Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_TASK_NAME, 3);
-                    monitor.setTaskName(Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_STEP0);
-                    generateHeader();
-                    monitor.worked(1);
-                    monitor.setTaskName(Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_STEP1);
-                    generateSource();
-                    monitor.worked(1);
-                    monitor.setTaskName(Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_STEP2);
-                    project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor,
-                            100));
-                    monitor.worked(1);
-                    monitor.done();
-                }
-                catch (Exception e)
-                {
-                    String title = Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_FILES_ERROR;
-                    MessageUtils.showErrorDialog(title, e.getLocalizedMessage());
-                    UIPlugin.log(title, e);
-                }
-
+                monitor = new NullProgressMonitor();
             }
-        });
+            monitor.beginTask(Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_TASK_NAME, 90);
+            monitor.setTaskName(Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_STEP0);
+            generateHeader();
+            monitor.worked(40);
+            monitor.setTaskName(Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_STEP1);
+            generateSource();
+            monitor.worked(40);
+            monitor.setTaskName(Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_STEP2);
+            project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 10));
+        }
+        catch (Exception e)
+        {
+            String title = Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_FILES_ERROR;
+            String message = e.getLocalizedMessage();
+            if (message == null || message.equals("")) {
+                message = Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_FILES_ERROR;
+            }
+            MessageUtils.showErrorDialog(title, message);
+            UIPlugin.log(title, e);
+        }
+
+        monitor.done();
+        
     }
 
     /**
@@ -232,7 +235,7 @@ public class NDKJavaToCppGenerator
      * @throws IOException
      * @throws InterruptedException 
      */
-    private void generateSource() throws IOException, InterruptedException
+    private void generateSource() throws IOException, InterruptedException, Exception
     {
         List<String> methodDeclarations = new ArrayList<String>();
         CSourceModel cModelIfWrittenIntoEmptyFile =
@@ -361,11 +364,37 @@ public class NDKJavaToCppGenerator
      * @throws IOException
      */
     private void copyAndAppendNewMethodsToSource(CSourceModel newMethodsModel, File cFile)
-            throws IOException
+            throws IOException, Exception
     {
+        // try to make copy of current file for backup purposes (but do not
+        // generate error in case this process fails; it is not essential)
+        boolean backupGenerated = false;
+        File backupFile = null;
+        try
+        {
+            backupFile = File.createTempFile(cFile.getName(), null);
+
+            // Getting file channels
+            FileChannel in = new FileInputStream(cFile).getChannel();
+            FileChannel out = new FileOutputStream(backupFile).getChannel();
+
+            // JavaVM does its best to do this as native I/O operations.
+            in.transferTo(0, in.size(), out);
+
+            // Closing file channels will close corresponding stream objects as well.
+            out.close();
+            in.close();
+            backupGenerated = true;
+        }
+        catch (Exception e)
+        {
+            // do nothing; only protect against errors
+        }
+
         //read current file 
         String currentFileText = "";
         BufferedReader reader = new BufferedReader(new FileReader(cFile));
+        BufferedWriter writer = null;
         try
         {
             String line = reader.readLine();
@@ -375,21 +404,11 @@ public class NDKJavaToCppGenerator
                 currentFileText += line + "\n";
                 line = reader.readLine();
             }
-        }
-        finally
-        {
-            if (reader != null)
-            {
-                reader.close();
-            }
-        }
 
-        //append new methods in the end
-        BufferedWriter writer = new BufferedWriter(new FileWriter(cFile));
-        writer.append(currentFileText);
-        String methodTemplate = "#returnType# #signature# ( #params# ) " + METHOD_BODY;
-        try
-        {
+            //append new methods in the end
+            writer = new BufferedWriter(new FileWriter(cFile));
+            writer.append(currentFileText);
+            String methodTemplate = "#returnType# #signature# ( #params# ) " + METHOD_BODY;
             if ((newMethodsModel != null) && (newMethodsModel.getMethods() != null))
             {
                 for (CSourceMethod method : newMethodsModel.getMethods())
@@ -426,12 +445,66 @@ public class NDKJavaToCppGenerator
                     writer.append(callMethod);
                 }
             }
+
+            // delete backup file, if it exists
+            if (backupFile != null && backupFile.exists())
+            {
+                try
+                {
+                    backupFile.delete();
+                }
+                catch (Exception ex)
+                {
+                    // do nothing; only protect against problems
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // recover backup file, if it exists
+            if (backupGenerated)
+            {
+                recoverBackupAfterError(backupFile, cFile);
+            }
+            throw e;
         }
         finally
         {
+            if (reader != null)
+            {
+                reader.close();
+            }
+
             if (writer != null)
             {
                 writer.close();
+            }
+        }
+    }
+    
+    private void recoverBackupAfterError(File backupFile, File originalFile)
+    {
+        if (backupFile != null && backupFile.exists())
+        {
+            try
+            {
+                // get file channels
+                FileChannel in = new FileInputStream(backupFile).getChannel();
+                FileChannel out = new FileOutputStream(originalFile).getChannel();
+
+                // JavaVM does its best to do this as native I/O operations.
+                in.transferTo(0, in.size(), out);
+
+                // closing file channels will close corresponding stream objects as well.
+                out.close();
+                in.close();
+
+                // delete backup file
+                backupFile.delete();
+            }
+            catch (Exception ex)
+            {
+                // do nothing; only protect against problems
             }
         }
     }

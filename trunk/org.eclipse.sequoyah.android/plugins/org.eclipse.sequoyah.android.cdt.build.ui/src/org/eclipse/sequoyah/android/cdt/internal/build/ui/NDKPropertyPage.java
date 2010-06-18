@@ -71,6 +71,7 @@ public class NDKPropertyPage extends PropertyPage implements IWorkbenchPropertyP
         //platform fields
         Label libraryLabel = new Label(auxComp, SWT.FILL);
         libraryLabel.setText("Native Library Name");
+        libraryLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
         libraryTxt = new Text(auxComp, SWT.FILL | SWT.BORDER);
         libraryTxt.setEditable(true);
         libraryTxt.setText(getInitialValue(INDKService.libName));
@@ -84,9 +85,7 @@ public class NDKPropertyPage extends PropertyPage implements IWorkbenchPropertyP
             libraryTxt.setEnabled(true);
         }
 
-        Label dummyLabel2 = new Label(auxComp, SWT.None);
-        dummyLabel2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 4, 1));
-
+        
         return main;
     }
 
