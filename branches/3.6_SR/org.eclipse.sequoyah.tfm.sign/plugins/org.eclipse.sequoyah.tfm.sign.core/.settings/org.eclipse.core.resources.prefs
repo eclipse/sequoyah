@@ -1,0 +1,5 @@
+#Tue Mar 09 14:30:16 AMT 2010
+eclipse.preferences.version=1
+encoding//src/org/eclipse/sequoyah/tfm/sign/core/SignCore.java=UTF-8
+encoding//src/org/eclipse/sequoyah/tfm/sign/core/extension/security/ISecurityManagement.java=UTF-8
+encoding//src/org/eclipse/sequoyah/tfm/sign/core/extension/IExtensionManager.java=UTF-8
