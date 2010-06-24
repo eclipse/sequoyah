@@ -16,6 +16,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.sequoyah.android.cdt.internal.build.ui.AddNativeProjectPage;
 
 /**
  * @author dschaefer
