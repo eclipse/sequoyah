@@ -31,6 +31,7 @@
          </visibility>
          <action
                class="org.eclipse.sequoyah.android.cdt.internal.build.ui.AddNativeSupport"
+               icon="icons/android_native_16x16.png"
                id="org.eclipse.sequoyah.android.cdt.build.ui.addNativeSupport"
                label="Add Native Support..."
                menubarPath="com.android.ide.eclipse.adt.AndroidTools/group4">
@@ -56,6 +57,20 @@
                name="nature"
                value="org.eclipse.cdt.core.cnature">
        	 </filter>
+       	 <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.eclipse.core.resources.IProject">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.jdt.internal.core.JavaProject">
+               </instanceof>
+            </or>
+         </enabledWhen>
+         <filter
+               name="nature"
+               value="com.android.ide.eclipse.adt.AndroidNature">
+         </filter>
       </page>
    </extension>
    <extension
@@ -120,6 +135,7 @@ ${visibility} native ${returnType} ${methodName}(${arguments});
             locationURI="popup:org.eclipse.jdt.ui.source.menu">
          <command
                commandId="org.eclipse.sequoyah.android.cdt.internal.build.ui.javatocppgenerator"
+               icon="icons/java_to_c_16x16.png"
                label="%androidNDKGenerateCSource"
                style="push">
             <visibleWhen
@@ -162,6 +178,7 @@ ${visibility} native ${returnType} ${methodName}(${arguments});
                label="&amp;Source">
             <command
                   commandId="org.eclipse.sequoyah.android.cdt.internal.build.ui.javatocppgenerator"
+                  icon="icons/java_to_c_16x16.png"
                   label="%androidNDKGenerateCSource"
                   style="push">
                <visibleWhen
@@ -206,6 +223,20 @@ ${visibility} native ${returnType} ${methodName}(${arguments});
             id="org.eclipse.sequoyah.android.cdt.internal.build.ui.javatocppgenerator"
             name="%androidNDKGenerateCSource">
       </command>
+      <command
+            defaultHandler="org.eclipse.sequoyah.android.cdt.internal.build.ui.NDKAddNativeSupportHandler"
+            id="org.eclipse.sequoyah.android.cdt.internal.build.ui.addNativeSupport"
+            name="%androidNDKAddNativeSupport">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.sequoyah.android.cdt.internal.build.ui.AndroidNativePerspective"
+            icon="icons/android_native_16x16.png"
+            id="org.eclipse.sequoyah.android.cdt.build.ui.perspective"
+            name="%androidNDKPerspectiveName">
+      </perspective>
    </extension>
 
 </plugin>

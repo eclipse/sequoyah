@@ -72,9 +72,13 @@ public class NDKJavaToCppGeneratorHandler extends AbstractHandler implements IHa
                     {
                         folderChosen = openDirectoryChooser(javaFile.getJavaProject().getProject());
                     }
-                    //if user do not select a folder, use the default (the java source folder)
-                    hasChosenOutputFolder = true;
-                    generateJniSourceFiles(folderChosen, javaFile);
+
+                    if (folderChosen != null)
+                    {
+                        //if user do not select a folder, use the default (the java source folder)
+                        hasChosenOutputFolder = true;
+                        generateJniSourceFiles(folderChosen, javaFile);
+                    }
                 }
             }
         }
@@ -91,10 +95,13 @@ public class NDKJavaToCppGeneratorHandler extends AbstractHandler implements IHa
                 {
                     folderChosen = openDirectoryChooser(javaFile.getJavaProject().getProject());
                 }
-                //if user do not select a folder, use the default (the java source folder)
-                hasChosenOutputFolder = true;
 
-                generateJniSourceFiles(folderChosen, javaFile);
+                if (folderChosen != null)
+                {
+                    //if user do not select a folder, use the default (the java source folder)
+                    hasChosenOutputFolder = true;
+                    generateJniSourceFiles(folderChosen, javaFile);
+                }
             }
         }
         return null;
@@ -120,7 +127,7 @@ public class NDKJavaToCppGeneratorHandler extends AbstractHandler implements IHa
 
         packageDialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
         packageDialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
-        
+
         if (project != null)
         {
             IResource jniFolder = project.findMember(NDKUtils.DEFAULT_JNI_FOLDER_NAME);
@@ -186,7 +193,7 @@ public class NDKJavaToCppGeneratorHandler extends AbstractHandler implements IHa
      * @param folderChosen
      * @param javaFile
      */
-    private void generateJniSourceFiles(final String folderChosen,final ICompilationUnit javaFile)
+    private void generateJniSourceFiles(final String folderChosen, final ICompilationUnit javaFile)
     {
         // Use the progess service to execute the runnable
         IProgressService service = PlatformUI.getWorkbench().getProgressService();

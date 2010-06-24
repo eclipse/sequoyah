@@ -1,6 +1,11 @@
 package org.eclipse.sequoyah.android.cdt.build.core;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -15,6 +20,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -28,7 +34,21 @@ import org.eclipse.sequoyah.android.cdt.internal.build.core.TemplatedInputStream
  */
 public class NDKUtils
 {
+    /**
+     * The default name of the JNI folder.
+     */
     public static final String DEFAULT_JNI_FOLDER_NAME = "jni";
+
+    /**
+     * The default name of the makefile.
+     */
+    public static final String MAKEFILE_FILE_NAME = "Android.mk";
+
+    private static final String MAKEFILE_SOURCE_FILES_VARIABLE = "LOCAL_SRC_FILES :=";
+
+    private static final String MAKEFILE_SOURCE_FILES_SEPARATOR = " ";
+
+    private static final String MAKEFINE_NEW_LINE = "\n";
 
     /**
      * Auxiliary method to set the NDK location in the Sequoyah framework
@@ -129,6 +149,79 @@ public class NDKUtils
         catch (CoreException e)
         {
             CorePlugin.getDefault().getLog().log(e.getStatus());
+        }
+    }
+
+    /**
+     * Adds the given source file name to the list of source files on
+     * the given makefile.
+     * This implementation assumes there is only one list of source files
+     * on the makefile.
+     * 
+     * @param makefile The makefile to have the source files list updated
+     * @param srcFileName The name of the new source file
+     * 
+     * @throws IOException If any problem occurs reading/writing the makefile
+     */
+    public static void addSourceFileToMakefile(IResource makefile, String srcFileName)
+            throws IOException
+    {
+        IPath makefilePath = makefile.getLocation();
+        File makefileFile = makefilePath.toFile();
+
+        StringBuilder sb = new StringBuilder();
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
+        try
+        {
+            // read from original makefile
+            reader = new BufferedReader(new FileReader(makefileFile));
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+                if (line.startsWith(MAKEFILE_SOURCE_FILES_VARIABLE))
+                {
+                    // append given source file name to the list of source files
+                    line = line.concat(MAKEFILE_SOURCE_FILES_SEPARATOR + srcFileName);
+                }
+                sb.append(line + MAKEFINE_NEW_LINE);
+            }
+        }
+        finally
+        {
+            try
+            {
+                if (reader != null)
+                {
+                    reader.close();
+                }
+            }
+            catch (IOException e)
+            {
+                // do nothing; only prevent errors
+            }
+        }
+
+        try
+        {
+            // write new content to makefile
+            String fileText = sb.toString();
+            writer = new BufferedWriter(new FileWriter(makefileFile));
+            writer.write(fileText);
+        }
+        finally
+        {
+            try
+            {
+                if (writer != null)
+                {
+                    writer.close();
+                }
+            }
+            catch (IOException e)
+            {
+                // do nothing; only prevent errors
+            }
         }
     }
 }
