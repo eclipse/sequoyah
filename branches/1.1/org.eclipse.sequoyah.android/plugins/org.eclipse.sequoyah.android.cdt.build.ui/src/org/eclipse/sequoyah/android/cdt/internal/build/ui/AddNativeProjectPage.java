@@ -1,10 +1,4 @@
-﻿/**
- * Contributors
- * 
- * Carlos Alberto Souto Junior - Initial contribution
- * 
- */
-package org.eclipse.sequoyah.android.cdt.internal.build.ui;
+﻿package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
