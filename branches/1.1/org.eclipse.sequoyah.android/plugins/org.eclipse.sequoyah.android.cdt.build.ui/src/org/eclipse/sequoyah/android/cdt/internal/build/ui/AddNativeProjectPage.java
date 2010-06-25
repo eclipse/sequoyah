@@ -1,6 +1,8 @@
 ﻿/**
- * Contributors:
- * Carlos Alberto Souto Junior - Initial Version
+ * Contributors
+ * 
+ * Carlos Alberto Souto Junior - Initial contribution
+ * 
  */
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
