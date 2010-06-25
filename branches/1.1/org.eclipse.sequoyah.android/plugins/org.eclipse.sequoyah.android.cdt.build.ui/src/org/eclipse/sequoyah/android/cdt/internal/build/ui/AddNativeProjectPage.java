@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Contributors:
  * Carlos Alberto Souto Junior - Initial Version
  */
