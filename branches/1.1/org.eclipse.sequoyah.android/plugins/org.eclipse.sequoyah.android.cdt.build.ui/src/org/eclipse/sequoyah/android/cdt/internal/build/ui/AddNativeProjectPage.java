@@ -69,14 +69,14 @@ public class AddNativeProjectPage extends WizardPage
 
     private String projectName;
 
-    public AddNativeProjectPage2(String projectName, boolean isNewProjectWizardPage)
+    public AddNativeProjectPage(String projectName, boolean isNewProjectWizardPage)
     {
         this(isNewProjectWizardPage);
         this.projectName = projectName;
         this.libName = projectName;
     }
 
-    public AddNativeProjectPage2(boolean isNewProjectWizardPage)
+    public AddNativeProjectPage(boolean isNewProjectWizardPage)
     {
         super("native_page"); //$NON-NLS-1$
         setTitle(Messages.AddNativeProjectPage_native_page_title);
