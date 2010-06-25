@@ -1,4 +1,11 @@
-﻿package org.eclipse.sequoyah.android.cdt.internal.build.ui;
+/**
+ * Contributors
+ * 
+ * Carlos Alberto Souto Junior - Initial contributor
+ * 
+ */
+
+package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -37,7 +44,7 @@ import org.eclipse.ui.WorkbenchException;
  * @author dschaefer
  *
  */
-public class AddNativeProjectPage extends WizardPage
+public class AddNativeProjectPage2 extends WizardPage
 {
     private final String ANDROID_NATIVE_PERSPECTIVE_ID =
             "org.eclipse.sequoyah.android.cdt.build.ui.perspective";
@@ -62,14 +69,14 @@ public class AddNativeProjectPage extends WizardPage
 
     private String projectName;
 
-    public AddNativeProjectPage(String projectName, boolean isNewProjectWizardPage)
+    public AddNativeProjectPage2(String projectName, boolean isNewProjectWizardPage)
     {
         this(isNewProjectWizardPage);
         this.projectName = projectName;
         this.libName = projectName;
     }
 
-    public AddNativeProjectPage(boolean isNewProjectWizardPage)
+    public AddNativeProjectPage2(boolean isNewProjectWizardPage)
     {
         super("native_page"); //$NON-NLS-1$
         setTitle(Messages.AddNativeProjectPage_native_page_title);

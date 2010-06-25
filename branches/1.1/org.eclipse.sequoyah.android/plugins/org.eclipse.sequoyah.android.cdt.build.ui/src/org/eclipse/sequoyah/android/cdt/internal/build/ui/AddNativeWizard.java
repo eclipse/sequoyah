@@ -16,7 +16,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.sequoyah.android.cdt.internal.build.ui.AddNativeProjectPage;
+import org.eclipse.sequoyah.android.cdt.internal.build.ui.AddNativeProjectPage2;
 
 /**
  * @author dschaefer
@@ -33,7 +33,7 @@ public class AddNativeWizard extends Wizard
 
     private final IProject project;
 
-    private AddNativeProjectPage projectPage;
+    private AddNativeProjectPage2 projectPage;
 
     public AddNativeWizard(IWorkbenchWindow window, IProject project)
     {
@@ -59,7 +59,7 @@ public class AddNativeWizard extends Wizard
     @Override
     public void addPages()
     {
-        projectPage = new AddNativeProjectPage(project == null ? null : project.getName(), false);
+        projectPage = new AddNativeProjectPage2(project == null ? null : project.getName(), false);
         addPage(projectPage);
     }
 
