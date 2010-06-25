@@ -44,7 +44,7 @@ import org.eclipse.ui.WorkbenchException;
  * @author dschaefer
  *
  */
-public class AddNativeProjectPage2 extends WizardPage
+public class AddNativeProjectPage extends WizardPage
 {
     private final String ANDROID_NATIVE_PERSPECTIVE_ID =
             "org.eclipse.sequoyah.android.cdt.build.ui.perspective";
