@@ -258,7 +258,7 @@ public class AddNativeProjectPage extends WizardPage
             // get the project Name
             String projectName = projectChooser.getText();
 
-            // validate project's name
+            // validate project name
             IStatus status = getProjectStatus(projectName);
             // add status to the list and check for error status, in case there is any
             if (status != null)
