@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.sequoyah.android.cdt.build.core.NDKUtils;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -159,8 +160,9 @@ public class NDKJavaToCppGenerator
 
     private void messageWhenJavaSdkNotFound()
     {
-        UIPlugin
-                .log(IStatus.ERROR, "Java SDK not found. It is required to run application to generate C source and header based on Java class");
+        UIPlugin.log(
+                IStatus.ERROR,
+                "Java SDK not found. It is required to run application to generate C source and header based on Java class");
     }
 
     /**
@@ -192,7 +194,8 @@ public class NDKJavaToCppGenerator
         {
             String title = Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_FILES_ERROR;
             String message = e.getLocalizedMessage();
-            if (message == null || message.equals("")) {
+            if (message == null || message.equals(""))
+            {
                 message = Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_FILES_ERROR;
             }
             MessageUtils.showErrorDialog(title, message);
@@ -200,7 +203,7 @@ public class NDKJavaToCppGenerator
         }
 
         monitor.done();
-        
+
     }
 
     /**
@@ -255,7 +258,15 @@ public class NDKJavaToCppGenerator
         else
         {
             writeSource(methodDeclarations, cFile);
+
+            // add new source file to makefile
+            IResource makefileRes = project.findMember(NDKUtils.DEFAULT_JNI_FOLDER_NAME + "/" + NDKUtils.MAKEFILE_FILE_NAME);
+            if (makefileRes != null)
+            {
+                NDKUtils.addSourceFileToMakefile(makefileRes, cFile.getName());
+            }
         }
+
         MessageUtils
                 .showInformationDialog(
                         Messages.JNI_SOURCE_HEADER_CREATION_MONITOR_FILES_SUCCESSFULLY_CREATED,
@@ -337,8 +348,14 @@ public class NDKJavaToCppGenerator
                             }
                             else
                             {
-                                UIPlugin.log(IStatus.WARNING, "Method does not have right parameter type: "
-                                        + parameterTypeAndName);
+
+
+
+
+                                UIPlugin.log(IStatus.WARNING,
+                                        "Method does not have right parameter type: "
+                                                + parameterTypeAndName);
+
                             }
                         }
                         model.getMethods().add(method);
@@ -405,10 +422,20 @@ public class NDKJavaToCppGenerator
                 line = reader.readLine();
             }
 
+
+
+
+
+
+
+
+
             //append new methods in the end
             writer = new BufferedWriter(new FileWriter(cFile));
             writer.append(currentFileText);
             String methodTemplate = "#returnType# #signature# ( #params# ) " + METHOD_BODY;
+
+
             if ((newMethodsModel != null) && (newMethodsModel.getMethods() != null))
             {
                 for (CSourceMethod method : newMethodsModel.getMethods())
@@ -481,7 +508,9 @@ public class NDKJavaToCppGenerator
             }
         }
     }
-    
+
+
+
     private void recoverBackupAfterError(File backupFile, File originalFile)
     {
         if (backupFile != null && backupFile.exists())
@@ -508,6 +537,7 @@ public class NDKJavaToCppGenerator
             }
         }
     }
+
 
     /**
      * Writes source file
@@ -742,6 +772,7 @@ public class NDKJavaToCppGenerator
                 }
                 UIPlugin.log(IStatus.INFO, "Executing cmd:" + cmd);
 
+
                 try
                 {
                     Runtime.getRuntime().exec(cmd);
@@ -750,6 +781,7 @@ public class NDKJavaToCppGenerator
                 {
                     result = false;
                     UIPlugin.log("Error while checking for JDK existence.", e);
+
                 }
 
             }

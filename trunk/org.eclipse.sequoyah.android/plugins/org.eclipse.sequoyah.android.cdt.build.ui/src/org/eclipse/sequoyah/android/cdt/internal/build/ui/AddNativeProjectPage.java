@@ -1,16 +1,23 @@
 /**
- * Contributors:
- * Carlos Alberto Souto Junior - Initial Version
+ * Contributors
+ * 
+ * Carlos Alberto Souto Junior - Initial contributor
+ * 
  */
+
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -19,6 +26,8 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.sequoyah.android.cdt.build.core.INDKService;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -37,11 +46,12 @@ import org.eclipse.ui.WorkbenchException;
  */
 public class AddNativeProjectPage extends WizardPage
 {
+    private final String ANDROID_NATIVE_PERSPECTIVE_ID =
+            "org.eclipse.sequoyah.android.cdt.build.ui.perspective";
 
     @Override
     public boolean canFlipToNextPage()
     {
-
         return false;
     }
 
@@ -49,16 +59,21 @@ public class AddNativeProjectPage extends WizardPage
 
     private Link setNDKLocationLink;
 
+    private ProjectChooser projectChooser;
+
     private Text location;
 
     private Text libraryText;
 
     boolean isNewProjectWizardPage = false;
 
-    public AddNativeProjectPage(String libraryName, boolean isNewProjectWizardPage)
+    private String projectName;
+
+    public AddNativeProjectPage(String projectName, boolean isNewProjectWizardPage)
     {
         this(isNewProjectWizardPage);
-        this.libName = libraryName;
+        this.projectName = projectName;
+        this.libName = projectName;
     }
 
     public AddNativeProjectPage(boolean isNewProjectWizardPage)
@@ -66,7 +81,6 @@ public class AddNativeProjectPage extends WizardPage
         super("native_page"); //$NON-NLS-1$
         setTitle(Messages.AddNativeProjectPage_native_page_title);
         setDescription(Messages.AddNativeProjectPage_native_page_description);
-
         this.isNewProjectWizardPage = isNewProjectWizardPage;
     }
 
@@ -77,10 +91,61 @@ public class AddNativeProjectPage extends WizardPage
         comp.setLayout(layout);
         comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+        if (!isNewProjectWizardPage)
+        {
+            addProjectChooser(comp);
+            projectChooser.setText(projectName == null ? "" : projectName);
+        }
         addNDKLocation(comp);
         addLibraryName(comp);
 
+        addListeners();
+
         setControl(comp);
+    }
+
+    ModifyListener listener = new ModifyListener()
+    {
+        public void modifyText(ModifyEvent e)
+        {
+            if (!isProjectValid())
+            {
+                setErrorMessage(Messages.AddNativeProjectPage_project_invalid_msg);
+            }
+            else if (!isNDKLocationValid())
+            {
+                setErrorMessage(Messages.AddNativeProjectPage_ndk_invalid_path_msg);
+            }
+            else if (!isLibraryNameValid())
+            {
+                setErrorMessage(Messages.AddNativeProjectPage_empty_library_name_msg);
+            }
+            else
+            {
+                setErrorMessage(null);
+            }
+            getWizard().getContainer().updateButtons();
+
+        }
+    };
+
+    private void addListeners()
+    {
+        if (!isNewProjectWizardPage)
+        {
+            projectChooser.addModifyListener(listener);
+        }
+        location.addModifyListener(listener);
+        libraryText.addModifyListener(listener);
+    }
+
+    private void addProjectChooser(Composite comp)
+    {
+        Group projectGroup = new Group(comp, SWT.NONE);
+        projectGroup.setText(Messages.AddNativeProjectPage_project_group_text);
+        projectGroup.setLayout(new GridLayout());
+        projectGroup.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+        projectChooser = new ProjectChooser(projectGroup, SWT.FILL);
     }
 
     private void addNDKLocation(Composite parent)
@@ -137,20 +202,6 @@ public class AddNativeProjectPage extends WizardPage
                                         UIPlugin.NDK_LOCATION_PREFERENCE);
                         location.setText(path);
                         location.update();
-
-                        if (!isNDKLocationValid())
-                        {
-                            setErrorMessage(Messages.AddNativeProjectPage_ndk_invalid_path_msg);
-                        }
-                        else if (!isLibraryNameValid())
-                        {
-                            setErrorMessage(Messages.AddNativeProjectPage_empty_library_name_msg);
-                        }
-                        else
-                        {
-                            setErrorMessage(null);
-                        }
-                        getWizard().getContainer().updateButtons();
                     }
                 });
             }
@@ -172,32 +223,7 @@ public class AddNativeProjectPage extends WizardPage
 
         libraryText = new Text(group, SWT.BORDER);
         libraryText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        libraryText.setText(libName);
-
-        if (!isLibraryNameValid())
-        {
-            setErrorMessage(Messages.AddNativeProjectPage_empty_library_name_msg);
-        }
-
-        libraryText.addListener(SWT.Modify, new Listener()
-        {
-            public void handleEvent(Event event)
-            {
-                if (!isLibraryNameValid())
-                {
-                    setErrorMessage(Messages.AddNativeProjectPage_empty_library_name_msg);
-                }
-                else if (!isNDKLocationValid())
-                {
-                    setErrorMessage(Messages.AddNativeProjectPage_ndk_invalid_path_msg);
-                }
-                else
-                {
-                    setErrorMessage(null);
-                }
-                getWizard().getContainer().updateButtons();
-            }
-        });
+        libraryText.setText(libName == null ? "" : libName);
     }
 
     public String getLibraryName()
@@ -218,12 +244,57 @@ public class AddNativeProjectPage extends WizardPage
     {
         boolean isComplete = false;
 
-        if (isNDKLocationValid() && isLibraryNameValid())
+        if (isNDKLocationValid() && isLibraryNameValid() && isProjectValid())
         {
             isComplete = true;
         }
 
         return isComplete;
+    }
+
+    public boolean isProjectValid()
+    {
+        boolean isValid = true;
+
+        if (projectChooser != null)
+        {
+            // get the project Name
+            String projectName = projectChooser.getText();
+
+            // validate project name
+            IStatus status = getProjectStatus(projectName);
+            // add status to the list and check for error status, in case there is any
+            if (status != null)
+            {
+                if (status.getSeverity() == IStatus.ERROR)
+                {
+                    isValid = false;
+                }
+            }
+        }
+
+        return isValid;
+    }
+
+    private IStatus getProjectStatus(String projectName)
+    {
+        IStatus status = null;
+
+        if ((projectName == null) || (projectName.length() == 0))
+        {
+            // there must be a selected project
+            status = new Status(IStatus.ERROR, UIPlugin.PLUGIN_ID, "");
+        }
+        else
+        {
+            IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+            if (!project.exists())
+            {
+                status = new Status(IStatus.ERROR, UIPlugin.PLUGIN_ID, "");
+            }
+        }
+
+        return status;
     }
 
     public boolean isNDKLocationValid()
@@ -257,6 +328,11 @@ public class AddNativeProjectPage extends WizardPage
 
     public boolean performFinish(IWorkbenchWindow window, IProject project, IProgressMonitor monitor)
     {
+        if (project == null)
+        {
+            project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectChooser.getText());
+        }
+
         boolean success = true;
         try
         {
@@ -264,14 +340,14 @@ public class AddNativeProjectPage extends WizardPage
             SubMonitor subMonitor = SubMonitor.convert(monitor, 10);
 
             subMonitor.beginTask(Messages.AddNativeProjectPage__Message_AddingNativeSupport, 10);
-            
+
             // Switch to the C perspective
 
             // Grab the data from the pages
             final String libraryName = getLibraryName();
 
             subMonitor.worked(2);
-            
+
             // Save the NDK location
             INDKService ndkService = UIPlugin.getService(INDKService.class);
             subMonitor.worked(1);
@@ -282,12 +358,16 @@ public class AddNativeProjectPage extends WizardPage
             {
                 // Add the native support
                 ndkService.addNativeSupport(project, libraryName);
-                if (MessageDialog.openQuestion(getShell(),
-                        Messages.AddNativeProjectPage_ChangePerspectiveDialogTitle,
-                        Messages.AddNativeProjectPage_ChangePerspectiveDialogQuestion))
+                if (!window.getActivePage().getPerspective().getId()
+                        .equals(ANDROID_NATIVE_PERSPECTIVE_ID))
                 {
-                    window.getWorkbench()
-                            .showPerspective("org.eclipse.cdt.ui.CPerspective", window); //$NON-NLS-1 //$NON-NLS-1$ //$NON-NLS-1$
+                    if (MessageDialog.openQuestion(getShell(),
+                            Messages.AddNativeProjectPage_ChangePerspectiveDialogTitle,
+                            Messages.AddNativeProjectPage_ChangePerspectiveDialogQuestion))
+                    {
+                        window.getWorkbench().showPerspective(ANDROID_NATIVE_PERSPECTIVE_ID,
+                                PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+                    }
                 }
             }
             try
@@ -295,13 +375,24 @@ public class AddNativeProjectPage extends WizardPage
                 project.setPersistentProperty(INDKService.libName, libraryName);
                 IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
                 IConfiguration configs[] = buildInfo.getManagedProject().getConfigurations();
-                
+
+                configs[0].setCleanCommand("");
+
+                configs[0].getBuilder().setAutoBuildEnable(true);
+                configs[0].getBuilder().setCleanBuildEnable(false);
+                configs[0].getBuilder().setIncrementalBuildTarget("-B");
+                configs[0].getBuilder().setCleanBuildTarget("");
+
+                IWorkspaceDescription desc = project.getWorkspace().getDescription();
+                desc.setAutoBuilding(true);
+
+                project.getWorkspace().setDescription(desc);
+
                 if (Platform.getOS().equals(Platform.OS_WIN32))
                 {
                     configs[0].setBuildCommand("bash " + getNDKLocation() + "\\ndk-build"); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 subMonitor.worked(1);
-
 
             }
             catch (CoreException e)

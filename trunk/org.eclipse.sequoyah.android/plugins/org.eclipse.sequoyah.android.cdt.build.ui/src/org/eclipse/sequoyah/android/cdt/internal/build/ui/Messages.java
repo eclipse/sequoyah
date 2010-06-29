@@ -12,7 +12,7 @@ public class Messages extends NLS
     public static String AddNativeProjectPage_ChangePerspectiveDialogQuestion;
 
     public static String AddNativeProjectPage_ChangePerspectiveDialogTitle;
-    
+
     public static String AddNativeProjectPage_empty_library_name_msg;
 
     public static String AddNativeProjectPage_library_name_group_text;
@@ -27,8 +27,12 @@ public class Messages extends NLS
 
     public static String AddNativeProjectPage_ndk_preference_link_text;
 
+    public static String AddNativeProjectPage_project_group_text;
+
+    public static String AddNativeProjectPage_project_invalid_msg;
+
     public static String AddNativeWizard__Message_UnexpectedErrorWhileAddingNativeSupport;
-    
+
     public static String AddNativeWizard_native_wizard_title;
 
     public static String NDKCompletionProposal_QuickFixProposal0;
@@ -40,7 +44,7 @@ public class Messages extends NLS
     public static String NDKPreferencePage_NDK_location;
 
     public static String JNI_C_FILES_CREATION_MONITOR_TASK_NAME;
-    
+
     public static String JNI_SOURCE_HEADER_CREATION_MONITOR_TASK_NAME;
 
     public static String JNI_SOURCE_HEADER_CREATION_MONITOR_STEP0;
@@ -68,10 +72,18 @@ public class Messages extends NLS
     public static String ERR_JNI_JDK_Not_Found;
 
     public static String ERR_JNI_JDK_Not_Found_Dialog_Title;
-    
+
     public static String AddNativeProjectAction_InvalidProjectLocation_Title;
-    
+
     public static String AddNativeProjectAction_InvalidProjectLocation_Message;
+
+    public static String PROJECTCHOOSER_TITLE;
+
+    public static String PROJECTCHOOSER_MESSAGE;
+
+    public static String PROJECTCHOOSER_PROJECT_LABEL;
+
+    public static String PROJECTCHOOSER_BROWSE_BUTTON;
 
     static
     {

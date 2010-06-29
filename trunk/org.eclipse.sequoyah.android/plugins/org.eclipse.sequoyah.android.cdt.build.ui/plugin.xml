@@ -31,6 +31,7 @@
          </visibility>
          <action
                class="org.eclipse.sequoyah.android.cdt.internal.build.ui.AddNativeSupport"
+               icon="icons/android_native_16x16.png"
                id="org.eclipse.sequoyah.android.cdt.build.ui.addNativeSupport"
                label="Add Native Support..."
                menubarPath="com.android.ide.eclipse.adt.AndroidTools/group4">
@@ -40,7 +41,6 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-     		category="com.android.ide.eclipse.preferences.main"
             class="org.eclipse.sequoyah.android.cdt.internal.build.ui.NDKPreferencePage"
             id="org.eclipse.sequoyah.android.cdt.build.ui.NDKPreferencePage"
             name="%androidNDKPreferencesPageName">
@@ -52,10 +52,20 @@
             class="org.eclipse.sequoyah.android.cdt.internal.build.ui.NDKPropertyPage"
             id="org.eclipse.sequoyah.android.cdt.build.ui.NDKPropertiesPage"
             name="%androidNDKPropertiesPageName">
+       	 <enabledWhen>
+            <or>
+               <instanceof
+                     value="org.eclipse.core.resources.IProject">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.jdt.internal.core.JavaProject">
+               </instanceof>
+            </or>
+         </enabledWhen>
          <filter
                name="nature"
-               value="org.eclipse.cdt.core.cnature">
-       	 </filter>
+               value="com.android.ide.eclipse.adt.AndroidNature">
+         </filter>
       </page>
    </extension>
    <extension
@@ -86,29 +96,23 @@
       <template
             autoinsert="true"
             contextTypeId="java-members"
-           description="basic method declaration for native call"
+            description="template that creates the basic functor for a ndk native call"
             id="org.eclipse.sequoyah.android.nativeMethodTemplate"
             name="native method">
          <pattern>
-            /**
-* Native Method declaration stub. To generate the corresponding C code
-* choose &quot;Source &gt; Generate C  files from Java Class&quot; 
-*/
-${visibility} native ${returnType} ${methodName}(${arguments});
+            ${visibility} native ${return_type} ${method_name}(${arguments});
          </pattern>
       </template>
       <template
             autoinsert="true"
             contextTypeId="java-members"
-            description="Pre-compiled Android Native Lib loading statement"
+            description="Add an pre-compiled Android Native Lib"
             id="org.eclipse.sequoyah.android.nativeLibTemplate"
             name="load native lib">
          <pattern>
             static{
 
-	//Native library linking directive. Change the libname to the native library name without the lib 
-	//prefix and the .so suffix
- 	System.loadLibrary(&quot;${libName}&quot;);
+	System.loadLibrary("${libName}");
 
 }
          </pattern>
@@ -120,6 +124,7 @@ ${visibility} native ${returnType} ${methodName}(${arguments});
             locationURI="popup:org.eclipse.jdt.ui.source.menu">
          <command
                commandId="org.eclipse.sequoyah.android.cdt.internal.build.ui.javatocppgenerator"
+               icon="icons/java_to_c_16x16.png"
                label="%androidNDKGenerateCSource"
                style="push">
             <visibleWhen
@@ -162,6 +167,7 @@ ${visibility} native ${returnType} ${methodName}(${arguments});
                label="&amp;Source">
             <command
                   commandId="org.eclipse.sequoyah.android.cdt.internal.build.ui.javatocppgenerator"
+                  icon="icons/java_to_c_16x16.png"
                   label="%androidNDKGenerateCSource"
                   style="push">
                <visibleWhen
@@ -206,6 +212,20 @@ ${visibility} native ${returnType} ${methodName}(${arguments});
             id="org.eclipse.sequoyah.android.cdt.internal.build.ui.javatocppgenerator"
             name="%androidNDKGenerateCSource">
       </command>
+      <command
+            defaultHandler="org.eclipse.sequoyah.android.cdt.internal.build.ui.NDKAddNativeSupportHandler"
+            id="org.eclipse.sequoyah.android.cdt.internal.build.ui.addNativeSupport"
+            name="%androidNDKAddNativeSupport">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.sequoyah.android.cdt.internal.build.ui.AndroidNativePerspective"
+            icon="icons/android_native_16x16.png"
+            id="org.eclipse.sequoyah.android.cdt.build.ui.perspective"
+            name="%androidNDKPerspectiveName">
+      </perspective>
    </extension>
 
 </plugin>

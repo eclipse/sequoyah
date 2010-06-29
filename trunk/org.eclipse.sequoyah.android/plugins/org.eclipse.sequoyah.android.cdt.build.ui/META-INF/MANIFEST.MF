@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.sequoyah.android.cdt.build.ui;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.1.qualifier
 Bundle-Activator: org.eclipse.sequoyah.android.cdt.internal.build.ui.UIPlugin
 Bundle-Vendor: %provider
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",

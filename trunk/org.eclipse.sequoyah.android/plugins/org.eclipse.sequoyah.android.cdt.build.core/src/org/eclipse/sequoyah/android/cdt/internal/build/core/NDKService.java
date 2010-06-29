@@ -33,6 +33,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -128,11 +129,11 @@ public class NDKService implements INDKService {
 					Map<String, String> map = new HashMap<String, String>();
 					map.put("lib", libraryName);
 					
-					URL makefileURL = CorePlugin.getFile(new Path("templates/Android.mk"));
+					URL makefileURL = CorePlugin.getFile(new Path("templates/" + NDKUtils.MAKEFILE_FILE_NAME));
 					InputStream makefileIn = makefileURL.openStream();
 					InputStream templateIn = new TemplatedInputStream(makefileIn, map);
 
-					IFile makefile = sourceFolder.getFile("Android.mk");
+					IFile makefile = sourceFolder.getFile(NDKUtils.MAKEFILE_FILE_NAME);
 					if (!makefile.exists()) {
 						makefile.create(templateIn, true, monitor);
 					
@@ -143,6 +144,11 @@ public class NDKService implements INDKService {
 						IFile srcFile = sourceFolder.getFile(libraryName + ".cpp");
 						if (!srcFile.exists())
 							srcFile.create(srcIn, true, monitor);
+						
+						NDKUtils.addSourceFileToMakefile(makefile, srcFile.getName());
+						
+						// refresh project resources
+						project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 10));
 					}
 				} catch (IOException e) {
 					throw new CoreException(new Status(IStatus.ERROR, CorePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
