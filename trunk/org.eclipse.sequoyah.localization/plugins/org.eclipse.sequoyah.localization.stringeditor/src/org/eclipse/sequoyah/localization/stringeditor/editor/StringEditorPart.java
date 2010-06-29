@@ -237,8 +237,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 		@Override
 		protected Object getValue(Object element) {
 			CellInfo info = ((RowInfo) element).getCells().get(columnID);
-			return (info != null && info.getValue() != null) ? info.getValue()
-					: ""; //$NON-NLS-1$
+			return ((info != null) && (info.getValue() != null)) ? info
+					.getValue() : ""; //$NON-NLS-1$
 		}
 
 		/*
@@ -273,11 +273,11 @@ public class StringEditorPart extends MultiPageEditorPart {
 					/*
 					 * Our old cell is different from our new one
 					 */
-					if ((oldCell.getValue() != null && !oldCell.getValue()
+					if (((oldCell.getValue() != null) && !oldCell.getValue()
 							.equals(value.toString()))
 							|| (oldCell.getValue() == null)) {
-						newCell = new CellInfo(value.toString(), oldCell
-								.getComment());
+						newCell = new CellInfo(value.toString(),
+								oldCell.getComment());
 					}
 				} else {
 					newCell = new CellInfo(value.toString(), null);
@@ -289,8 +289,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 			}
 			if (newCell != null) {
 				newCell.setDirty(true);
-				EditCellOperation operation = new EditCellOperation(theRow
-						.getKey(), columnID, oldCell, newCell,
+				EditCellOperation operation = new EditCellOperation(
+						theRow.getKey(), columnID, oldCell, newCell,
 						StringEditorPart.this);
 				executeOperation(operation);
 			}
@@ -315,14 +315,13 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 			if (newColumnInfo != null) {
 				try {
-					PlatformUI.getWorkbench().getProgressService().run(false,
-							false, new IRunnableWithProgress() {
+					PlatformUI.getWorkbench().getProgressService()
+							.run(false, false, new IRunnableWithProgress() {
 								public void run(IProgressMonitor monitor)
 										throws InvocationTargetException,
 										InterruptedException {
 
-									monitor
-											.setTaskName(Messages.TranslationProgress_Connecting);
+									monitor.setTaskName(Messages.TranslationProgress_Connecting);
 
 									TableColumn originalColumn = getEditorViewer()
 											.getTable().getColumn(activeColumn);
@@ -401,26 +400,26 @@ public class StringEditorPart extends MultiPageEditorPart {
 				selectedCellsText[i] = cellInfo.getValue();
 			}
 
-			String selectedCellText = activeRow.getViewerRow().getCell(
-					activeColumn).getText();
+			String selectedCellText = activeRow.getViewerRow()
+					.getCell(activeColumn).getText();
 			TableColumn[] tableColumns = getEditorViewer().getTable()
 					.getColumns();
 
 			final TranslationInfo[] newColumnsInfo = StringEditorPart.this
-					.getContentProvider().getOperationProvider()
+					.getContentProvider()
+					.getOperationProvider()
 					.getTranslatedColumnsInfo(originalColumn.getText(),
 							selectedKeysText, selectedCellsText, tableColumns);
 
 			if (newColumnsInfo != null) {
 				try {
-					PlatformUI.getWorkbench().getProgressService().run(false,
-							false, new IRunnableWithProgress() {
+					PlatformUI.getWorkbench().getProgressService()
+							.run(false, false, new IRunnableWithProgress() {
 								public void run(IProgressMonitor monitor)
 										throws InvocationTargetException,
 										InterruptedException {
 
-									monitor
-											.setTaskName(Messages.TranslationProgress_Connecting);
+									monitor.setTaskName(Messages.TranslationProgress_Connecting);
 
 									TableColumn originalColumn = getEditorViewer()
 											.getTable().getColumn(activeColumn);
@@ -504,8 +503,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 	class RevertToSavedAction extends Action {
 		public RevertToSavedAction() {
 			super(Messages.StringEditorPart_RevertColumnActionName);
-			this
-					.setToolTipText(Messages.StringEditorPart_RevertColumnActionTooltip);
+			this.setToolTipText(Messages.StringEditorPart_RevertColumnActionTooltip);
 			this.setEnabled(activeColumn != 0);
 		}
 
@@ -594,10 +592,9 @@ public class StringEditorPart extends MultiPageEditorPart {
 							.openInformation(
 									getEditorSite().getShell(),
 									Messages.StringEditorPart_ColumnAlreadyExistTitle,
-									NLS
-											.bind(
-													Messages.StringEditorPart_ColumnAlreadyExistMessage,
-													info.getId()));
+									NLS.bind(
+											Messages.StringEditorPart_ColumnAlreadyExistMessage,
+											info.getId()));
 				}
 			}
 		}
@@ -610,12 +607,11 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 		public RemoveColumnAction() {
 			super(Messages.StringEditorPart_RemoveColumnActionName);
-			String activeColumnID = getEditorViewer().getTable().getColumn(
-					activeColumn).getText();
-			this
-					.setEnabled(activeColumn != 0
-							&& (getModel().getColumn(activeColumnID) != null && getModel()
-									.getColumn(activeColumnID).canRemove()));
+			String activeColumnID = getEditorViewer().getTable()
+					.getColumn(activeColumn).getText();
+			this.setEnabled((activeColumn != 0)
+					&& ((getModel().getColumn(activeColumnID) != null) && getModel()
+							.getColumn(activeColumnID).canRemove()));
 		}
 
 		@Override
@@ -698,7 +694,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 		public void run() {
 			ISelection sel = viewer.getSelection();
 			List<RowInfo> toBeDeleted = new ArrayList<RowInfo>();
-			if (sel != null && sel instanceof IStructuredSelection) {
+			if ((sel != null) && (sel instanceof IStructuredSelection)) {
 				IStructuredSelection selection = (IStructuredSelection) sel;
 				for (Object o : selection.toArray()) {
 					if (o instanceof RowInfo) {
@@ -925,12 +921,12 @@ public class StringEditorPart extends MultiPageEditorPart {
 										.getLocation().toOSString());
 			}
 			errorImage = new Image(Display.getDefault(), PlatformUI
-					.getWorkbench().getSharedImages().getImage(
-							ISharedImages.IMG_OBJS_ERROR_TSK).getImageData()
+					.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJS_ERROR_TSK).getImageData()
 					.scaledTo(16, 16));
 			warningImage = new Image(Display.getDefault(), PlatformUI
-					.getWorkbench().getSharedImages().getImage(
-							ISharedImages.IMG_OBJS_WARN_TSK).getImageData()
+					.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJS_WARN_TSK).getImageData()
 					.scaledTo(16, 16));
 			okImage = new Image(Display.getDefault(), StringEditorPlugin
 					.imageDescriptorFromPlugin(StringEditorPlugin.PLUGIN_ID,
@@ -947,8 +943,10 @@ public class StringEditorPart extends MultiPageEditorPart {
 		MessageDialog.openError(new Shell(),
 				"Error loading editor. Some available editor will be opened", e //$NON-NLS-1$
 						.getMessage());
-		IEditorDescriptor[] editors = PlatformUI.getWorkbench()
-				.getEditorRegistry().getEditors(
+		IEditorDescriptor[] editors = PlatformUI
+				.getWorkbench()
+				.getEditorRegistry()
+				.getEditors(
 						"*." //$NON-NLS-1$
 								+ ((IFileEditorInput) input).getFile()
 										.getLocation().getFileExtension());
@@ -956,7 +954,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 		if (editors.length > 0) {
 			int i = 0;
 			IEditorDescriptor editor = null;
-			while (i < editors.length && editor == null) {
+			while ((i < editors.length) && (editor == null)) {
 				if (!editors[i].getId().equals(site.getId())) {
 					editor = editors[i];
 				}
@@ -1169,10 +1167,9 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 		editorComposite = toolkit.createForm(parent);
 		editorComposite
-				.setText(stringEditorInput.getName() != null
-						&& stringEditorInput.getName().trim().length() > 0 ? stringEditorInput
-						.getName()
-						: Messages.StringEditorPart_EditorTitle);
+				.setText((stringEditorInput.getName() != null)
+						&& (stringEditorInput.getName().trim().length() > 0) ? stringEditorInput
+						.getName() : Messages.StringEditorPart_EditorTitle);
 
 		GridLayout layout = new GridLayout(4, false);
 		layout.horizontalSpacing = 0;
@@ -1261,8 +1258,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 
-				return ((RowInfo) element).getKey().toLowerCase().contains(
-						getKeyFilter().toLowerCase());
+				return ((RowInfo) element).getKey().toLowerCase()
+						.contains(getKeyFilter().toLowerCase());
 			}
 		});
 
@@ -1273,18 +1270,19 @@ public class StringEditorPart extends MultiPageEditorPart {
 			protected boolean isEditorActivationEvent(
 					ColumnViewerEditorActivationEvent event) {
 				boolean activate = false;
-				if (event.stateMask == 0) {
-					if (event.character >= 32 && event.character <= 127) {
+				if ((event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED)
+						&& (event.stateMask == 0)) {
+					if ((event.character >= 32) && (event.character <= 127)) {
 						activate = true;
-					} else if (event.keyCode == SWT.CR
-							|| event.keyCode == SWT.DEL
-							|| event.keyCode == SWT.KEYPAD_CR) {
+					} else if ((event.keyCode == SWT.CR)
+							|| (event.keyCode == SWT.DEL)
+							|| (event.keyCode == SWT.KEYPAD_CR)) {
 						activate = true;
 					} else {
 						activate = super.isEditorActivationEvent(event);
 					}
-				} else {
-					activate = super.isEditorActivationEvent(event);
+				} else if (event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION) {
+					activate = true;
 				}
 				return activate;
 			}
@@ -1333,8 +1331,11 @@ public class StringEditorPart extends MultiPageEditorPart {
 		});
 
 		if (contentProvider.getContextHelpID() != null) {
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(
-					viewer.getTable(), contentProvider.getContextHelpID());
+			PlatformUI
+					.getWorkbench()
+					.getHelpSystem()
+					.setHelp(viewer.getTable(),
+							contentProvider.getContextHelpID());
 		}
 
 		// if (expandRow) {
@@ -1403,20 +1404,20 @@ public class StringEditorPart extends MultiPageEditorPart {
 		for (int i = 0; i < t.getColumnCount(); i++) {
 			{
 				TableColumn c = t.getColumn(t.getColumnOrder()[i]);
-				session.setProperty(c.getText(), PROPERTY.ORDER, new Integer(i)
-						.toString());
+				session.setProperty(c.getText(), PROPERTY.ORDER,
+						new Integer(i).toString());
 				session.setProperty(c.getText(), PROPERTY.VISIBLE, new Boolean(
 						c.getResizable()).toString());
-				session.setProperty(c.getText(), PROPERTY.WIDTH, new Integer(c
-						.getWidth()).toString());
+				session.setProperty(c.getText(), PROPERTY.WIDTH,
+						new Integer(c.getWidth()).toString());
 			}
 
 		}
 		/*
 		 * Save the sort column and the sort direction
 		 */
-		session.setProperty(SORTER_PROPERTY_NAME, PROPERTY.SORT_BY_COLUMN, t
-				.getSortColumn() != null ? t.getSortColumn().getText() : null);
+		session.setProperty(SORTER_PROPERTY_NAME, PROPERTY.SORT_BY_COLUMN,
+				t.getSortColumn() != null ? t.getSortColumn().getText() : null);
 		session.setProperty(SORTER_PROPERTY_NAME, PROPERTY.ORDER, t
 				.getSortDirection() == SWT.UP ? new Integer(SWT.UP).toString()
 				: new Integer(SWT.DOWN).toString());
@@ -1428,16 +1429,16 @@ public class StringEditorPart extends MultiPageEditorPart {
 		 * Save the search and highlight options
 		 */
 		String namespace = associatedProject.getName();
-		session.setProperty(namespace, PROPERTY.HIGHLIGHT_CHANGES, Boolean
-				.toString(highlightChanges));
-		session.setProperty(namespace, PROPERTY.SEARCH_TEXT, searchString
-				.length() > 0 ? searchString : null);
-		session.setProperty(namespace, PROPERTY.SHOW_COMMENTS, Boolean
-				.toString(showCellComments));
+		session.setProperty(namespace, PROPERTY.HIGHLIGHT_CHANGES,
+				Boolean.toString(highlightChanges));
+		session.setProperty(namespace, PROPERTY.SEARCH_TEXT,
+				searchString.length() > 0 ? searchString : null);
+		session.setProperty(namespace, PROPERTY.SHOW_COMMENTS,
+				Boolean.toString(showCellComments));
 		session.setProperty(namespace, PROPERTY.FILTER_BY_KEY,
 				filterByKeyString.length() > 0 ? filterByKeyString : null);
-		session.setProperty(namespace, PROPERTY.EXPAND_ROW, Boolean
-				.toString(expandRow));
+		session.setProperty(namespace, PROPERTY.EXPAND_ROW,
+				Boolean.toString(expandRow));
 	}
 
 	private void restoreOptions() {
@@ -1517,8 +1518,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 			String visible = session
 					.getProperty(info.getId(), PROPERTY.VISIBLE);
 
-			TableViewerColumn column = createColumn(info.getId(), info
-					.getTooltip(), -1);
+			TableViewerColumn column = createColumn(info.getId(),
+					info.getTooltip(), -1);
 			if (width != null) {
 				column.getColumn().setWidth(Integer.parseInt(width));
 			}
@@ -1537,8 +1538,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 			viewer.getTable().getColumn(0).setWidth(Integer.parseInt(width));
 		}
 		if (visible != null) {
-			viewer.getTable().getColumn(0).setResizable(
-					Boolean.parseBoolean(visible));
+			viewer.getTable().getColumn(0)
+					.setResizable(Boolean.parseBoolean(visible));
 		}
 		String sortBy = session.getProperty(SORTER_PROPERTY_NAME,
 				PROPERTY.SORT_BY_COLUMN);
@@ -1547,7 +1548,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 		/*
 		 * Try to restore the sort by. If no sort saved, use the key column
 		 */
-		if (sortBy != null && sortBy.length() > 0) {
+		if ((sortBy != null) && (sortBy.length() > 0)) {
 			for (TableColumn c : viewer.getTable().getColumns()) {
 				if (c.getText().equals(sortBy)) {
 					viewer.getTable().setSortColumn(c);
@@ -1598,8 +1599,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 */
 	private void hideColumn(TableColumn c) {
 		c.setResizable(false);
-		c.setData(PREVIOUS_WIDTH_PROPERTY_NAME, new Integer(c.getWidth())
-				.toString());
+		c.setData(PREVIOUS_WIDTH_PROPERTY_NAME,
+				new Integer(c.getWidth()).toString());
 		c.setWidth(0);
 	}
 
@@ -1903,10 +1904,9 @@ public class StringEditorPart extends MultiPageEditorPart {
 					.openQuestion(
 							StringEditorPart.this.getEditorSite().getShell(),
 							Messages.StringEditorPart_UpdateConflictTitle,
-							NLS
-									.bind(
-											Messages.StringEditorPart_UpdateConflictDescription,
-											columnNames));
+							NLS.bind(
+									Messages.StringEditorPart_UpdateConflictDescription,
+									columnNames));
 
 			if (!overwrite) {
 				result = false;
@@ -1959,8 +1959,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 * @return the created column
 	 */
 	public TableColumn addColumn(ColumnInfo info, int index) {
-		TableViewerColumn tableViewerColumn = createColumn(info.getId(), info
-				.getTooltip(), index);
+		TableViewerColumn tableViewerColumn = createColumn(info.getId(),
+				info.getTooltip(), index);
 		getEditorInput().addColumn(info.getId());
 		getModel().addColumn(info);
 		for (String cellKey : info.getCells().keySet()) {
@@ -2114,7 +2114,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 	public void setEditorStatus(IStatus status) {
 		StringBuilder builder = new StringBuilder();
 		int messageType = 0;
-		if (status != null && !status.isOK()) {
+		if ((status != null) && !status.isOK()) {
 			if (status.isMultiStatus()) {
 				for (IStatus child : status.getChildren()) {
 					builder.append(child.getMessage());
@@ -2182,7 +2182,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 			String pageName = getEditorInput().getSourcePageNameForFile(
 					files.get(i));
 			boolean sync = false;
-			while (j < getPageCount() && !sync) {
+			while ((j < getPageCount()) && !sync) {
 				if (getPageText(j).equals(pageName)) {
 					sync = true;
 				}
@@ -2208,7 +2208,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 			int j = 0;
 			String pageName = getPageText(i);
 			boolean sync = false;
-			while (j < files.size() && !sync) {
+			while ((j < files.size()) && !sync) {
 				if (getEditorInput().getSourcePageNameForFile(files.get(j))
 						.equals(pageName)) {
 					sync = true;
@@ -2255,8 +2255,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 					pageChangedWithDirtySourceEditors = true;
 					getEditorInput().notifyEditorChanged(
 							editorInput,
-							sourceEditorPart.getDocumentProvider().getDocument(
-									editorInput).get());
+							sourceEditorPart.getDocumentProvider()
+									.getDocument(editorInput).get());
 				}
 			}
 		}
@@ -2267,15 +2267,14 @@ public class StringEditorPart extends MultiPageEditorPart {
 				: null;
 		if (editor != null) {
 			IFileEditorInput input = editor.getEditorInput() instanceof IFileEditorInput ? (IFileEditorInput) editor
-					.getEditorInput()
-					: null;
+					.getEditorInput() : null;
 			if (input != null) {
 				String rawTextFileContent = getEditorInput()
 						.getContentForFileAsText(input);
 				if (!editor.getDocumentProvider().getDocument(input).get()
 						.equals(rawTextFileContent)) {
-					editor.getDocumentProvider().getDocument(input).set(
-							rawTextFileContent);
+					editor.getDocumentProvider().getDocument(input)
+							.set(rawTextFileContent);
 				}
 			}
 		}
