@@ -376,18 +376,7 @@ public class AddNativeProjectPage extends WizardPage
                 IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
                 IConfiguration configs[] = buildInfo.getManagedProject().getConfigurations();
 
-                configs[0].setCleanCommand("");
-
-                configs[0].getBuilder().setAutoBuildEnable(true);
-                configs[0].getBuilder().setCleanBuildEnable(false);
-                configs[0].getBuilder().setIncrementalBuildTarget("-B");
-                configs[0].getBuilder().setCleanBuildTarget("");
-
-                IWorkspaceDescription desc = project.getWorkspace().getDescription();
-                desc.setAutoBuilding(true);
-
-                project.getWorkspace().setDescription(desc);
-
+                            
                 if (Platform.getOS().equals(Platform.OS_WIN32))
                 {
                     configs[0].setBuildCommand("bash " + getNDKLocation() + "\\ndk-build"); //$NON-NLS-1$ //$NON-NLS-2$

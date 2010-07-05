@@ -34,8 +34,6 @@ import org.eclipse.sequoyah.android.cdt.internal.build.core.TemplatedInputStream
  */
 public class NDKUtils
 {
-    public static final String DEFAULT_JNI_FOLDER_NAME = "jni";
-
     /**
      * The default name of the JNI folder.
      */

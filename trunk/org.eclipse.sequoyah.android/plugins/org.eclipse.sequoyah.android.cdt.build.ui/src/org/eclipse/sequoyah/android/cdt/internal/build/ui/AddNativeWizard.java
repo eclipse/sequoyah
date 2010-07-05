@@ -3,12 +3,19 @@
  */
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.sequoyah.android.cdt.internal.build.ui.AddNativeProjectPage;
 
 /**
  * @author dschaefer
@@ -82,7 +89,7 @@ public class AddNativeWizard extends Wizard
         {
             // treat error - log, show the error message and set the flag for performing finish
             UIPlugin.getDefault().getLog()
-                    .log(new Status(IStatus.ERROR, PLUGIN_ID, ex.getMessage(), ex));
+                    .log(new Status(IStatus.ERROR, UIPlugin.PLUGIN_ID, ex.getMessage(), ex));
             MessageDialog.openError(getShell(), Messages.AddNativeWizard_native_wizard_title,
                     Messages.AddNativeWizard__Message_UnexpectedErrorWhileAddingNativeSupport);
             isOKPerformFinish[0] = false;
