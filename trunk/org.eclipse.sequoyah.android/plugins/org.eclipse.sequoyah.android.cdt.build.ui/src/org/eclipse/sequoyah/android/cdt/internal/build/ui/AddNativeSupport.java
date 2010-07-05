@@ -8,7 +8,7 @@
  *
  * Contributors:
  * Doug Schaefer (WRS) - Initial API and implementation
- * Carlos Alberto Souto Junior - Further improvements in the Wizard
+ * Carlos Alberto Souto Junior (Eldorado) - [317327] Major UI bugfixes and improvements in Android Native support
  * Marcelo Marzola Bossoni - [318712] Make run wizard an static method and make the add native support calls this method
  *******************************************************************************/
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
