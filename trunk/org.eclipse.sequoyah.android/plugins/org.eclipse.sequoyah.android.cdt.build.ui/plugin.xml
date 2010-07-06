@@ -101,7 +101,11 @@
             id="org.eclipse.sequoyah.android.nativeMethodTemplate"
             name="native method">
          <pattern>
-            ${visibility} native ${return_type} ${method_name}(${arguments});
+            /**
+* Native Method declaration stub. To generate the corresponding C code
+* choose &quot;Source &gt; Generate C  files from Java Class&quot; 
+*/
+${visibility} native ${returnType} ${methodName}(${arguments});
          </pattern>
       </template>
       <template
@@ -113,9 +117,9 @@
          <pattern>
             static{
 
-	System.loadLibrary("${libName}");
-
-}
+	//Native library linking directive. Change the libname to the native library name without the lib
+	//prefix and the .so suffix
+ 	System.loadLibrary(&quot;${libName}&quot;);
          </pattern>
       </template>
    </extension>
