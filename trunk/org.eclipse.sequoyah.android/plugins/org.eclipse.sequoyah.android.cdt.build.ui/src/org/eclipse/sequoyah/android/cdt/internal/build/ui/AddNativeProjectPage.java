@@ -386,7 +386,7 @@ public class AddNativeProjectPage extends WizardPage
                             
                 if (Platform.getOS().equals(Platform.OS_WIN32))
                 {
-                    configs[0].setBuildCommand("bash " + getNDKLocation() + "\\ndk-build"); //$NON-NLS-1$ //$NON-NLS-2$
+                    configs[0].setBuildCommand("bash " + "\"" + getNDKLocation() + "\\ndk-build" + "\""); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 subMonitor.worked(1);
 
