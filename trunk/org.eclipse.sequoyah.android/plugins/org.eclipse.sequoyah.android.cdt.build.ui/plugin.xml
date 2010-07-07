@@ -97,7 +97,7 @@
       <template
             autoinsert="true"
             contextTypeId="java-members"
-            description="template that creates the basic functor for a ndk native call"
+            description="basic method declaration for native call"
             id="org.eclipse.sequoyah.android.nativeMethodTemplate"
             name="native method">
          <pattern>
@@ -111,7 +111,7 @@ ${visibility} native ${returnType} ${methodName}(${arguments});
       <template
             autoinsert="true"
             contextTypeId="java-members"
-            description="Add an pre-compiled Android Native Lib"
+            description="Pre-compiled Android Native Lib loading statement"
             id="org.eclipse.sequoyah.android.nativeLibTemplate"
             name="load native lib">
          <pattern>
@@ -120,6 +120,7 @@ ${visibility} native ${returnType} ${methodName}(${arguments});
 	//Native library linking directive. Change the libname to the native library name without the lib
 	//prefix and the .so suffix
  	System.loadLibrary(&quot;${libName}&quot;);
+}
          </pattern>
       </template>
    </extension>
