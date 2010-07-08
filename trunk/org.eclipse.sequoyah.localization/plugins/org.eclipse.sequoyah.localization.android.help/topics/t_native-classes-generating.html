@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-us" xml:lang="en-us">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="DC.Type" content="task"/>
+<meta name="DC.Title" content="Generating native classes"/>
+<meta name="abstract" content="The Sequoyah Android feature lets you generate C++ classes from native method declarations in your Java source files. This allows you to focus on the native function implementations, rather than the mechanics of parameter passing between Java and native C/C++ code."/>
+<meta name="description" content="The Sequoyah Android feature lets you generate C++ classes from native method declarations in your Java source files. This allows you to focus on the native function implementations, rather than the mechanics of parameter passing between Java and native C/C++ code."/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_project-adding-native.html"/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_config-for-native.html"/>
+<meta name="copyright" content="Motorola, Inc. 2009-2010" type="primary"/>
+<meta name="DC.Rights.Owner" content="Motorola, Inc. 2009-2010" type="primary"/>
+<meta name="DC.Format" content="XHTML"/>
+<meta name="DC.Identifier" content="t_native-classes-generating"/>
+<meta name="DC.Language" content="en-us"/>
+<link rel="stylesheet" type="text/css" href="../commonltr.css"/>
+<title>Generating native classes</title>
+</head>
+<body id="t_native-classes-generating"><a name="t_native-classes-generating"><!-- --></a>
+<a class="hdr-none"/>
+
+  <h1 class="topictitle1">Generating native classes</h1>
+
+  
+  
+  <div><p>The Sequoyah Android feature lets you generate C++ classes from native method declarations in your Java
+    source files. This allows you to focus on the native function implementations, rather than the mechanics of
+    parameter passing between Java and native C/C++ code.</p>
+
+    <div class="p">
+      <p>Before you can generate native classes from the Java declarations, you must have added native support to your
+        Android project. You must also have one or more native function declarations in your Java source code. For
+        example:</p>
+
+      <pre class="codeblock">private static native void myNativeFunction(int myParam);</pre>
+
+      <div class="note"><span class="notetitle">Note:</span> The Sequoyah Android feature includes Content Assist templates for native function declaration ("native
+        lib") and native library loading ("load native lib"). See the "Templates" topic in the <em>C/C++ Development User
+          Guide</em> (in the online help) for more information on using Content Assist.</div>
+
+    </div>
+
+    <ol>
+      <li>
+        <span>Right-click the Java source file containing the native declarations and select <span class="menucascade"><span class="uicontrol">Source</span> &gt; <span class="uicontrol">Generate C files from Java class</span></span></span>
+         You will be prompted for the directory in which the C++ files should be created. By default, this is
+          your project's .jni directory.
+      </li>
+
+      <li>
+        <span>Select the directory in which the C++ files should be created, and click <span class="uicontrol">OK</span>.</span>
+      </li>
+
+    </ol>
+
+    <div class="section">C++ files containing basic functions corresponding to the native declarations are generated and stored in
+      the specified directory. Edit these source files--typically using the C/C++ perspective--and supply
+      implementations for each of the generated function bodies.</div>
+
+    <div class="section">If you re-generate C++ files for a given Java class--because you have added additional native declarations,
+      perhaps--a new version of each native function will be added to the existing C++ source file, but the existing
+      versions will not be deleted. You will need to delete any unneeded duplicate function definitions
+    manually.</div>
+
+  </div>
+
+<div><div class="relinfo"><strong>Related tasks</strong><br/>
+<div><a href="../topics/t_project-adding-native.html" title="Android projects that have native support build the native components along with those rest of the project. At build time the Sequoyah Android feature compiles the native (C/C++) code into a shared library and then includes that shared library in the project APK.">Adding native support to an Android project</a></div>
+<div><a href="../topics/t_config-for-native.html" title="After installing the Android NDK and a few other needed components, Eclipse can be configured to let you develop Android applications that include native (C/C++) code.">Configuring your development environment for native development</a></div>
+</div>
+</div>
+
+</body>
+</html>

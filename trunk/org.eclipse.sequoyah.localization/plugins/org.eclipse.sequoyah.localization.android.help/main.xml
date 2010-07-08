@@ -15,6 +15,14 @@
          <topic label="Editing a localized string array"
                 href="topics/t_localize-array-editing.html"/>
       </topic>
+      <topic label="Native Application Development">
+         <topic label="Configuring your development environment for native development"
+                href="topics/t_config-for-native.html"/>
+         <topic label="Adding native support to an Android project"
+                href="topics/t_project-adding-native.html"/>
+         <topic label="Generating native classes"
+                href="topics/t_native-classes-generating.html"/>
+      </topic>
    </topic>
    <topic label="Reference">
       <topic label="Localization Files Editor"
