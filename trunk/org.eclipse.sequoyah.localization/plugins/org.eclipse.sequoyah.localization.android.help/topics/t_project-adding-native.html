@@ -8,6 +8,7 @@
 <meta name="DC.Title" content="Adding native support to an Android project"/>
 <meta name="abstract" content="Android projects that have native support build the native components along with those rest of the project. At build time the Sequoyah Android feature compiles the native (C/C++) code into a shared library and then includes that shared library in the project APK."/>
 <meta name="description" content="Android projects that have native support build the native components along with those rest of the project. At build time the Sequoyah Android feature compiles the native (C/C++) code into a shared library and then includes that shared library in the project APK."/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_native-apps-about.html"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_native-classes-generating.html"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_config-for-native.html"/>
 <meta name="copyright" content="Motorola, Inc. 2009-2010" type="primary"/>
@@ -63,11 +64,17 @@
 
     <div class="section">You can now create your C/C++ code (in the jni directory); you will likely want to switch to the C/C++
       perspective to do this. When you build your project the native code is compiled into the shared library which is
-      then included as part of your APK.</div>
+      then included as part of your APK. Also note that you will need to load your native library from your Java code by
+      calling <samp class="codeph">System.loadLibrary()</samp>. See the sample applications that are included with the Android NDK
+      for tips on how and when to do this.</div>
 
   </div>
 
-<div><div class="relinfo"><strong>Related tasks</strong><br/>
+<div>
+<div class="familylinks">
+<div class="parentlink"><strong>Parent topic:</strong> <a href="../topics/t_native-apps-about.html" title="From within Eclipse you can develop Android applications that include native code. Once you have installed the necessary components and properly configured your development environment, for Android projects that have been enabled for native support your C/C++ code is compiled into a shared library that is included when the Java portions of your project are built. The Sequoyah Android feature provides other native application support: for instance, you can generate C++ classes from native method declarations in your Java source files.">Native Android Application Development</a></div>
+</div>
+<div class="relinfo"><strong>Related tasks</strong><br/>
 <div><a href="../topics/t_native-classes-generating.html" title="The Sequoyah Android feature lets you generate C++ classes from native method declarations in your Java source files. This allows you to focus on the native function implementations, rather than the mechanics of parameter passing between Java and native C/C++ code.">Generating native classes</a></div>
 <div><a href="../topics/t_config-for-native.html" title="After installing the Android NDK and a few other needed components, Eclipse can be configured to let you develop Android applications that include native (C/C++) code.">Configuring your development environment for native development</a></div>
 </div>

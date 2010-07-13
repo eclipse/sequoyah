@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
-<toc link_to="../com.motorola.studio.android.tooldocs.studio.helpbase/main.xml#tasks_end" label="Sequoyah Android Localization Files Editor Help"
-     >
+<toc link_to="../com.motorola.studio.android.tooldocs.studio.helpbase/main.xml#tasks_end" label="Sequoyah User Guide" >
    
       <topic label="Localizing Text Strings" href="topics/t_localize-about.html">
          <topic label="Creating a new locale" href="topics/t_localize-new-locale-creating.html"/>
@@ -15,7 +14,8 @@
          <topic label="Editing a localized string array"
                 href="topics/t_localize-array-editing.html"/>
       </topic>
-      <topic label="Native Application Development">
+      <topic label="Native Android Application Development"
+             href="topics/t_native-apps-about.html">
          <topic label="Configuring your development environment for native development"
                 href="topics/t_config-for-native.html"/>
          <topic label="Adding native support to an Android project"
