@@ -43,6 +43,7 @@ public class NewDeviceMenuWizard extends NewDeviceWizard implements INewWizard {
 	public void addPages() {
 		firstPage = new DefaultDeviceTypeMenuWizardPage(DEFAULT_PAGE_ID, getCurrentDeviceTypeId());
 		addPage(firstPage);
+		setWindowTitle(DeviceWizardResources.SEQUOYAH_NewDeviceMenuWizard_Window_Title + firstPage.getDeviceType().getLabel());
 		super.addPages();
 	}
 

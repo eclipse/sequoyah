@@ -36,6 +36,8 @@ public class DeviceWizardResources extends NLS {
 	public static String SEQUOYAH_Emulator_Wizard_Project_Title;
 	public static String SEQUOYAH_Emulator_Wizard_Project_Description;
 	public static String SEQUOYAH_Emulator_Wizard_Project_Description_Duplicated_Error;
+
+	public static String SEQUOYAH_NewDeviceMenuWizard_Window_Title;
 	
 	public static String msg_new_wizard_emulator_title;
 	public static String msg_new_wizard_emulator_description;
