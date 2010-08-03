@@ -22,11 +22,12 @@
 
 	<!-- property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.v20100118.jar" />
 	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.v20100123-1019" / -->
-	<!-- property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.N20100314-2000.jar" />
-	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.N20100314-2000" / -->
+	<!-- property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.v20100307.jar" />
+	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.v20100311-1400" / -->
 
-	<property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.v20100307.jar" />
-	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.v20100311-1400" />
+	<!-- plugins from the latest version (3.6) -->
+	<property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.v20100507.jar" />
+	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.v20100603" />
 	
 
 	<property name="forceContextQualifier" value="${buildType}${timestamp}" />
@@ -76,7 +77,7 @@
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.localization/" includes="**" />
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.vnc/" includes="**" />
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah/" includes="**" />
-			<!-- fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.android/" includes="**" / -->
+			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.android/" includes="**" />
 			<!-- fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.tfm.sign/" includes="**" / -->
 
 		</copy>
