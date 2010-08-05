@@ -17,7 +17,19 @@ import org.w3c.dom.traversal.NodeFilter;
 
 /**
  * The LocalizationXMLParserFilter provides a way to escape correctly '<' and '>' characters
- * when reading and saving xml localization files.
+ * when reading and saving XML localization files:
+ * The behavior of the parser was changed to correctly support the symbols '<' and '>'. 
+ * <br/>
+ * a) When the sequences <code>'&lt;'</code> and <code>'&gt;'</code> are rendered in the 
+ * graphical editor, they are unescaped to the symbols '<' and '>'. Those symbols are used 
+ * only to represent HTML tags that can be inserted in texts to be translated.<br/>
+ * b) When <code>'&amp;lt;'</code> and <code>'&amp;gt;'</code> are rendered in the graphical 
+ * editor, they are unescaped to the sequences <code>'&lt;'</code> and <code>'&gt;'</code>. 
+ * Those sequences must be used if the user wants to show '<' or '>' in texts to be translated.
+ * <br/><br/>
+ * Conclusion: if anyone needs to use the mathematical symbols '<' or '>' in a text,
+ *  they should use the escaped sequences <code>'&lt;'</code> and <code>'&gt;'</code>.
+ *  
  */
 public class LocalizationXMLParserFilter implements LSParserFilter {
 
