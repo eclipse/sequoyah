@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.activities">
+      <activity
+            description="Protocol Example"
+            id="org.eclipse.sequoyah.capabilities.echo"
+            name="Protocol Example">
+      </activity>
+      <category
+            description="Sequoyah UI Elements"
+            id="org.eclipse.sequoyah.capabilities.category"
+            name="Sequoyah (Mobile)">
+      </category>
+      <categoryActivityBinding
+            activityId="org.eclipse.sequoyah.capabilities.echo"
+            categoryId="org.eclipse.sequoyah.capabilities.category">
+      </categoryActivityBinding>
+      <activityPatternBinding
+            activityId="org.eclipse.sequoyah.capabilities.echo"
+            isEqualityPattern="false"
+            pattern="org\.eclipse\.sequoyah\.vnc\.echo/.*">
+      </activityPatternBinding>
+   </extension>
+
+</plugin>
