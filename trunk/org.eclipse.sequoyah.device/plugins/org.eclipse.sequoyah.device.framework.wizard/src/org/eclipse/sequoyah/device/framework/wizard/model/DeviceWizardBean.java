@@ -21,7 +21,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.PluginUtils;
 import org.eclipse.sequoyah.device.framework.wizard.DeviceWizardConstants;
-import org.eclipse.sequoyah.device.framework.wizard.DeviceWizardResources;
+import org.eclipse.sequoyah.device.framework.ui.wizard.DeviceWizardResources;
 import org.eclipse.sequoyah.device.framework.wizard.ui.WizardNewProjectPage;
 import org.eclipse.sequoyah.device.framework.wizard.ui.WizardNewPropertyPage;
 
