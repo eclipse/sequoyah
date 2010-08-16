@@ -16,7 +16,7 @@ package org.eclipse.sequoyah.device.framework.wizard.ui;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.sequoyah.device.framework.factory.InstanceRegistry;
-import org.eclipse.sequoyah.device.framework.wizard.DeviceWizardResources;
+import org.eclipse.sequoyah.device.framework.ui.wizard.DeviceWizardResources;
 import org.eclipse.sequoyah.device.framework.wizard.model.IWizardProjectPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

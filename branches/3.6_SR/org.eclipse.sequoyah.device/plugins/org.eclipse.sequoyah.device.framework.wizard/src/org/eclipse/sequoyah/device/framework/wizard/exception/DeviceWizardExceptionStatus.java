@@ -16,7 +16,7 @@ package org.eclipse.sequoyah.device.framework.wizard.exception;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.sequoyah.device.common.utilities.exception.AbstractExceptionStatus;
 import org.eclipse.sequoyah.device.common.utilities.exception.ExceptionMessage;
-import org.eclipse.sequoyah.device.framework.wizard.DeviceWizardResources;
+import org.eclipse.sequoyah.device.framework.ui.wizard.DeviceWizardResources;
 
 public class DeviceWizardExceptionStatus extends AbstractExceptionStatus {
 	public static final int CODE_ERROR_RESOURCE_NOT_AVAILABLE = 201;

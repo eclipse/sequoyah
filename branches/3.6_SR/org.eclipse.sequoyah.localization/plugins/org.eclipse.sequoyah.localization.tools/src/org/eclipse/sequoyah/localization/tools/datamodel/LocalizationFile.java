@@ -11,6 +11,7 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
@@ -163,7 +164,6 @@ public class LocalizationFile implements IFilePersistentData {
 	 * @return the StringNode which represents the key passed as a parameter
 	 */
 	public StringNode getStringNodeByKey(String key) {
-		// TODO: remove false
 		boolean isArray = false;
 		for (StringArray stringArray : this.getLocalizationProject()
 				.getAllStringArrays()) {
@@ -197,7 +197,9 @@ public class LocalizationFile implements IFilePersistentData {
 	}
 
 	/**
-	 * Set the list of StringNodes which are part of the file
+	 * Set the list of StringNodes which are part of the file.
+	 * NOTE: it will clear the StringNodes associated with StringArray.
+	 * You should call setStringArrays after this operation.
 	 * 
 	 * @param stringNodes
 	 *            the list of StringNodes which are part of the file
@@ -205,12 +207,15 @@ public class LocalizationFile implements IFilePersistentData {
 	public void setStringNodes(List<StringNode> stringNodes) {
 		this.stringNodes.clear();
 		stringNodesMap.clear();
-		for (StringNode stringNode : stringNodes) {
-			this.stringNodesMap.put(stringNode.getKey(), stringNode);
-			stringNode.setLocalizationFile(this);
+		if(stringNodes != null)
+		{
+			for (StringNode stringNode : stringNodes) {
+				this.stringNodesMap.put(stringNode.getKey(), stringNode);
+				stringNode.setLocalizationFile(this);
 
+			}
+			this.stringNodes.addAll(stringNodes);
 		}
-		this.stringNodes.addAll(stringNodes);
 	}
 
 	/**
@@ -328,10 +333,7 @@ public class LocalizationFile implements IFilePersistentData {
 		if (stringNode.isArray()) {
 			StringArray stringArray = findStringArray(stringNode.getKey());
 			int position = -1;
-			// if (stringNode.getKey().contains("_"))
 			if (StringArray.isArrayItem(stringNode.getKey())) {
-				// position =
-				// Integer.parseInt(stringNode.getKey().split("_")[1]);
 				position = StringArray.findItemPosition(stringNode.getKey());
 			}
 			newStringNode = stringArray.addValue(stringNode.getValue(),

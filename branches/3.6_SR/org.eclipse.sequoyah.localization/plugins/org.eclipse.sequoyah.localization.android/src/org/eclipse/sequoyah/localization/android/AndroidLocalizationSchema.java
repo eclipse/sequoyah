@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,9 @@
  * Marcel Gorri (Eldorado) -  Add method to retrieve ISO639 lang ID
  * Paulo Faria (Eldorado) - Add method to retrieve formatted (bold, underline, italics) string
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save
+ * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
+ * Daniel Drigo Pastore, Marcel Augusto Gorri (Eldorado) - Bug 312971 - Localization Editor does not accept < and > characters
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
 
@@ -96,11 +99,17 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSParser;
+import org.w3c.dom.ls.LSParserFilter;
 
 /**
  * The Android Localization Schema provides the localization schema for Android
@@ -978,14 +987,21 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		}
 
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-
-			Document document = builder.parse(new File(file.getLocation()
-					.toString()));
+			InputStream inputStream = new FileInputStream(file.getLocation().toFile());
+			DOMImplementation dimp = DOMImplementationRegistry.newInstance()
+					.getDOMImplementation("XML 3.0"); //$NON-NLS-1$
+			DOMImplementationLS dimpls = (DOMImplementationLS) dimp.getFeature("LS", "3.0"); //$NON-NLS-1$ //$NON-NLS-2$
+			LSInput lsi = dimpls.createLSInput();
+			LSParser lsp = dimpls.createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, 
+					"http://www.w3.org/2001/XMLSchema"); //$NON-NLS-1$
+			LSParserFilter filter = new LocalizationXMLParserFilter();
+			lsp.setFilter(filter);
+			lsi.setEncoding("UTF-8"); //$NON-NLS-1$
+			lsi.setByteStream(inputStream);
+			Document document = lsp.parse(lsi);
+			
 			localizationFile = new AndroidLocalizationFile(file, localeInfo,
-					new ArrayList<StringNode>(), null);
+					new ArrayList<StringNode>(), new ArrayList<StringArray>());
 			updateLocalizationFileContent(localizationFile, document);
 
 		} catch (Exception e) {
@@ -1721,8 +1737,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			stringArrays.add(stringArray);
 		}
 
-		localizationFile.setStringArrays(stringArrays);
 		localizationFile.setStringNodes(stringNodes);
+		localizationFile.setStringArrays(stringArrays);
 
 		((AndroidLocalizationFile) localizationFile)
 				.setSavedXMLDocument(document);

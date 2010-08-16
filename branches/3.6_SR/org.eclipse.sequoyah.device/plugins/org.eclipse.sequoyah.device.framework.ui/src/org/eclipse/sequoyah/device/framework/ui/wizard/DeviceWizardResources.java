@@ -12,6 +12,8 @@
  * Fabio Fantato (Instituto Eldorado) - [263188] - Create new examples to support tutorial presentation
  * Fabio Fantato (Instituto Eldorado) - [243494] Change the reference implementation to work on Galileo
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Daniel Pastore (Eldorado) - [278436] New device wizard does not offer a way to set its window title
+ * 
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.wizard;
@@ -25,7 +27,7 @@ import org.eclipse.osgi.util.NLS;
 public class DeviceWizardResources extends NLS {
 	
 
-	private static String BUNDLE_NAME = "org.eclipse.sequoyah.device.framework.wizard.DeviceWizardResources";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.sequoyah.device.framework.ui.wizard.DeviceWizardResources";//$NON-NLS-1$
 
 	public static String SEQUOYAH_Device_Plugin_Name;
 	public static String SEQUOYAH_Error;
@@ -36,6 +38,8 @@ public class DeviceWizardResources extends NLS {
 	public static String SEQUOYAH_Emulator_Wizard_Project_Title;
 	public static String SEQUOYAH_Emulator_Wizard_Project_Description;
 	public static String SEQUOYAH_Emulator_Wizard_Project_Description_Duplicated_Error;
+
+	public static String SEQUOYAH_NewDeviceMenuWizard_Window_Title;
 	
 	public static String msg_new_wizard_emulator_title;
 	public static String msg_new_wizard_emulator_description;
