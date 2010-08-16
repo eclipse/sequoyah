@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.sequoyah.feature"
       label="Sequoyah Feature"
-      version="1.0.0.qualifier">
+      version="1.0.1.qualifier">
 
    <description>
       %description
@@ -16,10 +16,6 @@
       %license
    </license>
 
-   <includes
-         id="org.eclipse.sequoyah.android.cdt.feature"
-         version="0.0.0"/>
-         
    <includes
          id="org.eclipse.sequoyah.device.common.feature"
          version="0.0.0"/>
