@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007-2010 Motorola Inc. All rights reserved.
+ * Copyright (c) 2007-2010 Motorola Mobility, Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,9 @@
  * Fabio Fantato (Motorola) - bug#221736 - new instance wizard
  * Otavio Ferranti (Eldorado Research Institute) - bug#221733 - removing the
  *                          project location field from the default project page
- * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah                         
+ * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Daniel Pastore (Eldorado) - [278436] New device wizard does not offer a way to set its window title
+ *                          
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.wizard.model;
