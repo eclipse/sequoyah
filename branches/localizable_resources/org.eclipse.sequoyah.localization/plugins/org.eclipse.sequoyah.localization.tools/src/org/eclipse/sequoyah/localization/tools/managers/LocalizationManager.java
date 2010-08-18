@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
-import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.extensions.providers.LocalizationSchemaProvider;
@@ -186,7 +186,7 @@ public class LocalizationManager {
 			ILocalizationSchema schema = getLocalizationSchema(project);
 			if (schema != null) {
 				projectManager.setProject(project);
-				List<LocalizationFile> locFiles = new ArrayList<LocalizationFile>();
+				List<StringLocalizationFile> locFiles = new ArrayList<StringLocalizationFile>();
 				try {
 					locFiles.addAll(schema.loadAllFiles(project).values());
 					projectManager
@@ -334,7 +334,7 @@ public class LocalizationManager {
 		}
 
 		if (projectLocalizationManager != null) {
-			LocalizationFile locFile = projectLocalizationManager
+			StringLocalizationFile locFile = projectLocalizationManager
 					.getLocalizationProject().getLocalizationFile(file);
 			if ((locFile != null)
 					&& (!locFile.isToBeDeleted())
@@ -358,11 +358,11 @@ public class LocalizationManager {
 	 *            the project localization manager
 	 * @return true if the file has changed, false otherwise
 	 */
-	private boolean hasFileChanged(IFile file, LocalizationFile locFile,
+	private boolean hasFileChanged(IFile file, StringLocalizationFile locFile,
 			ProjectLocalizationManager projectLocalizationManager) {
 		boolean result = false;
 
-		LocalizationFile newLocalizationFile;
+		StringLocalizationFile newLocalizationFile;
 		try {
 			newLocalizationFile = projectLocalizationManager
 					.getProjectLocalizationSchema().loadFile(file);

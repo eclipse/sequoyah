@@ -86,8 +86,8 @@ import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
-import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.NodeComment;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
@@ -415,7 +415,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			if ((info.getLocaleAttributes().size() > 0)
 					|| (value
 							.equalsIgnoreCase(AndroidLocalizationSchema.LOCALIZATION_FILES_FOLDER))) {
-				LocalizationFile file = manager.getLocalizationProject()
+				StringLocalizationFile file = manager.getLocalizationProject()
 						.getLocalizationFile(info);
 				if (file != null && !file.isToBeDeleted()) {
 					result = Messages.AndroidNewColumnProvider_Dialog_FileAlreadyExists;
@@ -453,7 +453,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 *      #createFile(org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo)
 	 */
 	@Override
-	public void createFile(LocalizationFile localizationFile)
+	public void createFile(StringLocalizationFile localizationFile)
 			throws SequoyahException {
 
 		try {
@@ -952,10 +952,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * ILocalizationSchema #loadAllFiles()
 	 */
 	@Override
-	public Map<LocaleInfo, LocalizationFile> loadAllFiles(IProject project)
+	public Map<LocaleInfo, StringLocalizationFile> loadAllFiles(IProject project)
 			throws IOException {
 
-		Map<LocaleInfo, LocalizationFile> filesMap = new LinkedHashMap<LocaleInfo, LocalizationFile>();
+		Map<LocaleInfo, StringLocalizationFile> filesMap = new LinkedHashMap<LocaleInfo, StringLocalizationFile>();
 
 		Map<LocaleInfo, IFile> localizationFiles = getLocalizationFiles(project);
 
@@ -973,12 +973,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * ILocalizationSchema #loadFile(org.eclipse.core.resources.IFile)
 	 */
 	@Override
-	public LocalizationFile loadFile(IFile file) throws IOException {
+	public StringLocalizationFile loadFile(IFile file) throws IOException {
 		AndroidLocalizationFile localizationFile = null;
 		LocaleInfo localeInfo = getLocaleInfoFromPath(file.getFullPath());
 
 		if (!file.exists()) {
-			LocalizationFile tempFile = new AndroidLocalizationFile(file,
+			StringLocalizationFile tempFile = new AndroidLocalizationFile(file,
 					localeInfo, null, null);
 			try {
 				createFile(tempFile);
@@ -1067,7 +1067,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * @param document
 	 * @throws SequoyahException
 	 */
-	private void updateFile(LocalizationFile localizationFile, Document document)
+	private void updateFile(StringLocalizationFile localizationFile, Document document)
 			throws SequoyahException {
 
 		AndroidLocalizationFile androidLocalizationFile = (AndroidLocalizationFile) localizationFile;
@@ -1129,7 +1129,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * .LocalizationFile)
 	 */
 	@Override
-	public void updateFile(LocalizationFile localizationFile)
+	public void updateFile(StringLocalizationFile localizationFile)
 			throws SequoyahException {
 		AndroidLocalizationFile androidLocalizationFile = (AndroidLocalizationFile) localizationFile;
 		Document document = androidLocalizationFile.getSavedXMLDocument();
@@ -1621,7 +1621,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * java.util.List, java.util.List)
 	 */
 	@Override
-	public LocalizationFile createLocalizationFile(IFile file,
+	public StringLocalizationFile createLocalizationFile(IFile file,
 			LocaleInfo localeInfo, List<StringNode> stringNodes,
 			List<StringArray> stringArrays) {
 		return new AndroidLocalizationFile(file, localeInfo, stringNodes,
@@ -1629,7 +1629,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	@Override
-	public String getLocalizationFileContent(LocalizationFile locFile) {
+	public String getLocalizationFileContent(StringLocalizationFile locFile) {
 		String text = null;
 		if (locFile instanceof AndroidLocalizationFile) {
 			AndroidLocalizationFile localizationFile = (AndroidLocalizationFile) locFile;
@@ -1645,7 +1645,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	private void updateLocalizationFileContent(
-			LocalizationFile localizationFile, Document document) {
+			StringLocalizationFile localizationFile, Document document) {
 		List<StringNode> stringNodes = new ArrayList<StringNode>();
 		List<StringArray> stringArrays = new ArrayList<StringArray>();
 
@@ -1747,7 +1747,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	@Override
 	public void updateLocalizationFileContent(
-			LocalizationFile localizationFile, String content)
+			StringLocalizationFile localizationFile, String content)
 			throws SequoyahException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;

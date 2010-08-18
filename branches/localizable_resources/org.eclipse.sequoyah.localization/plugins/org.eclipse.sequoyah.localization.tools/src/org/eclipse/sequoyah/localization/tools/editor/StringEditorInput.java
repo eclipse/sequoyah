@@ -48,7 +48,7 @@ import org.eclipse.sequoyah.localization.stringeditor.editor.input.AbstractStrin
 import org.eclipse.sequoyah.localization.stringeditor.editor.input.IEditorChangeListener;
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
-import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.NodeComment;
@@ -109,7 +109,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			IFileEditorInput fileInput = input instanceof IFileEditorInput ? (IFileEditorInput) input
 					: null;
 			if (fileInput != null) {
-				LocalizationFile locFile = projectLocalizationManager
+				StringLocalizationFile locFile = projectLocalizationManager
 						.getLocalizationProject().getLocalizationFile(
 								fileInput.getFile());
 				try {
@@ -155,7 +155,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			LocaleInfo locale = schema.getLocaleInfoFromID(schema
 					.getDefaultID());
 			if (locale != null) {
-				LocalizationFile mainFile = projectLocalizationManager
+				StringLocalizationFile mainFile = projectLocalizationManager
 						.getLocalizationProject().getLocalizationFile(locale);
 				StringNode stringNode = mainFile.getStringNodeByKey(row
 						.getKey(), isArray);
@@ -168,7 +168,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			String column = iterator.next();
 
 			LocaleInfo info = schema.getLocaleInfoFromID(column);
-			LocalizationFile file = projectLocalizationManager
+			StringLocalizationFile file = projectLocalizationManager
 					.getLocalizationProject().getLocalizationFile(info);
 			String value = (cells.get(column)).getValue();
 			String comment = (cells.get(column)).getComment();
@@ -202,12 +202,12 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	 */
 	@Override
 	public void removeRow(String key) {
-		List<LocalizationFile> files = projectLocalizationManager
+		List<StringLocalizationFile> files = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFiles();
 
-		for (Iterator<LocalizationFile> iterator = files.iterator(); iterator
+		for (Iterator<StringLocalizationFile> iterator = files.iterator(); iterator
 				.hasNext();) {
-			LocalizationFile localizationFile = iterator.next();
+			StringLocalizationFile localizationFile = iterator.next();
 			localizationFile.removeStringNode(localizationFile
 					.getStringNodeByKey(key));
 		}
@@ -258,7 +258,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	 */
 	@Override
 	public List<ColumnInfo> getColumns() {
-		List<LocalizationFile> files = projectLocalizationManager
+		List<StringLocalizationFile> files = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFiles();
 		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
 
@@ -266,9 +266,9 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.getProjectLocalizationSchema();
 		String defaultID = projectLocalizationManager
 				.getProjectLocalizationSchema().getDefaultID();
-		for (Iterator<LocalizationFile> iterator = files.iterator(); iterator
+		for (Iterator<StringLocalizationFile> iterator = files.iterator(); iterator
 				.hasNext();) {
-			LocalizationFile localizationFile = iterator.next();
+			StringLocalizationFile localizationFile = iterator.next();
 
 			String columnID = getColumnID(localizationFile.getFile());
 			String toolTip = schema.getLocaleToolTip(localizationFile.getFile()
@@ -311,7 +311,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 
 		LocaleInfo info = schema.getLocaleInfoFromID(srcColumnID);
 
-		LocalizationFile existingFile = projectLocalizationManager
+		StringLocalizationFile existingFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(info);
 
 		if (existingFile != null) {
@@ -321,7 +321,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			String path = schema.getPathFromLocaleInfo(infoTarget);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(
 					new Path(path));
-			LocalizationFile newFile = projectLocalizationManager
+			StringLocalizationFile newFile = projectLocalizationManager
 					.getProjectLocalizationSchema()
 					.createLocalizationFile(file, infoTarget,
 							new ArrayList<StringNode>(), null);
@@ -408,8 +408,8 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/**
 	 * Call the translator for each cell, populating the new column
 	 */
-	private boolean translateColumn(LocalizationFile source,
-			LocalizationFile target, TranslationInfo destColumnInfo,
+	private boolean translateColumn(StringLocalizationFile source,
+			StringLocalizationFile target, TranslationInfo destColumnInfo,
 			IProgressMonitor monitor) {
 
 		List<StringNode> originalNodes = source.getStringNodes();
@@ -476,14 +476,14 @@ public class StringEditorInput extends AbstractStringEditorInput {
 
 		LocaleInfo info = schema.getLocaleInfoFromID(ID);
 
-		LocalizationFile existingFile = projectLocalizationManager
+		StringLocalizationFile existingFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(info);
 
 		if (existingFile == null) {
 			String path = schema.getPathFromLocaleInfo(info);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(
 					new Path(path));
-			LocalizationFile newFile = projectLocalizationManager
+			StringLocalizationFile newFile = projectLocalizationManager
 					.getProjectLocalizationSchema().createLocalizationFile(
 							file, info, new ArrayList<StringNode>(), null);
 			newFile.setLocalizationProject(projectLocalizationManager
@@ -507,7 +507,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	public void removeColumn(String columnID) {
 		LocaleInfo locale = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
-		LocalizationFile file = projectLocalizationManager
+		StringLocalizationFile file = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(locale);
 		projectLocalizationManager.markFileForDeletion(file);
 		projectLocalizationManager.getLocalizationProject().setDirty(true);
@@ -532,7 +532,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		}
 		LocaleInfo locale = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
-		LocalizationFile file = projectLocalizationManager
+		StringLocalizationFile file = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(locale);
 		file.getStringNodeByKey(key).setValue(value);
 	}
@@ -547,7 +547,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	public CellInfo getValue(String columnID, String key) {
 		LocaleInfo localeInfo = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
-		LocalizationFile localizationFile = projectLocalizationManager
+		StringLocalizationFile localizationFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(localeInfo);
 		StringNode stringNode = localizationFile.getStringNodeByKey(key);
 		return new CellInfo(stringNode.getValue(), ((stringNode
@@ -568,7 +568,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
 		Map<String, CellInfo> keyValueMap = new HashMap<String, CellInfo>();
 		keyValueMap.keySet();
-		LocalizationFile localizationFile = projectLocalizationManager
+		StringLocalizationFile localizationFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(localeInfo);
 		//get string nodes values
 		List<StringNode> stringNodes = localizationFile.getStringNodes();
@@ -596,7 +596,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
 
 		List<CellInfo> keysForColumn = new ArrayList<CellInfo>();
-		LocalizationFile localizationFile = projectLocalizationManager
+		StringLocalizationFile localizationFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(localeInfo);
 		List<StringNode> stringNodes = localizationFile.getStringNodes();
 
@@ -755,10 +755,10 @@ public class StringEditorInput extends AbstractStringEditorInput {
 
 		if (localeInfo != null) {
 
-			LocalizationFile file = projectLocalizationManager
+			StringLocalizationFile file = projectLocalizationManager
 					.getLocalizationProject().getLocalizationFile(localeInfo);
 
-			LocalizationFile newFile = schema.loadFile(file.getFile());
+			StringLocalizationFile newFile = schema.loadFile(file.getFile());
 
 			projectLocalizationManager.getLocalizationProject()
 					.removeLocalizationFile(file);
@@ -815,7 +815,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		ILocalizationSchema schema = projectLocalizationManager
 				.getProjectLocalizationSchema();
 		LocaleInfo locale = schema.getLocaleInfoFromID(columnID);
-		LocalizationFile file = projectLocalizationManager
+		StringLocalizationFile file = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(locale);
 
 		// avoid total key deletion
@@ -850,7 +850,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		}
 		LocaleInfo locale = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
-		LocalizationFile file = projectLocalizationManager
+		StringLocalizationFile file = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(locale);
 
 		NodeComment comment = file.getStringNodeByKey(key)
@@ -883,7 +883,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			LocaleInfo info = projectLocalizationManager
 					.getProjectLocalizationSchema().getLocaleInfoFromID(
 							defaultID);
-			LocalizationFile localizationFile = projectLocalizationManager
+			StringLocalizationFile localizationFile = projectLocalizationManager
 					.getLocalizationProject().getLocalizationFile(info);
 
 			if (localizationFile == null) {
@@ -921,7 +921,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	@Override
 	public List<IFile> getFiles() {
 		List<IFile> files = new ArrayList<IFile>();
-		for (LocalizationFile locFile : projectLocalizationManager
+		for (StringLocalizationFile locFile : projectLocalizationManager
 				.getLocalizationProject().getLocalizationFiles()) {
 			files.add(locFile.getFile());
 		}
@@ -937,7 +937,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 
 	@Override
 	public String getContentForFileAsText(IFileEditorInput editorInput) {
-		LocalizationFile locFile = projectLocalizationManager
+		StringLocalizationFile locFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(
 						editorInput.getFile());
 		return projectLocalizationManager.getProjectLocalizationSchema()

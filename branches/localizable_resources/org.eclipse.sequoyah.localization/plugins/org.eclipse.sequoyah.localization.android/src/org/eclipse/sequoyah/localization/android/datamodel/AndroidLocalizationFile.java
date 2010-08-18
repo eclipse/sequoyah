@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
-import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
 import org.w3c.dom.Document;
@@ -29,7 +29,7 @@ import org.w3c.dom.Document;
  * contains information about XML file saved
  * 
  */
-public class AndroidLocalizationFile extends LocalizationFile {
+public class AndroidLocalizationFile extends StringLocalizationFile {
 
 	/**
 	 * Saved XML (it is used not to lose comments on updates)
@@ -82,7 +82,7 @@ public class AndroidLocalizationFile extends LocalizationFile {
 	}
 
 	/**
-	 * @see org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile#removeStringNode(org.eclipse.sequoyah.localization.tools.datamodel.StringNode)
+	 * @see org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile#removeStringNode(org.eclipse.sequoyah.localization.tools.datamodel.StringNode)
 	 */
 	@Override
 	public void removeStringNode(StringNode stringNode) {

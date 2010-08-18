@@ -29,7 +29,7 @@ public class StringArray {
 	/*
 	 * The LocalizationFile which the StringArray belongs to
 	 */
-	private LocalizationFile localizationFile = null;
+	private StringLocalizationFile localizationFile = null;
 
 	/*
 	 * Key used in the localization process
@@ -57,7 +57,7 @@ public class StringArray {
 	 * 
 	 * @return the LocalizationFile which the StringArray belongs to
 	 */
-	public LocalizationFile getLocalizationFile() {
+	public StringLocalizationFile getLocalizationFile() {
 		return localizationFile;
 	}
 
@@ -67,7 +67,7 @@ public class StringArray {
 	 * @param localizationFile
 	 *            the LocalizationFile which the StringArray belongs to
 	 */
-	public void setLocalizationFile(LocalizationFile localizationFile) {
+	public void setLocalizationFile(StringLocalizationFile localizationFile) {
 		this.localizationFile = localizationFile;
 	}
 
