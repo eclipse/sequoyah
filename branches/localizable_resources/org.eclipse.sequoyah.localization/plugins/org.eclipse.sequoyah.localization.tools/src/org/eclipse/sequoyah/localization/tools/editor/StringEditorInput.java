@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,7 +15,8 @@
  * Matheus Tait Lima (Eldorado) - Bug [300351] - Optimizing performance when translating a whole column at once
  * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/provide implementation to the new methods
  * Fabricio Violin (Eldorado) - Bug [316029] - Fix array behavior when switching between tabs
- * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
+ * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug
+ * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
@@ -50,7 +51,7 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringNodeComment;
+import org.eclipse.sequoyah.localization.tools.datamodel.NodeComment;
 import org.eclipse.sequoyah.localization.tools.datamodel.TranslationResult;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
@@ -173,9 +174,9 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			String comment = (cells.get(column)).getComment();
 			StringNode newNode = new StringNode(key, value);
 			newNode.setArray(isArray);
-			StringNodeComment commentNode = new StringNodeComment();
+			NodeComment commentNode = new NodeComment();
 			commentNode.setComment(comment);
-			newNode.setStringNodeComment(commentNode);
+			newNode.setNodeComment(commentNode);
 			newNode = file.addStringNode(newNode);
 			rowInfo.setKey(newNode.getKey());
 		}
@@ -279,8 +280,8 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			for (Iterator<StringNode> nodes = localizationNodes.iterator(); nodes
 					.hasNext();) {
 				StringNode stringNode = nodes.next();
-				String comment = ((stringNode.getStringNodeComment() != null) ? stringNode
-						.getStringNodeComment().getComment()
+				String comment = ((stringNode.getNodeComment() != null) ? stringNode
+						.getNodeComment().getComment()
 						: ""); //$NON-NLS-1$
 				CellInfo info = new CellInfo(stringNode.getValue(), comment);
 				cells.put(stringNode.getKey(), info);
@@ -550,8 +551,8 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.getLocalizationProject().getLocalizationFile(localeInfo);
 		StringNode stringNode = localizationFile.getStringNodeByKey(key);
 		return new CellInfo(stringNode.getValue(), ((stringNode
-				.getStringNodeComment() != null) ? stringNode
-				.getStringNodeComment().getComment() : null));
+				.getNodeComment() != null) ? stringNode
+				.getNodeComment().getComment() : null));
 	}
 
 	/*
@@ -573,8 +574,8 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		List<StringNode> stringNodes = localizationFile.getStringNodes();
 		for (StringNode stringNode : stringNodes) {
 			String comment = ""; //$NON-NLS-1$
-			if (stringNode.getStringNodeComment() != null) {
-				comment = stringNode.getStringNodeComment().getComment();
+			if (stringNode.getNodeComment() != null) {
+				comment = stringNode.getNodeComment().getComment();
 			}
 			keyValueMap.put(stringNode.getKey(), new CellInfo(stringNode
 					.getValue(), comment));
@@ -601,7 +602,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 
 		for (StringNode stringNode : stringNodes) {
 			keysForColumn.add(new CellInfo(stringNode.getKey(), stringNode
-					.getStringNodeComment().getComment()));
+					.getNodeComment().getComment()));
 		}
 
 		return keysForColumn;
@@ -852,13 +853,13 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		LocalizationFile file = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(locale);
 
-		StringNodeComment comment = file.getStringNodeByKey(key)
-				.getStringNodeComment();
+		NodeComment comment = file.getStringNodeByKey(key)
+				.getNodeComment();
 
 		if (comment == null) {
-			comment = new StringNodeComment();
+			comment = new NodeComment();
 		}
-		file.getStringNodeByKey(key).setStringNodeComment(comment);
+		file.getStringNodeByKey(key).setNodeComment(comment);
 		comment.setComment(tooltip);
 
 	}

@@ -18,6 +18,7 @@
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save
  * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
  * Daniel Drigo Pastore, Marcel Augusto Gorri (Eldorado) - Bug 312971 - Localization Editor does not accept < and > characters
+ * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
@@ -88,7 +89,7 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringNodeComment;
+import org.eclipse.sequoyah.localization.tools.datamodel.NodeComment;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.NewRowInputDialog;
 import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.TranslateColumnInputDialog;
@@ -564,7 +565,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	private void createOrUpdateComment(Document document,
 			StringNode stringNode, Element string) {
-		StringNodeComment nodeComment = stringNode.getStringNodeComment();
+		NodeComment nodeComment = stringNode.getNodeComment();
 		if (nodeComment != null) {
 			if (nodeComment.getComment() != null) {
 				if (nodeComment.getComment().length() > 0) {
@@ -1679,9 +1680,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			stringNode.toString();
 			StringNode stringNodeObj = new StringNode(key, value);
 			if (comment != null) {
-				StringNodeComment nodeComment = new StringNodeComment();
+				NodeComment nodeComment = new NodeComment();
 				nodeComment.setComment(comment);
-				stringNodeObj.setStringNodeComment(nodeComment);
+				stringNodeObj.setNodeComment(nodeComment);
 			}
 			stringNodes.add(stringNodeObj);
 		}
@@ -1726,9 +1727,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 					}
 
 					if (comment != null) {
-						StringNodeComment nodeComment = new StringNodeComment();
+						NodeComment nodeComment = new NodeComment();
 						nodeComment.setComment(comment);
-						newNode.setStringNodeComment(nodeComment);
+						newNode.setNodeComment(nodeComment);
 					}
 
 				}

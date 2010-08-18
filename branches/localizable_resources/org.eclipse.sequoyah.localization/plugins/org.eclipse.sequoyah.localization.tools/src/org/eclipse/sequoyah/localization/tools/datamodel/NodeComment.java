@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,6 +10,8 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
+ * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
@@ -19,20 +21,20 @@ import org.eclipse.sequoyah.localization.tools.persistence.IPersistentExtraData;
 import org.eclipse.sequoyah.localization.tools.persistence.PersistableAttributes;
 
 /**
- * This class stores a comment associated to a StringNode.
+ * This class stores a comment associated to a Node.
  * 
  * It's intended to be persisted as part of the extra-info related to a
- * StringNode object
+ * Node object
  */
-public class StringNodeComment implements IPersistentExtraData {
+public class NodeComment implements IPersistentExtraData {
 
 	/*
-	 * The StringNode this commented is related to
+	 * The Node this commented is related to
 	 */
-	private StringNode stringNode;
+	private Node node;
 
 	/*
-	 * The comment associated to the StringNode
+	 * The comment associated to the Node
 	 */
 	private String comment;
 
@@ -42,28 +44,28 @@ public class StringNodeComment implements IPersistentExtraData {
 	private Date date;
 
 	/**
-	 * Get the StringNode this commented is related to
+	 * Get the Node this commented is related to
 	 * 
-	 * @return the StringNode this commented is related to
+	 * @return the Node this commented is related to
 	 */
-	public StringNode getStringNode() {
-		return stringNode;
+	public Node getNode() {
+		return node;
 	}
 
 	/**
-	 * Set the StringNode this commented is related to
+	 * Set the Node this commented is related to
 	 * 
-	 * @param stringNode
-	 *            the StringNode this commented is related to
+	 * @param node
+	 *            the Node this commented is related to
 	 */
-	public void setStringNode(StringNode stringNode) {
-		this.stringNode = stringNode;
+	public void setNode(Node node) {
+		this.node = node;
 	}
 
 	/**
-	 * Get the comment associated to the StringNode
+	 * Get the comment associated to the Node
 	 * 
-	 * @return the comment associated to the StringNode
+	 * @return the comment associated to the Node
 	 */
 	public String getComment() {
 		return comment;
@@ -78,8 +80,8 @@ public class StringNodeComment implements IPersistentExtraData {
 	public void setComment(String comment) {
 		if (this.comment != comment) {
 			this.comment = comment;
-			if (this.stringNode != null) {
-				this.stringNode.setDirty(true);
+			if (this.node != null) {
+				this.node.setDirty(true);
 			}
 		}
 	}

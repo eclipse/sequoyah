@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2010 Motorola Inc.
+ * Copyright (c) 2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,26 +11,16 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save (currently only on update)
+ * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
 /**
- * This class represents an entry in a localization file.
+ * This class represents an entry in a localization file for text.
  * 
- * It basically stores a <key>:<value> pair, which contains the key used in the
- * localization process and the associated value in that specific language
- * represented by the given localization file.
- * 
- * It also stores or refers to any state data or meta-data associated with the
- * <key>:<value> pair that is represented by it.
  */
-public class StringNode implements Comparable<StringNode> {
-
-	/*
-	 * The LocalizationFile which the StringNode belongs to
-	 */
-	private LocalizationFile localizationFile = null;
+public class StringNode extends Node {
 
 	/*
 	 * Details of the translation process applied to the node, if any
@@ -43,21 +33,6 @@ public class StringNode implements Comparable<StringNode> {
 	private GrammarCheckerDetails grammarCheckerDetails = null;
 
 	/*
-	 * Comment associated to the node
-	 */
-	private StringNodeComment stringNodeComment = null;
-
-	/*
-	 * Key used in the localization process
-	 */
-	private String key = null;
-
-	/*
-	 * Associated value for the language represented by the localizationFile
-	 */
-	private String value = null;
-
-	/*
 	 * Whether the value has been generated using the translation process or not
 	 */
 	private boolean translated;
@@ -67,25 +42,15 @@ public class StringNode implements Comparable<StringNode> {
 	 * not
 	 */
 	private boolean checked;
-
+	
 	/*
-	 * Whether the value has been edited by the Localization Editor and differs
-	 * from the value saved in the localizationFile
+	 * Whether a node represents an array
 	 */
-	private boolean dirty;
-
-	/*
-	 * Whether there are changes in the associated meta-data
-	 */
-	private boolean dirtyMetaData;
-
-	/*
-	 * Whether there are changes in the associated extra-info
-	 */
-	private boolean dirtyExtraInfo;
-
 	private boolean isArray;
-
+	
+	/*
+	 * This node represents an array
+	 */
 	private StringArray stringArray;
 
 	/**
@@ -95,27 +60,7 @@ public class StringNode implements Comparable<StringNode> {
 	 * @param value
 	 */
 	public StringNode(String key, String value) {
-		this.key = key;
-		this.value = value;
-	}
-
-	/**
-	 * Get the LocalizationFile which the StringNode belongs to
-	 * 
-	 * @return the LocalizationFile which the StringNode belongs to
-	 */
-	public LocalizationFile getLocalizationFile() {
-		return localizationFile;
-	}
-
-	/**
-	 * Set the LocalizationFile which the StringNode belongs to
-	 * 
-	 * @param localizationFile
-	 *            the LocalizationFile which the StringNode belongs to
-	 */
-	public void setLocalizationFile(LocalizationFile localizationFile) {
-		this.localizationFile = localizationFile;
+		super(key, value);
 	}
 
 	/**
@@ -164,71 +109,6 @@ public class StringNode implements Comparable<StringNode> {
 	}
 
 	/**
-	 * Get the comment associated to the node
-	 * 
-	 * @return comment associated to the node
-	 */
-	public StringNodeComment getStringNodeComment() {
-		return stringNodeComment;
-	}
-
-	/**
-	 * Set the comment associated to the node
-	 * 
-	 * @param stringNodeComment
-	 *            comment to be associated to the node
-	 */
-	public void setStringNodeComment(StringNodeComment stringNodeComment) {
-		this.stringNodeComment = stringNodeComment;
-		if (this.stringNodeComment != null) {
-			this.stringNodeComment.setStringNode(this);
-		}
-	}
-
-	/**
-	 * Get the key used in the localization process
-	 * 
-	 * @return key used in the localization process
-	 */
-	public String getKey() {
-		return key;
-	}
-
-	/**
-	 * Set the key used in the localization process
-	 * 
-	 * @param key
-	 *            key used in the localization process
-	 */
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	/**
-	 * Get the value associated to the key for the language represented by the
-	 * localizationFile
-	 * 
-	 * @return value associated to the key
-	 */
-	public String getValue() {
-		return value;
-	}
-
-	/**
-	 * Set the value associated to the key for the language represented by the
-	 * localizationFile
-	 * 
-	 * @param value
-	 *            value associated to the key
-	 */
-	public void setValue(String value) {
-		if ((this.value != null) && (!this.value.equals(value))) {
-			setDirty(true);
-		}
-		this.value = value;
-	}
-
-	/**
 	 * Check whether the value has been generated using the translation process
 	 * or not
 	 * 
@@ -274,76 +154,6 @@ public class StringNode implements Comparable<StringNode> {
 		this.checked = checked;
 	}
 
-	/**
-	 * Check whether the value has been edited by the Localization Editor and
-	 * differs from the value saved in the localizationFile
-	 * 
-	 * @return true if he value has been edited by the Localization Editor and
-	 *         differs from the value saved in the localizationFile, false
-	 *         otherwise
-	 */
-	public boolean isDirty() {
-		return dirty;
-	}
-
-	/**
-	 * Set whether the value has been edited by the Localization Editor and
-	 * differs from the value saved in the localizationFile
-	 * 
-	 * @param dirty
-	 *            true if he value has been edited by the Localization Editor
-	 *            and differs from the value saved in the localizationFile,
-	 *            false otherwise
-	 */
-	public void setDirty(boolean dirty) {
-		// propagate the state if dirty = true
-		if (dirty) {
-			this.getLocalizationFile().setDirty(dirty);
-		}
-		this.dirty = dirty;
-	}
-
-	/**
-	 * Check whether there are changes in the associated meta-data
-	 * 
-	 * @return true if there are changes in the associated meta-data, false
-	 *         otherwise
-	 */
-	public boolean isDirtyMetaData() {
-		return dirtyMetaData;
-	}
-
-	/**
-	 * Set whether there are changes in the associated meta-data
-	 * 
-	 * @param dirtyMetaData
-	 *            true if there are changes in the associated meta-data, false
-	 *            otherwise
-	 */
-	public void setDirtyMetaData(boolean dirtyMetaData) {
-		this.dirtyMetaData = dirtyMetaData;
-	}
-
-	/**
-	 * Check whether there are changes in the associated extra-info
-	 * 
-	 * @return true if there are changes in the associated extra-info, false
-	 *         otherwise
-	 */
-	public boolean isDirtyExtraInfo() {
-		return dirtyExtraInfo;
-	}
-
-	/**
-	 * Set whether there are changes in the associated extra-info
-	 * 
-	 * @param dirtyExtraInfo
-	 *            true if there are changes in the associated extra-info, false
-	 *            otherwise
-	 */
-	public void setDirtyExtraInfo(boolean dirtyExtraInfo) {
-		this.dirtyExtraInfo = dirtyExtraInfo;
-	}
 
 	/**
 	 * Delete this StringNode. - Remove it from the model - Remove its comment,
@@ -376,59 +186,42 @@ public class StringNode implements Comparable<StringNode> {
 		return false;
 	}
 
+	/**
+	 * Check whether this node represents an array
+	 * 
+	 * @return true if this node is an array
+	 */	
 	public boolean isArray() {
 		return isArray;
 	}
 
+	/**
+	 * Set whether this node is an array
+	 * 
+	 * @param isArray
+	 *            true if this node is an array
+	 */
 	public void setArray(boolean isArray) {
 		this.isArray = isArray;
-	}
-
+	}	
+	
+	/**
+	 * Get the array this node represents
+	 * 
+	 * @return the StringArray representing this node
+	 */	
 	public StringArray getStringArray() {
 		return stringArray;
 	}
 
+	/**
+	 * Set the array this node represents
+	 * 
+	 * @param stringArray
+	 *            the array this node represents
+	 */	
 	public void setStringArray(StringArray stringArray) {
 		this.stringArray = stringArray;
-	}
-
-	public int compareTo(StringNode o) {
-		return this.getKey().compareTo(o.getKey());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		StringNode other = (StringNode) obj;
-		if (key == null) {
-			if (other.key != null)
-				return false;
-		} else if (!key.equals(other.key))
-			return false;
-		return true;
 	}
 
 }
