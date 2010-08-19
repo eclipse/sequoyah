@@ -26,9 +26,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
-import org.eclipse.sequoyah.localization.tools.persistence.IFilePersistentData;
-import org.eclipse.sequoyah.localization.tools.persistence.IPersistentData;
-import org.eclipse.sequoyah.localization.tools.persistence.PersistableAttributes;
 
 /**
  * This class represents a real localization file for strings

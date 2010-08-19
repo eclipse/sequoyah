@@ -18,10 +18,7 @@
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.sequoyah.localization.tools.persistence.IFilePersistentData;
