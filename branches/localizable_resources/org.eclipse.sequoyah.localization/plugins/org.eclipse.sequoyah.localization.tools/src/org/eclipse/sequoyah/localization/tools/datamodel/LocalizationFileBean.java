@@ -17,8 +17,9 @@ import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 
 /**
- * @author wmg040
- *
+ * This bean contains all information necessary to create a LocalizationFile,
+ * including the type of such file.
+ * 
  */
 public class LocalizationFileBean {
 
@@ -26,7 +27,7 @@ public class LocalizationFileBean {
 	 * Specifies if the bean relates to a certain type of LocalizationFile
 	 */
 	private int type;
-	
+
 	/*
 	 * A reference to the file being represented
 	 */
@@ -90,8 +91,8 @@ public class LocalizationFileBean {
 	 */
 	public void setLocale(LocaleInfo locale) {
 		this.locale = locale;
-	}	
-	
+	}
+
 	/**
 	 * @return the stringArrays
 	 */

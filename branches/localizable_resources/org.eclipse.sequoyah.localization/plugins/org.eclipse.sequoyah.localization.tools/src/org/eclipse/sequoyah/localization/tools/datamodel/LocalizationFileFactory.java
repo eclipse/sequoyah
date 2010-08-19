@@ -11,24 +11,28 @@
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
 /**
- * @author wmg040
- *
+ * Factory for creating the different types of LocalizationFile (named: String,
+ * Image, Sound, Video). It is also a singleton.
+ * 
  */
 public class LocalizationFileFactory {
 
-	/**
-	 * 
+	/*
+	 * Private instance of this factory for singleton purposes.
 	 */
 	private static LocalizationFileFactory localizationFileFactory;
 
 	/**
-	 * 
+	 * Default constructor (private since it is a singleton).
 	 */
 	private LocalizationFileFactory() {
 	}
 
 	/**
-	 * @return
+	 * This method provides a single instance of this factory for whoever needs
+	 * to use it.
+	 * 
+	 * @return unique instance of this factory
 	 */
 	public static LocalizationFileFactory getInstance() {
 		if (localizationFileFactory == null) {
@@ -42,12 +46,18 @@ public class LocalizationFileFactory {
 	}
 
 	/**
+	 * Method responsible for creating the different types of LocalizationFile
+	 * based on the type attribute of the LocalizationFileBean received as
+	 * parameter.
+	 * 
 	 * @param bean
-	 * @return
+	 *            Bean containing all information necessary for the creation of
+	 *            a LocalizationFile.
+	 * @return LocalizationFile created if the parameter received is not null.
 	 */
 	public LocalizationFile createLocalizationFile(LocalizationFileBean bean) {
 		LocalizationFile locFile = null;
-		if (bean != null){
+		if (bean != null) {
 			switch (bean.getType()) {
 			case ILocalizationFileType.STRING:
 				locFile = StringLocalizationFile.create(bean);
@@ -58,7 +68,7 @@ public class LocalizationFileFactory {
 			case ILocalizationFileType.VIDEO:
 				locFile = VideoLocalizationFile.create(bean);
 			}
-		}			
+		}
 		return locFile;
 	}
 }

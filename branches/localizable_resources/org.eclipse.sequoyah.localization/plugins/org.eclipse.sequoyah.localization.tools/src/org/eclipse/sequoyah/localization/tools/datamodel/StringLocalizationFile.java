@@ -70,8 +70,12 @@ public class StringLocalizationFile extends LocalizationFile {
 	}
 
 	/**
+	 * StringLocalizationFile knows how to create itself.
+	 * 
 	 * @param bean
-	 * @return
+	 *            Bean containing all information necessary to create any type
+	 *            of LocalizationFile.
+	 * @return LocalizationFile created (if the parameter received is not null).
 	 */
 	public static LocalizationFile create(LocalizationFileBean bean) {
 		LocalizationFile locFile;

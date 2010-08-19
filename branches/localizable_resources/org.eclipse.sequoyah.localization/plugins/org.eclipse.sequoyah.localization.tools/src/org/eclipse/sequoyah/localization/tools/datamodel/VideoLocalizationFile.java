@@ -19,6 +19,8 @@ import org.eclipse.core.resources.IFile;
 public class VideoLocalizationFile extends LocalizationFile {
 
 	/**
+	 * Constructor
+	 * 
 	 * @param file
 	 * @param localeInfo
 	 */
@@ -27,8 +29,12 @@ public class VideoLocalizationFile extends LocalizationFile {
 	}
 	
 	/**
+	 * VideoLocalizationFile knows how to create itself.
+	 * 
 	 * @param bean
-	 * @return
+	 *            Bean containing all information necessary to create any type
+	 *            of LocalizationFile.
+	 * @return LocalizationFile created (if the parameter received is not null).
 	 */
 	public static LocalizationFile create(LocalizationFileBean bean) {
 		LocalizationFile locFile;
