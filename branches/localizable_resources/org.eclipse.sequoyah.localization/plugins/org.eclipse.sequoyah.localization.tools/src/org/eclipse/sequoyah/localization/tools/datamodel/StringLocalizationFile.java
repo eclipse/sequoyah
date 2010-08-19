@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.eclipse.sequoyah.localization.tools.persistence.IFilePersistentData;
 import org.eclipse.sequoyah.localization.tools.persistence.IPersistentData;
 import org.eclipse.sequoyah.localization.tools.persistence.PersistableAttributes;
@@ -65,6 +67,22 @@ public class StringLocalizationFile extends LocalizationFile {
 		this.stringArrays = new ArrayList<StringArray>();
 		setStringNodes(stringNodes);
 		setStringArrays(stringArrays);
+	}
+
+	/**
+	 * @param bean
+	 * @return
+	 */
+	public static LocalizationFile create(LocalizationFileBean bean) {
+		LocalizationFile locFile;
+		if (bean != null) {
+			locFile = new StringLocalizationFile(bean.getFile(),
+					bean.getLocale(), bean.getStringNodes(),
+					bean.getStringArrays());
+		} else {
+			locFile = null;
+		}
+		return locFile;
 	}
 
 	/**
@@ -127,9 +145,9 @@ public class StringLocalizationFile extends LocalizationFile {
 	}
 
 	/**
-	 * Set the list of StringNodes which are part of the file.
-	 * NOTE: it will clear the StringNodes associated with StringArray.
-	 * You should call setStringArrays after this operation.
+	 * Set the list of StringNodes which are part of the file. NOTE: it will
+	 * clear the StringNodes associated with StringArray. You should call
+	 * setStringArrays after this operation.
 	 * 
 	 * @param stringNodes
 	 *            the list of StringNodes which are part of the file
@@ -137,8 +155,7 @@ public class StringLocalizationFile extends LocalizationFile {
 	public void setStringNodes(List<StringNode> stringNodes) {
 		this.stringNodes.clear();
 		stringNodesMap.clear();
-		if(stringNodes != null)
-		{
+		if (stringNodes != null) {
 			for (StringNode stringNode : stringNodes) {
 				this.stringNodesMap.put(stringNode.getKey(), stringNode);
 				stringNode.setLocalizationFile(this);
@@ -241,11 +258,11 @@ public class StringLocalizationFile extends LocalizationFile {
 	public boolean equals(Object obj) {
 		boolean result = true;
 
-//		if (!this.getLocaleInfo().equals(
-//				((StringLocalizationFile) obj).getLocaleInfo())) {
-//
-//			result = false;
-//		}
+		// if (!this.getLocaleInfo().equals(
+		// ((StringLocalizationFile) obj).getLocaleInfo())) {
+		//
+		// result = false;
+		// }
 		if (!super.equals(obj)) {
 			result = false;
 		} else {
@@ -264,8 +281,8 @@ public class StringLocalizationFile extends LocalizationFile {
 			} else {
 				boolean keyEqual, valueEqual;
 				for (int i = 0; i < thisStringNodes.size(); i++) {
-					keyEqual = thisStringNodes.get(i).getKey().equals(
-							otherStringNodes.get(i).getKey());
+					keyEqual = thisStringNodes.get(i).getKey()
+							.equals(otherStringNodes.get(i).getKey());
 					String EOL = System.getProperty("line.separator"); //$NON-NLS-1$
 					String fromFile = thisStringNodes.get(i).getValue()
 							.replaceAll(EOL, "\n"); //$NON-NLS-1$

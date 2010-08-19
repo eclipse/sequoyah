@@ -13,7 +13,7 @@
  * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources
  * 
  ********************************************************************************/
-package org.eclipse.sequoyah.localization.tools.datamodel;
+package org.eclipse.sequoyah.localization.tools.datamodel.node;
 
 import java.util.Date;
 

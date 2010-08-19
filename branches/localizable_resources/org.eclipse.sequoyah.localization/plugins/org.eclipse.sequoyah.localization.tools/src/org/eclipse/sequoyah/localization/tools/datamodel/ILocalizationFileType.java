@@ -5,15 +5,34 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources
+ * Marcel Augusto Gorri (Eldorado) - Bug [323036] - Add support to other localizable resources
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
 /**
- * This class represents an entry in a localization file for images.
  * 
  */
-public class ImageNode extends Node {
+public interface ILocalizationFileType {
+
+	/**
+	 * 
+	 */
+	public static final int STRING = 0;
+	
+	/**
+	 * 
+	 */
+	public static final int IMAGE = 1;
+
+	/**
+	 * 
+	 */
+	public static final int SOUND = 2;
+
+	/**
+	 * 
+	 */
+	public static final int VIDEO = 3;
 
 }

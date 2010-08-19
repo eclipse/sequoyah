@@ -12,7 +12,7 @@
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save (currently only on update)
  * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug
  ********************************************************************************/
-package org.eclipse.sequoyah.localization.tools.datamodel;
+package org.eclipse.sequoyah.localization.tools.datamodel.node;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 
 /**
  * This class represents an array entry in a localization file.

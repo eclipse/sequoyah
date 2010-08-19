@@ -14,12 +14,31 @@ import org.eclipse.core.resources.IFile;
 
 /**
  * This class represents a real localization file for images
- *
+ * 
  */
 public class ImageLocalizationFile extends LocalizationFile {
 
+	/**
+	 * @param file
+	 * @param localeInfo
+	 */
 	public ImageLocalizationFile(IFile file, LocaleInfo localeInfo) {
 		super(file, localeInfo);
+	}
+
+	/**
+	 * @param bean
+	 * @return
+	 */
+	public static LocalizationFile create(LocalizationFileBean bean) {
+		LocalizationFile locFile;
+		if (bean != null) {
+			locFile = new ImageLocalizationFile(bean.getFile(),
+					bean.getLocale());
+		} else {
+			locFile = null;
+		}
+		return locFile;
 	}
 
 }

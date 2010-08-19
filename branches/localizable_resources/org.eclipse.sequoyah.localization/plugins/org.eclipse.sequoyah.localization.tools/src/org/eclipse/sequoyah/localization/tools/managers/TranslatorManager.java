@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
-import org.eclipse.sequoyah.localization.tools.datamodel.TranslationResult;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.TranslationResult;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 import org.eclipse.sequoyah.localization.tools.extensions.providers.TranslatorProvider;
 import org.eclipse.swt.graphics.Image;

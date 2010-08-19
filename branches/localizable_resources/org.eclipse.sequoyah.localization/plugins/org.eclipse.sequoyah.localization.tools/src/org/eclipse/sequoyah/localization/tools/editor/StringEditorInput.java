@@ -49,10 +49,10 @@ import org.eclipse.sequoyah.localization.stringeditor.editor.input.IEditorChange
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
-import org.eclipse.sequoyah.localization.tools.datamodel.NodeComment;
-import org.eclipse.sequoyah.localization.tools.datamodel.TranslationResult;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.NodeComment;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.TranslationResult;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;

@@ -10,7 +10,7 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  ********************************************************************************/
-package org.eclipse.sequoyah.localization.tools.datamodel;
+package org.eclipse.sequoyah.localization.tools.datamodel.node;
 
 import java.util.Date;
 
@@ -18,10 +18,10 @@ import org.eclipse.sequoyah.localization.tools.persistence.IPersistentMetaData;
 import org.eclipse.sequoyah.localization.tools.persistence.PersistableAttributes;
 
 /**
- * This class stores meta-info about the grammar checker process and is intended
- * to be persisted as part of the meta-data related to a StringNode object
+ * This class stores meta-info about the translation process and is intended to
+ * be persisted as part of the meta-info related to a StringNode object
  */
-public class GrammarCheckerDetails implements IPersistentMetaData {
+public class TranslationDetails implements IPersistentMetaData {
 
 	/*
 	 * The StringNode this info is related to
@@ -29,9 +29,9 @@ public class GrammarCheckerDetails implements IPersistentMetaData {
 	private StringNode stringNode;
 
 	/*
-	 * The name of the Grammar Checker used in the process
+	 * The name of the Translator used in the process
 	 */
-	private String grammarChecker;
+	private String translator;
 
 	/*
 	 * When the process took place
@@ -42,15 +42,6 @@ public class GrammarCheckerDetails implements IPersistentMetaData {
 	 * Whether the process succeeded or not
 	 */
 	private boolean success;
-
-	/**
-	 * Constructor class
-	 * 
-	 * @param stringNode
-	 */
-	public GrammarCheckerDetails(StringNode stringNode) {
-		this.stringNode = stringNode;
-	}
 
 	/**
 	 * Get the StringNode this info is related to
@@ -72,26 +63,26 @@ public class GrammarCheckerDetails implements IPersistentMetaData {
 	}
 
 	/**
-	 * Get the name of the Grammar Checker used in the process
+	 * Get the name of the Translator used in the process
 	 * 
-	 * @return the name of the Grammar Checker used in the process
+	 * @return the name of the Translator used in the process
 	 */
-	public String getGrammarChecker() {
-		return grammarChecker;
+	public String getTranslator() {
+		return translator;
 	}
 
 	/**
-	 * Set the name of the Grammar Checker used in the process
+	 * Set the name of the Translator used in the process
 	 * 
-	 * @param grammarChecker
-	 *            the name of the Grammar Checker used in the process
+	 * @param translator
+	 *            the name of the Translator used in the process
 	 */
-	public void setGrammarChecker(String grammarChecker) {
-		this.grammarChecker = grammarChecker;
+	public void setTranslator(String translator) {
+		this.translator = translator;
 	}
 
 	/**
-	 * Get when the grammar checker process took place
+	 * Get when the translator process took place
 	 * 
 	 * @return when the grammar checker process took place
 	 */
@@ -100,38 +91,42 @@ public class GrammarCheckerDetails implements IPersistentMetaData {
 	}
 
 	/**
-	 * Set when the grammar checker process took place
+	 * Set when the translation process took place
 	 * 
 	 * @param date
-	 *            when the grammar checker process took place
+	 *            when the translation process took place
 	 */
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
 	/**
-	 * Check whether the grammar checker process succeeded or not
+	 * Check whether the translation process succeeded or not
 	 * 
-	 * @return true if the grammar checker process succeeded, false otherwise
+	 * @return true if the translation process succeeded, false otherwise
 	 */
 	public boolean isSuccess() {
 		return success;
 	}
 
 	/**
-	 * Set whether the grammar checker process succeeded or not
+	 * Set whether the translation process succeeded or not
 	 * 
 	 * @param success
-	 *            true if the grammar checker process succeeded, false otherwise
+	 *            true if the translation process succeeded, false otherwise
 	 */
 	public void setSuccess(boolean success) {
 		this.success = success;
 	}
 
-	/**
-	 * @see org.eclipse.sequoyah.localization.tools.persistence.IPersistentData#getPersistableAttributes()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.sequoyah.localization.tools.persistence.IPersistentData#
+	 * getPersistableAttributes()
 	 */
 	public PersistableAttributes getPersistableAttributes() {
+		// TODO: implement persistence
 		return null;
 	}
 

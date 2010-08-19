@@ -18,8 +18,27 @@ import org.eclipse.core.resources.IFile;
  */
 public class VideoLocalizationFile extends LocalizationFile {
 
+	/**
+	 * @param file
+	 * @param localeInfo
+	 */
 	public VideoLocalizationFile(IFile file, LocaleInfo localeInfo) {
 		super(file, localeInfo);
+	}
+	
+	/**
+	 * @param bean
+	 * @return
+	 */
+	public static LocalizationFile create(LocalizationFileBean bean) {
+		LocalizationFile locFile;
+		if (bean != null) {
+			locFile = new VideoLocalizationFile(bean.getFile(),
+					bean.getLocale());
+		} else {
+			locFile = null;
+		}
+		return locFile;
 	}
 
 }

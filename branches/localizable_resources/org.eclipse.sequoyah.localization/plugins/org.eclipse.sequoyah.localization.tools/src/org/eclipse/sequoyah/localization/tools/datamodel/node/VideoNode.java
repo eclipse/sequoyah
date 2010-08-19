@@ -8,7 +8,7 @@
  * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources
  * 
  ********************************************************************************/
-package org.eclipse.sequoyah.localization.tools.datamodel;
+package org.eclipse.sequoyah.localization.tools.datamodel.node;
 
 /**
  * This class represents an entry in a localization file for video files.

@@ -20,8 +20,8 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.w3c.dom.Document;
 
 /**
@@ -82,7 +82,7 @@ public class AndroidLocalizationFile extends StringLocalizationFile {
 	}
 
 	/**
-	 * @see org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile#removeStringNode(org.eclipse.sequoyah.localization.tools.datamodel.StringNode)
+	 * @see org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile#removeStringNode(org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode)
 	 */
 	@Override
 	public void removeStringNode(StringNode stringNode) {

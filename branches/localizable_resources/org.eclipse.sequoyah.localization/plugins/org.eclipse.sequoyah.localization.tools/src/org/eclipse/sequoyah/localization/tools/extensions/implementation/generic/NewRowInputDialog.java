@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.swt.SWT;

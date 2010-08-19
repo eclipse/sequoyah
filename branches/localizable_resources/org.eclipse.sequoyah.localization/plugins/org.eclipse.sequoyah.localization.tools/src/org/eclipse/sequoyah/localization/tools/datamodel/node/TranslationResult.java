@@ -10,7 +10,7 @@
  * Contributors:
  * name (company) - description.
  ********************************************************************************/
-package org.eclipse.sequoyah.localization.tools.datamodel;
+package org.eclipse.sequoyah.localization.tools.datamodel.node;
 
 import java.util.Date;
 

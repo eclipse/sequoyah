@@ -22,6 +22,7 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
 
 /**
  * This class represents a real project and contains other information about it

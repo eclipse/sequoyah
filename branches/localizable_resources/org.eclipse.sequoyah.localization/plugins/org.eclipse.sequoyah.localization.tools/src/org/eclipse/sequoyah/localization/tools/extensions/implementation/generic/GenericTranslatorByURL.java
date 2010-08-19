@@ -15,7 +15,7 @@ package org.eclipse.sequoyah.localization.tools.extensions.implementation.generi
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.sequoyah.localization.tools.datamodel.TranslationResult;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.TranslationResult;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 
 /**

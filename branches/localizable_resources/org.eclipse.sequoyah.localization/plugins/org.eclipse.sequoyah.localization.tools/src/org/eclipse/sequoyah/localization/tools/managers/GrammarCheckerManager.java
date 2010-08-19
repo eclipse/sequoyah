@@ -14,7 +14,7 @@ package org.eclipse.sequoyah.localization.tools.managers;
 
 import java.util.List;
 
-import org.eclipse.sequoyah.localization.tools.datamodel.GrammarCheckerResult;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.GrammarCheckerResult;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.IGrammarChecker;
 import org.eclipse.sequoyah.localization.tools.extensions.providers.GrammarCheckerProvider;
 

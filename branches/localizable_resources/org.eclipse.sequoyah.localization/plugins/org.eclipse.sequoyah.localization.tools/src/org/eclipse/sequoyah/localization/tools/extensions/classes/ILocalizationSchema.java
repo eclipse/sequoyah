@@ -29,8 +29,8 @@ import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**

@@ -14,12 +14,31 @@ import org.eclipse.core.resources.IFile;
 
 /**
  * This class represents a real localization file for sounds
- *
+ * 
  */
 public class SoundLocalizationFile extends LocalizationFile {
 
+	/**
+	 * @param file
+	 * @param localeInfo
+	 */
 	public SoundLocalizationFile(IFile file, LocaleInfo localeInfo) {
 		super(file, localeInfo);
+	}
+
+	/**
+	 * @param bean
+	 * @return
+	 */
+	public static LocalizationFile create(LocalizationFileBean bean) {
+		LocalizationFile locFile;
+		if (bean != null) {
+			locFile = new SoundLocalizationFile(bean.getFile(),
+					bean.getLocale());
+		} else {
+			locFile = null;
+		}
+		return locFile;
 	}
 
 }
