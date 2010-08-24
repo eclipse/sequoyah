@@ -35,17 +35,32 @@ public class StringLocalizationFile extends LocalizationFile {
 	/*
 	 * The list of StringNodes which are part of the file
 	 */
-	private List<StringNode> stringNodes;
+	private List<StringNode> stringNodes = new ArrayList<StringNode>();
 
 	/*
 	 * The list of StringArrays which are part of the file
 	 */
-	private List<StringArray> stringArrays;
+	private List<StringArray> stringArrays = new ArrayList<StringArray>();
 
 	/*
 	 * String nodes indexed by key
 	 */
-	Map<String, StringNode> stringNodesMap = new HashMap<String, StringNode>();
+	private Map<String, StringNode> stringNodesMap = new HashMap<String, StringNode>();
+
+	/*
+	 * Static code to add file type to factory's hashmap
+	 */
+	static {
+		LocalizationFileFactory.getInstance().addFileType(
+				StringLocalizationFile.class.getName(),
+				StringLocalizationFile.class);
+	}
+	
+	/**
+	 * Default constructor.
+	 */
+	public StringLocalizationFile (){
+	}
 
 	/**
 	 * Constructor method
@@ -60,8 +75,6 @@ public class StringLocalizationFile extends LocalizationFile {
 	public StringLocalizationFile(IFile file, LocaleInfo localeInfo,
 			List<StringNode> stringNodes, List<StringArray> stringArrays) {
 		super(file, localeInfo);
-		this.stringNodes = new ArrayList<StringNode>();
-		this.stringArrays = new ArrayList<StringArray>();
 		setStringNodes(stringNodes);
 		setStringArrays(stringArrays);
 	}
@@ -154,6 +167,8 @@ public class StringLocalizationFile extends LocalizationFile {
 	 *            the list of StringNodes which are part of the file
 	 */
 	public void setStringNodes(List<StringNode> stringNodes) {
+		if(this.stringNodes == null)
+			System.out.println("ma como!?!?!");
 		this.stringNodes.clear();
 		stringNodesMap.clear();
 		if (stringNodes != null) {

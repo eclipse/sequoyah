@@ -28,7 +28,7 @@ import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.eclipse.swt.widgets.TableColumn;
@@ -62,7 +62,7 @@ public abstract class ILocalizationSchema {
 	/**
 	 * Return the name to be displayed in the localization editor
 	 * 
-	 * @return the name to be displayd in the localization editor
+	 * @return the name to be displayed in the localization editor
 	 */
 	public abstract String getEditorName();
 
@@ -127,7 +127,7 @@ public abstract class ILocalizationSchema {
 	 * @param stringArrays
 	 * @return
 	 */
-	public abstract StringLocalizationFile createLocalizationFile(IFile file,
+	public abstract LocalizationFile createLocalizationFile(IFile file,
 			LocaleInfo localeInfo, List<StringNode> stringNodes,
 			List<StringArray> stringArrays);
 
@@ -141,7 +141,7 @@ public abstract class ILocalizationSchema {
 	 *         given localization file
 	 * @throws IOException
 	 */
-	public abstract StringLocalizationFile loadFile(IFile file) throws IOException;
+	public abstract LocalizationFile loadFile(IFile file) throws IOException;
 
 	/**
 	 * Update the content of the Localization File. This method will be used
@@ -155,7 +155,7 @@ public abstract class ILocalizationSchema {
 	 * @throws SequoyahException
 	 */
 	public abstract void updateLocalizationFileContent(
-			StringLocalizationFile localizationFile, String content)
+			LocalizationFile localizationFile, String content)
 			throws SequoyahException;
 
 	/**
@@ -169,7 +169,7 @@ public abstract class ILocalizationSchema {
 	 *         represent
 	 * @throws IOException
 	 */
-	public abstract Map<LocaleInfo, StringLocalizationFile> loadAllFiles(
+	public abstract Map<LocaleInfo, LocalizationFile> loadAllFiles(
 			IProject project) throws IOException;
 
 	/**
@@ -185,7 +185,7 @@ public abstract class ILocalizationSchema {
 	 *            that shall be created, as well as its content
 	 * @return true if the file has successfully been created, false otherwise
 	 */
-	public abstract void createFile(StringLocalizationFile localizationFile)
+	public abstract void createFile(LocalizationFile localizationFile)
 			throws SequoyahException;
 
 	/**
@@ -197,7 +197,7 @@ public abstract class ILocalizationSchema {
 	 *            that shall be updated, as well as its new content
 	 * @return true if the file has successfully been updated, false otherwise
 	 */
-	public abstract void updateFile(StringLocalizationFile localizationFile)
+	public abstract void updateFile(LocalizationFile localizationFile)
 			throws SequoyahException;
 
 	/**
@@ -401,6 +401,6 @@ public abstract class ILocalizationSchema {
 		return null;
 	}
 
-	public abstract String getLocalizationFileContent(StringLocalizationFile locFile);
+	public abstract Object getLocalizationFileContent(LocalizationFile locFile);
 
 }

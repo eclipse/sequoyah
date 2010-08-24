@@ -18,6 +18,21 @@ import org.eclipse.core.resources.IFile;
  */
 public class SoundLocalizationFile extends LocalizationFile {
 
+	/*
+	 * Static code to add file type to factory's hashmap
+	 */
+	static {
+		LocalizationFileFactory.getInstance().addFileType(
+				SoundLocalizationFile.class.getName(),
+				SoundLocalizationFile.class);
+	}	
+	
+	/**
+	 * Default constructor.
+	 */
+	public SoundLocalizationFile (){
+	}
+	
 	/**
 	 * Constructor
 	 * 

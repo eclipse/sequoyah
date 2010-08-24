@@ -26,7 +26,7 @@ public class LocalizationFileBean {
 	/*
 	 * Specifies if the bean relates to a certain type of LocalizationFile
 	 */
-	private int type;
+	private String type;
 
 	/*
 	 * A reference to the file being represented
@@ -51,7 +51,7 @@ public class LocalizationFileBean {
 	/**
 	 * @return the type
 	 */
-	public int getType() {
+	public String getType() {
 		return type;
 	}
 
@@ -59,7 +59,7 @@ public class LocalizationFileBean {
 	 * @param type
 	 *            the type to set
 	 */
-	public void setType(int type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 
@@ -138,12 +138,13 @@ public class LocalizationFileBean {
 	 * @param file
 	 * @param locale
 	 */
-	public LocalizationFileBean(int type, List<StringArray> stringArrays,
-			List<StringNode> stringNodes, IFile file, LocaleInfo locale) {
+	public LocalizationFileBean(String type, IFile file, LocaleInfo locale,
+			List<StringNode> stringNodes, List<StringArray> stringArrays) {
 		this.type = type;
-		this.stringArrays = stringArrays;
-		this.stringNodes = stringNodes;
 		this.file = file;
 		this.locale = locale;
+		this.stringNodes = stringNodes;
+		this.stringArrays = stringArrays;
 	}
+
 }

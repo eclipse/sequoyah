@@ -18,6 +18,21 @@ import org.eclipse.core.resources.IFile;
  */
 public class VideoLocalizationFile extends LocalizationFile {
 
+	/*
+	 * Static code to add file type to factory's hashmap
+	 */
+	static {
+		LocalizationFileFactory.getInstance().addFileType(
+				VideoLocalizationFile.class.getName(),
+				VideoLocalizationFile.class);
+	}	
+	
+	/**
+	 * Default constructor.
+	 */
+	public VideoLocalizationFile (){
+	}	
+	
 	/**
 	 * Constructor
 	 * 

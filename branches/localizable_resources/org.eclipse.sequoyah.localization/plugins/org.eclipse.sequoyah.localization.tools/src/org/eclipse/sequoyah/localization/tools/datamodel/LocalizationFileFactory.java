@@ -10,17 +10,42 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
+
 /**
  * Factory for creating the different types of LocalizationFile (named: String,
  * Image, Sound, Video). It is also a singleton.
  * 
  */
 public class LocalizationFileFactory {
-
-	/*
+	/**
 	 * Private instance of this factory for singleton purposes.
 	 */
 	private static LocalizationFileFactory localizationFileFactory;
+
+	/**
+	 * Private map for keeping LocalizationFile instances for creation.
+	 */
+	private HashMap<String, Class> hashMap = new HashMap<String, Class>();
+
+	/**
+	 * Store LocalizationFile classes for creation.
+	 * 
+	 * @param str
+	 * @param cls
+	 */
+	public void addFileType(String str, Class cls) {
+		hashMap.put(str, cls);
+	}
 
 	/**
 	 * Default constructor (private since it is a singleton).
@@ -57,18 +82,59 @@ public class LocalizationFileFactory {
 	 */
 	public LocalizationFile createLocalizationFile(LocalizationFileBean bean) {
 		LocalizationFile locFile = null;
-		if (bean != null) {
-			switch (bean.getType()) {
-			case ILocalizationFileType.STRING:
-				locFile = StringLocalizationFile.create(bean);
-			case ILocalizationFileType.IMAGE:
-				locFile = ImageLocalizationFile.create(bean);
-			case ILocalizationFileType.SOUND:
-				locFile = SoundLocalizationFile.create(bean);
-			case ILocalizationFileType.VIDEO:
-				locFile = VideoLocalizationFile.create(bean);
-			}
+		try {
+			// Loading a class as the first step in order to be able to retrieve
+			// it from the hash map based on its name
+			Class.forName(bean.getType());
+			// Creates a class of the desired type
+			Class c = Class.forName(hashMap.get(bean.getType()).toString()
+					.substring(6));
+			// Instantiates a new object to invoke its methods
+			Object o = c.newInstance();
+			// Creates the desired method
+			Method mthd = c.getMethod("create", LocalizationFileBean.class);
+			// Invokes the method of the desired type
+			locFile = (LocalizationFile) mthd.invoke(o, bean);
+		} catch (ClassNotFoundException e) {
+			BasePlugin.logError("Could not find class for LocalizationFile", e); //$NON-NLS-1$
+		} catch (InstantiationException e) {
+			BasePlugin.logError("Could not instantiate class for LocalizationFile", e); //$NON-NLS-1$
+		} catch (IllegalAccessException e) {
+			BasePlugin.logError("Could not access class or method for LocalizationFile", e); //$NON-NLS-1$
+		} catch (SecurityException e) {
+			BasePlugin.logError("Access to method denied", e); //$NON-NLS-1$
+		} catch (NoSuchMethodException e) {
+			BasePlugin.logError("Could not find method for LocalizationFile", e); //$NON-NLS-1$
+		} catch (IllegalArgumentException e) {
+			BasePlugin.logError("Invalid arguments for method for LocalizationFile", e); //$NON-NLS-1$
+		} catch (InvocationTargetException e) {
+			BasePlugin.logError("Could not call method for LocalizationFile", e); //$NON-NLS-1$
 		}
 		return locFile;
 	}
+
+//	public static void main(String[] args) {
+//		IFile file = null;
+//		LocaleInfo localeInfo = new LocaleInfo();
+//		StringNode node = new StringNode("", "");
+//		StringArray array = new StringArray("");
+//
+//		List<StringNode> stringNodes = new ArrayList<StringNode>();
+//		stringNodes.add(node);
+//		List<StringArray> stringArrays = new ArrayList<StringArray>();
+//		stringArrays.add(array);
+//
+//		LocalizationFileBean bean = new LocalizationFileBean(
+//				StringLocalizationFile.class.getName(), file, localeInfo,
+//				stringNodes, stringArrays);
+//		LocalizationFile locFile1 = LocalizationFileFactory.getInstance()
+//				.createLocalizationFile(bean);
+//		System.out.println("locFile1: " + locFile1.getClass().getName());
+//		bean = new LocalizationFileBean(ImageLocalizationFile.class.getName(),
+//				file, localeInfo, null, null);
+//		LocalizationFile locFile2 = LocalizationFileFactory.getInstance()
+//				.createLocalizationFile(bean);
+//		System.out.println("locFile2: " + locFile2.getClass().getName());
+//
+//	}
 }
