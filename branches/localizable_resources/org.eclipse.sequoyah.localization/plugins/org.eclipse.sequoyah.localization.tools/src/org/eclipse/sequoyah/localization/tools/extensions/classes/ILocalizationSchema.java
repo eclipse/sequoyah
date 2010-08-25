@@ -129,18 +129,6 @@ public abstract class ILocalizationSchema {
 	public abstract LocalizationFile createLocalizationFile(LocalizationFileBean bean);
 
 	/**
-	 * Read the given localization file and return its <key>:<value> pairs,
-	 * which need to be encapsulated in a LocalizationFile object
-	 * 
-	 * @param file
-	 *            the localization file that must be read
-	 * @return a LocalizationFile populated with the <key>:<value> pairs of the
-	 *         given localization file
-	 * @throws IOException
-	 */
-	public abstract LocalizationFile loadFile(IFile file) throws IOException;
-
-	/**
 	 * Update the content of the Localization File. This method will be used
 	 * when changes are made inside editors, but not notified by the input and
 	 * the content is not yet saved
@@ -398,6 +386,21 @@ public abstract class ILocalizationSchema {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param locFile
+	 * @return
+	 */
 	public abstract Object getLocalizationFileContent(LocalizationFile locFile);
+
+	/**
+	 * 
+	 * @param type
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public abstract LocalizationFile loadFile(String type, IFile file)
+			throws IOException;
 
 }
