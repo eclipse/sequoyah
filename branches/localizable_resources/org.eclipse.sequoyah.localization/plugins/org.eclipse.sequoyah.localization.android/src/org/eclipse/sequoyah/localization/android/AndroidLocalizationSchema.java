@@ -79,7 +79,10 @@ import org.eclipse.sequoyah.device.common.utilities.FileUtil;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahExceptionStatus;
 import org.eclipse.sequoyah.localization.android.AndroidLocaleAttribute.AndroidLocaleAttributes;
+import org.eclipse.sequoyah.localization.android.datamodel.AndroidImageLocalizationFile;
+import org.eclipse.sequoyah.localization.android.datamodel.AndroidSoundLocalizationFile;
 import org.eclipse.sequoyah.localization.android.datamodel.AndroidStringLocalizationFile;
+import org.eclipse.sequoyah.localization.android.datamodel.AndroidVideoLocalizationFile;
 import org.eclipse.sequoyah.localization.android.i18n.Messages;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
@@ -344,9 +347,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 		if (dialog.open() == IDialogConstants.OK_ID) {
 
-			newColumn = new TranslationInfo(dialog.getValue(), dialog
-					.getValue(), null, true, dialog.getFromLanguage(), dialog
-					.getToLanguage(), null, dialog.getTranslator());
+			newColumn = new TranslationInfo(dialog.getValue(),
+					dialog.getValue(), null, true, dialog.getFromLanguage(),
+					dialog.getToLanguage(), null, dialog.getTranslator());
 		}
 
 		return newColumn;
@@ -377,10 +380,11 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				for (int j = 0; j < destinationColumns.size(); j++) {
 					TranslateColumnsInputDialog.DestinationColumn destColumn = destinationColumns
 							.get(j);
-					newColumns[count] = new TranslationInfo(destColumn
-							.getText(), destColumn.getText(), null, true,
-							dialog.getFromLanguage(), destColumn.getLang(),
-							selectedCell, dialog.getTranslator());
+					newColumns[count] = new TranslationInfo(
+							destColumn.getText(), destColumn.getText(), null,
+							true, dialog.getFromLanguage(),
+							destColumn.getLang(), selectedCell,
+							dialog.getTranslator());
 					newColumns[count].setFromKey(selectedKey);
 					newColumns[count].setToColumn(destColumn.getText());
 					count++;
@@ -446,8 +450,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	/**
-	 * Create an Android string localization file. It's a XML which has the following
-	 * format:
+	 * Create an Android string localization file. It's a XML which has the
+	 * following format:
 	 * 
 	 * <?xml version="1.0" encoding="utf-8"?> <resources> <string
 	 * name="KEY">VALUE</string> ... </resources>
@@ -456,7 +460,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 *      #createStringFile(org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo)
 	 */
 	public void createStringFile(LocalizationFile localizationFile)
-			throws SequoyahException{
+			throws SequoyahException {
 
 		try {
 			String filePath = localizationFile.getFile().getFullPath()
@@ -494,12 +498,14 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			Element resources = document.createElement(XML_RESOURCES_TAG);
 
 			// Simple entries
-			for (StringNode stringNode : ((StringLocalizationFile) localizationFile).getStringNodes()) {
+			for (StringNode stringNode : ((StringLocalizationFile) localizationFile)
+					.getStringNodes()) {
 				addSingleEntry(document, resources, stringNode);
 			}
 
 			// Arrays
-			for (StringArray stringArray : ((StringLocalizationFile) localizationFile).getStringArrays()) {
+			for (StringArray stringArray : ((StringLocalizationFile) localizationFile)
+					.getStringArrays()) {
 				addArrayEntry(document, resources, stringArray);
 			}
 
@@ -509,8 +515,11 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 					document);
 			((AndroidStringLocalizationFile) localizationFile)
 					.setSavedXMLDocument(document);
-			localizationFile.getFile().getProject().refreshLocal(
-					IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			localizationFile
+					.getFile()
+					.getProject()
+					.refreshLocal(IResource.DEPTH_INFINITE,
+							new NullProgressMonitor());
 			// loadAllFiles(localizationFile.getLocalizationProject().getProject());
 
 		} catch (Exception e) {
@@ -887,21 +896,26 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 						if (!valuesFolder.exists()) {
 
 							// try to create the folder
-							PlatformUI.getWorkbench().getProgressService().run(
-									false, false, new IRunnableWithProgress() {
+							PlatformUI
+									.getWorkbench()
+									.getProgressService()
+									.run(false, false,
+											new IRunnableWithProgress() {
 
-										public void run(IProgressMonitor monitor)
-												throws InvocationTargetException,
-												InterruptedException {
-											try {
-												valuesFolder.create(true, true,
-														monitor);
-											} catch (CoreException e) {
-												// do nothing
-											}
+												public void run(
+														IProgressMonitor monitor)
+														throws InvocationTargetException,
+														InterruptedException {
+													try {
+														valuesFolder.create(
+																true, true,
+																monitor);
+													} catch (CoreException e) {
+														// do nothing
+													}
 
-										}
-									});
+												}
+											});
 						}
 						// check if folder was created
 						// create the default file
@@ -921,7 +935,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				}
 			}
 		} catch (CoreException e) {
-			// 
+			//
 		}
 		return localizationFiles;
 	}
@@ -937,8 +951,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 		boolean result = false;
 		if (file != null) {
-			if (file.getProjectRelativePath().toString().matches(
-					LF_REGULAR_EXPRESSION)) {
+			if (file.getProjectRelativePath().toString()
+					.matches(LF_REGULAR_EXPRESSION)) {
 
 				result = true;
 			}
@@ -962,7 +976,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		Map<LocaleInfo, IFile> localizationFiles = getLocalizationFiles(project);
 
 		for (Map.Entry<LocaleInfo, IFile> entry : localizationFiles.entrySet()) {
-			filesMap.put(entry.getKey(), loadFile(entry.getValue()));
+			// TODO fix entries
+			filesMap.put(entry.getKey(), loadFile("", entry.getValue()));
 		}
 
 		return filesMap;
@@ -975,22 +990,50 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * ILocalizationSchema #loadFile(org.eclipse.core.resources.IFile)
 	 */
 	@Override
-	public LocalizationFile loadFile(IFile file) throws IOException {
+	public LocalizationFile loadFile(String type, IFile file) throws IOException {
 		LocalizationFile localizationFile = null;
 		LocaleInfo localeInfo = getLocaleInfoFromPath(file.getFullPath());
-		LocalizationFileBean bean = new LocalizationFileBean("", file, localeInfo, null, null);
+		LocalizationFileBean bean = new LocalizationFileBean(type, file, localeInfo, null, null);
 
-		if (!file.exists()) {
-			LocalizationFile tempFile = new LocalizationFile(bean);
+		if (AndroidStringLocalizationFile.class.getName().equals(type)) { //in case its a string file
+			localizationFile = loadStringFile(bean);
+		} else if (AndroidImageLocalizationFile.class.getName().equals(type)) { //in case it's an image file
+			localizationFile = loadImageFile(bean);
+		} else if (AndroidSoundLocalizationFile.class.getName().equals(type)) { //in case it's a sound file
+			localizationFile = loadSoundFile(bean);
+		} else if (AndroidVideoLocalizationFile.class.getName().equals(type)) { //in case it's a video file
+			localizationFile = loadVideoFile(bean);
+		}
+		
+		return localizationFile;
+	}
+
+	private LocalizationFile loadImageFile(LocalizationFileBean bean) {
+		//TODO implement method
+		return LocalizationFileFactory.getInstance().createLocalizationFile(bean);
+	}
+
+	private LocalizationFile loadSoundFile(LocalizationFileBean bean) {
+		//TODO implement method
+		return LocalizationFileFactory.getInstance().createLocalizationFile(bean);
+	}
+	
+	private LocalizationFile loadVideoFile(LocalizationFileBean bean) {
+		//TODO implement method
+		return LocalizationFileFactory.getInstance().createLocalizationFile(bean);
+	}
+
+	public LocalizationFile loadStringFile(LocalizationFileBean bean) throws IOException {
+		if (!bean.getFile().exists()) {
+			LocalizationFile tempFile = LocalizationFileFactory.getInstance().createLocalizationFile(bean);
 			try {
 				createStringFile(tempFile);
 			} catch (SequoyahException e) {
-				// do nothing
+				BasePlugin.getLogger().error("Could not create StringLocalizationFile: ", e); //$NON-NLS-1$
 			}
 		}
-
-		try {
-			InputStream inputStream = new FileInputStream(file.getLocation().toFile());
+		try {					
+			InputStream inputStream = new FileInputStream(bean.getFile().getLocation().toFile());
 			DOMImplementation dimp = DOMImplementationRegistry.newInstance()
 					.getDOMImplementation("XML 3.0"); //$NON-NLS-1$
 			DOMImplementationLS dimpls = (DOMImplementationLS) dimp.getFeature("LS", "3.0"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1003,17 +1046,17 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			lsi.setByteStream(inputStream);
 			Document document = lsp.parse(lsi);
 			
-			localizationFile = new AndroidStringLocalizationFile(file, localeInfo,
-					new ArrayList<StringNode>(), new ArrayList<StringArray>());
+			LocalizationFile localizationFile = LocalizationFileFactory.getInstance().createLocalizationFile(bean);
 			updateLocalizationFileContent(localizationFile, document);
 
 		} catch (Exception e) {
 			throw new IOException(
 					Messages.AndroidLocalizationSchema_Exception_CouldNotLoadFile
-							+ file.getName() + ". " + e.getMessage()); //$NON-NLS-1$
+							+ bean.getFile().getName() + ". " + e.getMessage()); //$NON-NLS-1$
 		}
-
-		return localizationFile;
+		
+		return null;
+		
 	}
 
 	/**
@@ -1069,8 +1112,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 * @param document
 	 * @throws SequoyahException
 	 */
-	private void updateFile(StringLocalizationFile localizationFile, Document document)
-			throws SequoyahException {
+	private void updateFile(StringLocalizationFile localizationFile,
+			Document document) throws SequoyahException {
 
 		AndroidStringLocalizationFile androidLocalizationFile = (AndroidStringLocalizationFile) localizationFile;
 		if (document == null) {
@@ -1624,7 +1667,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 */
 	@Override
 	public LocalizationFile createLocalizationFile(LocalizationFileBean bean) {
-		return LocalizationFileFactory.getInstance().createLocalizationFile(bean);
+		return LocalizationFileFactory.getInstance().createLocalizationFile(
+				bean);
 	}
 
 	@Override
@@ -1633,8 +1677,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		if (locFile instanceof AndroidStringLocalizationFile) {
 			AndroidStringLocalizationFile localizationFile = (AndroidStringLocalizationFile) locFile;
 			try {
-				updateFile(localizationFile, localizationFile
-						.getSavedXMLDocument());
+				updateFile(localizationFile,
+						localizationFile.getSavedXMLDocument());
 			} catch (SequoyahException e) {
 
 			}
@@ -1644,10 +1688,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	private void updateLocalizationFileContent(
-			StringLocalizationFile localizationFile, Document document) {
+			LocalizationFile localizationFile, Document document) {
 		List<StringNode> stringNodes = new ArrayList<StringNode>();
 		List<StringArray> stringArrays = new ArrayList<StringArray>();
-
+		
 		/*
 		 * Get string nodes
 		 */
@@ -1736,9 +1780,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			}
 			stringArrays.add(stringArray);
 		}
+		LocalizationFileBean bean = new LocalizationFileBean();
+		bean.setStringArrays(stringArrays);
+		bean.setStringNodes(stringNodes);
 
-		localizationFile.setStringNodes(stringNodes);
-		localizationFile.setStringArrays(stringArrays);
 
 		((AndroidStringLocalizationFile) localizationFile)
 				.setSavedXMLDocument(document);
@@ -1755,7 +1800,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			ByteArrayInputStream byteInputStream = new ByteArrayInputStream(
 					content.getBytes("UTF-8")); //$NON-NLS-1$
 			Document document = builder.parse(byteInputStream);
-			updateLocalizationFileContent((StringLocalizationFile) localizationFile, document);
+			updateLocalizationFileContent(
+					(StringLocalizationFile) localizationFile, document);
 		} catch (Exception e) {
 			SequoyahExceptionStatus status = new SequoyahExceptionStatus(
 					IStatus.ERROR, AndroidLocalizationPlugin.PLUGIN_ID, 0,
