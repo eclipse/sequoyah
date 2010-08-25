@@ -29,8 +29,7 @@ import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
@@ -127,9 +126,7 @@ public abstract class ILocalizationSchema {
 	 * @param stringArrays
 	 * @return
 	 */
-	public abstract LocalizationFile createLocalizationFile(IFile file,
-			LocaleInfo localeInfo, List<StringNode> stringNodes,
-			List<StringArray> stringArrays);
+	public abstract LocalizationFile createLocalizationFile(LocalizationFileBean bean);
 
 	/**
 	 * Read the given localization file and return its <key>:<value> pairs,
@@ -185,7 +182,7 @@ public abstract class ILocalizationSchema {
 	 *            that shall be created, as well as its content
 	 * @return true if the file has successfully been created, false otherwise
 	 */
-	public abstract void createFile(LocalizationFile localizationFile)
+	public abstract void createStringFile(LocalizationFile localizationFile)
 			throws SequoyahException;
 
 	/**

@@ -10,7 +10,6 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
-import org.eclipse.core.resources.IFile;
 
 /**
  * This class represents a real localization file for images
@@ -39,8 +38,8 @@ public class ImageLocalizationFile extends LocalizationFile {
 	 * @param file
 	 * @param localeInfo
 	 */
-	public ImageLocalizationFile(IFile file, LocaleInfo localeInfo) {
-		super(file, localeInfo);
+	public ImageLocalizationFile(LocalizationFileBean bean) {
+		super(bean);
 	}
 
 	/**
@@ -54,8 +53,7 @@ public class ImageLocalizationFile extends LocalizationFile {
 	public static LocalizationFile create(LocalizationFileBean bean) {
 		LocalizationFile locFile;
 		if (bean != null) {
-			locFile = new ImageLocalizationFile(bean.getFile(),
-					bean.getLocale());
+			locFile = new ImageLocalizationFile(bean);
 		} else {
 			locFile = null;
 		}

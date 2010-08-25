@@ -77,9 +77,9 @@ public class LocalizationFile implements IFilePersistentData {
 	 * @param localeInfo
 	 *            the locale represented by the localization file
 	 */
-	public LocalizationFile(IFile file, LocaleInfo localeInfo) {
-		this.file = file;
-		this.localeInfo = localeInfo;
+	public LocalizationFile(LocalizationFileBean bean) {
+		this.file = bean.getFile();
+		this.localeInfo = bean.getLocale();
 	}
 
 	/**

@@ -19,6 +19,8 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileFactory;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
@@ -29,7 +31,7 @@ import org.w3c.dom.Document;
  * contains information about XML file saved
  * 
  */
-public class AndroidLocalizationFile extends StringLocalizationFile {
+public class AndroidStringLocalizationFile extends StringLocalizationFile {
 
 	/**
 	 * Saved XML (it is used not to lose comments on updates)
@@ -61,9 +63,8 @@ public class AndroidLocalizationFile extends StringLocalizationFile {
 	 * @param stringNodes
 	 * @param stringArrays
 	 */
-	public AndroidLocalizationFile(IFile file, LocaleInfo localeInfo,
-			List<StringNode> stringNodes, List<StringArray> stringArrays) {
-		super(file, localeInfo, stringNodes, stringArrays);
+	public AndroidStringLocalizationFile(LocalizationFileBean bean){
+		super(bean);
 	}
 
 	/**

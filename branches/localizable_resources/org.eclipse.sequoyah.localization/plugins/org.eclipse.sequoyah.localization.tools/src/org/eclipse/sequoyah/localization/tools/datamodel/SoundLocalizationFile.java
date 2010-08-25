@@ -10,7 +10,6 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
-import org.eclipse.core.resources.IFile;
 
 /**
  * This class represents a real localization file for sounds
@@ -39,8 +38,8 @@ public class SoundLocalizationFile extends LocalizationFile {
 	 * @param file
 	 * @param localeInfo
 	 */
-	public SoundLocalizationFile(IFile file, LocaleInfo localeInfo) {
-		super(file, localeInfo);
+	public SoundLocalizationFile(LocalizationFileBean bean) {
+		super(bean);
 	}
 
 	/**
@@ -54,8 +53,7 @@ public class SoundLocalizationFile extends LocalizationFile {
 	public static LocalizationFile create(LocalizationFileBean bean) {
 		LocalizationFile locFile;
 		if (bean != null) {
-			locFile = new SoundLocalizationFile(bean.getFile(),
-					bean.getLocale());
+			locFile = new SoundLocalizationFile(bean);
 		} else {
 			locFile = null;
 		}

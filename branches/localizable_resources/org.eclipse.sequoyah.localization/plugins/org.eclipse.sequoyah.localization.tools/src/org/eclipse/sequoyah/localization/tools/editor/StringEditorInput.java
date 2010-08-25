@@ -48,6 +48,7 @@ import org.eclipse.sequoyah.localization.stringeditor.editor.input.AbstractStrin
 import org.eclipse.sequoyah.localization.stringeditor.editor.input.IEditorChangeListener;
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.NodeComment;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
@@ -475,14 +476,14 @@ public class StringEditorInput extends AbstractStringEditorInput {
 
 		LocaleInfo info = schema.getLocaleInfoFromID(ID);
 
-		StringLocalizationFile existingFile = projectLocalizationManager
+		LocalizationFile existingFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(info);
 
 		if (existingFile == null) {
 			String path = schema.getPathFromLocaleInfo(info);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(
 					new Path(path));
-			StringLocalizationFile newFile = projectLocalizationManager
+			LocalizationFile newFile = projectLocalizationManager
 					.getProjectLocalizationSchema().createLocalizationFile(
 							file, info, new ArrayList<StringNode>(), null);
 			newFile.setLocalizationProject(projectLocalizationManager

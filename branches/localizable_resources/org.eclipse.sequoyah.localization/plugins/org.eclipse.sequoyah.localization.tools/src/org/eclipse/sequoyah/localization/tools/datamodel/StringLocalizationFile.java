@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 
@@ -72,11 +71,10 @@ public class StringLocalizationFile extends LocalizationFile {
 	 * @param stringNodes
 	 *            the list of StringNodes which are part of the file
 	 */
-	public StringLocalizationFile(IFile file, LocaleInfo localeInfo,
-			List<StringNode> stringNodes, List<StringArray> stringArrays) {
-		super(file, localeInfo);
-		setStringNodes(stringNodes);
-		setStringArrays(stringArrays);
+	public StringLocalizationFile(LocalizationFileBean bean) {
+		super(bean);
+		setStringNodes(bean.getStringNodes());
+		setStringArrays(bean.getStringArrays());
 	}
 
 	/**
@@ -90,9 +88,7 @@ public class StringLocalizationFile extends LocalizationFile {
 	public static LocalizationFile create(LocalizationFileBean bean) {
 		LocalizationFile locFile;
 		if (bean != null) {
-			locFile = new StringLocalizationFile(bean.getFile(),
-					bean.getLocale(), bean.getStringNodes(),
-					bean.getStringArrays());
+			locFile = new StringLocalizationFile(bean);
 		} else {
 			locFile = null;
 		}

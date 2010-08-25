@@ -10,7 +10,6 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
-import org.eclipse.core.resources.IFile;
 
 /**
  * This class represents a real localization file for videos
@@ -39,8 +38,8 @@ public class VideoLocalizationFile extends LocalizationFile {
 	 * @param file
 	 * @param localeInfo
 	 */
-	public VideoLocalizationFile(IFile file, LocaleInfo localeInfo) {
-		super(file, localeInfo);
+	public VideoLocalizationFile(LocalizationFileBean bean) {
+		super(bean);
 	}
 	
 	/**
@@ -54,8 +53,7 @@ public class VideoLocalizationFile extends LocalizationFile {
 	public static LocalizationFile create(LocalizationFileBean bean) {
 		LocalizationFile locFile;
 		if (bean != null) {
-			locFile = new VideoLocalizationFile(bean.getFile(),
-					bean.getLocale());
+			locFile = new VideoLocalizationFile(bean);
 		} else {
 			locFile = null;
 		}

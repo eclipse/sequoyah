@@ -201,7 +201,7 @@ public class ProjectLocalizationManager {
 				.createLocalizationFile(null, localeInfo, stringNodes, null);
 
 		try {
-			projectLocalizationSchema.createFile(localizationFile);
+			projectLocalizationSchema.createStringFile(localizationFile);
 		} catch (SequoyahException e) {
 			BasePlugin.logInfo("Error while creating file"); //$NON-NLS-1$
 		}
