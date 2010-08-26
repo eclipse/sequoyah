@@ -34,8 +34,10 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.GrammarCheckerResult;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
@@ -145,7 +147,8 @@ public class ProjectLocalizationManager {
 	}
 
 	// add missing string nodes from source to destination
-	private void syncNodes(StringLocalizationFile destination, StringLocalizationFile source) {
+	private void syncNodes(StringLocalizationFile destination,
+			StringLocalizationFile source) {
 		for (StringNode node : source.getStringNodes()) {
 			destination.getStringNodeByKey(node.getKey());
 		}
@@ -191,14 +194,12 @@ public class ProjectLocalizationManager {
 	 * 
 	 * The new localization file refers to a locale also passed as a parameter
 	 * 
-	 * @param localeInfo
-	 * @param stringNodes
+	 * @param bean
 	 */
-	public boolean createOrUpdateFile(LocaleInfo localeInfo,
-			List<StringNode> stringNodes) {
-
-		StringLocalizationFile localizationFile = getProjectLocalizationSchema()
-				.createLocalizationFile(null, localeInfo, stringNodes, null);
+	public boolean createOrUpdateFile(LocalizationFileBean bean) {
+		
+		LocalizationFile localizationFile = getProjectLocalizationSchema()
+				.createLocalizationFile(bean);
 
 		try {
 			projectLocalizationSchema.createStringFile(localizationFile);
@@ -287,24 +288,31 @@ public class ProjectLocalizationManager {
 
 	private void refreshWorkspace() {
 		try {
-			PlatformUI.getWorkbench().getProgressService().runInUI(
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
-					new IRunnableWithProgress() {
+			PlatformUI
+					.getWorkbench()
+					.getProgressService()
+					.runInUI(
+							PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow(),
+							new IRunnableWithProgress() {
 
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException,
-								InterruptedException {
+								public void run(IProgressMonitor monitor)
+										throws InvocationTargetException,
+										InterruptedException {
 
-							try {
-								localizationProject.getProject().refreshLocal(
-										IResource.DEPTH_INFINITE, monitor);
-							} catch (CoreException e) {
-								// Do nothing
-							}
+									try {
+										localizationProject
+												.getProject()
+												.refreshLocal(
+														IResource.DEPTH_INFINITE,
+														monitor);
+									} catch (CoreException e) {
+										// Do nothing
+									}
 
-						}
+								}
 
-					}, null);
+							}, null);
 		} catch (InvocationTargetException e) {
 			// Do nothing
 		} catch (InterruptedException e) {

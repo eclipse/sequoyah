@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2010 Motorola Inc.
- * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
+ * Copyright (c) 2010 Motorola Mobility, Inc.
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save
+ * Daniel Pastore (Eldorado) - Bug 323036 - Add support to other Localizable Resources
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.datamodel;
