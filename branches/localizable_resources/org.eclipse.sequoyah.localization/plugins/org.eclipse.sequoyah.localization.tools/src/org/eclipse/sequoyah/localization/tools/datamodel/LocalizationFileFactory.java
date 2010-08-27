@@ -12,14 +12,9 @@ package org.eclipse.sequoyah.localization.tools.datamodel;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 
 /**
  * Factory for creating the different types of LocalizationFile (named: String,
@@ -92,7 +87,7 @@ public class LocalizationFileFactory {
 			// Instantiates a new object to invoke its methods
 			Object o = c.newInstance();
 			// Creates the desired method
-			Method mthd = c.getMethod("create", LocalizationFileBean.class);
+			Method mthd = c.getMethod("create", LocalizationFileBean.class);  //$NON-NLS-1$
 			// Invokes the method of the desired type
 			locFile = (LocalizationFile) mthd.invoke(o, bean);
 		} catch (ClassNotFoundException e) {

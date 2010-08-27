@@ -168,7 +168,6 @@ public abstract class ILocalizationSchema {
 	 * @param localizationFile
 	 *            an object which has information about the localization file
 	 *            that shall be created, as well as its content
-	 * @return true if the file has successfully been created, false otherwise
 	 */
 	public abstract void createStringFile(LocalizationFile localizationFile)
 			throws SequoyahException;
@@ -180,7 +179,6 @@ public abstract class ILocalizationSchema {
 	 * @param localizationFile
 	 *            an object which has information about the localization file
 	 *            that shall be updated, as well as its new content
-	 * @return true if the file has successfully been updated, false otherwise
 	 */
 	public abstract void updateFile(LocalizationFile localizationFile)
 			throws SequoyahException;
