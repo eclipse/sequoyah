@@ -146,5 +146,15 @@ public class LocalizationFileBean {
 		this.stringNodes = stringNodes;
 		this.stringArrays = stringArrays;
 	}
+	
+	/**
+	 * Constructor based on a LocalizationFile.
+	 * 
+	 * @param locFile
+	 */
+	public LocalizationFileBean(LocalizationFile locFile){
+		this.file = locFile.getFile();
+		this.locale = locFile.getLocaleInfo();
+	}
 
 }
