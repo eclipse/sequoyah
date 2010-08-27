@@ -37,7 +37,7 @@ public class LocalizationProject {
 	/*
 	 * The list of LocalizationFiles which belong to the project
 	 */
-	private List<StringLocalizationFile> localizationFiles;
+	private List<LocalizationFile> localizationFiles;
 
 	/*
 	 * Whether the data in the model has been modified and differs from the
@@ -50,13 +50,13 @@ public class LocalizationProject {
 	 */
 	private boolean dirtyMetaExtraData;
 
-	public LocalizationProject(IProject project, List<StringLocalizationFile> files) {
+	public LocalizationProject(IProject project, List<LocalizationFile> files) {
 		this.project = project;
 		this.localizationFiles = files;
 
-		for (Iterator<StringLocalizationFile> iterator = localizationFiles.iterator(); iterator
+		for (Iterator<LocalizationFile> iterator = localizationFiles.iterator(); iterator
 				.hasNext();) {
-			StringLocalizationFile localizationFile = iterator.next();
+			LocalizationFile localizationFile = iterator.next();
 			localizationFile.setLocalizationProject(this);
 		}
 
@@ -86,7 +86,7 @@ public class LocalizationProject {
 	 * 
 	 * @return the list of LocalizationFiles which belong to the project
 	 */
-	public List<StringLocalizationFile> getLocalizationFiles() {
+	public List<LocalizationFile> getLocalizationFiles() {
 		return localizationFiles;
 	}
 
@@ -96,7 +96,7 @@ public class LocalizationProject {
 	 * @param localizationFiles
 	 *            the list of LocalizationFiles which belong to the project
 	 */
-	public void setLocalizationFiles(List<StringLocalizationFile> localizationFiles) {
+	public void setLocalizationFiles(List<LocalizationFile> localizationFiles) {
 		this.localizationFiles = localizationFiles;
 	}
 
@@ -153,14 +153,14 @@ public class LocalizationProject {
 	 *            the LocaleInfo object that represents the locale
 	 * @return the localization file for the given locale
 	 */
-	public StringLocalizationFile getLocalizationFile(LocaleInfo localeInfo) {
+	public LocalizationFile getLocalizationFile(LocaleInfo localeInfo) {
 
-		StringLocalizationFile localizationFile = null;
+		LocalizationFile localizationFile = null;
 
 		boolean found = false;
-		Iterator<StringLocalizationFile> iterator = localizationFiles.iterator();
+		Iterator<LocalizationFile> iterator = localizationFiles.iterator();
 		while (iterator.hasNext() && !found) {
-			StringLocalizationFile file = iterator.next();
+			LocalizationFile file = iterator.next();
 
 			if (file.getLocaleInfo().equals(localeInfo)) {
 				localizationFile = file;
@@ -177,14 +177,14 @@ public class LocalizationProject {
 	 * @param file
 	 * @return the localization file for the given file
 	 */
-	public StringLocalizationFile getLocalizationFile(IFile file) {
+	public LocalizationFile getLocalizationFile(IFile file) {
 
-		StringLocalizationFile localizationFile = null;
+		LocalizationFile localizationFile = null;
 
 		boolean found = false;
-		Iterator<StringLocalizationFile> iterator = localizationFiles.iterator();
+		Iterator<LocalizationFile> iterator = localizationFiles.iterator();
 		while (iterator.hasNext() && !found) {
-			StringLocalizationFile locFile = iterator.next();
+			LocalizationFile locFile = iterator.next();
 
 			if (locFile.getFile().equals(file)) {
 				localizationFile = locFile;
@@ -201,7 +201,7 @@ public class LocalizationProject {
 	 * @param localizationFile
 	 * @return true if the file has been successfully added, false otherwise
 	 */
-	public boolean addLocalizationFile(StringLocalizationFile localizationFile) {
+	public boolean addLocalizationFile(LocalizationFile localizationFile) {
 		localizationFile.setLocalizationProject(this);
 		return localizationFiles.add(localizationFile);
 	}
@@ -212,7 +212,7 @@ public class LocalizationProject {
 	 * @param localizationFile
 	 * @return true if the file has been successfully removed, false otherwise
 	 */
-	public boolean removeLocalizationFile(StringLocalizationFile localizationFile) {
+	public boolean removeLocalizationFile(LocalizationFile localizationFile) {
 		return localizationFiles.remove(localizationFile);
 	}
 
@@ -228,10 +228,10 @@ public class LocalizationProject {
 					}
 				});
 
-		List<StringLocalizationFile> localizationFiles = getLocalizationFiles();
+		List<LocalizationFile> localizationFiles = getLocalizationFiles();
 
-		for (StringLocalizationFile locFile : localizationFiles) {
-			allStringArrays.addAll(locFile.getStringArrays());
+		for (LocalizationFile locFile : localizationFiles) {
+			allStringArrays.addAll(((StringLocalizationFile)locFile).getStringArrays());
 		}
 
 		return allStringArrays;

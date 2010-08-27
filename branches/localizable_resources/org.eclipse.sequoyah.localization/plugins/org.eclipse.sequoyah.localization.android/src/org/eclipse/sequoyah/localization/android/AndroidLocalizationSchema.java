@@ -373,7 +373,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements IA
 			if ((info.getLocaleAttributes().size() > 0)
 					|| (value
 							.equalsIgnoreCase(AndroidLocalizationSchema.LOCALIZATION_FILES_FOLDER))) {
-				StringLocalizationFile file = manager.getLocalizationProject()
+				LocalizationFile file = manager.getLocalizationProject()
 						.getLocalizationFile(info);
 				if (file != null && !file.isToBeDeleted()) {
 					result = Messages.AndroidNewColumnProvider_Dialog_FileAlreadyExists;

@@ -89,7 +89,7 @@ public class ProjectLocalizationManager {
 		this.projectPreferencesManager = new ProjectPreferencesManager(project);
 		this.projectLocalizationSchema = localizationSchema;
 		try {
-			List<StringLocalizationFile> localizationFiles = new ArrayList<StringLocalizationFile>();
+			List<LocalizationFile> localizationFiles = new ArrayList<LocalizationFile>();
 
 			localizationFiles.addAll(this.projectLocalizationSchema
 					.loadAllFiles(project).values());
@@ -106,9 +106,9 @@ public class ProjectLocalizationManager {
 	}
 
 	public void reload(IProject project) {
-		List<StringLocalizationFile> localizationFiles = new ArrayList<StringLocalizationFile>();
-		List<StringLocalizationFile> notPersisted = new ArrayList<StringLocalizationFile>();
-		Map<IFile, StringLocalizationFile> localizationFilesMap = new HashMap<IFile, StringLocalizationFile>();
+		List<LocalizationFile> localizationFiles = new ArrayList<LocalizationFile>();
+		List<LocalizationFile> notPersisted = new ArrayList<LocalizationFile>();
+		Map<IFile, LocalizationFile> localizationFilesMap = new HashMap<IFile, LocalizationFile>();
 
 		boolean createLocalizationProject = false;
 		if (getLocalizationProject() != null) {
@@ -119,24 +119,24 @@ public class ProjectLocalizationManager {
 		}
 
 		try {
-			Collection<StringLocalizationFile> loadedLocationFiles = this.projectLocalizationSchema
+			Collection<LocalizationFile> loadedLocationFiles = this.projectLocalizationSchema
 					.loadAllFiles(project).values();
 			if (createLocalizationProject) {
 
 			}
 			localizationFiles.addAll(loadedLocationFiles);
-			for (StringLocalizationFile file : localizationFiles) {
+			for (LocalizationFile file : localizationFiles) {
 				localizationFilesMap.put(file.getFile(), file);
 			}
 
-			for (StringLocalizationFile file : notPersisted) {
+			for (LocalizationFile file : notPersisted) {
 				if (localizationFilesMap.get(file.getFile()) == null) {
 					localizationFiles.add(file);
 				}
 			}
 
 			this.localizationProject.getLocalizationFiles().clear();
-			for (StringLocalizationFile file : localizationFiles) {
+			for (LocalizationFile file : localizationFiles) {
 				localizationProject.addLocalizationFile(file);
 			}
 			syncDefaultColumn();
@@ -156,15 +156,15 @@ public class ProjectLocalizationManager {
 
 	// ensure that all keys exists within the default columns
 	private void syncDefaultColumn() {
-		StringLocalizationFile mainFile = localizationProject
+		LocalizationFile mainFile = localizationProject
 				.getLocalizationFile(getProjectLocalizationSchema()
 						.getLocaleInfoFromID(
 								getProjectLocalizationSchema().getDefaultID()));
 		if (mainFile != null) {
-			for (StringLocalizationFile locFile : localizationProject
+			for (LocalizationFile locFile : localizationProject
 					.getLocalizationFiles()) {
 				if (locFile != mainFile) {
-					syncNodes(mainFile, locFile);
+					syncNodes((StringLocalizationFile)mainFile, (StringLocalizationFile)locFile);
 				}
 			}
 		}
@@ -179,9 +179,9 @@ public class ProjectLocalizationManager {
 
 		List<LocaleInfo> localeInfoList = new ArrayList<LocaleInfo>();
 
-		List<StringLocalizationFile> localizationFiles = localizationProject
+		List<LocalizationFile> localizationFiles = localizationProject
 				.getLocalizationFiles();
-		for (StringLocalizationFile localizationFile : localizationFiles) {
+		for (LocalizationFile localizationFile : localizationFiles) {
 			localeInfoList.add(localizationFile.getLocaleInfo());
 		}
 
@@ -216,10 +216,10 @@ public class ProjectLocalizationManager {
 	 */
 	public boolean saveProject() {
 		syncDefaultColumn();
-		List<StringLocalizationFile> localizationFiles = localizationProject
+		List<LocalizationFile> localizationFiles = localizationProject
 				.getLocalizationFiles();
 
-		for (StringLocalizationFile localizationFile : localizationFiles) {
+		for (LocalizationFile localizationFile : localizationFiles) {
 
 			// Check if the file is not to be deleted
 			if (!localizationFile.isToBeDeleted()) {
@@ -271,9 +271,9 @@ public class ProjectLocalizationManager {
 		}
 
 		// If the file was deleted, also remove it from the model
-		List<StringLocalizationFile> tempLocalizationFiles = new ArrayList<StringLocalizationFile>(
+		List<LocalizationFile> tempLocalizationFiles = new ArrayList<LocalizationFile>(
 				localizationFiles);
-		for (StringLocalizationFile localizationFile : tempLocalizationFiles) {
+		for (LocalizationFile localizationFile : tempLocalizationFiles) {
 			if (localizationFile.isToBeDeleted()) {
 				localizationProject.removeLocalizationFile(localizationFile);
 			}
@@ -375,7 +375,7 @@ public class ProjectLocalizationManager {
 	 * @param localizationFile
 	 *            the localization file that shall be deleted
 	 */
-	public void markFileForDeletion(StringLocalizationFile localizationFile) {
+	public void markFileForDeletion(LocalizationFile localizationFile) {
 		localizationFile.setToBeDeleted(true);
 	}
 
@@ -426,9 +426,9 @@ public class ProjectLocalizationManager {
 
 		LocaleInfo localeInfo = null;
 
-		List<StringLocalizationFile> localizationFiles = localizationProject
+		List<LocalizationFile> localizationFiles = localizationProject
 				.getLocalizationFiles();
-		for (StringLocalizationFile localizationFile : localizationFiles) {
+		for (LocalizationFile localizationFile : localizationFiles) {
 			if (localizationFile.getFile().equals(file)) {
 				localeInfo = localizationFile.getLocaleInfo();
 			}
