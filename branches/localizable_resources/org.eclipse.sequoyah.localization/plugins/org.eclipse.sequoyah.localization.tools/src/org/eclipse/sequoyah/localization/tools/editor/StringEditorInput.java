@@ -49,6 +49,7 @@ import org.eclipse.sequoyah.localization.stringeditor.editor.input.IEditorChange
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.NodeComment;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
@@ -321,19 +322,19 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			String path = schema.getPathFromLocaleInfo(infoTarget);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(
 					new Path(path));
-			StringLocalizationFile newFile = projectLocalizationManager
+			LocalizationFileBean bean = new LocalizationFileBean("", file, infoTarget, new ArrayList<StringNode>(), null);
+			LocalizationFile newFile = (StringLocalizationFile) projectLocalizationManager
 					.getProjectLocalizationSchema()
-					.createLocalizationFile(file, infoTarget,
-							new ArrayList<StringNode>(), null);
+					.createLocalizationFile(bean);
 			newFile.setLocalizationProject(projectLocalizationManager
 					.getLocalizationProject());
 
-			result = translateColumn(existingFile, newFile, destColumnInfo,
+			result = translateColumn(existingFile, (StringLocalizationFile) newFile, destColumnInfo,
 					monitor);
 
 			if (result) {
 				projectLocalizationManager.getLocalizationProject()
-						.addLocalizationFile(newFile);
+						.addLocalizationFile((StringLocalizationFile) newFile);
 				newFile.setDirty(true);
 			}
 
@@ -483,14 +484,14 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			String path = schema.getPathFromLocaleInfo(info);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(
 					new Path(path));
+			LocalizationFileBean bean = new LocalizationFileBean("", file, info, new ArrayList<StringNode>(), null);
 			LocalizationFile newFile = projectLocalizationManager
-					.getProjectLocalizationSchema().createLocalizationFile(
-							file, info, new ArrayList<StringNode>(), null);
+					.getProjectLocalizationSchema().createLocalizationFile(bean);
 			newFile.setLocalizationProject(projectLocalizationManager
 					.getLocalizationProject());
 			newFile.setDirty(true);
 			projectLocalizationManager.getLocalizationProject()
-					.addLocalizationFile(newFile);
+					.addLocalizationFile((StringLocalizationFile) newFile);
 
 		} else {
 			existingFile.setToBeDeleted(false);
@@ -500,7 +501,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @see org.eclipse.sequoyah.localization.stringeditor.editor.input.
 	 * IStringEditorInput #removeColumn (java.lang.String)
 	 */
 	@Override
@@ -940,7 +941,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		StringLocalizationFile locFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(
 						editorInput.getFile());
-		return projectLocalizationManager.getProjectLocalizationSchema()
+		return (String) projectLocalizationManager.getProjectLocalizationSchema()
 				.getLocalizationFileContent(locFile);
 	}
 }

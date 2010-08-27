@@ -1672,7 +1672,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	@Override
-	public String getLocalizationFileContent(LocalizationFile locFile) {
+	public Object getLocalizationFileContent(LocalizationFile locFile) {
 		String text = null;
 		if (locFile instanceof AndroidStringLocalizationFile) {
 			AndroidStringLocalizationFile localizationFile = (AndroidStringLocalizationFile) locFile;
