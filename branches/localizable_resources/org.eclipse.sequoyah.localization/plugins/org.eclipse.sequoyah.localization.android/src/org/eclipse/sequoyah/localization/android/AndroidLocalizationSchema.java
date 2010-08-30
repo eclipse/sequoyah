@@ -24,12 +24,10 @@
 package org.eclipse.sequoyah.localization.android;
 
 import java.awt.Dimension;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,9 +53,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
-import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahExceptionStatus;
 import org.eclipse.sequoyah.localization.android.AndroidLocaleAttribute.AndroidLocaleAttributes;
-import org.eclipse.sequoyah.localization.android.datamodel.AndroidStringLocalizationFile;
 import org.eclipse.sequoyah.localization.android.i18n.Messages;
 import org.eclipse.sequoyah.localization.android.manager.ILocalizationFileManager;
 import org.eclipse.sequoyah.localization.android.manager.ImageLocalizationFileManager;
@@ -77,8 +73,6 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileFactory
 import org.eclipse.sequoyah.localization.tools.datamodel.SoundLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.VideoLocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.NewRowInputDialog;
 import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.TranslateColumnInputDialog;
@@ -87,7 +81,6 @@ import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.sequoyah.localization.tools.managers.ProjectLocalizationManager;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -365,7 +358,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 			if ((info.getLocaleAttributes().size() > 0)
 					|| (value
 							.equalsIgnoreCase(AndroidLocalizationSchema.LOCALIZATION_FILES_FOLDER))) {
-				StringLocalizationFile file = manager.getLocalizationProject()
+				LocalizationFile file = manager.getLocalizationProject()
 						.getLocalizationFile(info);
 				if (file != null && !file.isToBeDeleted()) {
 					result = Messages.AndroidNewColumnProvider_Dialog_FileAlreadyExists;
@@ -405,72 +398,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	public void createLocalizationFile(LocalizationFile localizationFile)
 			throws SequoyahException {
 
-		// try {
-		// String filePath = localizationFile.getFile().getFullPath()
-		// .toOSString();
-		//
-		// if (!localizationFile.getFile().exists()) {
-		// localizationFile.getFile().getLocation();
-		// IPath fileToSave = null;
-		// if (localizationFile.getLocalizationProject() != null) {
-		// fileToSave = new Path(localizationFile
-		// .getLocalizationProject().getProject()
-		// .getLocation()
-		// + filePath);
-		// } else {
-		// fileToSave = localizationFile.getFile().getLocation();
-		// }
-		//
-		// fileToSave.removeLastSegments(1).toFile().mkdirs();
-		// fileToSave.toFile().createNewFile();
-		//
-		// if (localizationFile.getLocalizationProject() != null) {
-		// IFile iFile = localizationFile.getLocalizationProject()
-		// .getProject().getFile(new Path(filePath));
-		// localizationFile.setFile(iFile);
-		// }
-		// }
-		//
-		// DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		// DocumentBuilder db = dbf.newDocumentBuilder();
-		// Document document = db.newDocument();
-		//
-		// /*
-		// * Create XML nodes
-		// */
-		// Element resources = document.createElement(XML_RESOURCES_TAG);
-		//
-		// // Simple entries
-		// for (StringNode stringNode : ((StringLocalizationFile)
-		// localizationFile)
-		// .getStringNodes()) {
-		// addSingleEntry(document, resources, stringNode);
-		// }
-		//
-		// // Arrays
-		// for (StringArray stringArray : ((StringLocalizationFile)
-		// localizationFile)
-		// .getStringArrays()) {
-		// addArrayEntry(document, resources, stringArray);
-		// }
-		//
-		// document.appendChild(resources);
-		//
-		// saveXMLDocument(localizationFile.getFile().getLocation().toFile(),
-		// document);
-		// ((AndroidStringLocalizationFile) localizationFile)
-		// .setSavedXMLDocument(document);
-		// localizationFile
-		// .getFile()
-		// .getProject()
-		// .refreshLocal(IResource.DEPTH_INFINITE,
-		// new NullProgressMonitor());
-		// //
-		// loadAllFiles(localizationFile.getLocalizationProject().getProject());
-		//
-		// } catch (Exception e) {
-		// throw new SequoyahException();
-		// }
+		Class aClass = typesMap.get(localizationFile);
+		ILocalizationFileManager manager = LocalizationFileManagerFactory
+		.getInstance().createLocalizationFileManager(aClass.getName());
+		manager.createFile(localizationFile);	
 
 	}
 
