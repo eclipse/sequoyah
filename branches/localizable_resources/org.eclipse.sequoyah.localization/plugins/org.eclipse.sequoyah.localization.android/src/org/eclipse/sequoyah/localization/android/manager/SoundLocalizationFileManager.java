@@ -10,6 +10,7 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.manager;
 
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 
 /**
@@ -60,6 +61,20 @@ public class SoundLocalizationFileManager extends ILocalizationFileManager {
 	public void updateFile(LocalizationFile locFile) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void updateLocalizationFileContent(
+			LocalizationFile localizationFile, String content)
+			throws SequoyahException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Object getLocalizationFileContent(LocalizationFile locFile) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

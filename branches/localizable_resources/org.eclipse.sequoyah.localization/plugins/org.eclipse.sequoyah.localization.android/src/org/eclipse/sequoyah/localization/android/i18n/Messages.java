@@ -26,7 +26,7 @@ public class Messages extends NLS {
 
 	public static String AndroidLocalizationSchema_Default_Andr_Localization_File_Tooltip;
 
-	public static String AndroidLocalizationSchema_Exception_CouldNotLoadFile;
+	public static String StringLocalizationFileManager_Exception_CouldNotLoadFile;
 
 	public static String AndroidNewColumnProvider_Dialog_FileAlreadyExists;
 

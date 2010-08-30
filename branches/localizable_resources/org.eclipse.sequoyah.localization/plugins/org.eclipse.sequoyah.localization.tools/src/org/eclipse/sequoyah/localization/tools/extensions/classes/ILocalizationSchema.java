@@ -155,7 +155,7 @@ public abstract class ILocalizationSchema {
 	 * @throws IOException
 	 */
 	public abstract Map<LocaleInfo, LocalizationFile> loadAllFiles(
-			IProject project) throws IOException;
+			IProject project) throws SequoyahException;
 
 	/**
 	 * Create a new localization file according to the rules for this specific
@@ -169,7 +169,7 @@ public abstract class ILocalizationSchema {
 	 *            an object which has information about the localization file
 	 *            that shall be created, as well as its content
 	 */
-	public abstract void createStringFile(LocalizationFile localizationFile)
+	public abstract void createLocalizationFile(LocalizationFile localizationFile)
 			throws SequoyahException;
 
 	/**
@@ -399,6 +399,6 @@ public abstract class ILocalizationSchema {
 	 * @throws IOException
 	 */
 	public abstract LocalizationFile loadFile(String type, IFile file)
-			throws IOException;
+			throws SequoyahException;
 
 }
