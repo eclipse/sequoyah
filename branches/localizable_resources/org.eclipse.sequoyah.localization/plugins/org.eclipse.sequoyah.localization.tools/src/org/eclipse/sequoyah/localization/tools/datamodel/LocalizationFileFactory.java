@@ -25,7 +25,7 @@ public class LocalizationFileFactory {
 	/**
 	 * Private instance of this factory for singleton purposes.
 	 */
-	private static LocalizationFileFactory localizationFileFactory;
+	private volatile static LocalizationFileFactory localizationFileFactory;
 
 	/**
 	 * Private map for keeping LocalizationFile instances for creation.
