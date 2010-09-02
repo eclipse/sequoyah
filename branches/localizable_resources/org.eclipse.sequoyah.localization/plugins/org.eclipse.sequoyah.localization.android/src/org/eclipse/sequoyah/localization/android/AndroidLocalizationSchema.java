@@ -61,9 +61,9 @@ import org.eclipse.sequoyah.localization.android.manager.LocalizationFileManager
 import org.eclipse.sequoyah.localization.android.manager.SoundLocalizationFileManager;
 import org.eclipse.sequoyah.localization.android.manager.StringLocalizationFileManager;
 import org.eclipse.sequoyah.localization.android.manager.VideoLocalizationFileManager;
-import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
-import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.ImageLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;

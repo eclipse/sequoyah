@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.sequoyah.device.common.utilities,
  org.eclipse.ui.editors,
  org.eclipse.ui.ide,
- org.eclipse.sequoyah.localization.stringeditor
+ org.eclipse.sequoyah.localization.editor
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.sequoyah.localization.tools.datamodel,

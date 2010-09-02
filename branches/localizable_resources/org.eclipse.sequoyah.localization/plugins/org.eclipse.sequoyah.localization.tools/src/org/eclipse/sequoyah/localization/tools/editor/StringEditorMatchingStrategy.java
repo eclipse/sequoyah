@@ -14,7 +14,7 @@ package org.eclipse.sequoyah.localization.tools.editor;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.sequoyah.localization.stringeditor.editor.StringEditorPart;
+import org.eclipse.sequoyah.localization.editor.model.StringEditorPart;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.ui.IEditorInput;

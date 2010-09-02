@@ -40,12 +40,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahExceptionStatus;
-import org.eclipse.sequoyah.localization.stringeditor.datatype.CellInfo;
-import org.eclipse.sequoyah.localization.stringeditor.datatype.ColumnInfo;
-import org.eclipse.sequoyah.localization.stringeditor.datatype.RowInfo;
-import org.eclipse.sequoyah.localization.stringeditor.datatype.TranslationInfo;
-import org.eclipse.sequoyah.localization.stringeditor.editor.input.AbstractStringEditorInput;
-import org.eclipse.sequoyah.localization.stringeditor.editor.input.IEditorChangeListener;
+import org.eclipse.sequoyah.localization.editor.datatype.CellInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.TranslationInfo;
+import org.eclipse.sequoyah.localization.editor.model.input.AbstractStringEditorInput;
+import org.eclipse.sequoyah.localization.editor.model.input.IEditorChangeListener;
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
@@ -220,7 +220,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	 * 
 	 * @throws SequoyahException
 	 * 
-	 * @see org.eclipse.sequoyah.localization.stringeditor.editor.input.AbstractStringEditorInput#init(org.eclipse.core.resources.IProject)
+	 * @see org.eclipse.sequoyah.localization.editor.model.input.AbstractStringEditorInput#init(org.eclipse.core.resources.IProject)
 	 */
 	@Override
 	public void init(final IProject project) throws SequoyahException {
