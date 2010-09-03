@@ -60,7 +60,8 @@ public class NDKQuickFixParticipant extends CompilationParticipant
 
         try
         {
-            Boolean isAndroid = true;
+            Boolean isAndroid = false;
+            Boolean isCNature = false;
             visitor.resetVisitor();
             compilationUnit = context.getAST3();
             compilationUnit.accept(visitor);
@@ -70,13 +71,15 @@ public class NDKQuickFixParticipant extends CompilationParticipant
 
                 for (String s : projectNature)
                 {
-                    isAndroid =
-                            isAndroid
-                                    && (!(s.equals("org.eclipse.cdt.core.cnature") || s
-                                            .equals("org.eclipse.cdt.core.ccnature")));
+                    isAndroid = isAndroid || s.equals("com.android.ide.eclipse.adt.AndroidNature");
+                    isCNature =
+                            isCNature
+                                    || (s.equals("org.eclipse.cdt.core.cnature") || s
+                                            .equals("org.eclipse.cdt.core.ccnature"));
                 }
 
                 if (isAndroid
+                        && !(isCNature)
                         && (Platform.getBundle("org.eclipse.sequoyah.android.cdt.build.core") != null))
                 {
                     NDKNativeProblem[] problems;
