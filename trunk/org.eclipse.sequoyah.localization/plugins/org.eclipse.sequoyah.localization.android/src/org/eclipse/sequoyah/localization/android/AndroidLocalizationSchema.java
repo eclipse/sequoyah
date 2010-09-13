@@ -18,6 +18,7 @@
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save
  * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
  * Daniel Drigo Pastore, Marcel Augusto Gorri (Eldorado) - Bug 312971 - Localization Editor does not accept < and > characters
+ * Marcel Gorri (Eldorado) - Bug 325110 - Add support to new Android Localization qualifiers
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
@@ -798,7 +799,13 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.SCREEN_SIZE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.SCREEN_ASPECT.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.SCREEN_ORIENTATION.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.DOCK_MODE.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.NIGHT_MODE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(new Integer(12),
 				AndroidLocaleAttributes.PIXEL_DENSITY.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
@@ -807,6 +814,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				AndroidLocaleAttributes.KEYBOARD_STATE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.TEXT_INPUT_METHOD.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.NAVIGATION_METHOD.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(new Dimension(1, 1),
@@ -1446,6 +1455,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				lastQualifier = AndroidLocaleAttributes.SCREEN_SIZE.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.SCREEN_SIZE.ordinal()));
+			} else if (isScreenAspectSegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.SCREEN_ASPECT
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.SCREEN_ASPECT.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.SCREEN_ASPECT.ordinal()));
 			} else if (isOrientationSegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttributes.SCREEN_ORIENTATION
 							.ordinal())) {
@@ -1453,6 +1468,18 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 						.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.SCREEN_ORIENTATION.ordinal()));
+			} else if (isDockSegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.DOCK_MODE
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.DOCK_MODE.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.DOCK_MODE.ordinal()));
+			} else if (isNightSegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.NIGHT_MODE
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.NIGHT_MODE.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.NIGHT_MODE.ordinal()));
 			} else if (isPixelDensitySegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttributes.PIXEL_DENSITY
 							.ordinal())) {
@@ -1479,6 +1506,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 						.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.TEXT_INPUT_METHOD.ordinal()));
+			} else if (isNavigationKeySegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal()));
 			} else if (isNavigationSegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttributes.NAVIGATION_METHOD
 							.ordinal())) {
@@ -1529,6 +1562,26 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		return LOCALIZATION_FILES_FOLDER;
 	}
 
+	private boolean isScreenAspectSegment(String value) {
+		return ((value.equalsIgnoreCase("long") || value //$NON-NLS-1$
+				.equalsIgnoreCase("notlong"))); //$NON-NLS-1$
+	}	
+	
+	private boolean isDockSegment(String value) {
+		return ((value.equalsIgnoreCase("car") || value //$NON-NLS-1$
+				.equalsIgnoreCase("desk"))); //$NON-NLS-1$
+	}	
+
+	private boolean isNightSegment(String value) {
+		return ((value.equalsIgnoreCase("night") || value //$NON-NLS-1$
+				.equalsIgnoreCase("notnight"))); //$NON-NLS-1$
+	}	
+
+	private boolean isNavigationKeySegment(String value) {
+		return ((value.equalsIgnoreCase("navexposed") || value //$NON-NLS-1$
+				.equalsIgnoreCase("navhidden"))); //$NON-NLS-1$
+	}	
+	
 	private boolean isNetworkCodeSegment(String value) {
 		return value.startsWith("mnc"); //$NON-NLS-1$
 
@@ -1565,7 +1618,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	private boolean isKeyboardStateSegment(String value) {
 		return ((value.equalsIgnoreCase("keysexposed") || value //$NON-NLS-1$
 				.equalsIgnoreCase("keyshidden"))); //$NON-NLS-1$
-
 	}
 
 	private boolean isTextInputSegment(String value) {
