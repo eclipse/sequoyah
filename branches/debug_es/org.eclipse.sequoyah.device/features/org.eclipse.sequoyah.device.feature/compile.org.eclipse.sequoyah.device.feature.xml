@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Compile org.eclipse.sequoyah.device.feature" default="main">
+	<target name="main">
+		<ant antfile="build.xml" dir="../org.eclipse.sequoyah.device.framework" target="build.jars"/>
+		<ant antfile="build.xml" dir="../org.eclipse.sequoyah.device.service.stop" target="build.jars"/>
+		<ant antfile="build.xml" dir="../org.eclipse.sequoyah.device.backward" target="build.jars"/>
+		<ant antfile="build.xml" dir="../org.eclipse.sequoyah.device.framework.ui" target="build.jars"/>
+		<ant antfile="build.xml" dir="../org.eclipse.sequoyah.device.service.start" target="build.jars"/>
+		<ant antfile="build.xml" dir="../org.eclipse.sequoyah.device.framework.wizard" target="build.jars"/>
+	</target>
+</project>
