@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.sequoyah.feature"
       label="Sequoyah Feature"
-      version="3.6.0.v20100913171717">
+      version="1.1.0.qualifier">
 
    <description>
       %description
