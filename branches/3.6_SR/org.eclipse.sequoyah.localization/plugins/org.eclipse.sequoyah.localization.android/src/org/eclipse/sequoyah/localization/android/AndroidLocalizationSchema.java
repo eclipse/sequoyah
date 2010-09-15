@@ -973,6 +973,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 */
 	@Override
 	public LocalizationFile loadFile(IFile file) throws IOException {
+		Document document;
 		AndroidLocalizationFile localizationFile = null;
 		LocaleInfo localeInfo = getLocaleInfoFromPath(file.getFullPath());
 
@@ -987,18 +988,28 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		}
 
 		try {
-			InputStream inputStream = new FileInputStream(file.getLocation().toFile());
-			DOMImplementation dimp = DOMImplementationRegistry.newInstance()
-					.getDOMImplementation("XML 3.0"); //$NON-NLS-1$
-			DOMImplementationLS dimpls = (DOMImplementationLS) dimp.getFeature("LS", "3.0"); //$NON-NLS-1$ //$NON-NLS-2$
-			LSInput lsi = dimpls.createLSInput();
-			LSParser lsp = dimpls.createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, 
-					"http://www.w3.org/2001/XMLSchema"); //$NON-NLS-1$
-			LSParserFilter filter = new LocalizationXMLParserFilter();
-			lsp.setFilter(filter);
-			lsi.setEncoding("UTF-8"); //$NON-NLS-1$
-			lsi.setByteStream(inputStream);
-			Document document = lsp.parse(lsi);
+			if (System.getProperty("java.version").startsWith("1.5")){
+				DocumentBuilderFactory factory = DocumentBuilderFactory
+						.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+
+				document = builder.parse(new File(file.getLocation()
+						.toString()));
+			}
+			else {
+				InputStream inputStream = new FileInputStream(file.getLocation().toFile());
+				DOMImplementation dimp = DOMImplementationRegistry.newInstance()
+						.getDOMImplementation("XML 3.0"); //$NON-NLS-1$
+				DOMImplementationLS dimpls = (DOMImplementationLS) dimp.getFeature("LS", "3.0"); //$NON-NLS-1$ //$NON-NLS-2$
+				LSInput lsi = dimpls.createLSInput();
+				LSParser lsp = dimpls.createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, 
+						"http://www.w3.org/2001/XMLSchema"); //$NON-NLS-1$
+				LSParserFilter filter = new LocalizationXMLParserFilter();
+				lsp.setFilter(filter);
+				lsi.setEncoding("UTF-8"); //$NON-NLS-1$
+				lsi.setByteStream(inputStream);
+				document = lsp.parse(lsi);
+			}
 			
 			localizationFile = new AndroidLocalizationFile(file, localeInfo,
 					new ArrayList<StringNode>(), new ArrayList<StringArray>());
