@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009-2010 Motorola Mobility, Inc.
- * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -19,6 +19,7 @@
  * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
  * Daniel Drigo Pastore, Marcel Augusto Gorri (Eldorado) - Bug 312971 - Localization Editor does not accept < and > characters
  * Marcel Gorri (Eldorado) - Bug 325110 - Add support to new Android Localization qualifiers
+ * Marcel Gorri (Eldorado) - Bug 325630 - Fix validation of some Android localization qualifiers
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
@@ -1592,11 +1593,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		return ((value.equalsIgnoreCase("navexposed") || value //$NON-NLS-1$
 				.equalsIgnoreCase("navhidden"))); //$NON-NLS-1$
 	}	
-	
-	private boolean isNetworkCodeSegment(String value) {
-		return value.startsWith("mnc"); //$NON-NLS-1$
-
-	}
 
 	private boolean isLanguageSegment(String value) {
 		return (value.length() == 2);
@@ -1659,8 +1655,41 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	private boolean isCountryCodeSegment(String value) {
-		return value.startsWith("mcc"); //$NON-NLS-1$
-
+		boolean result = false;
+		if (value.startsWith("mcc")){ //$NON-NLS-1$
+			if (value.length() <= 6){
+				Integer intValue = -1;
+				String source = (String) value;
+				String intValueAsText = source.substring(3, source.length());
+				try {
+					intValue = Integer.parseInt((String) intValueAsText);
+					result = true;
+				} catch (NumberFormatException nfe) {
+					//do nothing, the false value returned will 
+					//take care of the correct validation
+				}
+			}
+		}
+		return result;
+	}
+	
+	private boolean isNetworkCodeSegment(String value) {
+		boolean result = false;
+		if (value.startsWith("mnc")){ //$NON-NLS-1$
+			if (value.length() <= 6){
+				Integer intValue = -1;
+				String source = (String) value;
+				String intValueAsText = source.substring(3, source.length());
+				try {
+					intValue = Integer.parseInt((String) intValueAsText);
+					result = true;
+				} catch (NumberFormatException nfe) {
+					//do nothing, the false value returned will 
+					//take care of the correct validation
+				}
+			}
+		}
+		return result;		
 	}
 
 	private boolean isScreenSizeSegment(String value) {
@@ -1670,7 +1699,20 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	private boolean isAPIVersionSegment(String value) {
-		return value.startsWith("v"); //$NON-NLS-1$
+		boolean result = false;
+		if (value.startsWith("v")){ //$NON-NLS-1$
+			Integer intValue = -1;
+			String source = (String) value;
+			String intValueAsText = source.substring(1, source.length());
+			try {
+				intValue = Integer.parseInt((String) intValueAsText);
+				result = true;
+			} catch (NumberFormatException nfe) {
+				//do nothing, the false value returned will 
+				//take care of the correct validation
+			}
+		}
+		return result;
 	}
 
 	/*

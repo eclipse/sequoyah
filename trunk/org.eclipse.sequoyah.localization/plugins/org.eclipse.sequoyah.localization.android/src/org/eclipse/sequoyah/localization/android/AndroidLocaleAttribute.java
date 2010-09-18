@@ -1,6 +1,6 @@
 /********************************************************************************
  * Copyright (c) 2009-2010 Motorola Mobility, Inc.
- * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -10,6 +10,8 @@
  * Contributors:
  * name (company) - description.
  * Marcel Gorri (Eldorado) - Bug 325110 - Add support to new Android Localization qualifiers
+ * Marcel Gorri (Eldorado) - Bug 325630 - Fix validation of some Android localization qualifiers
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
 
@@ -180,7 +182,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 			int y = Integer.parseInt(numbers[1]);
 			result = new Dimension(x, y);
 		} else if (androidType == AndroidLocaleAttributes.API_VERSION.ordinal()) {
-			result = strValue.substring(1);
+			result = strValue.substring(0, strValue.length());
 		}
 
 		return result;
@@ -476,8 +478,26 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		fixedSize = 0;
 		maximumSize = 3;
 		allowedValues = null;
-		setIntValue(value);
+		setAPIValue(value);
 		folderValue = displayValue;
+	}
+	
+	/*
+	 * 
+	 * @param value
+	 */
+	private void setAPIValue(Object value){
+		if (value instanceof String) {
+			Integer intValue = -1;
+			String source = (String) value;
+			String intValueAsText = source.substring(1, source.length());
+			try {
+				intValue = Integer.parseInt((String) intValueAsText);
+			} catch (NumberFormatException nfe) {
+				throw new IllegalArgumentException(Messages.Invalid_Andr_Value);
+			}
+			displayValue = (String) value;
+		}
 	}
 
 	/**
