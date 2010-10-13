@@ -17,6 +17,7 @@
  * Fabricio Violin (Eldorado) - Bug [316029] - Fix array behavior when switching between tabs
  * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug
  * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources 
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
@@ -51,6 +52,7 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.NodeComment;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.TranslationResult;
@@ -77,7 +79,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #getTitle()
 	 */
 	@Override
@@ -134,7 +136,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #addRow(org
 	 * .eclipse.sequoyah.stringeditor.datatype.RowInfo)
 	 */
@@ -173,8 +175,15 @@ public class StringEditorInput extends AbstractStringEditorInput {
 					.getLocalizationProject().getLocalizationFile(info);
 			String value = (cells.get(column)).getValue();
 			String comment = (cells.get(column)).getComment();
-			StringNode newNode = new StringNode(key, value);
-			newNode.setArray(isArray);
+
+			StringNode newNode = null;
+			if (isArray) {
+				newNode = new ArrayStringNode(key);
+				((ArrayStringNode) newNode).addValue(value);
+			} else {
+				newNode = new StringNode(key, value);
+			}
+
 			NodeComment commentNode = new NodeComment();
 			commentNode.setComment(comment);
 			newNode.setNodeComment(commentNode);
@@ -198,7 +207,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #removeRow (java.lang.String)
 	 */
 	@Override
@@ -211,7 +220,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			LocalizationFile localizationFile = iterator.next();
 			((StringLocalizationFile) localizationFile)
 					.removeStringNode(((StringLocalizationFile) localizationFile)
-							.getStringNodeByKey(key));
+							.getStringNodeByKey(key, null));
 		}
 	}
 
@@ -255,7 +264,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #getColumns()
 	 */
 	@Override
@@ -276,6 +285,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			String toolTip = schema.getLocaleToolTip(localizationFile.getFile()
 					.getFullPath());
 
+			//Iterating over strings
 			List<StringNode> localizationNodes = ((StringLocalizationFile) localizationFile)
 					.getStringNodes();
 			Map<String, CellInfo> cells = new HashMap<String, CellInfo>();
@@ -288,6 +298,28 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				cells.put(stringNode.getKey(), info);
 			}
 
+			
+			
+			//Iterating over arrays
+			List<ArrayStringNode> arrayNodes = ((StringLocalizationFile) localizationFile)
+			.getStringArrays();
+			for (Iterator<ArrayStringNode> nodes = arrayNodes.iterator(); nodes
+				.hasNext();) {
+				ArrayStringNode stringNode = nodes.next();
+				//List<String> contentOfThisArray = stringNode.getStringValues();
+				List<StringNode> contentOfThisArray = stringNode.getValues();
+				
+				for (StringNode item: contentOfThisArray) {
+					String comment = (item.getNodeComment() != null) ? item.getNodeComment().getComment() : "";
+					CellInfo info = new CellInfo(item.getValue(), comment);
+					cells.put(item.getKey(), info);
+					
+				}
+		
+			}
+			
+			
+			
 			columns.add(new ColumnInfo(columnID, toolTip, cells, columnID
 					.equals(defaultID) ? false : true));
 
@@ -299,7 +331,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #translate (java.lang.String, TranslatedColumnInfo)
 	 */
 	@Override
@@ -449,9 +481,17 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			monitor.worked(1);
 			TranslationResult translationResult = iterator.next();
 			String translatedString = translationResult.getTranslatedWord();
-			StringNode newNode = new StringNode(originalNodes.get(i).getKey(),
-					translatedString);
-			newNode.setArray(originalNodes.get(i).isArray());
+
+			boolean isArray = (originalNodes.get(i) instanceof ArrayStringNode);
+			StringNode newNode = null;
+			if (isArray) {
+				newNode = new ArrayStringNode(originalNodes.get(i).getKey());
+				((ArrayStringNode) newNode).addValue(translatedString);
+			} else {
+				newNode = new StringNode(originalNodes.get(i).getKey(),
+						translatedString);
+			}
+
 			i++;
 			target.addStringNode(newNode);
 			destColumnInfo.addCell(newNode.getKey(),
@@ -465,7 +505,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #addColumn (java.lang.String)
 	 */
 	@Override
@@ -502,7 +542,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @see org.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #removeColumn (java.lang.String)
 	 */
 	@Override
@@ -518,7 +558,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #setValue (java.lang.String, java.lang.String,
 	 * java.lang.String)
 	 */
@@ -536,13 +576,14 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
 		LocalizationFile file = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(locale);
-		((StringLocalizationFile) file).getStringNodeByKey(key).setValue(value);
+		((StringLocalizationFile) file).getStringNodeByKey(key, null).setValue(
+				value);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #getValue (java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -552,7 +593,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		LocalizationFile localizationFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(localeInfo);
 		StringNode stringNode = ((StringLocalizationFile) localizationFile)
-				.getStringNodeByKey(key);
+				.getStringNodeByKey(key, null);
 		return new CellInfo(stringNode.getValue(),
 				((stringNode.getNodeComment() != null) ? stringNode
 						.getNodeComment().getComment() : null));
@@ -561,7 +602,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #getValues (java.lang.String)
 	 */
 	@Override
@@ -616,7 +657,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #canSave()
 	 */
 	@Override
@@ -627,7 +668,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #save()
 	 */
 	@Override
@@ -640,7 +681,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #isDirty()
 	 */
 	@Override
@@ -725,7 +766,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #revert()
 	 */
 	@Override
@@ -746,7 +787,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #revert(java .lang.String)
 	 */
 	@Override
@@ -763,7 +804,16 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			LocalizationFile file = projectLocalizationManager
 					.getLocalizationProject().getLocalizationFile(localeInfo);
 
-			LocalizationFile newFile = schema.loadFile(file.getFile());
+			String type = file.getClass().toString(); // type =
+														// <Type>LocalizationFile.class
+			type.substring(0, type.length() - 22);
+
+			LocalizationFile newFile = null;
+			try {
+				newFile = schema.loadFile(type, file.getFile());
+			} catch (SequoyahException e) {
+				e.printStackTrace();
+			}
 
 			projectLocalizationManager.getLocalizationProject()
 					.removeLocalizationFile(file);
@@ -790,7 +840,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #dispose()
 	 */
 	@Override
@@ -812,7 +862,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #removeCell (java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -834,7 +884,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		} else {
 			((StringLocalizationFile) file)
 					.removeStringNode(((StringLocalizationFile) file)
-							.getStringNodeByKey(key));
+							.getStringNodeByKey(key, null));
 		}
 
 	}
@@ -842,7 +892,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #setCellTooltip (java.lang.String, java.lang.String,
 	 * java.lang.String)
 	 */
@@ -860,12 +910,14 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		LocalizationFile file = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(locale);
 
-		NodeComment comment = ((StringLocalizationFile) file).getStringNodeByKey(key).getNodeComment();
+		NodeComment comment = ((StringLocalizationFile) file)
+				.getStringNodeByKey(key, null).getNodeComment();
 
 		if (comment == null) {
 			comment = new NodeComment();
 		}
-		((StringLocalizationFile) file).getStringNodeByKey(key).setNodeComment(comment);
+		((StringLocalizationFile) file).getStringNodeByKey(key, null)
+				.setNodeComment(comment);
 		comment.setComment(tooltip);
 
 	}
@@ -873,7 +925,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #validate()
 	 */
 	@Override
@@ -910,7 +962,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.sequoyah.localization.stringeditor.editor.input.
+	 * @seeorg.eclipse.sequoyah.localization.editor.editor.input.
 	 * IStringEditorInput #canHandle (org.eclipse.core.resources.IFile)
 	 */
 	@Override

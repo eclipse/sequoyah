@@ -80,7 +80,7 @@ public class LocalizationFileFactory {
 		try {
 			// Loading a class as the first step in order to be able to retrieve
 			// it from the hash map based on its name
-			Class.forName(bean.getType());
+			Class.forName(bean.getType().getClass().getName());
 			// Creates a class of the desired type
 			Class c = Class.forName(hashMap.get(bean.getType()).toString()
 					.substring(6));

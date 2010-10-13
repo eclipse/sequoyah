@@ -6,11 +6,10 @@
  * 
  * Contributors:
  * Marcel Augusto Gorri (Eldorado) - Bug [323036] - Add support to other localizable resources
+ * Matheus Lima (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.manager;
-
-import static org.w3c.dom.Node.COMMENT_NODE;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -61,15 +60,14 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileFactory;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.NodeComment;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
@@ -123,10 +121,14 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			throws SequoyahException {
 		if (!locFile.getFile().exists()) {
 			LocalizationFileBean bean = new LocalizationFileBean(locFile);
-			bean.setStringNodes(((StringLocalizationFile) locFile)
-					.getStringNodes());
-			bean.setStringArrays(((StringLocalizationFile) locFile)
-					.getStringArrays());
+
+			for (NodeManager nodeManager : NodeManagerProvider.getInstance()
+					.getNodeManagers()) {
+				// according to NodeManagerProvider, the first element is a
+				// StringNodeManager and the second is an ArrayStringNodeManager
+				nodeManager.loadFile(bean, locFile);
+			}
+
 			LocalizationFile tempFile = LocalizationFileFactory.getInstance()
 					.createLocalizationFile(bean);
 			try {
@@ -157,13 +159,16 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 
 		} catch (Exception e) {
 			SequoyahExceptionStatus status = new SequoyahExceptionStatus(
-					IStatus.ERROR, AndroidLocalizationPlugin.PLUGIN_ID, 0,
+					IStatus.ERROR,
+					AndroidLocalizationPlugin.PLUGIN_ID,
+					0,
 					Messages.StringLocalizationFileManager_Exception_CouldNotLoadFile
-					+ locFile.getFile().getName() + ". " + e.getMessage(), e); //$NON-NLS-1$
-			throw new SequoyahException(status);			
+							+ locFile.getFile().getName()
+							+ ". " + e.getMessage(), e); //$NON-NLS-1$
+			throw new SequoyahException(status);
 		}
 
-		return null;
+		return locFile;
 	}
 
 	/*
@@ -171,149 +176,31 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 */
 	private void updateLocalizationFileContent(
 			LocalizationFile localizationFile, Document document) {
-		List<StringNode> stringNodes = new ArrayList<StringNode>();
-		List<StringArray> stringArrays = new ArrayList<StringArray>();
-
-		/*
-		 * Get string nodes
-		 */
-		NodeList stringNodeList = document.getElementsByTagName(XML_STRING_TAG);
-
-		String key = null;
-		String value = null;
-		for (int i = 0; i < stringNodeList.getLength(); i++) {
-			Element stringNode = (Element) stringNodeList.item(i);
-			key = stringNode.getAttributeNode(XML_STRING_ATTR_NAME)
-					.getNodeValue();
-			String comment = null;
-			if (stringNode.hasChildNodes()) {
-				NodeList childs = stringNode.getChildNodes();
-				for (int j = 0; j < childs.getLength(); j++) {
-					Node childN = childs.item(j);
-					if (childN.getNodeType() == COMMENT_NODE) {
-						comment = childN.getNodeValue();
-					}
-				}
-
-			}
-			// get formatted text from single (non-array) item
-			Node auxNode = stringNode.getFirstChild();
-			StringBuffer valueText = new StringBuffer();
-			getStringByNodes(valueText, auxNode);
-			value = valueText.toString();
-
-			stringNode.toString();
-			StringNode stringNodeObj = new StringNode(key, value);
-			if (comment != null) {
-				NodeComment nodeComment = new NodeComment();
-				nodeComment.setComment(comment);
-				stringNodeObj.setNodeComment(nodeComment);
-			}
-			stringNodes.add(stringNodeObj);
+		ArrayList<StringNode> stringNodes = new ArrayList<StringNode>();
+		ArrayList<StringNode> stringArrays = new ArrayList<StringNode>();
+		
+		for (NodeManager nodeManager : NodeManagerProvider.getInstance()
+				.getNodeManagers()) {
+			if (nodeManager instanceof StringNodeManager){
+				nodeManager.updateLocalizationFileContent(document, stringNodes);
+			} else
+				if (nodeManager instanceof ArrayStringNodeManager){
+					((ArrayStringNodeManager)nodeManager).updateLocalizationFileContent(document, stringArrays);
+				}				
 		}
-
-		/*
-		 * Get array nodes
-		 */
-		NodeList arrayNodeList = document
-				.getElementsByTagName(XML_STRING_ARRAY_TAG);
-		String arrayKey = null;
-		String arrayValue = null;
-		for (int i = 0; i < arrayNodeList.getLength(); i++) {
-			Element arrayNode = (Element) arrayNodeList.item(i);
-			arrayKey = arrayNode.getAttributeNode(XML_STRING_ATTR_NAME)
-					.getNodeValue();
-			StringArray stringArray = new StringArray(arrayKey);
-			if (arrayNode.hasChildNodes()) {
-				NodeList arrayItems = arrayNode
-						.getElementsByTagName(XML_STRING_ARRAY_ITEM_TAG);
-				for (int j = 0; j < arrayItems.getLength(); j++) {
-					Node childN = arrayItems.item(j);
-
-					// get formatted text from array item
-					Node auxNode = childN.getFirstChild();
-					StringBuffer valueText = new StringBuffer();
-					getStringByNodes(valueText, auxNode);
-					arrayValue = valueText.toString();
-
-					StringNode newNode = stringArray.addValue(arrayValue);
-
-					// comments
-					String comment = null;
-					if (childN.hasChildNodes()) {
-						NodeList childs = childN.getChildNodes();
-						for (int k = 0; k < childs.getLength(); k++) {
-							Node commentNode = childs.item(k);
-							if (commentNode.getNodeType() == COMMENT_NODE) {
-								comment = commentNode.getNodeValue();
-							}
-						}
-
-					}
-
-					if (comment != null) {
-						NodeComment nodeComment = new NodeComment();
-						nodeComment.setComment(comment);
-						newNode.setNodeComment(nodeComment);
-					}
-
-				}
-
-			}
-			stringArrays.add(stringArray);
-		}
-		LocalizationFileBean bean = new LocalizationFileBean();
-		bean.setStringArrays(stringArrays);
-		bean.setStringNodes(stringNodes);
-
+ 				
 		((AndroidStringLocalizationFile) localizationFile)
 				.setSavedXMLDocument(document);
-	}
-
-	/**
-	 * Extracts the text with the right formatting from DOM XML representation
-	 * 
-	 * @param valueText
-	 *            string to return, in the initial recursion set it as ""
-	 * @param firstChildNode
-	 *            node to start iterating over siblings
-	 */
-	private void getStringByNodes(StringBuffer valueText, Node firstChildNode) {
-		Node auxNode = firstChildNode;
-		while (auxNode != null) {
-			// according to Android documentation it allows only <b>, <i>, <u>
-			// formatting. However, we preserve any tags the user has included
-			if (auxNode.getNodeName() != null
-					&& (auxNode.getNodeType() == Node.ELEMENT_NODE)) {
-				NamedNodeMap nodeAttributes = auxNode.getAttributes();
-				String nodeAttributesText = ""; //$NON-NLS-1$
-				for (int i = 0; i < nodeAttributes.getLength(); i++) {
-					Node nodeAttribute = nodeAttributes.item(i);
-					nodeAttributesText += " " + nodeAttribute.toString(); //$NON-NLS-1$
-				}
-
-				// case: sibling with formatting node
-				valueText.append("<" + auxNode.getNodeName() //$NON-NLS-1$
-						+ nodeAttributesText + ">"); //$NON-NLS-1$
-				if (auxNode.hasChildNodes()) {
-					// recursion (step): sibling has internal formatting nodes
-					getStringByNodes(valueText, auxNode.getFirstChild());
-				} else {
-					// recursion (base case): only simple text inside sibling
-					if (auxNode.getNodeType() != Node.COMMENT_NODE) {
-						valueText.append(auxNode.getTextContent());
-					}
-				}
-				valueText.append("</" //$NON-NLS-1$
-						+ auxNode.getNodeName() + ">"); //$NON-NLS-1$
-			} else {
-				// recursion (base case): simple text in the sibling
-				if (auxNode.getNodeType() != Node.COMMENT_NODE) {
-					valueText.append(auxNode.getTextContent());
-				}
-			}
-			auxNode = auxNode.getNextSibling();
-		}
+		
+		((AndroidStringLocalizationFile) localizationFile)
+		.setStringNodes(stringNodes);		
+		
+		ArrayList<ArrayStringNode> stringArrays2 = new ArrayList<ArrayStringNode>();
+		for (StringNode node : stringArrays) {	
+			stringArrays2.add( (ArrayStringNode) node);
+		}			
+		((AndroidStringLocalizationFile) localizationFile)
+		.setStringArrayNodes(stringArrays2);	
 	}
 
 	/*
@@ -362,19 +249,14 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			 * Create XML nodes
 			 */
 			Element resources = document.createElement(XML_RESOURCES_TAG);
-
-			// Simple entries
-			for (StringNode stringNode : ((StringLocalizationFile) localizationFile)
-					.getStringNodes()) {
-				addSingleEntry(document, resources, stringNode);
+			
+			for (NodeManager nodeManager : NodeManagerProvider.getInstance()
+					.getNodeManagers()) {
+				// according to NodeManagerProvider, the first element is a
+				// StringNodeManager and the second is an ArrayStringNodeManager
+				nodeManager.createFile(document, resources, localizationFile);
 			}
-
-			// Arrays
-			for (StringArray stringArray : ((StringLocalizationFile) localizationFile)
-					.getStringArrays()) {
-				addArrayEntry(document, resources, stringArray);
-			}
-
+			
 			document.appendChild(resources);
 
 			saveXMLDocument(localizationFile.getFile().getLocation().toFile(),
@@ -402,15 +284,11 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 */
 	private void addSingleEntry(Document document, Element resources,
 			StringNode stringNode) {
-		if (!stringNode.isArray()) {
-			Element string = document.createElement(XML_STRING_TAG);
-			string.setAttribute(XML_STRING_ATTR_NAME, stringNode.getKey());
-			string.appendChild(document.createTextNode(stringNode.getValue()));
-
-			createOrUpdateComment(document, stringNode, string);
-
-			resources.appendChild(string);
-		}
+		Element string = document.createElement(XML_STRING_TAG);
+		string.setAttribute(XML_STRING_ATTR_NAME, stringNode.getKey());
+		string.appendChild(document.createTextNode(stringNode.getValue()));
+		createOrUpdateComment(document, stringNode, string);
+		resources.appendChild(string);
 	}
 
 	/*
@@ -443,7 +321,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 * @param stringArray
 	 */
 	private void addArrayEntry(Document document, Element resources,
-			StringArray stringArray) {
+			ArrayStringNode stringArray) {
 		Element array = document.createElement(XML_STRING_ARRAY_TAG);
 		array.setAttribute(XML_STRING_ATTR_NAME, stringArray.getKey());
 		for (StringNode stringNode : stringArray.getValues()) {
@@ -625,8 +503,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 		}
 		// save modified document
 		try {
-			saveXMLDocument(locFile.getFile().getLocation().toFile(),
-					document);
+			saveXMLDocument(locFile.getFile().getLocation().toFile(), document);
 		} catch (Exception e) {
 			SequoyahException sqE = new SequoyahException();
 			sqE.setStackTrace(e.getStackTrace());
@@ -634,7 +511,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 		}
 		locFile.setDirty(false);
 	}
-	
+
 	/**
 	 * Update the XML representation of the file
 	 * 
@@ -642,9 +519,9 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 * @param document
 	 * @throws SequoyahException
 	 */
-	private void updateFile(LocalizationFile locFile,
-			Document document) throws SequoyahException {
-		
+	private void updateFile(LocalizationFile locFile, Document document)
+			throws SequoyahException {
+
 		AndroidStringLocalizationFile androidLocalizationFile = (AndroidStringLocalizationFile) locFile;
 		if (document == null) {
 			// file not created yet, do it
@@ -654,17 +531,32 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			// file already created, update
 			// update nodes on XML Document according to LocalizationFile model
 			Map<String, StringNode> singleStringsToUpdateOrAdd = new HashMap<String, StringNode>();
-			for (StringNode stringNode : ((StringLocalizationFile)locFile).getStringNodes()) {
-				if (!stringNode.isArray()) {
-					singleStringsToUpdateOrAdd.put(stringNode.getKey(),
-							stringNode);
-				}
+			Map<String, ArrayStringNode> arrayStringsToUpdateOrAdd = new HashMap<String, ArrayStringNode>();
+
+			for (StringNode stringNode : ((StringLocalizationFile) locFile)
+					.getStringNodes()) {
+
+				if (!(stringNode instanceof ArrayStringNode)) {
+					singleStringsToUpdateOrAdd.put(stringNode.getKey(), stringNode);
+				}				
 			}
-			Map<String, StringArray> arrayStringsToUpdateOrAdd = new HashMap<String, StringArray>();
-			for (StringArray stringArray : ((StringLocalizationFile)locFile).getStringArrays()) {
-				arrayStringsToUpdateOrAdd
-						.put(stringArray.getKey(), stringArray);
+			
+			for (ArrayStringNode stringArray : ((StringLocalizationFile)locFile).getStringArrays()) {
+				arrayStringsToUpdateOrAdd.put(stringArray.getKey(), stringArray);
 			}
+			
+//			Map<String, StringNode> stringsToUpdateOrAdd = new HashMap<String, StringNode>();
+//			for (NodeManager nodeManager : NodeManagerProvider.getInstance()
+//					.getNodeManagers()) {
+//				// according to NodeManagerProvider, the first element is a
+//				// StringNodeManager and the second is an ArrayStringNodeManager
+//				nodeManager.updateFile(locFile, stringsToUpdateOrAdd);
+//			}			
+
+//			for (ArrayStringNode stringArray : ((StringLocalizationFile)locFile).getStringArrays()) {
+//				arrayStringsToUpdateOrAdd
+//						.put(stringArray.getKey(), stringArray);
+//			}
 
 			NodeList resourcesList = document.getElementsByTagName("resources"); //$NON-NLS-1$
 			// if there is no resource tag, add at least one
@@ -692,8 +584,8 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 						arrayStringsToUpdateOrAdd, resource);
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * 
 	 * Visit all child in the DOM tree to add an attribute.
@@ -705,23 +597,24 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 * @param arrayStringsToUpdateOrAdd
 	 *            map with array item to update/add (in the end of visit, only
 	 *            add item should
-	 * @param resource           
+	 * @param resource
 	 */
 	public void visitToAddDOMChildren(Document document,
 			Map<String, StringNode> singleStringsToUpdateOrAdd,
-			Map<String, StringArray> arrayStringsToUpdateOrAdd, Element resource) {
+			Map<String, ArrayStringNode> arrayStringsToUpdateOrAdd,
+			Element resource) {
 		for (Map.Entry<String, StringNode> singleEntry : singleStringsToUpdateOrAdd
 				.entrySet()) {
 			StringNode stringNode = singleEntry.getValue();
 			addSingleEntry(document, resource, stringNode);
 		}
-		for (Map.Entry<String, StringArray> arrayEntry : arrayStringsToUpdateOrAdd
+		for (Map.Entry<String, ArrayStringNode> arrayEntry : arrayStringsToUpdateOrAdd
 				.entrySet()) {
-			StringArray stringArray = arrayEntry.getValue();
+			ArrayStringNode stringArray = arrayEntry.getValue();
 			addArrayEntry(document, resource, stringArray);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * Visit all child in the DOM tree, as an attribute is found, it gets the
@@ -731,15 +624,15 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 * @param visitingNode
 	 * @param attrName
 	 * @param singleStringsToRemove
-	 *            map with single items to remove (in the end of visit, only
-	 *            add items should remain)
+	 *            map with single items to remove (in the end of visit, only add
+	 *            items should remain)
 	 * @param arrayItemsToRemove
-	 *            map with array item to remove (in the end of visit, only
-	 *            add item should
+	 *            map with array item to remove (in the end of visit, only add
+	 *            item should
 	 */
 	public void visitToRemoveDOMChildren(Document document, Node visitingNode,
 			String attrName, Map<String, StringNode> singleStringsToRemove,
-			Map<String, StringArray> arrayStringsToRemove,
+			Map<String, ArrayStringNode> arrayStringsToRemove,
 			Map<String, StringNode> arrayItemsToRemove) {
 		while (visitingNode != null) {
 			Node nextNodeToVisit = visitingNode.getNextSibling();
@@ -757,7 +650,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 					} else {
 						// not found single string - try to find as entire array
 						// entry
-						StringArray foundStringArray = arrayStringsToRemove
+						ArrayStringNode foundStringArray = arrayStringsToRemove
 								.get(keyName);
 						if (foundStringArray != null) {
 							// remove array entry
@@ -811,7 +704,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	public void visitToUpdateDOMChildren(Document document, Node visitingNode,
 			String attrName,
 			Map<String, StringNode> singleStringsToUpdateOrAdd,
-			Map<String, StringArray> arrayStringsToUpdateOrAdd) {
+			Map<String, ArrayStringNode> arrayStringsToUpdateOrAdd) {
 		while (visitingNode != null) {
 			if (visitingNode.getNodeType() == Node.ELEMENT_NODE) {
 				Attr attribute = getAttribute((Element) visitingNode, attrName);
@@ -833,7 +726,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 						singleStringsToUpdateOrAdd.remove(keyName);
 					} else {
 						// not found single string - try to find as array entry
-						StringArray foundStringArray = arrayStringsToUpdateOrAdd
+						ArrayStringNode foundStringArray = arrayStringsToUpdateOrAdd
 								.get(keyName);
 						if (foundStringArray != null) {
 							NodeList items = visitingNode.getChildNodes();
@@ -894,7 +787,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 		Attr attr = el.getAttributeNode(attrName);
 		return attr;
 	}
-	
+
 	/*
 	 * 
 	 */
@@ -934,14 +827,13 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 * 
 	 * @see
 	 * org.eclipse.sequoyah.localization.android.manager.ILocalizationFileManager
-	 * #
-	 * updateLocalizationFileContent()
+	 * # updateLocalizationFileContent()
 	 */
 	@Override
 	public void updateLocalizationFileContent(
 			LocalizationFile localizationFile, String content)
 			throws SequoyahException {
-		
+
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		try {
@@ -965,8 +857,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 * 
 	 * @see
 	 * org.eclipse.sequoyah.localization.android.manager.ILocalizationFileManager
-	 * #
-	 * getLocalizationFileContent()
+	 * # getLocalizationFileContent()
 	 */
 	@Override
 	public Object getLocalizationFileContent(LocalizationFile locFile) {
@@ -982,5 +873,5 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			text = getXMLAsString(localizationFile.getSavedXMLDocument());
 		}
 		return text;
-	}	
+	}
 }

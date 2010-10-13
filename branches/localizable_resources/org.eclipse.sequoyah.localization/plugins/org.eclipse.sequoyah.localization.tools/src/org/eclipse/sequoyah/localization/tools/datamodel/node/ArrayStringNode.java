@@ -20,25 +20,14 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 
 /**
  * This class represents an array entry in a localization file.
  */
-public class StringArray {
-
-	/*
-	 * The LocalizationFile which the StringArray belongs to
-	 */
-	private StringLocalizationFile localizationFile = null;
-
-	/*
-	 * Key used in the localization process
-	 */
-	private String key = null;
+public class ArrayStringNode extends StringNode {
 
 	/*
 	 * Associated value for the language represented by the localizationFile
@@ -51,54 +40,14 @@ public class StringArray {
 	 * @param key
 	 * @param value
 	 */
-	public StringArray(String key) {
-		this.key = key;
+	public ArrayStringNode(String key) {
+		super(key, null);
 		this.values = new HashMap<Integer, StringNode>();
 	}
 
 	/**
-	 * Get the LocalizationFile which the StringArray belongs to
-	 * 
-	 * @return the LocalizationFile which the StringArray belongs to
-	 */
-	public StringLocalizationFile getLocalizationFile() {
-		return localizationFile;
-	}
-
-	/**
-	 * Set the LocalizationFile which the StringArray belongs to
-	 * 
-	 * @param localizationFile
-	 *            the LocalizationFile which the StringArray belongs to
-	 */
-	public void setLocalizationFile(StringLocalizationFile localizationFile) {
-		this.localizationFile = localizationFile;
-	}
-
-	/**
-	 * Get the key used in the localization process
-	 * 
-	 * @return key used in the localization process
-	 */
-	public String getKey() {
-		return key;
-	}
-
-	/**
-	 * Set the key used in the localization process
-	 * 
-	 * @param key
-	 *            key used in the localization process
-	 */
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	/**
 	 * Get the value associated to the key for the language represented by the
-	 * localizationFile
-	 * 
-	 * @return value associated to the key
+	 * a @return value associated to the key
 	 */
 	public List<StringNode> getValues() {
 		List<StringNode> result = new ArrayList<StringNode>();
@@ -116,6 +65,20 @@ public class StringArray {
 			result = Arrays.asList(stringNodes);
 		}
 		return result;
+	}
+
+	/**
+	 * Retrieves the values contained in this array as a list of Strings
+	 * @return
+	 */
+	public List<String> getStringValues() {
+		LinkedList<String> result = new LinkedList<String>();
+				
+		for (StringNode node : this.values.values()) {								
+			result.add(node.value);
+		}
+		
+	 return result;
 	}
 
 	/**
@@ -148,7 +111,8 @@ public class StringArray {
 			if (this.values.size() > 0) {
 				// Generate new key
 				StringNode lastNode = this.values.get(this.values.size() - 1);
-				lastNumber = StringArray.findItemPosition(lastNode.getKey());
+				lastNumber = ArrayStringNode
+						.findItemPosition(lastNode.getKey());
 			}
 			position = lastNumber + 1;
 		}
@@ -186,7 +150,7 @@ public class StringArray {
 	 */
 	public void removeValue(StringNode stringNode) {
 		// int position = Integer.parseInt(stringNode.getKey().split("_")[1]);
-		int position = StringArray.findItemPosition(stringNode.getKey());
+		int position = ArrayStringNode.findItemPosition(stringNode.getKey());
 		this.values.remove(new Integer(position));
 	}
 
@@ -200,7 +164,7 @@ public class StringArray {
 	public boolean isPartOfTheArray(String key) {
 		boolean result = false;
 		// String arrayKey = key.split("_")[0];
-		String arrayKey = StringArray.getArrayKeyFromItemKey(key);
+		String arrayKey = ArrayStringNode.getArrayKeyFromItemKey(key);
 		if (arrayKey != null) {
 			result = this.key.equals(arrayKey);
 		}
@@ -227,7 +191,7 @@ public class StringArray {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return this.getKey().equals(((StringArray) obj).getKey());
+		return this.getKey().equals(((ArrayStringNode) obj).getKey());
 	}
 
 	/**
@@ -243,8 +207,8 @@ public class StringArray {
 		try {
 			int separatorIndex = key.lastIndexOf("_"); //$NON-NLS-1$
 			String arrayKey = key.substring(0, separatorIndex);
-			String itemPosition = key.substring(separatorIndex + 1, key
-					.length());
+			String itemPosition = key.substring(separatorIndex + 1,
+					key.length());
 			if ((arrayKey == null) || (arrayKey.equals(""))) { //$NON-NLS-1$
 				result = false;
 			}
@@ -272,8 +236,8 @@ public class StringArray {
 
 		try {
 			int separatorIndex = key.lastIndexOf("_"); //$NON-NLS-1$
-			position = Integer.parseInt(key.substring(separatorIndex + 1, key
-					.length()));
+			position = Integer.parseInt(key.substring(separatorIndex + 1,
+					key.length()));
 		} catch (Exception e) {
 			// do nothing
 		}

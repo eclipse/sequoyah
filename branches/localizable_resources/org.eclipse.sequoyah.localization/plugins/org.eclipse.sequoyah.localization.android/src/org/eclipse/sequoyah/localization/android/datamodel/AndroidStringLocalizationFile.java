@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2010 Motorola Mobility, Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,20 +10,20 @@
  * Contributors:
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save
  * Daniel Pastore (Eldorado) - Bug 323036 - Add support to other Localizable Resources
+ * Matheus Lima (Eldorado) - Bug 326793 - Updating data model so the Array Strings is now a new class
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.datamodel;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
+import org.eclipse.sequoyah.localization.android.manager.LocalizationFileManagerFactory;
+import org.eclipse.sequoyah.localization.android.manager.StringLocalizationFileManager;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileFactory;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.w3c.dom.Document;
 
@@ -34,6 +34,16 @@ import org.w3c.dom.Document;
  */
 public class AndroidStringLocalizationFile extends StringLocalizationFile {
 
+	static {
+		LocalizationFileFactory.getInstance().addFileType(
+				AndroidStringLocalizationFile.class.getName(),
+				AndroidStringLocalizationFile.class);
+		
+		LocalizationFileManagerFactory.getInstance().addManager(
+				AndroidStringLocalizationFile.class.getName(),
+				StringLocalizationFileManager.class);
+	}
+	
 	/**
 	 * Saved XML (it is used not to lose comments on updates)
 	 */
@@ -55,7 +65,7 @@ public class AndroidStringLocalizationFile extends StringLocalizationFile {
 	 * Kept to remove an entire array to be removed from savedXMLDocument in the
 	 * next save action
 	 */
-	private Map<String, StringArray> arrayEntryToRemove = new HashMap<String, StringArray>();
+	private Map<String, ArrayStringNode> arrayEntryToRemove = new HashMap<String, ArrayStringNode>();
 
 	/**
 	 * 
@@ -93,14 +103,14 @@ public class AndroidStringLocalizationFile extends StringLocalizationFile {
 			getStringNodesMap().remove(stringNode.getKey());
 			this.setDirty(true);
 			// check if it's is an array
-			if (stringNode.isArray()) {
-				stringNode.getStringArray().removeValue(stringNode);
-				if (stringNode.getStringArray().getValues().size() == 0) {
-					this.getStringArrays().remove(stringNode.getStringArray());
+			if (stringNode instanceof ArrayStringNode) {
+				ArrayStringNode arrayNode = (ArrayStringNode) stringNode ;
+				arrayNode.removeValue(stringNode);
+				if (arrayNode.getValues().size() == 0) {
+					this.getStringArrays().remove(arrayNode);
 					// mark entire array entry to be removed
 					arrayEntryToRemove.put(
-							stringNode.getStringArray().getKey(), stringNode
-									.getStringArray());
+							arrayNode.getKey(), arrayNode);
 				} else {
 					// mark item array to be removed
 					arrayItemsToRemove.put(stringNode.getKey(), stringNode);
@@ -129,7 +139,7 @@ public class AndroidStringLocalizationFile extends StringLocalizationFile {
 	/**
 	 * @return the arrayEntryToRemove
 	 */
-	public Map<String, StringArray> getArrayEntryToRemove() {
+	public Map<String, ArrayStringNode> getArrayEntryToRemove() {
 		return arrayEntryToRemove;
 	}
 }

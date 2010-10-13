@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,7 +12,9 @@
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Marcelo Marzola Bossoni (Eldorado) - Bug (289236) - Editor Permitting create 2 columns with same id
  * Marcelo Marzola Bossoni (Eldorado) - Bug (289282) - NullPointer adding keyNullPointer adding key
- *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Daniel Barboza Franco (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.managers;
 
@@ -98,9 +100,9 @@ public class ProjectLocalizationManager {
 			this.project = project;
 			syncDefaultColumn();
 
-		} catch (IOException e) {
-			BasePlugin.logError("Could not load the localization manager: " //$NON-NLS-1$
-					+ e.getMessage());
+		} catch (SequoyahException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -140,8 +142,9 @@ public class ProjectLocalizationManager {
 				localizationProject.addLocalizationFile(file);
 			}
 			syncDefaultColumn();
-		} catch (IOException e) {
-
+		} catch (SequoyahException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -150,7 +153,7 @@ public class ProjectLocalizationManager {
 	private void syncNodes(StringLocalizationFile destination,
 			StringLocalizationFile source) {
 		for (StringNode node : source.getStringNodes()) {
-			destination.getStringNodeByKey(node.getKey());
+			destination.getStringNodeByKey(node.getKey(), null);
 		}
 	}
 
@@ -201,11 +204,7 @@ public class ProjectLocalizationManager {
 		LocalizationFile localizationFile = getProjectLocalizationSchema()
 				.createLocalizationFile(bean);
 
-		try {
-			projectLocalizationSchema.createStringFile(localizationFile);
-		} catch (SequoyahException e) {
-			BasePlugin.logInfo("Error while creating file"); //$NON-NLS-1$
-		}
+		projectLocalizationSchema.createStringFile(localizationFile);
 
 		return true;
 	}

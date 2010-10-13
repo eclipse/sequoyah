@@ -8,7 +8,8 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * Marcel Gorri (Eldorado) - Extend to support arrays
+ * Marcel Gorri (Eldorado) - Bug [326793] - Improvements on the String Arrays handling
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.implementation.generic;
 
@@ -22,7 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.swt.SWT;
@@ -367,10 +368,10 @@ public class NewRowInputDialog extends Dialog {
 
 		}
 
-		Set<StringArray> allStringArrays = localizationProject
+		Set<ArrayStringNode> allStringArrays = localizationProject
 				.getAllStringArrays();
 
-		Iterator<StringArray> iterator = allStringArrays.iterator();
+		Iterator<ArrayStringNode> iterator = allStringArrays.iterator();
 
 		while (iterator.hasNext()) {
 			arrayNames.add(iterator.next().getKey());

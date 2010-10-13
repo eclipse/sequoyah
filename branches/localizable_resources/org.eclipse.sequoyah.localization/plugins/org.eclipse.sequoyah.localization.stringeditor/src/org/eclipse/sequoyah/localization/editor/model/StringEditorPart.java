@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,10 +16,13 @@
  * Matheus Lima (Eldorado) - Adapting to accept online translation for a column
  * Paulo Faria (Eldorado) - Add option to expand rows for global maximum height (default) or let all lines with row 1 and include scroll for items with multiple lines
  * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/make this editor a multipage one
+ * Daniel Barboza Franco (Eldorado) - Bug [326793] - Improvements on the String Arrays handling 
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -639,6 +642,18 @@ public class StringEditorPart extends MultiPageEditorPart {
 		}
 	}
 
+
+	private void generateArrayKeys (RowInfo[] infos){
+		for (int i=0 ; i < infos.length; i++) {
+			
+			DecimalFormat formatter = new DecimalFormat("000"); //$NON-NLS-1$
+			String virtualKey = infos[i].getKey() + "_" //$NON-NLS-1$
+					+ formatter.format(i);
+	
+			infos[i].setKey(virtualKey);
+		}
+	}
+	
 	/**
 	 * Action to add a new key
 	 */
@@ -653,10 +668,13 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 			RowInfo[] rowInfo = getContentProvider().getOperationProvider()
 					.getNewRow();
+			
+			//generateArrayKeys(rowInfo);
+			
+			
 			// add new key only if the key isn't null and the new key does not
 			// exists
 			if (rowInfo != null) {
-
 				if (rowInfo.length > 1) {
 					AddKeysOperation operation = new AddKeysOperation(
 							Messages.StringEditorPart_AddKeyOperationName,
@@ -928,10 +946,16 @@ public class StringEditorPart extends MultiPageEditorPart {
 					.getWorkbench().getSharedImages()
 					.getImage(ISharedImages.IMG_OBJS_WARN_TSK).getImageData()
 					.scaledTo(16, 16));
-			okImage = new Image(Display.getDefault(), StringEditorPlugin
-					.imageDescriptorFromPlugin(StringEditorPlugin.PLUGIN_ID,
-							"icons/obj16_ok.png").getImageData()); //$NON-NLS-1$
 
+			if (StringEditorPlugin.imageDescriptorFromPlugin(
+					StringEditorPlugin.PLUGIN_ID, "icons/obj16_ok.png") != null) {
+				okImage = new Image(Display.getDefault(), StringEditorPlugin
+						.imageDescriptorFromPlugin(
+								StringEditorPlugin.PLUGIN_ID,
+								"icons/obj16_ok.png").getImageData()); //$NON-NLS-1$
+			} else {
+				BasePlugin.logWarning("Could not find icons/obj16_ok.png file on plugin " + StringEditorPlugin.PLUGIN_ID);
+			}
 		} catch (Exception e) {
 			handleInitFailure(e, input, site);
 		}

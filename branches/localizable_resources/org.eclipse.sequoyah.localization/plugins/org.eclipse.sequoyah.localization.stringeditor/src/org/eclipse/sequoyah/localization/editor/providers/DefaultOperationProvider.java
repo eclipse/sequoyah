@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,6 +10,8 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Matheus Tait Lima (Eldorado) - Adapting localization plugins to accept automatic translations
+ * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.providers;
 
@@ -34,7 +36,7 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
+	 * org.eclipse.sequoyah.localization.editor.providers.IOperationProvider
 	 * #init(org.eclipse .core.resources.IProject)
 	 */
 	public void init(IProject project) throws Exception {
@@ -45,7 +47,7 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
+	 * org.eclipse.sequoyah.localization.editor.providers.IOperationProvider
 	 * #getNewColumn()
 	 */
 	public ColumnInfo getNewColumn() {
@@ -78,7 +80,7 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
+	 * org.eclipse.sequoyah.localization.editor.providers.IOperationProvider
 	 * #getNewRow()
 	 */
 	public RowInfo[] getNewRow() {
@@ -101,7 +103,7 @@ public class DefaultOperationProvider implements IOperationProvider {
 
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			newRow = new RowInfo[1];
-			newRow[0] = new RowInfo(dialog.getValue(), false, null);
+			newRow[0] = new RowInfo(dialog.getValue(), null);
 		}
 
 		return newRow;
@@ -111,7 +113,7 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
+	 * org.eclipse.sequoyah.localization.editor.providers.IOperationProvider
 	 * #getTranslatedColumnInfo()
 	 */
 	public TranslationInfo getTranslatedColumnInfo(String selectedColumn) {
@@ -124,7 +126,7 @@ public class DefaultOperationProvider implements IOperationProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.sequoyah.localization.stringeditor.providers.IOperationProvider
+	 * org.eclipse.sequoyah.localization.editor.providers.IOperationProvider
 	 * #getTranslatedColumnsInfo()
 	 */
 	public TranslationInfo[] getTranslatedColumnsInfo(String selectedColumn,

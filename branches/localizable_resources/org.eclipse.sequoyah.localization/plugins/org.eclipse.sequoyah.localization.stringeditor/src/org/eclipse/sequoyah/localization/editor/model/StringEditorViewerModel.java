@@ -9,7 +9,9 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
- *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Daniel Barboza Franco (Eldorado) - Bug [326793] - Improvements on the String Arrays handling
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
@@ -87,7 +89,7 @@ public class StringEditorViewerModel {
 			for (String cellKey : column.getCells().keySet()) {
 				if (rowsMap.get(cellKey) == null) {
 					// TODO: check how to identify if it's an array or not
-					rowsMap.put(cellKey, new RowInfo(cellKey, false, null));
+					rowsMap.put(cellKey, new RowInfo(cellKey, null));
 				}
 				RowInfo rowInfo = rowsMap.get(cellKey);
 				rowInfo.addCell(column.getId(), column.getCells().get(cellKey));
@@ -151,7 +153,7 @@ public class StringEditorViewerModel {
 			RowInfo row = rowsMap.get(key);
 			if (row == null) {
 				// TODO: check how to identify if it's an array or not
-				row = new RowInfo(key, false, null);
+				row = new RowInfo(key, null);
 				rowsMap.put(key, row);
 			}
 			row.addCell(info.getId(), info.getCells().get(key));

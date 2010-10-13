@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,7 +10,9 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
- *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Marcel Augusto Gorri (Eldorado) - Bug [323036] - Add support to other localizable resources
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
@@ -22,7 +24,7 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
 
 /**
  * This class represents a real project and contains other information about it
@@ -219,11 +221,11 @@ public class LocalizationProject {
 	/**
 	 * @return
 	 */
-	public Set<StringArray> getAllStringArrays() {
-		Set<StringArray> allStringArrays = new TreeSet<StringArray>(
-				new Comparator<StringArray>() {
+	public Set<ArrayStringNode> getAllStringArrays() {
+		Set<ArrayStringNode> allStringArrays = new TreeSet<ArrayStringNode>(
+				new Comparator<ArrayStringNode>() {
 
-					public int compare(StringArray o1, StringArray o2) {
+					public int compare(ArrayStringNode o1, ArrayStringNode o2) {
 						return o1.getKey().compareTo(o2.getKey());
 					}
 				});

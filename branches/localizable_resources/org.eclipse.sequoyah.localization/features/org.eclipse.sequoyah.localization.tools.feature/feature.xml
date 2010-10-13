@@ -41,7 +41,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.sequoyah.localization.stringeditor"
+         id="org.eclipse.sequoyah.localization.editor"
          download-size="0"
          install-size="0"
          version="0.0.0"

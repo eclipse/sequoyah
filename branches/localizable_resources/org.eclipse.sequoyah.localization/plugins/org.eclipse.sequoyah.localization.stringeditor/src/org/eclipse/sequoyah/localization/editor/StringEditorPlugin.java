@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,7 +8,8 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor 
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor;
 
@@ -21,7 +22,7 @@ import org.osgi.framework.BundleContext;
 public class StringEditorPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.sequoyah.localization.stringeditor";//$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.sequoyah.localization.editor";//$NON-NLS-1$
 
 	// The shared instance
 	private static StringEditorPlugin plugin;

@@ -13,7 +13,7 @@ package org.eclipse.sequoyah.localization.tools.datamodel;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 
 /**
@@ -41,7 +41,7 @@ public class LocalizationFileBean {
 	/*
 	 * The list of StringArrays which are part of the file
 	 */
-	private List<StringArray> stringArrays;
+	private List<ArrayStringNode> stringArrays;
 
 	/*
 	 * The list of StringNodes which are part of the file
@@ -96,7 +96,7 @@ public class LocalizationFileBean {
 	/**
 	 * @return the stringArrays
 	 */
-	public List<StringArray> getStringArrays() {
+	public List<ArrayStringNode> getStringArrays() {
 		return stringArrays;
 	}
 
@@ -104,7 +104,7 @@ public class LocalizationFileBean {
 	 * @param stringArrays
 	 *            the stringArrays to set
 	 */
-	public void setStringArrays(List<StringArray> stringArrays) {
+	public void setStringArrays(List<ArrayStringNode> stringArrays) {
 		this.stringArrays = stringArrays;
 	}
 
@@ -139,7 +139,7 @@ public class LocalizationFileBean {
 	 * @param locale
 	 */
 	public LocalizationFileBean(String type, IFile file, LocaleInfo locale,
-			List<StringNode> stringNodes, List<StringArray> stringArrays) {
+			List<StringNode> stringNodes, List<ArrayStringNode> stringArrays) {
 		this.type = type;
 		this.file = file;
 		this.locale = locale;

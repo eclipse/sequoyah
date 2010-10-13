@@ -19,6 +19,7 @@
  * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
  * Daniel Drigo Pastore, Marcel Augusto Gorri (Eldorado) - Bug 312971 - Localization Editor does not accept < and > characters
  * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources
+ * Matheus Lima (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
@@ -54,6 +55,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.android.AndroidLocaleAttribute.AndroidLocaleAttributes;
+import org.eclipse.sequoyah.localization.android.datamodel.AndroidStringLocalizationFile;
 import org.eclipse.sequoyah.localization.android.i18n.Messages;
 import org.eclipse.sequoyah.localization.android.manager.ILocalizationFileManager;
 import org.eclipse.sequoyah.localization.android.manager.ImageLocalizationFileManager;
@@ -63,6 +65,7 @@ import org.eclipse.sequoyah.localization.android.manager.StringLocalizationFileM
 import org.eclipse.sequoyah.localization.android.manager.VideoLocalizationFileManager;
 import org.eclipse.sequoyah.localization.editor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfoArray;
 import org.eclipse.sequoyah.localization.editor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.ImageLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
@@ -92,17 +95,23 @@ import org.w3c.dom.NodeList;
  */
 public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		IAndroidLocalizationSchemaConstants {
-	
+
 	private static final HashMap<Class, Class> typesMap = new HashMap<Class, Class>();
-	
+
 	static {
-		typesMap.put(StringLocalizationFile.class, StringLocalizationFileManager.class);
-		typesMap.put(ImageLocalizationFile.class, ImageLocalizationFileManager.class);
-		typesMap.put(SoundLocalizationFile.class, SoundLocalizationFileManager.class);
-		typesMap.put(VideoLocalizationFile.class, VideoLocalizationFileManager.class);
-		
+		typesMap.put(StringLocalizationFile.class,
+				StringLocalizationFileManager.class);
+		typesMap.put(AndroidStringLocalizationFile.class,
+				StringLocalizationFileManager.class);			
+		typesMap.put(ImageLocalizationFile.class,
+				ImageLocalizationFileManager.class);
+		typesMap.put(SoundLocalizationFile.class,
+				SoundLocalizationFileManager.class);
+		typesMap.put(VideoLocalizationFile.class,
+				VideoLocalizationFileManager.class);
+
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -245,8 +254,11 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 			rowInfo = new RowInfo[dialog.getNumEntries()];
 			String key = dialog.getKey();
 			boolean isArray = dialog.isArray();
+
 			for (int i = 0; i < dialog.getNumEntries(); i++) {
-				rowInfo[i] = new RowInfo(key, isArray, null);
+				RowInfo row = (isArray) ? new RowInfoArray(key, null)
+						: new RowInfo(key, null);
+				rowInfo[i] = row;
 			}
 		}
 
@@ -398,10 +410,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	public void createLocalizationFile(LocalizationFile localizationFile)
 			throws SequoyahException {
 
-		Class aClass = typesMap.get(localizationFile);
+		Class aClass = typesMap.get(localizationFile.getClass());
 		ILocalizationFileManager manager = LocalizationFileManagerFactory
-		.getInstance().createLocalizationFileManager(aClass.getName());
-		manager.createFile(localizationFile);	
+				.getInstance().createLocalizationFileManager(aClass.getName());
+		manager.createFile(localizationFile);
 
 	}
 
@@ -518,7 +530,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 
 								if ((file instanceof IFile)
 										&& (isLocalizationFile((IFile) file))) {
-									// TODO WARNING 2 put LocalizationFiles in the map, not an IFile
+									// TODO WARNING 2 put LocalizationFiles in
+									// the map, not an IFile
 									localizationFiles.put(
 											getLocaleInfoFromPath(file
 													.getProjectRelativePath()),
@@ -599,7 +612,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 
 		boolean result = false;
 		if (file != null) {
-			// TODO WARNING 1 fix regular expression for each type of localizable resource
+			// TODO WARNING 1 fix regular expression for each type of
+			// localizable resource
 			if (file.getProjectRelativePath().toString()
 					.matches(LF_REGULAR_EXPRESSION)) {
 
@@ -625,8 +639,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		Map<LocaleInfo, IFile> localizationFiles = getLocalizationFiles(project);
 
 		for (Map.Entry<LocaleInfo, IFile> entry : localizationFiles.entrySet()) {
-			// TODO WARNING 3 fix entries: based on the type of the resource, choose a specific manager
-			filesMap.put(entry.getKey(), loadFile("", entry.getValue()));
+
+			String fileName = entry.getValue().getName();
+			if (fileName.endsWith(LOCALIZATION_FILE_NAME)) {
+				//Selecting the StringLocalizationFileManager for resources of type string file
+				filesMap.put(entry.getKey(), loadFile(StringLocalizationFileManager.class.getName(), entry.getValue()));
+			} 
 		}
 
 		return filesMap;
@@ -641,13 +659,18 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	@Override
 	public LocalizationFile loadFile(String type, IFile file)
 			throws SequoyahException {
-		LocalizationFile localizationFile = new LocalizationFile();
+
+		ILocalizationFileManager manager = LocalizationFileManagerFactory
+		.getInstance().createLocalizationFileManager(type);
+
+			
+		LocalizationFileBean bean = new LocalizationFileBean(new LocalizationFile()); 		
+		AndroidStringLocalizationFile localizationFile= new AndroidStringLocalizationFile(bean);
+		
 		localizationFile
 				.setLocaleInfo(getLocaleInfoFromPath(file.getFullPath()));
 		localizationFile.setFile(file);
 
-		ILocalizationFileManager manager = LocalizationFileManagerFactory
-				.getInstance().createLocalizationFileManager(type);
 		
 		LocalizationFile locFile = manager.loadFile(localizationFile);
 
@@ -665,13 +688,13 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	@Override
 	public void updateFile(LocalizationFile localizationFile)
 			throws SequoyahException {
-		
-		Class aClass = typesMap.get(localizationFile);
+
+		Class aClass = typesMap.get(localizationFile.getClass());
 		ILocalizationFileManager manager = LocalizationFileManagerFactory
-		.getInstance().createLocalizationFileManager(aClass.getName());
-		manager.updateFile(localizationFile);		
+				.getInstance().createLocalizationFileManager(aClass.getName());
+		manager.updateFile(localizationFile);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -683,28 +706,27 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	 */
 	@Override
 	public LocalizationFile createLocalizationFile(LocalizationFileBean bean) {
-		return LocalizationFileFactory.getInstance().createLocalizationFile(
-				bean);
+		bean.setType(AndroidStringLocalizationFile.class.getName());		
+		AndroidStringLocalizationFile f = new AndroidStringLocalizationFile(bean); 
+		return f;
 	}
 
 	@Override
 	public Object getLocalizationFileContent(LocalizationFile locFile) {
-		Class aClass = typesMap.get(locFile);
+		Class aClass = typesMap.get(locFile.getClass());
 		ILocalizationFileManager manager = LocalizationFileManagerFactory
-		.getInstance().createLocalizationFileManager(aClass.getName());
-		return manager.getLocalizationFileContent(locFile);	
+				.getInstance().createLocalizationFileManager(aClass.getName());
+		return manager.getLocalizationFileContent(locFile);
 	}
 
 	@Override
-	public void updateLocalizationFileContent(
-			LocalizationFile locFile, String content)
-			throws SequoyahException {
-		Class aClass = typesMap.get(locFile);
+	public void updateLocalizationFileContent(LocalizationFile locFile,
+			String content) throws SequoyahException {
+		Class aClass = typesMap.get(locFile.getClass());
 		ILocalizationFileManager manager = LocalizationFileManagerFactory
-		.getInstance().createLocalizationFileManager(aClass.getName());
-		manager.updateLocalizationFileContent(locFile, content);	
-	}	
-	
+				.getInstance().createLocalizationFileManager(aClass.getName());
+		manager.updateLocalizationFileContent(locFile, content);
+	}
 
 	/*
 	 * 

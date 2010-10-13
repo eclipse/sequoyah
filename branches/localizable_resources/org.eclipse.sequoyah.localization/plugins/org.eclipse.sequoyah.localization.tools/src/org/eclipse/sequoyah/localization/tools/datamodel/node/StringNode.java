@@ -11,10 +11,12 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save (currently only on update)
- * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources
+ * Marcel Augusto Gorri (Eldorado) - Bug [323036] - Add support to other Localizable Resources
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel.node;
+
+import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 
 
 /**
@@ -24,35 +26,30 @@ package org.eclipse.sequoyah.localization.tools.datamodel.node;
 public class StringNode extends Node {
 
 	/*
+	 * The LocalizationFile which the StringArray belongs to
+	 */
+	protected StringLocalizationFile localizationFile = null;
+
+	/*
 	 * Details of the translation process applied to the node, if any
 	 */
-	private TranslationDetails translationDetails = null;
+	protected TranslationDetails translationDetails = null;
 
 	/*
 	 * Details of the grammar checker process applied to the node, if any
 	 */
-	private GrammarCheckerDetails grammarCheckerDetails = null;
+	protected GrammarCheckerDetails grammarCheckerDetails = null;
 
 	/*
 	 * Whether the value has been generated using the translation process or not
 	 */
-	private boolean translated;
+	protected boolean translated;
 
 	/*
 	 * Whether the value has been checked using the grammar checker process or
 	 * not
 	 */
-	private boolean checked;
-	
-	/*
-	 * Whether a node represents an array
-	 */
-	private boolean isArray;
-	
-	/*
-	 * This node represents an array
-	 */
-	private StringArray stringArray;
+	protected boolean checked;
 
 	/**
 	 * Constructor method
@@ -64,6 +61,25 @@ public class StringNode extends Node {
 		super(key, value);
 	}
 
+	/**
+	 * Get the LocalizationFile which the StringArray belongs to
+	 * 
+	 * @return the LocalizationFile which the StringArray belongs to
+	 */
+	public StringLocalizationFile getLocalizationFile() {
+		return localizationFile;
+	}
+
+	/**
+	 * Set the LocalizationFile which the StringArray belongs to
+	 * 
+	 * @param localizationFile
+	 *            the LocalizationFile which the StringArray belongs to
+	 */
+	public void setLocalizationFile(StringLocalizationFile localizationFile) {
+		this.localizationFile = localizationFile;
+	}
+	
 	/**
 	 * Get the details of the translation process applied to the node, if any
 	 * 
@@ -185,44 +201,6 @@ public class StringNode extends Node {
 	public boolean hasExtraInfo() {
 		// TODO: implement hasExtraInfo
 		return false;
-	}
-
-	/**
-	 * Check whether this node represents an array
-	 * 
-	 * @return true if this node is an array
-	 */	
-	public boolean isArray() {
-		return isArray;
-	}
-
-	/**
-	 * Set whether this node is an array
-	 * 
-	 * @param isArray
-	 *            true if this node is an array
-	 */
-	public void setArray(boolean isArray) {
-		this.isArray = isArray;
-	}	
-	
-	/**
-	 * Get the array this node represents
-	 * 
-	 * @return the StringArray representing this node
-	 */	
-	public StringArray getStringArray() {
-		return stringArray;
-	}
-
-	/**
-	 * Set the array this node represents
-	 * 
-	 * @param stringArray
-	 *            the array this node represents
-	 */	
-	public void setStringArray(StringArray stringArray) {
-		this.stringArray = stringArray;
 	}
 
 }

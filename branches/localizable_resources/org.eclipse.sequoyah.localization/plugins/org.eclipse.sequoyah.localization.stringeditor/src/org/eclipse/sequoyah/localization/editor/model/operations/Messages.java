@@ -1,9 +1,20 @@
+/********************************************************************************
+ * Copyright (c) 2010 Motorola Mobility, Inc.
+ * All rights reserved. This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * Marcel Augusto Gorri (Eldorado) - Bug [323036] - Add support to other localizable resources
+ *  
+ ********************************************************************************/
+
 package org.eclipse.sequoyah.localization.editor.model.operations;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.sequoyah.localization.stringeditor.editor.operations.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.sequoyah.localization.editor.model.operations.messages"; //$NON-NLS-1$
 	public static String CloneOperation_0;
 	public static String EditCellOperation_0;
 	public static String TranslateOperation_0;

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,8 @@
  * Marcelo Marzola Bossoni (Eldorado) - Bug (289236) - Editor Permitting create 2 columns with same id
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Daniel Barboza Franco (Eldorado) - Bug [290058] - fixing NullPointerException's while listening changes made from outside Eclipse
+ * Daniel Barboza Franco (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.managers;
 
@@ -33,6 +35,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
@@ -193,8 +196,9 @@ public class LocalizationManager {
 					projectManager
 							.setLocalizationProject(new LocalizationProject(
 									project, locFiles));
-				} catch (IOException e) {
-					throw e;
+				} catch (SequoyahException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
 			}
@@ -365,14 +369,16 @@ public class LocalizationManager {
 
 		LocalizationFile newLocalizationFile;
 		try {
+			String type = locFile.getClass().getName(); //type = <Type>LocalizationFile.class
+			//type.substring(0, type.length()-22);
 			newLocalizationFile = projectLocalizationManager
-					.getProjectLocalizationSchema().loadFile(file);
+					.getProjectLocalizationSchema().loadFile(type,file);
 
 			if (!locFile.equals(newLocalizationFile)) {
 				result = true;
 			}
-		} catch (IOException e) {
-			BasePlugin.logError("Could not compare localization file versions"); //$NON-NLS-1$
+		} catch (SequoyahException e) {
+			e.printStackTrace();
 		}
 
 		return result;

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,8 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) -  Bug [289146] - Performance and Usability Issues
+ * Daniel Barboza Franco (Eldorado) - Bug [326793] - Improvements on the String Arrays handling 
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.datatype;
 
@@ -50,9 +52,8 @@ public class RowInfo {
 	 * @param key
 	 * @param cells
 	 */
-	public RowInfo(String key, boolean isArray, Map<String, CellInfo> cells) {
+	public RowInfo(String key, Map<String, CellInfo> cells) {
 		this.key = key;
-		this.isArray = isArray;
 		this.cells = cells != null ? cells : new HashMap<String, CellInfo>();
 		this.rowStatus = new MultiStatus(StringEditorPlugin.PLUGIN_ID, 0, null,
 				null);
