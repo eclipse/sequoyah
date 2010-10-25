@@ -98,6 +98,8 @@ public class Messages extends NLS {
 
 	public static String NewRowDialog_AddToArray;
 
+	public static String NewRowDialog_Error_RowKeyHasBlankSpaces;
+
 	public static String NetworkConnection;
 
 	public static String NetworkLinkText;

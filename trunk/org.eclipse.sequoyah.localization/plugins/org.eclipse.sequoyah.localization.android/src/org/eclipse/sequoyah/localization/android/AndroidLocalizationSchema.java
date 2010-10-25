@@ -342,9 +342,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 		if (dialog.open() == IDialogConstants.OK_ID) {
 
-			newColumn = new TranslationInfo(dialog.getValue(), dialog
-					.getValue(), null, true, dialog.getFromLanguage(), dialog
-					.getToLanguage(), null, dialog.getTranslator());
+			newColumn = new TranslationInfo(dialog.getValue(),
+					dialog.getValue(), null, true, dialog.getFromLanguage(),
+					dialog.getToLanguage(), null, dialog.getTranslator());
 		}
 
 		return newColumn;
@@ -375,10 +375,11 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				for (int j = 0; j < destinationColumns.size(); j++) {
 					TranslateColumnsInputDialog.DestinationColumn destColumn = destinationColumns
 							.get(j);
-					newColumns[count] = new TranslationInfo(destColumn
-							.getText(), destColumn.getText(), null, true,
-							dialog.getFromLanguage(), destColumn.getLang(),
-							selectedCell, dialog.getTranslator());
+					newColumns[count] = new TranslationInfo(
+							destColumn.getText(), destColumn.getText(), null,
+							true, dialog.getFromLanguage(),
+							destColumn.getLang(), selectedCell,
+							dialog.getTranslator());
 					newColumns[count].setFromKey(selectedKey);
 					newColumns[count].setToColumn(destColumn.getText());
 					count++;
@@ -508,8 +509,11 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 					document);
 			((AndroidLocalizationFile) localizationFile)
 					.setSavedXMLDocument(document);
-			localizationFile.getFile().getProject().refreshLocal(
-					IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			localizationFile
+					.getFile()
+					.getProject()
+					.refreshLocal(IResource.DEPTH_INFINITE,
+							new NullProgressMonitor());
 			// loadAllFiles(localizationFile.getLocalizationProject().getProject());
 
 		} catch (Exception e) {
@@ -894,21 +898,26 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 						if (!valuesFolder.exists()) {
 
 							// try to create the folder
-							PlatformUI.getWorkbench().getProgressService().run(
-									false, false, new IRunnableWithProgress() {
+							PlatformUI
+									.getWorkbench()
+									.getProgressService()
+									.run(false, false,
+											new IRunnableWithProgress() {
 
-										public void run(IProgressMonitor monitor)
-												throws InvocationTargetException,
-												InterruptedException {
-											try {
-												valuesFolder.create(true, true,
-														monitor);
-											} catch (CoreException e) {
-												// do nothing
-											}
+												public void run(
+														IProgressMonitor monitor)
+														throws InvocationTargetException,
+														InterruptedException {
+													try {
+														valuesFolder.create(
+																true, true,
+																monitor);
+													} catch (CoreException e) {
+														// do nothing
+													}
 
-										}
-									});
+												}
+											});
 						}
 						// check if folder was created
 						// create the default file
@@ -928,7 +937,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				}
 			}
 		} catch (CoreException e) {
-			// 
+			//
 		}
 		return localizationFiles;
 	}
@@ -944,8 +953,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 		boolean result = false;
 		if (file != null) {
-			if (file.getProjectRelativePath().toString().matches(
-					LF_REGULAR_EXPRESSION)) {
+			if (file.getProjectRelativePath().toString()
+					.matches(LF_REGULAR_EXPRESSION)) {
 
 				result = true;
 			}
@@ -998,29 +1007,31 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		}
 
 		try {
-			if (System.getProperty("java.version").startsWith("1.5")){
+			if (System.getProperty("java.version").startsWith("1.5")) {
 				DocumentBuilderFactory factory = DocumentBuilderFactory
 						.newInstance();
 				DocumentBuilder builder = factory.newDocumentBuilder();
 
-				document = builder.parse(new File(file.getLocation()
-						.toString()));
-			}
-			else {
-				InputStream inputStream = new FileInputStream(file.getLocation().toFile());
-				DOMImplementation dimp = DOMImplementationRegistry.newInstance()
-						.getDOMImplementation("XML 3.0"); //$NON-NLS-1$
-				DOMImplementationLS dimpls = (DOMImplementationLS) dimp.getFeature("LS", "3.0"); //$NON-NLS-1$ //$NON-NLS-2$
+				document = builder
+						.parse(new File(file.getLocation().toString()));
+			} else {
+				InputStream inputStream = new FileInputStream(file
+						.getLocation().toFile());
+				DOMImplementation dimp = DOMImplementationRegistry
+						.newInstance().getDOMImplementation("XML 3.0"); //$NON-NLS-1$
+				DOMImplementationLS dimpls = (DOMImplementationLS) dimp
+						.getFeature("LS", "3.0"); //$NON-NLS-1$ //$NON-NLS-2$
 				LSInput lsi = dimpls.createLSInput();
-				LSParser lsp = dimpls.createLSParser(DOMImplementationLS.MODE_SYNCHRONOUS, 
+				LSParser lsp = dimpls.createLSParser(
+						DOMImplementationLS.MODE_SYNCHRONOUS,
 						"http://www.w3.org/2001/XMLSchema"); //$NON-NLS-1$
 				LSParserFilter filter = new LocalizationXMLParserFilter();
 				lsp.setFilter(filter);
 				lsi.setEncoding("UTF-8"); //$NON-NLS-1$
 				lsi.setByteStream(inputStream);
 				document = lsp.parse(lsi);
-			}			
-			
+			}
+
 			localizationFile = new AndroidLocalizationFile(file, localeInfo,
 					new ArrayList<StringNode>(), new ArrayList<StringArray>());
 			updateLocalizationFileContent(localizationFile, document);
@@ -1521,9 +1532,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			} else if (isNavigationKeySegment(segments[i])
 					&& lastQualifier < AndroidLocaleAttributes.NAVIGATION_KEY_STATE
 							.ordinal()) {
-				lastQualifier = AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal();
-				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
-						AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal()));
+				lastQualifier = AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+						.ordinal();
+				localeAttributes
+						.add(new AndroidLocaleAttribute(segments[i],
+								AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+										.ordinal()));
 			} else if (isNavigationSegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttributes.NAVIGATION_METHOD
 							.ordinal())) {
@@ -1577,22 +1591,22 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	private boolean isScreenAspectSegment(String value) {
 		return ((value.equalsIgnoreCase("long") || value //$NON-NLS-1$
 				.equalsIgnoreCase("notlong"))); //$NON-NLS-1$
-	}	
-	
+	}
+
 	private boolean isDockSegment(String value) {
 		return ((value.equalsIgnoreCase("car") || value //$NON-NLS-1$
 				.equalsIgnoreCase("desk"))); //$NON-NLS-1$
-	}	
+	}
 
 	private boolean isNightSegment(String value) {
 		return ((value.equalsIgnoreCase("night") || value //$NON-NLS-1$
 				.equalsIgnoreCase("notnight"))); //$NON-NLS-1$
-	}	
+	}
 
 	private boolean isNavigationKeySegment(String value) {
 		return ((value.equalsIgnoreCase("navexposed") || value //$NON-NLS-1$
 				.equalsIgnoreCase("navhidden"))); //$NON-NLS-1$
-	}	
+	}
 
 	private boolean isLanguageSegment(String value) {
 		return (value.length() == 2);
@@ -1656,8 +1670,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	private boolean isCountryCodeSegment(String value) {
 		boolean result = false;
-		if (value.startsWith("mcc")){ //$NON-NLS-1$
-			if (value.length() <= 6){
+		if (value.startsWith("mcc")) { //$NON-NLS-1$
+			if (value.length() <= 6) {
 				Integer intValue = -1;
 				String source = (String) value;
 				String intValueAsText = source.substring(3, source.length());
@@ -1665,18 +1679,18 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 					intValue = Integer.parseInt((String) intValueAsText);
 					result = true;
 				} catch (NumberFormatException nfe) {
-					//do nothing, the false value returned will 
-					//take care of the correct validation
+					// do nothing, the false value returned will
+					// take care of the correct validation
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	private boolean isNetworkCodeSegment(String value) {
 		boolean result = false;
-		if (value.startsWith("mnc")){ //$NON-NLS-1$
-			if (value.length() <= 6){
+		if (value.startsWith("mnc")) { //$NON-NLS-1$
+			if (value.length() <= 6) {
 				Integer intValue = -1;
 				String source = (String) value;
 				String intValueAsText = source.substring(3, source.length());
@@ -1684,12 +1698,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 					intValue = Integer.parseInt((String) intValueAsText);
 					result = true;
 				} catch (NumberFormatException nfe) {
-					//do nothing, the false value returned will 
-					//take care of the correct validation
+					// do nothing, the false value returned will
+					// take care of the correct validation
 				}
 			}
 		}
-		return result;		
+		return result;
 	}
 
 	private boolean isScreenSizeSegment(String value) {
@@ -1700,7 +1714,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	private boolean isAPIVersionSegment(String value) {
 		boolean result = false;
-		if (value.startsWith("v")){ //$NON-NLS-1$
+		if (value.startsWith("v")) { //$NON-NLS-1$
 			Integer intValue = -1;
 			String source = (String) value;
 			String intValueAsText = source.substring(1, source.length());
@@ -1708,8 +1722,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				intValue = Integer.parseInt((String) intValueAsText);
 				result = true;
 			} catch (NumberFormatException nfe) {
-				//do nothing, the false value returned will 
-				//take care of the correct validation
+				// do nothing, the false value returned will
+				// take care of the correct validation
 			}
 		}
 		return result;
@@ -1738,8 +1752,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		if (locFile instanceof AndroidLocalizationFile) {
 			AndroidLocalizationFile localizationFile = (AndroidLocalizationFile) locFile;
 			try {
-				updateFile(localizationFile, localizationFile
-						.getSavedXMLDocument());
+				updateFile(localizationFile,
+						localizationFile.getSavedXMLDocument());
 			} catch (SequoyahException e) {
 
 			}
@@ -1869,5 +1883,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			throw new SequoyahException(status);
 		}
 
+	}
+
+	@Override
+	public boolean keyAcceptsBlankSpaces() {
+		return false;
 	}
 }
