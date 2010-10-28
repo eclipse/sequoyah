@@ -1708,6 +1708,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 	private boolean isScreenSizeSegment(String value) {
 		return value.equalsIgnoreCase("large") //$NON-NLS-1$
+				|| value.equalsIgnoreCase("xlarge") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("normal") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("small"); //$NON-NLS-1$
 	}
