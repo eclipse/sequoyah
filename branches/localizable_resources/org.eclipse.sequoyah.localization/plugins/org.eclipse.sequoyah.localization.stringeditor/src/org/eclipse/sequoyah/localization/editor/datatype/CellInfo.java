@@ -12,6 +12,10 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.datatype;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * This class represents a Cell of the editor. It can include comments
  */
@@ -31,6 +35,8 @@ public class CellInfo {
 	 * The dirt state of the cell
 	 */
 	private boolean dirty;
+
+	private final TreeMap<Integer, CellInfo> children;
 
 	/**
 	 * Get the value of this cell
@@ -75,9 +81,35 @@ public class CellInfo {
 	 * @param comment
 	 */
 	public CellInfo(String value, String comment) {
+		this(false);
 		this.value = value;
 		this.comment = comment;
 		this.dirty = false;
+	}
+
+	public CellInfo(CellInfo baseCellInfo) {
+		this(baseCellInfo.hasChildren());
+		this.value = baseCellInfo.getValue();
+		this.comment = baseCellInfo.getComment();
+		this.dirty = false;
+
+		if (baseCellInfo.hasChildren()) {
+			Map<Integer, CellInfo> baseChildren = baseCellInfo.getChildren();
+			for (Integer index : baseChildren.keySet()) {
+				CellInfo baseChild = baseChildren.get(index);
+				CellInfo child = new CellInfo(baseChild.getValue(),
+						baseChild.getComment());
+				this.addChild(child, index);
+			}
+		}
+	}
+
+	public CellInfo(boolean hasChildren) {
+		if (hasChildren) {
+			children = new TreeMap<Integer, CellInfo>();
+		} else {
+			children = null;
+		}
 	}
 
 	/*
@@ -99,6 +131,45 @@ public class CellInfo {
 
 	public boolean isDirty() {
 		return dirty;
+	}
+
+	public boolean hasChildren() {
+		return children != null;
+	}
+
+	public Map<Integer, CellInfo> getChildren() {
+		return new LinkedHashMap<Integer, CellInfo>(children);
+	}
+
+	public void clearChildren() {
+		if (children != null) {
+			children.clear();
+		}
+	}
+
+	public void addChild(CellInfo child) {
+		if (children != null) {
+			children.put(getNextPositionAvailable(), child);
+		}
+	}
+
+	public void addChild(CellInfo child, Integer index) {
+		if (children != null) {
+			children.put(index, child);
+		}
+	}
+
+	private Integer getNextPositionAvailable() {
+		Integer nextPositionAvailable;
+		Integer lastKey = (children.size() > 0 ? children.lastKey() : null);
+
+		if (lastKey != null) {
+			nextPositionAvailable = lastKey + 1;
+		} else {
+			nextPositionAvailable = 0;
+		}
+
+		return nextPositionAvailable;
 	}
 
 }

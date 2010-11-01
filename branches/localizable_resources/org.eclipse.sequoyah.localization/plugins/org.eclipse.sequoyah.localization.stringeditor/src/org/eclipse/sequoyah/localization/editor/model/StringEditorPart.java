@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Mobility, Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,8 +16,7 @@
  * Matheus Lima (Eldorado) - Adapting to accept online translation for a column
  * Paulo Faria (Eldorado) - Add option to expand rows for global maximum height (default) or let all lines with row 1 and include scroll for items with multiple lines
  * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/make this editor a multipage one
- * Daniel Barboza Franco (Eldorado) - Bug [326793] - Improvements on the String Arrays handling 
- * 
+ * Paulo Faria (Eldorado) - Bug [326793] -  Improvements on the String Arrays handling 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
@@ -45,8 +44,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CellEditor;
@@ -78,6 +79,7 @@ import org.eclipse.sequoyah.localization.editor.datatype.CellInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.IModelChangedListener;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 import org.eclipse.sequoyah.localization.editor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.editor.i18n.Messages;
 import org.eclipse.sequoyah.localization.editor.model.EditorSession.PROPERTY;
@@ -108,6 +110,8 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -123,6 +127,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -239,7 +244,10 @@ public class StringEditorPart extends MultiPageEditorPart {
 		 */
 		@Override
 		protected Object getValue(Object element) {
-			CellInfo info = ((RowInfo) element).getCells().get(columnID);
+			CellInfo info = null;
+			if (element instanceof RowInfoLeaf) {
+				info = ((RowInfoLeaf) element).getCells().get(columnID);
+			}
 			return ((info != null) && (info.getValue() != null)) ? info
 					.getValue() : ""; //$NON-NLS-1$
 		}
@@ -253,49 +261,51 @@ public class StringEditorPart extends MultiPageEditorPart {
 		 */
 		@Override
 		protected void setValue(Object element, Object value) {
-			RowInfo theRow = (RowInfo) element;
-			CellInfo oldCell = theRow.getCells().get(columnID);
-			CellInfo newCell = null;
+			if (element instanceof RowInfoLeaf) {
+				RowInfoLeaf theRow = (RowInfoLeaf) element;
+				CellInfo oldCell = theRow.getCells().get(columnID);
+				CellInfo newCell = null;
 
-			String EOL = System.getProperty("line.separator"); //$NON-NLS-1$
-			String oldValue = ((oldCell != null) ? oldCell.getValue() : ""); //$NON-NLS-1$
-			String newValue = ((String) value).replaceAll(EOL, "\n"); //$NON-NLS-1$
-			if (newValue.equals(oldValue)) {
-				return;
-			}
+				String EOL = System.getProperty("line.separator"); //$NON-NLS-1$
+				String oldValue = ((oldCell != null) ? oldCell.getValue() : ""); //$NON-NLS-1$
+				String newValue = ((String) value).replaceAll(EOL, "\n"); //$NON-NLS-1$
+				if (newValue.equals(oldValue)) {
+					return;
+				}
 
-			/*
-			 * If our new value is a valid one, we create a new cell
-			 */
-			if (value.toString().length() > 0) {
 				/*
-				 * if our old cell isn't a null one check if the values aren't
-				 * the same
+				 * If our new value is a valid one, we create a new cell
 				 */
-				if (oldCell != null) {
+				if (value.toString().length() > 0) {
 					/*
-					 * Our old cell is different from our new one
+					 * if our old cell isn't a null one check if the values
+					 * aren't the same
 					 */
-					if (((oldCell.getValue() != null) && !oldCell.getValue()
-							.equals(value.toString()))
-							|| (oldCell.getValue() == null)) {
-						newCell = new CellInfo(value.toString(),
-								oldCell.getComment());
+					if (oldCell != null) {
+						/*
+						 * Our old cell is different from our new one
+						 */
+						if (((oldCell.getValue() != null) && !oldCell
+								.getValue().equals(value.toString()))
+								|| (oldCell.getValue() == null)) {
+							newCell = new CellInfo(value.toString(),
+									oldCell.getComment());
+						}
+					} else {
+						newCell = new CellInfo(value.toString(), null);
 					}
 				} else {
-					newCell = new CellInfo(value.toString(), null);
+					if (oldCell != null) {
+						newCell = new CellInfo(null, null);
+					}
 				}
-			} else {
-				if (oldCell != null) {
-					newCell = new CellInfo(null, null);
+				if (newCell != null) {
+					newCell.setDirty(true);
+					EditCellOperation operation = new EditCellOperation(
+							theRow.getKey(), columnID, oldCell, newCell,
+							StringEditorPart.this, theRow);
+					executeOperation(operation);
 				}
-			}
-			if (newCell != null) {
-				newCell.setDirty(true);
-				EditCellOperation operation = new EditCellOperation(
-						theRow.getKey(), columnID, oldCell, newCell,
-						StringEditorPart.this);
-				executeOperation(operation);
 			}
 		}
 	}
@@ -344,6 +354,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 													StringEditorPart.this,
 													newColumnInfo);
 
+											operation
+													.addContext(getUndoContext());
 											executeOperation(operation);
 										} else {
 											monitor.setCanceled(true);
@@ -394,13 +406,16 @@ public class StringEditorPart extends MultiPageEditorPart {
 					.getSelection();
 			String[] selectedKeysText = new String[selection.size()];
 			String[] selectedCellsText = new String[selection.size()];
-			Object[] selectedRows = selection.toArray();
+			final Object[] selectedRows = selection.toArray();
 			for (int i = 0; i < selectedRows.length; i++) {
 				RowInfo rowInfo = (RowInfo) selectedRows[i];
-				CellInfo cellInfo = rowInfo.getCells().get(
-						originalColumn.getText());
-				selectedKeysText[i] = rowInfo.getKey();
-				selectedCellsText[i] = cellInfo.getValue();
+				if (rowInfo instanceof RowInfoLeaf) {
+					RowInfoLeaf leaf = (RowInfoLeaf) rowInfo;
+					CellInfo cellInfo = leaf.getCells().get(
+							originalColumn.getText());
+					selectedKeysText[i] = rowInfo.getKey();
+					selectedCellsText[i] = cellInfo.getValue();
+				}
 			}
 
 			String selectedCellText = activeRow.getViewerRow()
@@ -457,8 +472,10 @@ public class StringEditorPart extends MultiPageEditorPart {
 												Messages.StringEditorPart_TranslateCellActionName,
 												keys, columns, oldValues,
 												newValues,
-												StringEditorPart.this);
+												StringEditorPart.this,
+												selectedRows);
 
+										operation.addContext(getUndoContext());
 										executeOperation(operation);
 										getEditorViewer().refresh();
 
@@ -498,6 +515,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 			if (newColumnInfo != null) {
 				CloneOperation operation = new CloneOperation(
 						StringEditorPart.this, column.getText(), newColumnInfo);
+				operation.addContext(getUndoContext());
 				executeOperation(operation);
 			}
 		}
@@ -576,6 +594,10 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 		public AddColumnAction() {
 			super(Messages.StringEditorPart_AddColumnActionName);
+			// FIXME change/remove wrong icon for this action
+			this.setImageDescriptor(StringEditorPlugin
+					.imageDescriptorFromPlugin(StringEditorPlugin.PLUGIN_ID,
+							"icons/string_array.gif"));
 		}
 
 		@Override
@@ -588,6 +610,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 					AddColumnOperation operation = new AddColumnOperation(
 							Messages.StringEditorPart_AddColumnOperationName,
 							StringEditorPart.this, info);
+					operation.addContext(getUndoContext());
 					executeOperation(operation);
 
 				} else {
@@ -636,24 +659,24 @@ public class StringEditorPart extends MultiPageEditorPart {
 									.getText()), getEditorViewer().getTable()
 									.indexOf(selectedColumn), selectedColumn
 									.getWidth());
+					operation.addContext(getUndoContext());
 					executeOperation(operation);
 				}
 			}
 		}
 	}
 
+	private void generateArrayKeys(RowInfo[] infos) {
+		for (int i = 0; i < infos.length; i++) {
 
-	private void generateArrayKeys (RowInfo[] infos){
-		for (int i=0 ; i < infos.length; i++) {
-			
 			DecimalFormat formatter = new DecimalFormat("000"); //$NON-NLS-1$
 			String virtualKey = infos[i].getKey() + "_" //$NON-NLS-1$
 					+ formatter.format(i);
-	
+
 			infos[i].setKey(virtualKey);
 		}
 	}
-	
+
 	/**
 	 * Action to add a new key
 	 */
@@ -661,6 +684,9 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 		public AddKeyAction() {
 			super(Messages.StringEditorPart_AddKeyActionName);
+			this.setImageDescriptor(StringEditorPlugin
+					.imageDescriptorFromPlugin(StringEditorPlugin.PLUGIN_ID,
+							"icons/string.gif"));
 		}
 
 		@Override
@@ -668,10 +694,9 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 			RowInfo[] rowInfo = getContentProvider().getOperationProvider()
 					.getNewRow();
-			
-			//generateArrayKeys(rowInfo);
-			
-			
+
+			// generateArrayKeys(rowInfo);
+
 			// add new key only if the key isn't null and the new key does not
 			// exists
 			if (rowInfo != null) {
@@ -682,17 +707,75 @@ public class StringEditorPart extends MultiPageEditorPart {
 					operation.addContext(getUndoContext());
 					executeOperation(operation);
 				} else {
-					if (getModel().getRow(rowInfo[0].getKey()) == null) {
-						AddKeyOperation operation = new AddKeyOperation(
-								Messages.StringEditorPart_AddKeyOperationName,
-								StringEditorPart.this, rowInfo[0]);
-						operation.addContext(getUndoContext());
-						executeOperation(operation);
-					} else {
-						editorComposite
-								.setMessage(
-										Messages.StringEditorPart_KeyAlreadyExistsErrorMessage,
-										IMessage.ERROR);
+					String arrayKey = rowInfo[0].getKey();
+					if (rowInfo[0] instanceof RowInfoLeaf) {// string or array
+															// item?
+						if (((RowInfoLeaf) rowInfo[0]).getParent() == null) {// string
+							if (getModel().getRow(arrayKey) == null) {// key
+																		// does
+																		// not
+																		// exist
+								AddKeyOperation operation = new AddKeyOperation(
+										Messages.StringEditorPart_AddKeyOperationName,
+										StringEditorPart.this, rowInfo[0]);
+								operation.addContext(getUndoContext());
+								executeOperation(operation);
+							} else { // key already exists
+								editorComposite
+										.setMessage(
+												Messages.StringEditorPart_KeyAlreadyExistsErrorMessage,
+												IMessage.ERROR);
+							}
+						} else {// array item
+
+						}
+					} else {// array
+						if (getModel().getRow(rowInfo[0].getKey()) == null) {
+							// new array
+							Map<Integer, RowInfoLeaf> children = rowInfo[0]
+									.getChildren();
+							// if (children.isEmpty()) {//empty array
+							for (int i = 0; i < children.size(); i++) {
+								if (getModel().getRow(
+										children.get(i).getCells().toString()) == null) {// child
+																							// does
+																							// not
+																							// exist
+									AddKeyOperation operation = new AddKeyOperation(
+											Messages.StringEditorPart_AddKeyOperationName,
+											StringEditorPart.this, rowInfo[0]);
+									operation.addContext(getUndoContext());
+									executeOperation(operation);
+								} else { // key already exists
+									editorComposite
+											.setMessage(
+													Messages.StringEditorPart_KeyAlreadyExistsErrorMessage,
+													IMessage.ERROR);
+
+								}
+							}
+						} else {
+							// existing array
+							RowInfo existingRowArray = getModel().getRow(
+									rowInfo[0].getKey());
+							Map<Integer, RowInfoLeaf> childrenExistentArray = existingRowArray
+									.getChildren();
+							Map<Integer, RowInfoLeaf> childrenToInsert = rowInfo[0]
+									.getChildren();
+							int lastIndex = childrenExistentArray.size();
+							for (RowInfoLeaf arrayItem : childrenToInsert
+									.values()) {
+								RowInfoLeaf rowInfoLeaf = new RowInfoLeaf(
+										arrayItem.getKey(), existingRowArray,
+										lastIndex, null);
+								AddKeyOperation operation = new AddKeyOperation(
+										Messages.StringEditorPart_AddKeyOperationName,
+										StringEditorPart.this, rowInfoLeaf);
+								operation.addContext(getUndoContext());
+								executeOperation(operation);
+								lastIndex++;
+							}
+						}
 					}
 				}
 			}
@@ -706,6 +789,10 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 		public RemoveKeyAction() {
 			super(Messages.StringEditorPart_RemoveKeyActionName);
+			// FIXME change/remove wrong icon for this action
+			this.setImageDescriptor(StringEditorPlugin
+					.imageDescriptorFromPlugin(StringEditorPlugin.PLUGIN_ID,
+							"icons/string_array_item.gif"));
 		}
 
 		@Override
@@ -724,6 +811,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 				RemoveKeyOperation operation = new RemoveKeyOperation(
 						Messages.StringEditorPart_RemoveKeyOperationName,
 						StringEditorPart.this, toBeDeleted);
+				operation.addContext(getUndoContext());
 				executeOperation(operation);
 			}
 		}
@@ -954,7 +1042,9 @@ public class StringEditorPart extends MultiPageEditorPart {
 								StringEditorPlugin.PLUGIN_ID,
 								"icons/obj16_ok.png").getImageData()); //$NON-NLS-1$
 			} else {
-				BasePlugin.logWarning("Could not find icons/obj16_ok.png file on plugin " + StringEditorPlugin.PLUGIN_ID);
+				BasePlugin
+						.logWarning("Could not find icons/obj16_ok.png file on plugin "
+								+ StringEditorPlugin.PLUGIN_ID);
 			}
 		} catch (Exception e) {
 			handleInitFailure(e, input, site);
@@ -1201,13 +1291,40 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 		createOptionsSection(toolkit, editorComposite);
 
+		// Add label to toolbar
+		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, false, false,
+				1, 1);
+		Label tblabel = toolkit.createLabel(editorComposite.getBody(),
+				"Editor actions: ", SWT.BOLD); // new Label(editorToolBar,
+												// SWT.NONE);
+		tblabel.setLayoutData(layoutData);
+		FontData[] fontData = tblabel.getFont().getFontData();
+		fontData[0].setStyle(SWT.BOLD);
+		tblabel.setFont(new Font(tblabel.getDisplay(), fontData));
+		// Add actions toolbar to form
+		ToolBar editorToolBar = new ToolBar(editorComposite.getBody(),
+				SWT.RIGHT | SWT.FLAT);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
+		editorToolBar.setLayoutData(layoutData);
+		toolkit.adapt(editorToolBar);
+		// Set toolbar manager
+		IToolBarManager lowertbmanager = new ToolBarManager(editorToolBar);
+		// Create toolbar items
+		lowertbmanager.add(new AddKeyAction());
+		lowertbmanager.add(new Separator());
+		lowertbmanager.add(new AddColumnAction());
+		lowertbmanager.add(new Separator());
+		lowertbmanager.add(new RemoveKeyAction());
+		lowertbmanager.add(new Separator());
+		lowertbmanager.update(true);
+
 		Table t = toolkit.createTable(editorComposite.getBody(),
 				SWT.FULL_SELECTION | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
 						| SWT.BORDER | SWT.HIDE_SELECTION);
 
 		viewer = new TableViewer(t);
 
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
 		viewer.getTable().setLayoutData(layoutData);
 		listener = new ColumnSelectionListener(viewer);
 
@@ -1420,6 +1537,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 		 */
 		// }
 		registerActionHandlers();
+
 		return editorComposite;
 	}
 
@@ -1733,7 +1851,16 @@ public class StringEditorPart extends MultiPageEditorPart {
 	public void updateViewer(List<RowInfo> rows) {
 		if (rows != null) {
 			for (RowInfo changedRow : rows) {
-				viewer.update(changedRow, null);
+				if (changedRow instanceof RowInfoLeaf) {
+					// string
+					viewer.update(changedRow, null);
+				} else {
+					// array: update row and children rows
+					viewer.update(changedRow, null);
+					for (RowInfoLeaf child : changedRow.getChildren().values()) {
+						viewer.update(child, null);
+					}
+				}
 			}
 		} else {
 			for (RowInfo changedRow : getModel().getRows().values()) {
@@ -1993,6 +2120,13 @@ public class StringEditorPart extends MultiPageEditorPart {
 				if (cell.getValue() != null) {
 					getEditorInput().setValue(info.getId(), cellKey,
 							cell.getValue());
+				} else if (cell.hasChildren()) {
+					Map<Integer, CellInfo> children = cell.getChildren();
+					for (Integer cellIndex : children.keySet()) {
+						CellInfo childCell = children.get(cellIndex);
+						getEditorInput().setValue(info.getId(), cellKey,
+								childCell.getValue(), cellIndex);
+					}
 				}
 			} catch (SequoyahException e) {
 				BasePlugin.logError("Error adding column: " + info.getId(), e); //$NON-NLS-1$
@@ -2045,13 +2179,26 @@ public class StringEditorPart extends MultiPageEditorPart {
 	}
 
 	/**
-	 * Remove a row
+	 * Remove a top level row
 	 * 
 	 * @param key
 	 */
 	public void removeRow(String key) {
-		getModel().removeRow(key);
-		getEditorInput().removeRow(key);
+		getModel().removeRow(key); // Remove the key from the ui model
+		getEditorInput().removeRow(key); // Remove the key from the persistence
+											// model
+		fireDirtyPropertyChanged();
+	}
+
+	/**
+	 * Remove an array item row
+	 * 
+	 * @param key
+	 */
+	public void removeRow(String key, Integer index) {
+		getModel().removeRow(key, index); // Remove the key from the ui model
+		getEditorInput().removeRow(key, index); // Remove the key from the
+												// persistence model
 		fireDirtyPropertyChanged();
 	}
 

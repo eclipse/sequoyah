@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Mobility, Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,8 +10,6 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Matheus Tait Lima (Eldorado) - Adapting localization plugins to accept automatic translations
- * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
- * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.providers;
 
@@ -21,6 +19,7 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.sequoyah.localization.editor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 import org.eclipse.sequoyah.localization.editor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.editor.i18n.Messages;
 import org.eclipse.swt.widgets.TableColumn;
@@ -103,7 +102,7 @@ public class DefaultOperationProvider implements IOperationProvider {
 
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			newRow = new RowInfo[1];
-			newRow[0] = new RowInfo(dialog.getValue(), null);
+			newRow[0] = new RowInfoLeaf(dialog.getValue(), null, null, null);
 		}
 
 		return newRow;

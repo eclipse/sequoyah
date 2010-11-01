@@ -11,7 +11,6 @@
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save
  * Daniel Pastore (Eldorado) - Bug 323036 - Add support to other Localizable Resources
  * Matheus Lima (Eldorado) - Bug 326793 - Updating data model so the Array Strings is now a new class
- * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.datamodel;
 
@@ -38,12 +37,12 @@ public class AndroidStringLocalizationFile extends StringLocalizationFile {
 		LocalizationFileFactory.getInstance().addFileType(
 				AndroidStringLocalizationFile.class.getName(),
 				AndroidStringLocalizationFile.class);
-		
+
 		LocalizationFileManagerFactory.getInstance().addManager(
 				AndroidStringLocalizationFile.class.getName(),
 				StringLocalizationFileManager.class);
 	}
-	
+
 	/**
 	 * Saved XML (it is used not to lose comments on updates)
 	 */
@@ -74,7 +73,7 @@ public class AndroidStringLocalizationFile extends StringLocalizationFile {
 	 * @param stringNodes
 	 * @param stringArrays
 	 */
-	public AndroidStringLocalizationFile(LocalizationFileBean bean){
+	public AndroidStringLocalizationFile(LocalizationFileBean bean) {
 		super(bean);
 	}
 
@@ -94,31 +93,38 @@ public class AndroidStringLocalizationFile extends StringLocalizationFile {
 	}
 
 	/**
-	 * @see org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile#removeStringNode(org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode)
+	 * Removes item from top level node
 	 */
-	@Override
 	public void removeStringNode(StringNode stringNode) {
-		if (getStringNodes().contains(stringNode)) {
-			getStringNodes().remove(stringNode);
-			getStringNodesMap().remove(stringNode.getKey());
+		if (containsKey(stringNode.getKey())) {
+			// top level: array or string
+			removeNode(stringNode.getKey());
 			this.setDirty(true);
 			// check if it's is an array
 			if (stringNode instanceof ArrayStringNode) {
-				ArrayStringNode arrayNode = (ArrayStringNode) stringNode ;
-				arrayNode.removeValue(stringNode);
-				if (arrayNode.getValues().size() == 0) {
-					this.getStringArrays().remove(arrayNode);
-					// mark entire array entry to be removed
-					arrayEntryToRemove.put(
-							arrayNode.getKey(), arrayNode);
-				} else {
-					// mark item array to be removed
-					arrayItemsToRemove.put(stringNode.getKey(), stringNode);
-				}
+				ArrayStringNode arrayNode = (ArrayStringNode) stringNode;
+				arrayEntryToRemove.put(arrayNode.getKey(), arrayNode);
 			} else {
 				// mark single entry to be removed
 				singleEntryToRemove.put(stringNode.getKey(), stringNode);
 			}
+		}
+	}
+
+	/**
+	 * Removes from non top level node
+	 * 
+	 * @param node
+	 * @param index
+	 */
+	public void removeStringNode(ArrayStringNode parent, StringNode child) {
+		super.removeStringNode(parent, child);
+		if (parent.getValues().size() == 0) {
+			// item removal make the array useless => remove array
+			arrayEntryToRemove.put(parent.getKey(), parent);
+			removeNode(parent.getKey());
+		} else {
+			arrayItemsToRemove.put(child.getKey(), child);
 		}
 	}
 

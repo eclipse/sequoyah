@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Mobility, Inc.
+ * Copyright (c) 2009 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,13 +9,12 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) -  Bug [289146] - Performance and Usability Issues
- * Daniel Barboza Franco (Eldorado) - Bug [326793] - Improvements on the String Arrays handling 
- * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.datatype;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -31,15 +30,7 @@ public class RowInfo {
 	 */
 	private String key;
 
-	/*
-	 * This row cells
-	 */
-	private final Map<String, CellInfo> cells;
-
-	/*
-	 * Array info
-	 */
-	boolean isArray = false;
+	private final TreeMap<Integer, RowInfoLeaf> children = new TreeMap<Integer, RowInfoLeaf>();
 
 	/*
 	 * This row status
@@ -52,30 +43,10 @@ public class RowInfo {
 	 * @param key
 	 * @param cells
 	 */
-	public RowInfo(String key, Map<String, CellInfo> cells) {
+	public RowInfo(String key) {
 		this.key = key;
-		this.cells = cells != null ? cells : new HashMap<String, CellInfo>();
 		this.rowStatus = new MultiStatus(StringEditorPlugin.PLUGIN_ID, 0, null,
 				null);
-	}
-
-	/**
-	 * Add a cell to this row
-	 * 
-	 * @param columnID
-	 * @param value
-	 */
-	public void addCell(String columnID, CellInfo value) {
-		cells.put(columnID, value);
-	}
-
-	/**
-	 * Remove a cell of this row.
-	 * 
-	 * @param columnID
-	 */
-	public void removeCell(String columnID) {
-		cells.remove(columnID);
 	}
 
 	/**
@@ -91,15 +62,6 @@ public class RowInfo {
 		this.key = key;
 	}
 
-	/**
-	 * get this row cells
-	 * 
-	 * @return the cells
-	 */
-	public Map<String, CellInfo> getCells() {
-		return cells;
-	}
-
 	public void addStatus(IStatus status) {
 		this.rowStatus.merge(status);
 	}
@@ -113,12 +75,17 @@ public class RowInfo {
 		return rowStatus;
 	}
 
-	public boolean isArray() {
-		return isArray;
+	protected void addChild(RowInfoLeaf child, Integer index) {
+		children.put(index, child);
 	}
 
-	public void setArray(boolean isArray) {
-		this.isArray = isArray;
+	public Map<Integer, RowInfoLeaf> getChildren() {
+		return new LinkedHashMap<Integer, RowInfoLeaf>(children);
 	}
 
+	@Override
+	public String toString() {
+		return "RowInfo [key=" + key + ", children=" + children
+				+ ", rowStatus=" + rowStatus + "]";
+	}
 }

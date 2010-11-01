@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2010 Motorola Mobility, Inc.
+ * Copyright (c) 2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,8 +11,6 @@
  * Contributors:
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save (currently only on update)
  * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug
- * Matheus Tait Lima (Eldorado) - Bug [326793] - Improvements on the String Arrays handling
- * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel.node;
 
@@ -20,6 +18,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +46,9 @@ public class ArrayStringNode extends StringNode {
 
 	/**
 	 * Get the value associated to the key for the language represented by the
-	 * a @return value associated to the key
+	 * localizationFile
+	 * 
+	 * @return value associated to the key
 	 */
 	public List<StringNode> getValues() {
 		List<StringNode> result = new ArrayList<StringNode>();
@@ -67,18 +68,23 @@ public class ArrayStringNode extends StringNode {
 		return result;
 	}
 
+	public StringNode getArrayItemByIndex(Integer index) {
+		return values.get(index);
+	}
+
 	/**
 	 * Retrieves the values contained in this array as a list of Strings
+	 * 
 	 * @return
 	 */
 	public List<String> getStringValues() {
 		LinkedList<String> result = new LinkedList<String>();
-				
-		for (StringNode node : this.values.values()) {								
+
+		for (StringNode node : this.values.values()) {
 			result.add(node.value);
 		}
-		
-	 return result;
+
+		return result;
 	}
 
 	/**
@@ -151,7 +157,15 @@ public class ArrayStringNode extends StringNode {
 	public void removeValue(StringNode stringNode) {
 		// int position = Integer.parseInt(stringNode.getKey().split("_")[1]);
 		int position = ArrayStringNode.findItemPosition(stringNode.getKey());
-		this.values.remove(new Integer(position));
+		Map<Integer, StringNode> copyOfValues = new LinkedHashMap<Integer, StringNode>(
+				values);
+		this.values.clear();
+		int newCount = 0;
+		for (Integer originalIndex : copyOfValues.keySet()) {
+			if (originalIndex.intValue() != position) {
+				this.values.put(newCount++, copyOfValues.get(originalIndex));
+			}
+		}
 	}
 
 	/**
@@ -263,6 +277,11 @@ public class ArrayStringNode extends StringNode {
 		}
 
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "ArrayStringNode [values=" + values + "]";
 	}
 
 }

@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
-import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 import org.eclipse.sequoyah.localization.editor.i18n.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -116,23 +116,28 @@ public class StringEditorViewerEditableTooltipSupport extends
 		ViewerCell cell = viewer.getCell(new Point(currentTooltipEvent.x,
 				currentTooltipEvent.y));
 		if (cell.getColumnIndex() != 0) {
-			RowInfo row = ((RowInfo) cell.getViewerRow().getElement());
-			TableColumn column = ((Table) viewer.getControl()).getColumn(cell
-					.getColumnIndex());
-			if (tooltipText != null
-					&& !tooltipText.trim().equals(
-							row.getCells().get(column.getText()).getComment())) {
-				row.getCells().get(column.getText()).setComment(
-						tooltipText.trim());
-				if (this.editor != null) {
-					try {
-						editor.getEditorInput().setCellTooltip(
-								column.getText(), row.getKey(), tooltipText);
-						editor.fireDirtyPropertyChanged();
-					} catch (SequoyahException e) {
-						BasePlugin.logError("Error setting cell tooltip: (" //$NON-NLS-1$
-								+ column.getText() + ", " + row.getKey() //$NON-NLS-1$
-								+ ") = " + tooltipText, e); //$NON-NLS-1$
+			if (cell.getViewerRow().getElement() instanceof RowInfoLeaf) {
+				RowInfoLeaf row = ((RowInfoLeaf) cell.getViewerRow()
+						.getElement());
+				TableColumn column = ((Table) viewer.getControl())
+						.getColumn(cell.getColumnIndex());
+				if (tooltipText != null
+						&& !tooltipText.trim().equals(
+								row.getCells().get(column.getText())
+										.getComment())) {
+					row.getCells().get(column.getText())
+							.setComment(tooltipText.trim());
+					if (this.editor != null) {
+						try {
+							editor.getEditorInput()
+									.setCellTooltip(column.getText(),
+											row.getKey(), tooltipText);
+							editor.fireDirtyPropertyChanged();
+						} catch (SequoyahException e) {
+							BasePlugin.logError("Error setting cell tooltip: (" //$NON-NLS-1$
+									+ column.getText() + ", " + row.getKey() //$NON-NLS-1$
+									+ ") = " + tooltipText, e); //$NON-NLS-1$
+						}
 					}
 				}
 			}

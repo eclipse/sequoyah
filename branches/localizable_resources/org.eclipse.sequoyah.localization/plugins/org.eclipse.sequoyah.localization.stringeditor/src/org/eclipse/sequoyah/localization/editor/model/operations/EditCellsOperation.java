@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.sequoyah.localization.editor.datatype.CellInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.editor.model.StringEditorPart;
 
 /**
@@ -43,13 +44,15 @@ public class EditCellsOperation extends EditorOperation {
 	 *            - the cell new value.
 	 * @param editor
 	 *            - the editor Object.
+	 * @param infors
+	 * 			  - rows associated to each cell
 	 */
 	public EditCellsOperation(String label, String[] key, String[] column,
-			CellInfo[] oldValue, CellInfo[] newValue, StringEditorPart editor) {
+			CellInfo[] oldValue, CellInfo[] newValue, StringEditorPart editor, Object[] infos) {
 		super(label, editor);
 		for (int i = 0; i < key.length; i++) {
 			this.editCellOperations.add(new EditCellOperation(key[i],
-					column[i], oldValue[i], newValue[i], editor));
+					column[i], oldValue[i], newValue[i], editor, (RowInfo)infos[i]));
 		}
 	}
 

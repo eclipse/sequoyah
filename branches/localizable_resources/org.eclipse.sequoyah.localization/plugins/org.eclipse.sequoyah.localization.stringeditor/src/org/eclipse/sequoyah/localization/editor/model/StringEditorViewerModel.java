@@ -9,16 +9,17 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
- * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
- * Daniel Barboza Franco (Eldorado) - Bug [326793] - Improvements on the String Arrays handling
- * 
+ *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Paulo Faria (Eldorado) -  Bug [326793] -  Improvements on the String Arrays handling 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,9 +33,12 @@ import org.eclipse.sequoyah.localization.editor.datatype.CellInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.IModelChangedListener;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 import org.eclipse.sequoyah.localization.editor.providers.ICellValidator;
 
 public class StringEditorViewerModel {
+
+	private static final int INDEX_NOT_REQUIRED = -1;
 
 	/**
 	 * List with all columns
@@ -87,12 +91,65 @@ public class StringEditorViewerModel {
 		for (ColumnInfo column : columns) {
 			columnsMap.put(column.getId(), column);
 			for (String cellKey : column.getCells().keySet()) {
-				if (rowsMap.get(cellKey) == null) {
-					// TODO: check how to identify if it's an array or not
-					rowsMap.put(cellKey, new RowInfo(cellKey, null));
+				CellInfo cell = column.getCells().get(cellKey);
+
+				if (cell.hasChildren()) {
+					// array
+					if (rowsMap.get(cellKey) == null) {
+						// first column
+						RowInfo arrayRow = new RowInfo(cellKey);
+						Map<Integer, CellInfo> subCells = cell.getChildren();
+						for (Integer subCellIndex : subCells.keySet()) {
+							CellInfo subCell = subCells.get(subCellIndex);
+							Map<String, CellInfo> cells = new HashMap<String, CellInfo>();
+							cells.put(column.getId(), subCell);
+							// it does not need to keep object instance because
+							// it is inserted on parent (RowInfo arrayRow)
+							new RowInfoLeaf(cellKey, arrayRow, subCellIndex,
+									cells);
+						}
+						rowsMap.put(cellKey, arrayRow);
+					} else {
+						// other columns
+						RowInfo arrayRow = rowsMap.get(cellKey);
+
+						Map<Integer, CellInfo> subCells = cell.getChildren();
+						Map<Integer, RowInfoLeaf> subRows = arrayRow
+								.getChildren();
+
+						for (Integer subCellIndex : subCells.keySet()) {
+							CellInfo subCell = subCells.get(subCellIndex);
+							if (subRows.containsKey(subCellIndex)) {
+								RowInfoLeaf leaf = subRows.get(subCellIndex);
+								leaf.addCell(column.getId(), subCell);
+							} else {
+								// not found subcell at the given index, create
+								// row and add sub cell
+								Map<String, CellInfo> cells = new HashMap<String, CellInfo>();
+								cells.put(column.getId(), subCell);
+								new RowInfoLeaf(cellKey, arrayRow,
+										subCellIndex, cells);
+							}
+						}
+					}
+				} else {
+					// string
+					if (rowsMap.get(cellKey) == null) {
+						// first column
+						Map<String, CellInfo> cells = new HashMap<String, CellInfo>();
+						cells.put(column.getId(), cell);
+						RowInfoLeaf row = new RowInfoLeaf(cellKey, null, null,
+								cells);
+						rowsMap.put(cellKey, row);
+					} else {
+						// other columns
+						RowInfo rowInfo = rowsMap.get(cellKey);
+						if (rowInfo instanceof RowInfoLeaf) {
+							((RowInfoLeaf) rowInfo).addCell(column.getId(),
+									cell);
+						}
+					}
 				}
-				RowInfo rowInfo = rowsMap.get(cellKey);
-				rowInfo.addCell(column.getId(), column.getCells().get(cellKey));
 			}
 
 		}
@@ -150,13 +207,53 @@ public class StringEditorViewerModel {
 		columnsMap.put(info.getId(), info);
 		Map<String, CellInfo> cells = info.getCells();
 		for (String key : cells.keySet()) {
+			CellInfo cell = cells.get(key);
+
 			RowInfo row = rowsMap.get(key);
-			if (row == null) {
-				// TODO: check how to identify if it's an array or not
-				row = new RowInfo(key, null);
-				rowsMap.put(key, row);
+
+			if (cell.hasChildren()) {
+				// array
+				Map<Integer, CellInfo> subCells = cell.getChildren();
+
+				if (row == null) {
+					row = new RowInfo(key);
+					rowsMap.put(key, row);
+					for (Integer subCellIndex : subCells.keySet()) {
+						CellInfo subCell = subCells.get(subCellIndex);
+						Map<String, CellInfo> cellsForRow = new HashMap<String, CellInfo>();
+						cells.put(info.getId(), subCell);
+						new RowInfoLeaf(key, row, subCellIndex, cellsForRow);
+					}
+				} else {
+					Map<Integer, RowInfoLeaf> subRows = row.getChildren();
+
+					for (Integer subCellIndex : subCells.keySet()) {
+						CellInfo subCell = subCells.get(subCellIndex);
+						if (subRows.containsKey(subCellIndex)) {
+							RowInfoLeaf leaf = subRows.get(subCellIndex);
+							leaf.addCell(info.getId(), subCell);
+						} else {
+							Map<String, CellInfo> cellsForArray = new HashMap<String, CellInfo>();
+							cells.put(info.getId(), subCell);
+							new RowInfoLeaf(key, row, subCellIndex,
+									cellsForArray);
+						}
+					}
+				}
+			} else {
+				// string
+				if (row == null) {
+					Map<String, CellInfo> cellsForArray = new HashMap<String, CellInfo>();
+					cells.put(info.getId(), cell);
+					row = new RowInfoLeaf(key, null, null, cellsForArray);
+					rowsMap.put(key, row);
+				} else {
+					if (row instanceof RowInfoLeaf) {
+						((RowInfoLeaf) row).addCell(info.getId(), cell);
+					}
+				}
 			}
-			row.addCell(info.getId(), info.getCells().get(key));
+
 			validateRow(row);
 		}
 		notifyListeners();
@@ -168,19 +265,95 @@ public class StringEditorViewerModel {
 	 * @param info
 	 */
 	public void addRow(RowInfo info) {
-		Map<String, CellInfo> cells = info.getCells();
-		rowsMap.put(info.getKey(), info);
-		for (String column : cells.keySet()) {
-			ColumnInfo columnInfo = columnsMap.get(column);
-			if (columnInfo == null) {
-				columnInfo = new ColumnInfo(column, column, null, true);
-				columnsMap.put(column, columnInfo);
-				columns.add(columnInfo);
+		Map<String, CellInfo> cells = null;
+		if (info instanceof RowInfoLeaf) {
+			RowInfoLeaf leaf = (RowInfoLeaf) info;
+			if (leaf.getParent() == null) {
+				// string
+				cells = leaf.getCells();
+
+				for (String column : columnsMap.keySet()) {
+					ColumnInfo columnInfo = columnsMap.get(column);
+					if (columnInfo == null) {
+						columnInfo = new ColumnInfo(column, column, null, true);
+						columnsMap.put(column, columnInfo);
+						columns.add(columnInfo);
+					}
+					CellInfo cell = cells.get(column);
+					if (cell == null) {
+						cell = new CellInfo(false);
+					}
+					columnInfo.addCell(info.getKey(), cell);
+					rowsMap.put(info.getKey(), info);
+				}
+			} else {
+				// array item
+				RowInfo parentRowInfo = leaf.getParent();
+
+				for (String column : columnsMap.keySet()) {
+					ColumnInfo columnInfo = columnsMap.get(column);
+					if (columnInfo == null) {
+						columnInfo = new ColumnInfo(column, column, null, true);
+						columnsMap.put(column, columnInfo);
+						columns.add(columnInfo);
+					}
+					CellInfo parentCell = columnInfo.getCells().get(
+							parentRowInfo.getKey());
+					if (parentCell == null) {
+						parentCell = new CellInfo(true);
+						columnInfo.addCell(parentRowInfo.getKey(), parentCell);
+					}
+
+					CellInfo subcellInfo = leaf.getCells().get(column);
+					if (subcellInfo == null) {
+						subcellInfo = new CellInfo(null, null);
+						leaf.addCell(column, subcellInfo);
+					}
+					parentCell.addChild(subcellInfo, leaf.getPosition());
+				}
 			}
-			columnInfo.addCell(info.getKey(), cells.get(column));
+		} else {
+			// array
+			Map<Integer, RowInfoLeaf> subrows = info.getChildren();
+			// columnName to parentCell
+			Map<String, CellInfo> parentsMap = new LinkedHashMap<String, CellInfo>();
+
+			for (Integer subrowIndex : subrows.keySet()) {
+				cells = subrows.get(subrowIndex).getCells();
+				for (ColumnInfo cl : columns) {
+					String column = cl.getId();
+					CellInfo parentCell = parentsMap.get(column);
+					if (parentCell == null) {
+						// not found => create
+						parentCell = new CellInfo(true);
+						parentsMap.put(column, parentCell);
+					}
+					CellInfo cell = cells.get(column);
+					if (cell == null) {
+						cell = new CellInfo(false);
+					}
+
+					parentCell.addChild(cell);
+				}
+			}
+
+			for (String column : parentsMap.keySet()) {
+				ColumnInfo columnInfo = columnsMap.get(column);
+				if (columnInfo == null) {
+					columnInfo = new ColumnInfo(column, column, null, true);
+					columnsMap.put(column, columnInfo);
+					columns.add(columnInfo);
+				}
+				columnInfo.addCell(info.getKey(), parentsMap.get(column));
+			}
+			rowsMap.put(info.getKey(), info);
 		}
 		validateRow(info);
 		notifyListeners();
+	}
+
+	public void addCell(CellInfo info, String key, String column) {
+		addCell(info, key, column, INDEX_NOT_REQUIRED);
 	}
 
 	/**
@@ -193,42 +366,67 @@ public class StringEditorViewerModel {
 	 * @param column
 	 *            the column
 	 */
-	public void addCell(CellInfo info, String key, String column) {
-		columnsMap.get(column).addCell(key, info);
-		rowsMap.get(key).addCell(column, info);
+	public void addCell(CellInfo info, String key, String column, Integer index) {
+		RowInfo rowInfo = rowsMap.get(key);
+		if (rowInfo instanceof RowInfoLeaf) {
+			// string or item array
+			RowInfoLeaf leaf = (RowInfoLeaf) rowInfo;
+			if (leaf.getParent() == null) {
+				// string
+				columnsMap.get(column).addCell(key, info);
+			}
+			leaf.addCell(column, info);
+		} else {
+			// array-item
+			if (index >= 0) {
+				Map<Integer, RowInfoLeaf> rowChildren = rowInfo.getChildren();
+
+				Map<String, CellInfo> cells = rowChildren.get(index).getCells();
+				cells.put(column, info);
+
+				ColumnInfo columnInfo = columnsMap.get(column);
+				CellInfo parentCell = columnInfo.getCells().get(key);
+				if (parentCell == null) {
+					// array does not exist
+					parentCell = new CellInfo(true);
+					columnInfo.addCell(key, parentCell);
+				}
+				parentCell.addChild(info, index);
+			}
+		}
 		validateRow(key);
 		notifyListeners();
 	}
 
 	/**
-	 * Remove the cell with some key within some column
+	 * Remove column from the UI model
 	 * 
-	 * @param key
 	 * @param column
+	 *            the columnID to remove
 	 */
-	public void removeCell(String key, String column) {
-		rowsMap.get(key).removeCell(column);
-		columnsMap.get(column).removeCell(key);
-		notifyListeners();
-	}
-
 	public void removeColumn(String column) {
+		// remove from columns map
 		columnsMap.remove(column);
+		// remove from columns list
 		List<ColumnInfo> orig = new ArrayList<ColumnInfo>(columns);
 		for (ColumnInfo info : orig) {
 			if (info.getId().equals(column)) {
 				columns.remove(info);
 			}
 		}
-
+		// remove from rows map
 		Map<String, RowInfo> rowsMapClone = new HashMap<String, RowInfo>(
 				rowsMap);
 		Iterator<RowInfo> it = rowsMapClone.values().iterator();
 		while (it.hasNext()) {
 			RowInfo row = it.next();
-			row.removeCell(column);
-			if (isEmptyRow(row)) {
-				removeRow(row.getKey());
+			if (row instanceof RowInfoLeaf) {
+				RowInfoLeaf leaf = (RowInfoLeaf) row;
+				leaf.removeCell(column);
+				if (isEmptyRow(row)) {
+					// TODO check this
+					removeRow(row.getKey());
+				}
 			}
 		}
 
@@ -236,7 +434,60 @@ public class StringEditorViewerModel {
 	}
 
 	private boolean isEmptyRow(RowInfo row) {
-		return row.getCells().size() == 0;
+		if (row instanceof RowInfoLeaf) {
+			return ((RowInfoLeaf) row).getCells().size() == 0;
+		} else {
+			return false;
+		}
+	}
+
+	public void removeRow(String key, Integer index) {
+		RowInfo row = rowsMap.remove(key);
+
+		if (row != null) {
+			Map<Integer, RowInfoLeaf> children = row.getChildren();
+			RowInfo newRow = new RowInfo(key);
+			rowsMap.put(key, newRow);
+			int newCount = 0;
+			for (Integer childIndex : children.keySet()) {
+				if (index != childIndex) {
+					RowInfoLeaf child = children.get(childIndex);
+					RowInfoLeaf newChild = new RowInfoLeaf(key, newRow,
+							newCount++, child.getCells());
+					newChild.addStatus(child.getStatus());
+				}
+			}
+			if (newCount == 0) {
+				rowsMap.remove(key);
+			}
+		}
+
+		Iterator<ColumnInfo> it = columnsMap.values().iterator();
+		while (it.hasNext()) {
+			ColumnInfo col = it.next();
+			CellInfo parent = col.getCells().get(key);
+			if (parent != null) {
+				Map<Integer, CellInfo> children = parent.getChildren();
+				parent.clearChildren();
+				if (children != null) {
+					int newCount = 0;
+					for (Integer childIndex : children.keySet()) {
+						if (index != childIndex) {
+							parent.addChild(children.get(childIndex),
+									newCount++);
+						}
+					}
+					if (newCount == 0) {
+						col.removeCell(key);
+					}
+				} else {
+					// this should not happen, but if it does, be safe
+					col.removeCell(key);
+				}
+			}
+		}
+
+		notifyListeners();
 	}
 
 	public void removeRow(String key) {
@@ -273,10 +524,19 @@ public class StringEditorViewerModel {
 	public List<RowInfo> save() {
 		List<RowInfo> changed = new ArrayList<RowInfo>();
 		for (RowInfo info : rowsMap.values()) {
-			for (CellInfo cell : info.getCells().values()) {
-				if (cell != null && cell.isDirty()) {
-					cell.setDirty(false);
-					changed.add(info);
+			Collection<RowInfoLeaf> leaves;
+			if (info instanceof RowInfoLeaf) {
+				leaves = new ArrayList<RowInfoLeaf>(1);
+				leaves.add((RowInfoLeaf) info);
+			} else {
+				leaves = info.getChildren().values();
+			}
+			for (RowInfoLeaf leaf : leaves) {
+				for (CellInfo cell : leaf.getCells().values()) {
+					if (cell != null && cell.isDirty()) {
+						cell.setDirty(false);
+						changed.add(info);
+					}
 				}
 			}
 		}
@@ -286,11 +546,20 @@ public class StringEditorViewerModel {
 	public List<ColumnInfo> getColumnsChanged() {
 		Set<ColumnInfo> changed = new HashSet<ColumnInfo>();
 		for (RowInfo info : rowsMap.values()) {
-			for (Map.Entry<String, CellInfo> cellEntry : info.getCells()
-					.entrySet()) {
-				CellInfo cell = cellEntry.getValue();
-				if (cell != null && cell.isDirty()) {
-					changed.add(columnsMap.get(cellEntry.getKey()));
+			Collection<RowInfoLeaf> leaves;
+			if (info instanceof RowInfoLeaf) {
+				leaves = new ArrayList<RowInfoLeaf>(1);
+				leaves.add((RowInfoLeaf) info);
+			} else {
+				leaves = info.getChildren().values();
+			}
+			for (RowInfoLeaf leaf : leaves) {
+				for (Map.Entry<String, CellInfo> cellEntry : leaf.getCells()
+						.entrySet()) {
+					CellInfo cell = cellEntry.getValue();
+					if (cell != null && cell.isDirty()) {
+						changed.add(columnsMap.get(cellEntry.getKey()));
+					}
 				}
 			}
 		}
@@ -310,12 +579,31 @@ public class StringEditorViewerModel {
 
 	public void validateRow(RowInfo row) {
 		row.cleanStatus();
-		for (ColumnInfo column : columns) {
-			CellInfo cell = row.getCells().get(column.getId());
-			IStatus cellStatus = validator.isCellValid(column.getId(), row
-					.getKey(), cell != null ? cell.getValue() : null);
-			if (!cellStatus.isOK()) {
-				row.addStatus(cellStatus);
+		if (row instanceof RowInfoLeaf) {
+			// string
+			RowInfoLeaf leaf = (RowInfoLeaf) row;
+			for (ColumnInfo column : columns) {
+				CellInfo cell = leaf.getCells().get(column.getId());
+				IStatus cellStatus = validator.isCellValid(column.getId(),
+						row.getKey(), cell != null ? cell.getValue() : null);
+				if (!cellStatus.isOK()) {
+					row.addStatus(cellStatus);
+				}
+			}
+		} else {
+			// array: validate each child
+			Map<Integer, RowInfoLeaf> children = row.getChildren();
+			for (RowInfoLeaf child : children.values()) {
+				child.cleanStatus();
+				for (ColumnInfo column : columns) {
+					CellInfo cell = child.getCells().get(column.getId());
+					IStatus cellStatus = validator
+							.isCellValid(column.getId(), row.getKey(),
+									cell != null ? cell.getValue() : null);
+					if (!cellStatus.isOK()) {
+						child.addStatus(cellStatus);
+					}
+				}
 			}
 		}
 	}

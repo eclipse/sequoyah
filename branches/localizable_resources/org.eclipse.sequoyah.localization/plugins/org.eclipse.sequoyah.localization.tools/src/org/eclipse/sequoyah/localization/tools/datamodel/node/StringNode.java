@@ -11,25 +11,16 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save (currently only on update)
- * Marcel Augusto Gorri (Eldorado) - Bug [323036] - Add support to other Localizable Resources
+ * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel.node;
-
-import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
-
 
 /**
  * This class represents an entry in a localization file for text.
  * 
  */
 public class StringNode extends Node {
-
-	/*
-	 * The LocalizationFile which the StringArray belongs to
-	 */
-	protected StringLocalizationFile localizationFile = null;
-
 	/*
 	 * Details of the translation process applied to the node, if any
 	 */
@@ -61,25 +52,6 @@ public class StringNode extends Node {
 		super(key, value);
 	}
 
-	/**
-	 * Get the LocalizationFile which the StringArray belongs to
-	 * 
-	 * @return the LocalizationFile which the StringArray belongs to
-	 */
-	public StringLocalizationFile getLocalizationFile() {
-		return localizationFile;
-	}
-
-	/**
-	 * Set the LocalizationFile which the StringArray belongs to
-	 * 
-	 * @param localizationFile
-	 *            the LocalizationFile which the StringArray belongs to
-	 */
-	public void setLocalizationFile(StringLocalizationFile localizationFile) {
-		this.localizationFile = localizationFile;
-	}
-	
 	/**
 	 * Get the details of the translation process applied to the node, if any
 	 * 
@@ -170,7 +142,6 @@ public class StringNode extends Node {
 	public void setChecked(boolean checked) {
 		this.checked = checked;
 	}
-
 
 	/**
 	 * Delete this StringNode. - Remove it from the model - Remove its comment,

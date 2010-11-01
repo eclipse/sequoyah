@@ -8,8 +8,7 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * Marcel Gorri (Eldorado) - Bug [326793] - Improvements on the String Arrays handling
- * 
+ * Marcel Gorri (Eldorado) - Extend to support arrays
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.implementation.generic;
 

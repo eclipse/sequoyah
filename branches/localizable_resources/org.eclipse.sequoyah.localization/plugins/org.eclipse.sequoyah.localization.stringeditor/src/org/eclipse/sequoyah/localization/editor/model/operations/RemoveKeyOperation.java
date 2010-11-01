@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 import org.eclipse.sequoyah.localization.editor.model.StringEditorPart;
 
 /**
@@ -66,7 +67,19 @@ public class RemoveKeyOperation extends EditorOperation {
 			throws ExecutionException {
 
 		for (RowInfo row : rows) {
-			getEditor().removeRow(row.getKey());
+			if (row instanceof RowInfoLeaf) {
+				RowInfoLeaf leaf = (RowInfoLeaf) row;
+				if (leaf.getParent() == null) {
+					// string
+					getEditor().removeRow(row.getKey());
+				} else {
+					// array item
+					getEditor().removeRow(row.getKey(), leaf.getPosition());
+				}
+			} else {
+				// array
+				getEditor().removeRow(row.getKey());
+			}
 		}
 		getEditor().getEditorViewer().refresh();
 		return Status.OK_STATUS;

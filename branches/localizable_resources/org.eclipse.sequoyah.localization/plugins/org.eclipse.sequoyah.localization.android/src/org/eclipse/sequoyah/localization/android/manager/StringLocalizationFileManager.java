@@ -7,7 +7,6 @@
  * Contributors:
  * Marcel Augusto Gorri (Eldorado) - Bug [323036] - Add support to other localizable resources
  * Matheus Lima (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
- * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.manager;
 
@@ -178,29 +177,31 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			LocalizationFile localizationFile, Document document) {
 		ArrayList<StringNode> stringNodes = new ArrayList<StringNode>();
 		ArrayList<StringNode> stringArrays = new ArrayList<StringNode>();
-		
+
 		for (NodeManager nodeManager : NodeManagerProvider.getInstance()
 				.getNodeManagers()) {
-			if (nodeManager instanceof StringNodeManager){
-				nodeManager.updateLocalizationFileContent(document, stringNodes);
-			} else
-				if (nodeManager instanceof ArrayStringNodeManager){
-					((ArrayStringNodeManager)nodeManager).updateLocalizationFileContent(document, stringArrays);
-				}				
+			if (nodeManager instanceof StringNodeManager) {
+				nodeManager
+						.updateLocalizationFileContent(document, stringNodes);
+			} else if (nodeManager instanceof ArrayStringNodeManager) {
+				((ArrayStringNodeManager) nodeManager)
+						.updateLocalizationFileContent(document, stringArrays);
+			}
 		}
- 				
+
 		((AndroidStringLocalizationFile) localizationFile)
 				.setSavedXMLDocument(document);
-		
+
+		((AndroidStringLocalizationFile) localizationFile).clearStringNodes();
 		((AndroidStringLocalizationFile) localizationFile)
-		.setStringNodes(stringNodes);		
-		
+				.setStringNodes(stringNodes);
+
 		ArrayList<ArrayStringNode> stringArrays2 = new ArrayList<ArrayStringNode>();
-		for (StringNode node : stringArrays) {	
-			stringArrays2.add( (ArrayStringNode) node);
-		}			
+		for (StringNode node : stringArrays) {
+			stringArrays2.add((ArrayStringNode) node);
+		}
 		((AndroidStringLocalizationFile) localizationFile)
-		.setStringArrayNodes(stringArrays2);	
+				.setStringArrayNodes(stringArrays2);
 	}
 
 	/*
@@ -249,14 +250,14 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			 * Create XML nodes
 			 */
 			Element resources = document.createElement(XML_RESOURCES_TAG);
-			
+
 			for (NodeManager nodeManager : NodeManagerProvider.getInstance()
 					.getNodeManagers()) {
 				// according to NodeManagerProvider, the first element is a
 				// StringNodeManager and the second is an ArrayStringNodeManager
 				nodeManager.createFile(document, resources, localizationFile);
 			}
-			
+
 			document.appendChild(resources);
 
 			saveXMLDocument(localizationFile.getFile().getLocation().toFile(),
@@ -537,26 +538,31 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 					.getStringNodes()) {
 
 				if (!(stringNode instanceof ArrayStringNode)) {
-					singleStringsToUpdateOrAdd.put(stringNode.getKey(), stringNode);
-				}				
+					singleStringsToUpdateOrAdd.put(stringNode.getKey(),
+							stringNode);
+				}
 			}
-			
-			for (ArrayStringNode stringArray : ((StringLocalizationFile)locFile).getStringArrays()) {
-				arrayStringsToUpdateOrAdd.put(stringArray.getKey(), stringArray);
-			}
-			
-//			Map<String, StringNode> stringsToUpdateOrAdd = new HashMap<String, StringNode>();
-//			for (NodeManager nodeManager : NodeManagerProvider.getInstance()
-//					.getNodeManagers()) {
-//				// according to NodeManagerProvider, the first element is a
-//				// StringNodeManager and the second is an ArrayStringNodeManager
-//				nodeManager.updateFile(locFile, stringsToUpdateOrAdd);
-//			}			
 
-//			for (ArrayStringNode stringArray : ((StringLocalizationFile)locFile).getStringArrays()) {
-//				arrayStringsToUpdateOrAdd
-//						.put(stringArray.getKey(), stringArray);
-//			}
+			for (ArrayStringNode stringArray : ((StringLocalizationFile) locFile)
+					.getStringArrays()) {
+				arrayStringsToUpdateOrAdd
+						.put(stringArray.getKey(), stringArray);
+			}
+
+			// Map<String, StringNode> stringsToUpdateOrAdd = new
+			// HashMap<String, StringNode>();
+			// for (NodeManager nodeManager : NodeManagerProvider.getInstance()
+			// .getNodeManagers()) {
+			// // according to NodeManagerProvider, the first element is a
+			// // StringNodeManager and the second is an ArrayStringNodeManager
+			// nodeManager.updateFile(locFile, stringsToUpdateOrAdd);
+			// }
+
+			// for (ArrayStringNode stringArray :
+			// ((StringLocalizationFile)locFile).getStringArrays()) {
+			// arrayStringsToUpdateOrAdd
+			// .put(stringArray.getKey(), stringArray);
+			// }
 
 			NodeList resourcesList = document.getElementsByTagName("resources"); //$NON-NLS-1$
 			// if there is no resource tag, add at least one
@@ -567,7 +573,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			}
 			for (int i = 0; i < resourcesList.getLength(); i++) {
 				Element resource = (Element) resourcesList.item(i);
-				// remove nodes
+				// // remove nodes
 				visitToRemoveDOMChildren(
 						document,
 						resource.getFirstChild(),
@@ -575,7 +581,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 						androidLocalizationFile.getSingleEntryToRemove(),
 						androidLocalizationFile.getArrayEntryToRemove(),
 						androidLocalizationFile.getArrayItemsToRemove());
-				// update nodes
+				// // update nodes
 				visitToUpdateDOMChildren(document, resource.getFirstChild(),
 						"name", //$NON-NLS-1$
 						singleStringsToUpdateOrAdd, arrayStringsToUpdateOrAdd);
@@ -662,6 +668,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 							// inside array
 							NodeList items = visitingNode.getChildNodes();
 							int itemsIndex = 0;
+							int arrayItemIndex = 0;
 							while (itemsIndex < items.getLength()) {
 								Object obj = items.item(itemsIndex);
 								if (obj instanceof Element) {
@@ -669,13 +676,14 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 									DecimalFormat formatter = new DecimalFormat(
 											"000"); //$NON-NLS-1$
 									String virtualKey = keyName + "_" //$NON-NLS-1$
-											+ formatter.format(itemsIndex);
+											+ formatter.format(arrayItemIndex);
 									StringNode arrayItem = arrayItemsToRemove
 											.get(virtualKey);
 									if (arrayItem != null) {
 										// remove array item
 										item.getParentNode().removeChild(item);
 									}
+									arrayItemIndex++;
 								}
 								itemsIndex++;
 							}

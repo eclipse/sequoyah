@@ -44,8 +44,7 @@ public class CloneOperation extends EditorOperation {
 		for (String cellKey : source.getCells().keySet()) {
 			CellInfo cell = source.getCells().get(cellKey);
 			if (cell != null) {
-				destinationColumn.addCell(cellKey, new CellInfo(
-						cell.getValue(), cell.getComment()));
+				destinationColumn.addCell(cellKey, new CellInfo(cell));
 			}
 		}
 		return redo(monitor, info);

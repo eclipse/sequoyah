@@ -23,12 +23,12 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
  * <key>:<value> pair that is represented by it.
  */
 public class Node implements Comparable<Node> {
-	
+
 	/*
 	 * The LocalizationFile which the StringNode belongs to
 	 */
 	protected LocalizationFile localizationFile = null;
-	
+
 	/*
 	 * Key used in the localization process
 	 */
@@ -54,19 +54,19 @@ public class Node implements Comparable<Node> {
 	 * Whether there are changes in the associated extra-info
 	 */
 	protected boolean dirtyExtraInfo;
-	
+
 	/*
 	 * Comment associated to the node
 	 */
-	protected NodeComment nodeComment = null;	
+	protected NodeComment nodeComment = null;
 
 	/**
 	 * Default constructor method
 	 * 
 	 */
 	public Node() {
-	}	
-	
+	}
+
 	/**
 	 * Constructor method
 	 * 
@@ -76,8 +76,8 @@ public class Node implements Comparable<Node> {
 	public Node(String key, String value) {
 		this.key = key;
 		this.value = value;
-	}	
-	
+	}
+
 	/**
 	 * Get the LocalizationFile which the StringNode belongs to
 	 * 
@@ -86,7 +86,7 @@ public class Node implements Comparable<Node> {
 	public LocalizationFile getLocalizationFile() {
 		return localizationFile;
 	}
-	
+
 	/**
 	 * Set the LocalizationFile which the StringNode belongs to
 	 * 
@@ -168,7 +168,7 @@ public class Node implements Comparable<Node> {
 		}
 		this.dirty = dirty;
 	}
-	
+
 	/**
 	 * Check whether there are changes in the associated meta-data
 	 * 
@@ -210,7 +210,6 @@ public class Node implements Comparable<Node> {
 	public void setDirtyExtraInfo(boolean dirtyExtraInfo) {
 		this.dirtyExtraInfo = dirtyExtraInfo;
 	}
-	
 
 	/**
 	 * Get the comment associated to the node
@@ -232,8 +231,8 @@ public class Node implements Comparable<Node> {
 		if (this.nodeComment != null) {
 			this.nodeComment.setNode(this);
 		}
-	}	
-	
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -277,5 +276,12 @@ public class Node implements Comparable<Node> {
 			return false;
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Node [localizationFile=" + localizationFile + ", key=" + key
+				+ ", value=" + value + ", dirty=" + dirty + ", nodeComment="
+				+ nodeComment + "]";
+	}
+
 }

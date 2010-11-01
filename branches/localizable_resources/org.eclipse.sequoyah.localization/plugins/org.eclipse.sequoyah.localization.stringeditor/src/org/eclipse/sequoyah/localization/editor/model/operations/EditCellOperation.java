@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Mobility, Inc.
+ * Copyright (c) 2009-2010 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,7 +9,7 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
+ * Marcel Gorri (Eldorado) - Bug [326793] - Improvements on the string arrays handling
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.operations;
@@ -22,8 +22,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.editor.datatype.CellInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 import org.eclipse.sequoyah.localization.editor.model.StringEditorPart;
-import org.eclipse.sequoyah.localization.editor.model.operations.Messages;
 
 /**
  * The operation of editing a specific editor cell.
@@ -38,11 +39,13 @@ public class EditCellOperation extends EditorOperation {
 
 	private final CellInfo newValue;
 
+	private final RowInfo rowInfo;
+
 	/**
 	 * Creates a new EditCellOperation.
 	 * 
-	 * @param key
-	 *            - the key related to the cell.
+	 * @param info
+	 *            - the row related to the cell.
 	 * @param column
 	 *            - the column related to the cell.
 	 * @param oldValue
@@ -51,14 +54,18 @@ public class EditCellOperation extends EditorOperation {
 	 *            - the cell new value.
 	 * @param editor
 	 *            - the editor Object.
+	 * @param rowInfo
+	 *            - row info associated to the cell
+	 * 
 	 */
 	public EditCellOperation(String key, String column, CellInfo oldValue,
-			CellInfo newValue, StringEditorPart editor) {
+			CellInfo newValue, StringEditorPart editor, RowInfo info) {
 		super(Messages.EditCellOperation_0, editor);
 		this.key = key;
 		this.column = column;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
+		this.rowInfo = info;
 	}
 
 	/*
@@ -94,19 +101,29 @@ public class EditCellOperation extends EditorOperation {
 					|| (newValue != null && newValue.getValue() == null)) {
 				getEditorInput().removeCell(key, column);
 			} else {
-				getEditorInput().setValue(column, key, newValue.getValue());
+				if (rowInfo instanceof RowInfoLeaf) {
+					RowInfoLeaf leaf = (RowInfoLeaf) rowInfo;
+					if (leaf.getParent() == null) {
+						getEditorInput().setValue(column, key,
+								newValue.getValue());
+					} else {
+						getModel().addCell(newValue, key, column,
+								leaf.getPosition());
+						getEditorInput().setValue(column, key,
+								newValue.getValue(), leaf.getPosition());
+					}
+				} else {
+					getEditorInput().setValue(column, key, newValue.getValue());
+				}
 			}
 		} catch (SequoyahException e) {
-			BasePlugin
-					.logError(
-							"Error editing cell value: (" + column //$NON-NLS-1$
-									+ ", " + key //$NON-NLS-1$
-									+ ") =" + newValue != null ? newValue //$NON-NLS-1$
-									.getValue()
-									: null, e);
+			BasePlugin.logError("Error editing cell value: (" + column //$NON-NLS-1$
+					+ ", " + key //$NON-NLS-1$
+					+ ") =" + newValue != null ? newValue //$NON-NLS-1$
+					.getValue() : null, e);
 		}
 		getEditor().fireDirtyPropertyChanged();
-		getEditor().getEditorViewer().update(getModel().getRow(key), null);
+		getEditor().getEditorViewer().update(this.rowInfo, null);
 		return Status.OK_STATUS;
 	}
 
@@ -126,21 +143,25 @@ public class EditCellOperation extends EditorOperation {
 				oldValue.setDirty(true);
 			}
 			if (oldValue != null && oldValue.getValue() != null) {
-				getEditorInput().setValue(column, key, oldValue.getValue());
+				// TODO check if this method is working correctly
+				if (rowInfo instanceof RowInfoLeaf) {
+					RowInfoLeaf leaf = (RowInfoLeaf) rowInfo;
+					getEditorInput().setValue(column, key, newValue.getValue(),
+							leaf.getPosition());
+				} else {
+					getEditorInput().setValue(column, key, oldValue.getValue());
+				}
 			} else {
 				getEditorInput().removeCell(key, column);
 			}
 		} catch (SequoyahException e) {
-			BasePlugin
-					.logError(
-							"Error undoing cell edition: (" + column //$NON-NLS-1$
-									+ ", " + key //$NON-NLS-1$
-									+ ") =" + oldValue != null ? oldValue //$NON-NLS-1$
-									.getValue()
-									: null, e);
+			BasePlugin.logError("Error undoing cell edition: (" + column //$NON-NLS-1$
+					+ ", " + key //$NON-NLS-1$
+					+ ") =" + oldValue != null ? oldValue //$NON-NLS-1$
+					.getValue() : null, e);
 		}
 		getEditor().fireDirtyPropertyChanged();
-		getEditor().getEditorViewer().update(getModel().getRow(key), null);
+		getEditor().getEditorViewer().update(this.rowInfo, null);
 		return Status.OK_STATUS;
 	}
 

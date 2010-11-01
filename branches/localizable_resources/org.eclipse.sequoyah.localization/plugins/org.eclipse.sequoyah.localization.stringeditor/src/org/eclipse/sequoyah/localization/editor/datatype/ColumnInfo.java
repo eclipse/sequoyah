@@ -129,4 +129,10 @@ public class ColumnInfo {
 	public boolean canRemove() {
 		return canRemove;
 	}
+
+	@Override
+	public String toString() {
+		return "ColumnInfo [id=" + id + ", cells=" + cells + "]";
+	}
+
 }

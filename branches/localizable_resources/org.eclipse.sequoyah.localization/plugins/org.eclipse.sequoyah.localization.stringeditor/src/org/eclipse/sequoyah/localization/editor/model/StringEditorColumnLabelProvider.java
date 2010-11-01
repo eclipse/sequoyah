@@ -12,13 +12,18 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
+import java.text.NumberFormat;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.sequoyah.localization.editor.datatype.CellInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 import org.eclipse.sequoyah.localization.editor.i18n.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
@@ -55,9 +60,23 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (column.equalsIgnoreCase(Messages.StringEditorPart_KeyLabel)) {
+			if (element instanceof RowInfoLeaf) {
+				RowInfoLeaf row = (RowInfoLeaf) element;
+				if (row.getParent() != null) {
+					// array item
+					NumberFormat f = NumberFormat.getInstance();
+					f.setMinimumIntegerDigits(3);
+					// did not work :( char levelMarker = '\u2514';
+					return super.getText("  + " + f.format(row.getPosition()));
+				}
+			}
 			return super.getText(((RowInfo) element).getKey());
 		}
-		return super.getText(((RowInfo) element).getCells().get(column));
+		if (element instanceof RowInfoLeaf) {
+			return super
+					.getText(((RowInfoLeaf) element).getCells().get(column));
+		}
+		return null;
 	}
 
 	/*
@@ -82,10 +101,14 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 			}
 
 		} else if (editor.getShowCellComments()) {
-			CellInfo cell = row.getCells().get(column);
-			if (cell != null && cell.getValue() != null
-					&& cell.getValue().trim().length() > 0) {
-				comment = cell.getComment() != null ? cell.getComment() : ""; //$NON-NLS-1$
+			if (row instanceof RowInfoLeaf) {
+				RowInfoLeaf leaf = (RowInfoLeaf) row;
+				CellInfo cell = leaf.getCells().get(column);
+				if (cell != null && cell.getValue() != null
+						&& cell.getValue().trim().length() > 0) {
+					comment = cell.getComment() != null ? cell.getComment()
+							: ""; //$NON-NLS-1$
+				}
 			}
 		}
 		return comment;
@@ -105,16 +128,19 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 			c = Display.getDefault().getSystemColor(
 					SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		} else {
-			CellInfo cell = ((RowInfo) element).getCells().get(column);
-			String searchText = editor.getSearchText();
-			if (cell != null) {
-				if (searchText.length() > 0
-						&& cell.toString().toLowerCase().contains(
-								searchText.toLowerCase())) {
-					c = searchColor;
-				} else if (editor.getHighlightChanges() && cell.isDirty()) {
-					c = Display.getDefault().getSystemColor(
-							SWT.COLOR_INFO_BACKGROUND);
+			if (element instanceof RowInfoLeaf) {
+				RowInfoLeaf leaf = (RowInfoLeaf) element;
+				CellInfo cell = leaf.getCells().get(column);
+				String searchText = editor.getSearchText();
+				if (cell != null) {
+					if (searchText.length() > 0
+							&& cell.toString().toLowerCase()
+									.contains(searchText.toLowerCase())) {
+						c = searchColor;
+					} else if (editor.getHighlightChanges() && cell.isDirty()) {
+						c = Display.getDefault().getSystemColor(
+								SWT.COLOR_INFO_BACKGROUND);
+					}
 				}
 			}
 		}
@@ -148,4 +174,30 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 		return statusImage;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+	 */
+	public Font getFont(Object element) {
+		if (column.equals(Messages.StringEditorPart_KeyLabel)) {
+			if (!(element instanceof RowInfoLeaf)) {
+				Font font = Display.getDefault().getSystemFont();
+				FontData[] data = font.getFontData();
+				Font newFont = new Font(font.getDevice(), data[0].getName(),
+						data[0].getHeight(), SWT.BOLD);
+				return newFont;
+			} else if (element instanceof RowInfoLeaf) {
+				RowInfoLeaf leaf = (RowInfoLeaf) element;
+				if (leaf.getParent() != null) {
+					Font font = Display.getDefault().getSystemFont();
+					FontData[] data = font.getFontData();
+					Font newFont = new Font(font.getDevice(),
+							data[0].getName(), data[0].getHeight(), SWT.ITALIC);
+					return newFont;
+				}
+			}
+		}
+		return null;
+	}
 }

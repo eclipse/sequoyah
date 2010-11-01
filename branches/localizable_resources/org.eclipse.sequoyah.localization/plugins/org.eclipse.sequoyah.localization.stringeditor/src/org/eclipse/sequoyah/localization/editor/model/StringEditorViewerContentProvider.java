@@ -12,11 +12,14 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 
 /**
  * This class provides a content provider for the editor
@@ -36,13 +39,20 @@ public class StringEditorViewerContentProvider implements
 		if (inputElement instanceof StringEditorViewerModel) {
 			StringEditorViewerModel theInput = (StringEditorViewerModel) inputElement;
 			Map<String, RowInfo> rows = theInput.getRows();
-			elements = new Object[rows.size()];
-			int rowCounter = 0;
+			List<RowInfo> rowsList = new ArrayList<RowInfo>();
 			for (String key : rows.keySet()) {
 				RowInfo aRow = rows.get(key);
-				elements[rowCounter++] = aRow;
+				rowsList.add(aRow);
+				// check if it is an array; if so, add its children
+				if (!(aRow instanceof RowInfoLeaf)) {
+					Map<Integer, RowInfoLeaf> children = aRow.getChildren();
+					for (RowInfoLeaf child : children.values()) {
+						rowsList.add(child);
+					}
+				}
 			}
-
+			elements = new Object[rowsList.size()];
+			elements = rowsList.toArray(elements);
 		}
 
 		return elements;

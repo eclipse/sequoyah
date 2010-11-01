@@ -58,8 +58,9 @@ public class TableComparator extends ViewerComparator {
 				s1 = r1.getKey();
 				s2 = r2.getKey();
 			} else {
-				CellInfo t1 = r1.getCells().get(sortColumnID);
-				CellInfo t2 = r2.getCells().get(sortColumnID);
+				// FIXME comparation is wrong
+				CellInfo t1 = null;// r1.getCells().get(sortColumnID);
+				CellInfo t2 = null;// r2.getCells().get(sortColumnID);
 				s1 = t1 != null ? t1.toString() : ""; //$NON-NLS-1$
 				s2 = t2 != null ? t2.toString() : ""; //$NON-NLS-1$
 			}

@@ -5,9 +5,8 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * Marcel Gorri (Eldorado) - Bug [326793] -  Improvements on the String Arrays handling  
+ * Marcel Gorri (Eldorado) - Bug 326793 -  Improvements on the String Arrays handling  
  * Matheus Lima (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
- * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.manager;
 
@@ -20,7 +19,6 @@ import org.eclipse.sequoyah.localization.android.IAndroidLocalizationSchemaConst
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.NodeComment;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.w3c.dom.Document;
@@ -118,9 +116,7 @@ public class StringNodeManager extends NodeManager implements
 			Map<String, StringNode> singleStringsToUpdateOrAdd) {
 		for (StringNode stringNode : ((StringLocalizationFile) locFile)
 				.getStringNodes()) {
-			if (!(stringNode instanceof ArrayStringNode)) {
-				singleStringsToUpdateOrAdd.put(stringNode.getKey(), stringNode);
-			}
+			singleStringsToUpdateOrAdd.put(stringNode.getKey(), stringNode);
 		}
 	}
 

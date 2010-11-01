@@ -220,8 +220,8 @@ public class LocalizationFile implements IFilePersistentData {
 	/**
 	 * Set whether the file shall be deleted or not
 	 * 
-	 * @param shallBeDeleted
-	 *            true if the shall be deleted or not, false otherwise
+	 * @param toBeDeleted
+	 *            true if the file shall be deleted or false otherwise
 	 */
 	public void setToBeDeleted(boolean toBeDeleted) {
 		this.toBeDeleted = toBeDeleted;

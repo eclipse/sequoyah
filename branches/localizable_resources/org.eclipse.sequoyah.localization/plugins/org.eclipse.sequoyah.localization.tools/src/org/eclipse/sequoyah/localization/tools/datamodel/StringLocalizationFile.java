@@ -14,7 +14,8 @@
  * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
  * Daniel Pastore (Eldorado) - Bug [323036] - Add support to other localizable resources
  * Matheus Lima (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
- * 
+ * Paulo Faria (Eldorado) - Bug 326793 - Improvements on the String Arrays handling 
+ * Paulo Faria (Eldorado) - Bug [326793] -  Improvements on the String Arrays handling 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
@@ -24,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
+import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 
@@ -33,19 +36,9 @@ import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 public class StringLocalizationFile extends LocalizationFile {
 
 	/*
-	 * The list of StringNodes which are part of the file
+	 * String nodes (single strings and array nodes) indexed by key
 	 */
-	private List<StringNode> stringNodes = new ArrayList<StringNode>();
-
-	/*
-	 * The list of StringArrays which are part of the file
-	 */
-	private List<ArrayStringNode> stringArrayNodes = new ArrayList<ArrayStringNode>();
-
-	/*
-	 * String nodes indexed by key
-	 */
-	private Map<String, StringNode> stringNodesMap = new HashMap<String, StringNode>();
+	private final Map<String, StringNode> stringNodesMap = new HashMap<String, StringNode>();
 
 	/*
 	 * Static code to add file type to factory's hashmap
@@ -55,11 +48,11 @@ public class StringLocalizationFile extends LocalizationFile {
 				StringLocalizationFile.class.getName(),
 				StringLocalizationFile.class);
 	}
-	
+
 	/**
 	 * Default constructor.
 	 */
-	public StringLocalizationFile (){
+	public StringLocalizationFile() {
 	}
 
 	/**
@@ -74,6 +67,7 @@ public class StringLocalizationFile extends LocalizationFile {
 	 */
 	public StringLocalizationFile(LocalizationFileBean bean) {
 		super(bean);
+		clearStringNodes();
 		setStringNodes(bean.getStringNodes());
 		setStringArrayNodes(bean.getStringArrays());
 	}
@@ -97,87 +91,147 @@ public class StringLocalizationFile extends LocalizationFile {
 	}
 
 	/**
-	 * Get the list of StringNodes which are part of the file
+	 * Get the list of StringNodes (ONLY single strings, not arrays items nor
+	 * arrays) which are part of the file
 	 * 
 	 * @return the list of StringNodes which are part of the file
 	 */
 	public List<StringNode> getStringNodes() {
+		List<StringNode> stringNodes = new ArrayList<StringNode>();
+		for (StringNode stringNode : stringNodesMap.values()) {
+			if (!(stringNode instanceof ArrayStringNode)) {
+				stringNodes.add(stringNode);
+			}
+		}
 		return stringNodes;
 	}
 
 	/**
-	 * Get the list of StringNodes which are part of the file
+	 * Get the list of StringNodes (ONLY arrays, not arrays items nor single
+	 * strings) which are part of the file
+	 * 
+	 * @return the list of ArrayStringNodes which are part of the file
+	 */
+	public List<ArrayStringNode> getStringArrays() {
+		List<ArrayStringNode> arrayStringNodes = new ArrayList<ArrayStringNode>();
+		for (StringNode stringNode : stringNodesMap.values()) {
+			if (stringNode instanceof ArrayStringNode) {
+				ArrayStringNode arrayNode = (ArrayStringNode) stringNode;
+				arrayStringNodes.add(arrayNode);
+			}
+		}
+		return arrayStringNodes;
+	}
+
+	/**
+	 * Get the list of StringNodes (single strings, and array items, NOT arrays)
+	 * which are part of the file
 	 * 
 	 * @return the list of StringNodes which are part of the file
 	 */
-	public List<ArrayStringNode> getStringArrays() {
-		return stringArrayNodes;
+	public List<StringNode> getNodesWithTextContent() {
+		List<StringNode> stringNodes = new ArrayList<StringNode>();
+		for (StringNode stringNode : stringNodesMap.values()) {
+			if (!(stringNode instanceof ArrayStringNode)) {
+				stringNodes.add(stringNode);
+			} else {
+				ArrayStringNode array = (ArrayStringNode) stringNode;
+				for (StringNode child : array.getValues()) {
+					stringNodes.add(child);
+				}
+			}
+		}
+		return stringNodes;
 	}
 
 	/**
-	 * Get the StringNodes which represents a specific key. If there is no node
-	 * for this key, a new node is created and returned
+	 * Get the list of StringNodes top levels (arrays or single strings, NOT
+	 * array items) which are part of the file
+	 * 
+	 * @return the list of ArrayStringNodes which are part of the file
+	 */
+	public List<StringNode> getTopLevelNodes() {
+		List<StringNode> topLevelStringNodes = new ArrayList<StringNode>();
+		topLevelStringNodes.addAll(stringNodesMap.values());
+		return topLevelStringNodes;
+	}
+
+	/**
+	 * Creates a new node based on the type of the row (single or array)
+	 * 
+	 * @param rowInfo
+	 * @return
+	 */
+	public StringNode createNode(RowInfo rowInfo) {
+		StringNode newNode = null;
+		if (rowInfo instanceof RowInfoLeaf) {
+			// string or array item
+			RowInfoLeaf leaf = (RowInfoLeaf) rowInfo;
+			if (leaf.getParent() == null) {
+				// string
+				newNode = this.addStringNode(new StringNode(rowInfo.getKey(),
+						""));
+			} else {
+				// array item - add parent to add value
+				ArrayStringNode arrayNode = (stringNodesMap.containsKey(rowInfo
+						.getKey()) ? (ArrayStringNode) stringNodesMap
+						.get(rowInfo.getKey()) : new ArrayStringNode(
+						rowInfo.getKey()));
+				// do not use addStringNode because it is not a top level item
+				// (array or string)
+				newNode = arrayNode.addValue("", leaf.getPosition());
+			}
+		} else if (rowInfo instanceof RowInfo) {
+			// array
+			Map<Integer, RowInfoLeaf> children = rowInfo.getChildren();
+			ArrayStringNode arrayNode = new ArrayStringNode(rowInfo.getKey());
+			for (int pos = 0; pos < children.size(); pos++) {
+				arrayNode.addValue("", pos);
+			}
+			newNode = this.addStringNode(arrayNode);
+		}
+		if (newNode != null) {
+			newNode.setLocalizationFile(this);
+			newNode.setDirty(true);
+		}
+		return newNode;
+	}
+
+	/**
+	 * Get the StringNodes (top level nodes, that is single string or array, NOT
+	 * array items) which represents a specific key.
+	 * 
 	 * 
 	 * @param key
 	 *            the StringNode key attribute
-	 * @param isArray 
-	 * @return the StringNode which represents the key passed as a parameter
+	 * @return the StringNode which represents the key passed as a parameter,
+	 *         null if not found
 	 */
-	public StringNode getStringNodeByKey(String key, Boolean isArray) {
-		//case 1: try to find as string item
+	public StringNode getStringNodeByKey(String key, Boolean isArra) {
 		StringNode result = stringNodesMap.get(key);
-		
-		// TODO: split this method in 2,  this one should only return existent nodes and the other should create nodes.
-		// If a node does not exist, it should not be created because in some points we can't be sure if a node
-		// is an array or not.
-		if (result == null) {
-			//case 2: not found as string item, try to find as array item
-			//remove underscore to get key
-			int indexOfUnderscore = key.indexOf("_"); 
-			if (indexOfUnderscore>=0){
-				String arrayPrefix = key.substring(0, indexOfUnderscore);
-				//get index
-				String arrayIndexStr = key.substring(indexOfUnderscore+1); 
-				Integer arrayIndex = Integer.valueOf(arrayIndexStr);
-				if (result==null && isArray==null){
-					int id = stringArrayNodes.indexOf(new ArrayStringNode(arrayPrefix));
-					if (id>=0){
-						ArrayStringNode arrayNode = stringArrayNodes.get(id);				
-						result = arrayNode.getValues().get(arrayIndex);						
-					}
-				}
-			}
-			if (result==null){
-				//case 3: not found as array nor string => create new node
-				StringNode newNode = (isArray) ? new ArrayStringNode(key) : new StringNode(key, ""); //$NON-NLS-1$
-				//StringNode newNode =  new StringNode(key, ""); //$NON-NLS-1$
-				newNode.setLocalizationFile(this);
-				result = this.addStringNode(newNode);
-			}
-		}
-		result.setLocalizationFile(this);
 		return result;
 	}
 
+	public void clearStringNodes() {
+		stringNodesMap.clear();
+	}
+
+	public boolean containsKey(String key) {
+		return stringNodesMap.containsKey(key);
+	}
+
 	/**
-	 * Set the list of StringNodes which are part of the file. NOTE: it will
-	 * clear the StringNodes associated with StringArray. You should call
-	 * setStringArrays after this operation.
+	 * Set the list of StringNodes which are part of the file.
 	 * 
 	 * @param stringNodes
 	 *            the list of StringNodes which are part of the file
 	 */
-	public void setStringNodes(List<StringNode> stringNodes){
-
-		this.stringNodes.clear();
-		stringNodesMap.clear();
+	public void setStringNodes(List<StringNode> stringNodes) {
 		if (stringNodes != null) {
 			for (StringNode stringNode : stringNodes) {
 				this.stringNodesMap.put(stringNode.getKey(), stringNode);
 				stringNode.setLocalizationFile(this);
-
 			}
-			this.stringNodes.addAll(stringNodes);
 		}
 	}
 
@@ -189,29 +243,20 @@ public class StringLocalizationFile extends LocalizationFile {
 	 */
 	public void setStringArrayNodes(List<ArrayStringNode> stringArrayNodes) {
 		if (stringArrayNodes != null) {
-			this.stringArrayNodes.clear(); //clears actual content do add new one
-			
-			/*
-			 * Removed this for a while because we have a separated list of
-			 * arrayNodes. With this code they were being replicated
 			for (ArrayStringNode stringArrayNode : stringArrayNodes) {
 				List<StringNode> stringNodes = stringArrayNode.getValues();
 				for (StringNode stringNode : stringNodes) {
-					this.stringNodesMap.put(stringNode.getKey(), stringNode);
 					stringNode.setLocalizationFile(this);
 				}
-				this.stringNodes.addAll(stringNodes);
+				stringArrayNode.setLocalizationFile(this);
+				this.stringNodesMap.put(stringArrayNode.getKey(),
+						stringArrayNode);
 			}
-			*/
-			this.stringArrayNodes.addAll(stringArrayNodes);
 		}
 	}
 
-	/**
-	 * @return the stringNodesMap
-	 */
-	public Map<String, StringNode> getStringNodesMap() {
-		return stringNodesMap;
+	public void removeNode(String key) {
+		this.stringNodesMap.remove(key);
 	}
 
 	/**
@@ -221,7 +266,7 @@ public class StringLocalizationFile extends LocalizationFile {
 	 */
 	public List<StringNode> getModifiedStringNodes() {
 		List<StringNode> modifiedStringNodes = new ArrayList<StringNode>();
-		for (StringNode stringNode : stringNodes) {
+		for (StringNode stringNode : getNodesWithTextContent()) {
 			if (stringNode.isDirty()) {
 				modifiedStringNodes.add(stringNode);
 			}
@@ -236,35 +281,32 @@ public class StringLocalizationFile extends LocalizationFile {
 		StringNode newStringNode = stringNode;
 
 		newStringNode.setLocalizationFile(this);
-		stringNodes.add(newStringNode);
 		stringNodesMap.put(newStringNode.getKey(), newStringNode);
 
 		this.setDirty(true);
 
 		return newStringNode;
 	}
-	
+
 	/**
-	 * Add a new ArrayStringNode to the list
+	 * Remove a top level StringNode from the list (array or single string)
 	 */
-	public ArrayStringNode addStringArraynode(ArrayStringNode arrayStringNode){
-		ArrayStringNode newArrayStringNode;
-		ArrayStringNode arrStringNode = findStringArray(arrayStringNode.getKey());
-		int position = -1;
-		if (ArrayStringNode.isArrayItem(arrayStringNode.getKey())) {
-			position = ArrayStringNode.findItemPosition(arrayStringNode.getKey());
+	public void removeStringNode(StringNode stringNode) {
+		if (stringNodesMap.containsKey(stringNode.getKey())) {
+			stringNodesMap.remove(stringNode.getKey());
+			this.setDirty(true);
 		}
-		return newArrayStringNode = (ArrayStringNode) arrStringNode.addValue(arrayStringNode.getValue(),
-				((position != -1) ? position : null));
 	}
 
 	/**
-	 * Remove a StringNode from the list
+	 * Removes a non top level StringNode from the list (array item)
+	 * 
+	 * @param parent
+	 * @param child
 	 */
-	public void removeStringNode(StringNode stringNode) {
-		if (stringNodes.contains(stringNode)) {
-			stringNodes.remove(stringNode);
-			stringNodesMap.remove(stringNode.getKey());
+	public void removeStringNode(ArrayStringNode parent, StringNode child) {
+		if (stringNodesMap.containsKey(parent.getKey())) {
+			parent.removeValue(child);
 			this.setDirty(true);
 		}
 	}
@@ -282,10 +324,11 @@ public class StringLocalizationFile extends LocalizationFile {
 			result = false;
 		} else {
 			StringLocalizationFile locFile = (StringLocalizationFile) obj;
-			List<StringNode> locFileStringNodes = locFile.getStringNodes();
+			List<StringNode> locFileStringNodes = locFile
+					.getNodesWithTextContent();
 
 			// skip blank array items
-			List<StringNode> thisStringNodes = removeBlankArrayItems(stringNodes);
+			List<StringNode> thisStringNodes = removeBlankArrayItems(getNodesWithTextContent());
 			List<StringNode> otherStringNodes = removeBlankArrayItems(locFileStringNodes);
 
 			Collections.sort(thisStringNodes);
@@ -347,7 +390,7 @@ public class StringLocalizationFile extends LocalizationFile {
 			key = ArrayStringNode.getArrayKeyFromItemKey(key);
 		}
 		ArrayStringNode stringArrayNode = null;
-		for (ArrayStringNode sArray : this.stringArrayNodes) {
+		for (ArrayStringNode sArray : this.getStringArrays()) {
 			if (sArray.getKey().equals(key)) {
 				stringArrayNode = sArray;
 				break;
@@ -355,7 +398,7 @@ public class StringLocalizationFile extends LocalizationFile {
 		}
 		if (stringArrayNode == null) {
 			stringArrayNode = new ArrayStringNode(key);
-			this.stringArrayNodes.add(stringArrayNode);
+			this.getStringArrays().add(stringArrayNode);
 		}
 		return stringArrayNode;
 	}

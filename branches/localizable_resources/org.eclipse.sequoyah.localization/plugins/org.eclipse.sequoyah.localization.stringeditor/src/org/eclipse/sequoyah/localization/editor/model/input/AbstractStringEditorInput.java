@@ -90,7 +90,22 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	public abstract void removeColumn(String id);
 
 	/**
-	 * Set a translation value to the following key in the following language
+	 * Set a translation value to the following key (array or single string) in the following language
+	 * 
+	 * @param columnID
+	 *            the column id
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value        
+	 *            
+	 * @throws SequoyahException
+	 */
+	public abstract void setValue(String columnID, String key, String value)
+			throws SequoyahException;
+	
+	/**
+	 * Set a translation value to the following key (array item) in the following language
 	 * 
 	 * @param columnID
 	 *            the column id
@@ -98,9 +113,12 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	 *            the key
 	 * @param value
 	 *            the value
+	 * @param index
+	 * 			  index in the give array
+	 *            
 	 * @throws SequoyahException
 	 */
-	public abstract void setValue(String columnID, String key, String value)
+	public abstract void setValue(String columnID, String key, String value, Integer index)
 			throws SequoyahException;
 
 	/**
@@ -175,11 +193,18 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	public abstract boolean canRevertByColumn();
 
 	/**
-	 * Remove the row with the following key from all columns
+	 * Remove the top level row with the following key from all columns
 	 * 
 	 * @param key
 	 */
 	public abstract void removeRow(String key);
+	
+	/**
+	 * Remove the child row with the following key, index from all columns
+	 * 
+	 * @param key
+	 */
+	public abstract void removeRow(String key, Integer index);
 
 	/**
 	 * Remove the cell with the following key from the following column
