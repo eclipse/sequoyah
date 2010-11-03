@@ -13,7 +13,11 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.operations;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -66,6 +70,8 @@ public class RemoveKeyOperation extends EditorOperation {
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 
+		Map<RowInfo, TreeSet<RowInfoLeaf>> mapForRemovingArrayItems = new HashMap<RowInfo, TreeSet<RowInfoLeaf>>();
+
 		for (RowInfo row : rows) {
 			if (row instanceof RowInfoLeaf) {
 				RowInfoLeaf leaf = (RowInfoLeaf) row;
@@ -73,16 +79,60 @@ public class RemoveKeyOperation extends EditorOperation {
 					// string
 					getEditor().removeRow(row.getKey());
 				} else {
-					// array item
-					getEditor().removeRow(row.getKey(), leaf.getPosition());
+					// array item - accumulate and remove all at once to avoid
+					// index problems
+					TreeSet<RowInfoLeaf> childrenList = mapForRemovingArrayItems
+							.get(leaf.getParent());
+					if (childrenList == null) {
+						childrenList = new TreeSet<RowInfoLeaf>(
+								new LeavesInvertedPositionComparator());
+						mapForRemovingArrayItems.put(leaf.getParent(),
+								childrenList);
+					}
+					childrenList.add(leaf);
 				}
 			} else {
 				// array
 				getEditor().removeRow(row.getKey());
 			}
 		}
+
+		if (!mapForRemovingArrayItems.isEmpty()) {
+			// remove array items that were accumulated
+			for (TreeSet<RowInfoLeaf> childrenList : mapForRemovingArrayItems
+					.values()) {
+				for (RowInfoLeaf leaf : childrenList) {
+					getEditor().removeRow(leaf.getKey(), leaf.getPosition());
+				}
+			}
+		}
+
 		getEditor().getEditorViewer().refresh();
 		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Compares two leaves by their position in decreasing order. This applies
+	 * to leaves who have the same parent. No checking is made to make sure they
+	 * have the same parent, the only checking is about the position not being
+	 * null.
+	 * 
+	 * This is meant to be used by the redo() method of this class only.
+	 */
+	private class LeavesInvertedPositionComparator implements
+			Comparator<RowInfoLeaf> {
+
+		public int compare(RowInfoLeaf o1, RowInfoLeaf o2) {
+			int compareValue = 0;
+			// if either object return null for getPosition(), results are
+			// unexpected anyway, so this test will only pass (test only to
+			// prevent from crashing)
+			if (o1.getPosition() != null && o2.getPosition() != null) {
+				compareValue = o1.getPosition().compareTo(o2.getPosition())
+						* -1; // multiply by -1 to invert order
+			}
+			return compareValue;
+		}
 	}
 
 	/*
