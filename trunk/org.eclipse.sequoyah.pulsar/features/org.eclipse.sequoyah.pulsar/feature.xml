@@ -19,8 +19,8 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/dsdp/sequoyah/updates/1.0.1/stable/"/>
-      <discovery label="%updateSiteName" url="http://download.eclipse.org/dsdp/sequoyah/updates/1.0.1/stable/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/dsdp/sequoyah/updates/1.1.0/stable/"/>
+      <discovery label="%updateSiteName" url="http://download.eclipse.org/dsdp/sequoyah/updates/1.1.0/stable/"/>
    </url>
 
    <requires>
