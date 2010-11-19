@@ -10,6 +10,8 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Matheus Tait Lima (Eldorado) - Adapting to accept automatic translation
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array key)
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
@@ -27,7 +29,7 @@ import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.sequoyah.localization.tools.managers.ProjectLocalizationManager;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * Extends the DefaultOperationProvider in order to provide new, empty
@@ -36,12 +38,26 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class NewColumnProvider extends DefaultOperationProvider {
 
+	/**
+	 * Generates key automatically for single row instead of showing dialog
+	 */
 	@Override
-	public RowInfo[] getNewRow() {
+	public RowInfo[] getNewSingleRow(int quantity) {
 		return projectLocalizationManager.getProjectLocalizationSchema()
-				.promptRowName(
+				.promptSingleRowName(
 						projectLocalizationManager.getLocalizationProject()
-								.getProject());
+								.getProject(), quantity);
+	}
+
+	/**
+	 * Generates key automatically for array row instead of showing dialog
+	 */
+	@Override
+	public RowInfo[] getNewArrayRow(int quantity) {
+		return projectLocalizationManager.getProjectLocalizationSchema()
+				.promptArrayRowName(
+						projectLocalizationManager.getLocalizationProject()
+								.getProject(), quantity);
 	}
 
 	/*
@@ -113,12 +129,24 @@ public class NewColumnProvider extends DefaultOperationProvider {
 	 */
 	@Override
 	public TranslationInfo[] getTranslatedColumnsInfo(String selectedColumn,
-			String[] selectedKeys, String[] selectedCells, TableColumn[] columns) {
+			String[] selectedKeys, String[] selectedCells, TreeColumn[] columns) {
 		return projectLocalizationManager.getProjectLocalizationSchema()
 				.promptTranslatedCollumnsName(
 						projectLocalizationManager.getLocalizationProject()
 								.getProject(), selectedColumn, selectedKeys,
 						selectedCells, columns);
+
+	}
+
+	@Override
+	public TranslationInfo[] getTranslatedColumnsInfo(String selectedColumn,
+			String[] selectedKeys, String[] selectedCells,
+			Integer[] selectedIndexes, TreeColumn[] columns) {
+		return projectLocalizationManager.getProjectLocalizationSchema()
+				.promptTranslatedCollumnsName(
+						projectLocalizationManager.getLocalizationProject()
+								.getProject(), selectedColumn, selectedKeys,
+						selectedCells, selectedIndexes, columns);
 
 	}
 

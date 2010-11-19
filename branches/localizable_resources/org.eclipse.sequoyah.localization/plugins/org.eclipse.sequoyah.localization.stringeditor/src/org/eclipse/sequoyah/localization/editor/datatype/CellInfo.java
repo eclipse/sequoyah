@@ -8,13 +8,12 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Paulo Faria (Eldorado) - Bug [326793] -  Fix issue to translate array item (update position from child being edited) 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.datatype;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class represents a Cell of the editor. It can include comments
@@ -36,7 +35,9 @@ public class CellInfo {
 	 */
 	private boolean dirty;
 
-	private final TreeMap<Integer, CellInfo> children;
+	private int position = -1;
+
+	private final List<CellInfo> children;
 
 	/**
 	 * Get the value of this cell
@@ -80,11 +81,22 @@ public class CellInfo {
 	 * @param value
 	 * @param comment
 	 */
-	public CellInfo(String value, String comment) {
+	public CellInfo(String value, String comment, int position) {
 		this(false);
 		this.value = value;
 		this.comment = comment;
 		this.dirty = false;
+		this.position = position;
+	}
+
+	/**
+	 * Create a new CellInfo object with a given name and comment
+	 * 
+	 * @param value
+	 * @param comment
+	 */
+	public CellInfo(String value, String comment) {
+		this(value, comment, -1);
 	}
 
 	public CellInfo(CellInfo baseCellInfo) {
@@ -94,19 +106,21 @@ public class CellInfo {
 		this.dirty = false;
 
 		if (baseCellInfo.hasChildren()) {
-			Map<Integer, CellInfo> baseChildren = baseCellInfo.getChildren();
-			for (Integer index : baseChildren.keySet()) {
-				CellInfo baseChild = baseChildren.get(index);
-				CellInfo child = new CellInfo(baseChild.getValue(),
-						baseChild.getComment());
-				this.addChild(child, index);
+			for (CellInfo child : baseCellInfo.getChildren()) {
+				this.addChild(child);
 			}
 		}
 	}
 
+	/**
+	 * Create a new cellinfo without children. That means that this cell will
+	 * not be used as array head
+	 * 
+	 * @param hasChildren
+	 */
 	public CellInfo(boolean hasChildren) {
 		if (hasChildren) {
-			children = new TreeMap<Integer, CellInfo>();
+			children = new ArrayList<CellInfo>();
 		} else {
 			children = null;
 		}
@@ -137,8 +151,8 @@ public class CellInfo {
 		return children != null;
 	}
 
-	public Map<Integer, CellInfo> getChildren() {
-		return new LinkedHashMap<Integer, CellInfo>(children);
+	public List<CellInfo> getChildren() {
+		return new ArrayList<CellInfo>(children);
 	}
 
 	public void clearChildren() {
@@ -147,29 +161,77 @@ public class CellInfo {
 		}
 	}
 
+	/**
+	 * Add a new child at the position indicated by child.getPosition();
+	 * 
+	 * @param child
+	 */
 	public void addChild(CellInfo child) {
+		ensurePosition(child);
 		if (children != null) {
-			children.put(getNextPositionAvailable(), child);
+			children.add(child);
+			child.setPosition(children.indexOf(child));
 		}
 	}
 
-	public void addChild(CellInfo child, Integer index) {
+	/**
+	 * Add a new child in desired index position
+	 * 
+	 * @param child
+	 * @param index
+	 * @param overwrite
+	 *            true to replace the cell at index position, false to add it
+	 *            and move all other cells
+	 */
+	public void addChild(CellInfo child, int index, boolean overwrite) {
+		ensurePosition(overwrite ? index + 1 : index);
 		if (children != null) {
-			children.put(index, child);
+			if (child != null) {
+				child.setPosition(index);
+			}
+			if (!overwrite) {
+
+				children.add(index, child);
+
+				for (int i = index + 1; i < children.size(); i++) {
+					children.get(i).setPosition(
+							children.get(i).getPosition() + 1);
+				}
+			} else {
+				children.set(index, child);
+			}
 		}
 	}
 
-	private Integer getNextPositionAvailable() {
-		Integer nextPositionAvailable;
-		Integer lastKey = (children.size() > 0 ? children.lastKey() : null);
-
-		if (lastKey != null) {
-			nextPositionAvailable = lastKey + 1;
-		} else {
-			nextPositionAvailable = 0;
-		}
-
-		return nextPositionAvailable;
+	/**
+	 * Ensure right array capacity and cell position
+	 * 
+	 * @param child
+	 */
+	private void ensurePosition(CellInfo child) {
+		ensurePosition(child.getPosition());
 	}
 
+	private void ensurePosition(int index) {
+		for (int i = children.size(); i < index; i++) {
+			addChild(new CellInfo(null, null, i), i, false);
+		}
+	}
+
+	public void removeChild(int index) {
+		if (children != null && children.size() > index) {
+			children.remove(index);
+			for (int i = index; i < children.size(); i++) {
+				children.get(i).setPosition(children.get(i).getPosition() - 1);
+			}
+		}
+	}
+
+	public void setPosition(int position) {
+		this.position = position;
+	}
+
+	public int getPosition() {
+		return position;
+	}
 }

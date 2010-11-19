@@ -10,7 +10,8 @@
  * 
  * Contributors:
  * Marcel Gorri (Eldorado) - Bug [326793] - Improvements on the string arrays handling
- * 
+ * Paulo Faria (Eldorado) - Bug [326793] -  Fixing undo/redo edit for array items
+ * Matheus Lima (Eldorado) - Bug [326793] -  Fixed translation of strings
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.operations;
 
@@ -24,6 +25,7 @@ import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.editor.datatype.CellInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
+import org.eclipse.sequoyah.localization.editor.i18n.Messages;
 import org.eclipse.sequoyah.localization.editor.model.StringEditorPart;
 
 /**
@@ -92,27 +94,42 @@ public class EditCellOperation extends EditorOperation {
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 
-		getModel().addCell(newValue, key, column);
+		if (newValue != null && newValue.getPosition() >= 0) {
+			getModel().addCell(newValue, key, column, newValue.getPosition(),
+					true);
+		} else {
+
+			getModel().addCell(newValue, key, column);
+
+		}
+
 		if (newValue != null && !newValue.isDirty()) {
 			newValue.setDirty(true);
 		}
 		try {
 			if (newValue == null
 					|| (newValue != null && newValue.getValue() == null)) {
-				getEditorInput().removeCell(key, column);
+				if (newValue.getPosition() >= 0) {
+					getEditorInput().removeCell(key, column,
+							newValue.getPosition());
+				} else {
+					getEditorInput().removeCell(key, column);
+				}
 			} else {
 				if (rowInfo instanceof RowInfoLeaf) {
 					RowInfoLeaf leaf = (RowInfoLeaf) rowInfo;
 					if (leaf.getParent() == null) {
+						// single string
 						getEditorInput().setValue(column, key,
 								newValue.getValue());
 					} else {
-						getModel().addCell(newValue, key, column,
-								leaf.getPosition());
+						// array item
+						// return value from cell to the original
 						getEditorInput().setValue(column, key,
 								newValue.getValue(), leaf.getPosition());
 					}
 				} else {
+					// array
 					getEditorInput().setValue(column, key, newValue.getValue());
 				}
 			}
@@ -124,6 +141,11 @@ public class EditCellOperation extends EditorOperation {
 		}
 		getEditor().fireDirtyPropertyChanged();
 		getEditor().getEditorViewer().update(this.rowInfo, null);
+		if (rowInfo instanceof RowInfoLeaf
+				&& ((RowInfoLeaf) rowInfo).getParent() != null) {
+			getEditor().getEditorViewer().update(
+					((RowInfoLeaf) rowInfo).getParent(), null);
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -137,22 +159,59 @@ public class EditCellOperation extends EditorOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		getModel().addCell(oldValue, key, column);
+
+		if ((oldValue != null && oldValue.getPosition() >= 0)
+				|| (newValue != null && newValue.getPosition() >= 0)) {
+			getModel().addCell(
+					oldValue,
+					key,
+					column, /*
+							 * get position from oldValue first, than newValue.
+							 * If none, -1
+							 */
+					oldValue != null ? oldValue.getPosition()
+							: newValue != null ? newValue.getPosition() : -1,
+					true);
+		} else {
+
+			getModel().addCell(oldValue, key, column);
+
+		}
 		try {
-			if (oldValue != null) {
-				oldValue.setDirty(true);
-			}
 			if (oldValue != null && oldValue.getValue() != null) {
-				// TODO check if this method is working correctly
+				// there is old value
 				if (rowInfo instanceof RowInfoLeaf) {
 					RowInfoLeaf leaf = (RowInfoLeaf) rowInfo;
-					getEditorInput().setValue(column, key, newValue.getValue(),
-							leaf.getPosition());
+					if (leaf.getParent() == null) {
+						// string
+						getEditorInput().setValue(column, key,
+								oldValue.getValue());
+					} else {
+						// array item
+						getEditorInput().setValue(column, key,
+								oldValue.getValue(), leaf.getPosition());
+					}
+
 				} else {
+					// array
 					getEditorInput().setValue(column, key, oldValue.getValue());
 				}
 			} else {
-				getEditorInput().removeCell(key, column);
+				// there is no old value => remove cell
+				if (rowInfo instanceof RowInfoLeaf) {
+					RowInfoLeaf leaf = (RowInfoLeaf) rowInfo;
+					if (leaf.getParent() == null) {
+						// string
+						getEditorInput().removeCell(key, column);
+					} else {
+						// array item
+						getEditorInput().removeCell(key, column,
+								leaf.getPosition());
+					}
+				} else {
+					// array
+					getEditorInput().removeCell(key, column);
+				}
 			}
 		} catch (SequoyahException e) {
 			BasePlugin.logError("Error undoing cell edition: (" + column //$NON-NLS-1$
@@ -162,6 +221,9 @@ public class EditCellOperation extends EditorOperation {
 		}
 		getEditor().fireDirtyPropertyChanged();
 		getEditor().getEditorViewer().update(this.rowInfo, null);
+		if (rowInfo instanceof RowInfoLeaf && ((RowInfoLeaf)rowInfo).getParent() != null) {
+			getEditor().getEditorViewer().update(((RowInfoLeaf)rowInfo).getParent(), null);
+		}
 		return Status.OK_STATUS;
 	}
 

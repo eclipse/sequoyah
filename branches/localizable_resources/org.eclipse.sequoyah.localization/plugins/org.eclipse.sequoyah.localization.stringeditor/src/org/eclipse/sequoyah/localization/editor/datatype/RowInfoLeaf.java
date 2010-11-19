@@ -12,17 +12,14 @@ public class RowInfoLeaf extends RowInfo {
 
 	private final RowInfo parent;
 
-	private Integer position;
+	private int position;
 
-	public RowInfoLeaf(String key, RowInfo parent, Integer index,
+	public RowInfoLeaf(String key, RowInfo parent, int index,
 			Map<String, CellInfo> cells) {
 		super(key);
 		this.parent = parent;
 		this.cells = cells != null ? cells : new HashMap<String, CellInfo>();
-		if (parent != null) {
-			this.position = index;
-			parent.addChild(this, index);
-		}
+		this.position = parent != null ? index : -1;
 	}
 
 	/**
@@ -42,6 +39,7 @@ public class RowInfoLeaf extends RowInfo {
 	 */
 	public void removeCell(String columnID) {
 		cells.remove(columnID);
+
 	}
 
 	/**
@@ -67,8 +65,12 @@ public class RowInfoLeaf extends RowInfo {
 
 	@Override
 	public String toString() {
-		return "RowInfoLeaf [cells=" + cells + ", parent=" + parent
-				+ ", position=" + position + "]";
+		return "parent=" + (parent == null ? null : parent.getKey()) //$NON-NLS-1$
+				+ "; position=" + position; //$NON-NLS-1$
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return this == obj;
+	}
 }

@@ -11,6 +11,7 @@
  * Marcelo Marzola Bossoni (Eldorado) - Bug (289236) - Editor Permitting create 2 columns with same id
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Matheus Tait Lima (Eldorado) - Adapting localization plugins to accept automatic translations
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array key)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.i18n;
 
@@ -19,9 +20,41 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.sequoyah.localization.editor.i18n.messages"; //$NON-NLS-1$
 
+	public static String AddArrayAction_DescriptionPrefix;
+
+	public static String AddArrayItemAction_DescriptionPrefix;
+
+	public static String AddSingleStringAction_DescriptionPrefix;
+
+	public static String StringEditorColumnLabelProvider_0;
+
+	public static String CloneOperation_0;
+
+	public static String EditCellOperation_0;
+
+	public static String EditKeyOperation_OperationName;
+
+	public static String StringEditorPart_1;
+
+	public static String StringEditorPart_2;
+
+	public static String StringEditorPart_3;
+
+	public static String StringEditorPart_4;
+
+	public static String StringEditorPart_5;
+
+	public static String StringEditorPart_6;
+
+	public static String StringEditorPart_7;
+
 	public static String StringEditorPart_Apply;
 
 	public static String StringEditorPart_TranslateCellActionName;
+
+	public static String TranslateCellAction_NoResultsMessage;
+
+	public static String TranslateCellAction_NoResultsTitle;
 
 	public static String TranslationProgress_Connecting;
 
@@ -45,9 +78,17 @@ public class Messages extends NLS {
 
 	public static String StringEditorPart_AddColumnOperationName;
 
-	public static String StringEditorPart_AddKeyActionName;
+	public static String StringEditorPart_AddSingleStringActionName;
 
-	public static String StringEditorPart_AddKeyOperationName;
+	public static String StringEditorPart_AddSingleStringOperationName;
+
+	public static String StringEditorPart_AddArrayActionName;
+
+	public static String StringEditorPart_AddArrayOperationName;
+
+	public static String StringEditorPart_AddArrayItemActionName;
+
+	public static String StringEditorPart_AddArrayItemOperationName;
 
 	public static String StringEditorPart_HideAllColumnsActionName;
 
@@ -114,6 +155,10 @@ public class Messages extends NLS {
 	public static String StringEditorPart_TranslationErrorTargetExists;
 
 	public static String StringEditorViewerEditableTooltipSupport_TypeYourComment;
+
+	public static String StringEditorPart_ErrorOpeningEditor;
+
+	public static String StringEditorPart_ErrorOpeningEditorUnknown;
 
 	static {
 		// initialize resource bundle

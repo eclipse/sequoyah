@@ -8,13 +8,16 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
+ * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Changes on image and tooltip
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
 import java.text.NumberFormat;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.sequoyah.localization.editor.datatype.CellInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
@@ -25,6 +28,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -35,6 +39,8 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 	private final String column;
 
 	private final StringEditorPart editor;
+
+	private final Point tooltipShift;
 
 	private final Color searchColor = new Color(Display.getDefault(), 255, 200,
 			200);
@@ -49,6 +55,10 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 			StringEditorPart editor) {
 		this.column = column;
 		this.editor = editor;
+		// Workaround for tooltip on Ubuntu.. show tooltip under mouse cursor
+		this.tooltipShift = Platform.getOS().equals(Platform.OS_LINUX) ? new Point(
+				-6, -10) : new Point(5, -5);
+
 	}
 
 	/*
@@ -67,7 +77,7 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 					NumberFormat f = NumberFormat.getInstance();
 					f.setMinimumIntegerDigits(3);
 					// did not work :( char levelMarker = '\u2514';
-					return super.getText("  + " + f.format(row.getPosition()));
+					return super.getText(f.format(row.getPosition()));
 				}
 			}
 			return super.getText(((RowInfo) element).getKey());
@@ -93,13 +103,13 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 		if (column.equalsIgnoreCase(Messages.StringEditorPart_KeyLabel)) {
 			if (!row.getStatus().isOK()) {
 				StringBuilder builder = new StringBuilder();
+				builder.append(Messages.StringEditorColumnLabelProvider_0);
 				for (IStatus child : row.getStatus().getChildren()) {
+					builder.append("\n - "); //$NON-NLS-1$
 					builder.append(child.getMessage());
-					builder.append("\n"); //$NON-NLS-1$
 				}
 				comment = builder.toString();
 			}
-
 		} else if (editor.getShowCellComments()) {
 			if (row instanceof RowInfoLeaf) {
 				RowInfoLeaf leaf = (RowInfoLeaf) row;
@@ -142,6 +152,9 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 								SWT.COLOR_INFO_BACKGROUND);
 					}
 				}
+			} else {
+				c = Display.getDefault().getSystemColor(
+						SWT.COLOR_WIDGET_LIGHT_SHADOW);
 			}
 		}
 		return c;
@@ -200,4 +213,15 @@ public class StringEditorColumnLabelProvider extends ColumnLabelProvider {
 		}
 		return null;
 	}
+
+	@Override
+	public Point getToolTipShift(Object object) {
+		return tooltipShift;
+	}
+
+	@Override
+	public int getToolTipDisplayDelayTime(Object object) {
+		return 250;
+	}
+
 }

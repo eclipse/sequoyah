@@ -12,9 +12,8 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.datatype;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -30,7 +29,7 @@ public class RowInfo {
 	 */
 	private String key;
 
-	private final TreeMap<Integer, RowInfoLeaf> children = new TreeMap<Integer, RowInfoLeaf>();
+	private final List<RowInfoLeaf> children = new LinkedList<RowInfoLeaf>();
 
 	/*
 	 * This row status
@@ -75,17 +74,27 @@ public class RowInfo {
 		return rowStatus;
 	}
 
-	protected void addChild(RowInfoLeaf child, Integer index) {
-		children.put(index, child);
+	public void addChild(RowInfoLeaf child, Integer index) {
+		children.add(index, child);
+		for (int i = index + 1; i < children.size(); i++) {
+			children.get(i).setPosition(children.get(i).getPosition() + 1);
+		}
 	}
 
-	public Map<Integer, RowInfoLeaf> getChildren() {
-		return new LinkedHashMap<Integer, RowInfoLeaf>(children);
+	public void removeChild(int index) {
+		children.remove(index);
+		for (int i = index; i < children.size(); i++) {
+			children.get(i).setPosition(children.get(i).getPosition() - 1);
+		}
+	}
+
+	public List<RowInfoLeaf> getChildren() {
+		return children;
 	}
 
 	@Override
 	public String toString() {
-		return "RowInfo [key=" + key + ", children=" + children
-				+ ", rowStatus=" + rowStatus + "]";
+		return "key = " + key + "; Children count = " //$NON-NLS-1$ //$NON-NLS-2$
+				+ (children != null ? children.size() : "0"); //$NON-NLS-1$
 	}
 }

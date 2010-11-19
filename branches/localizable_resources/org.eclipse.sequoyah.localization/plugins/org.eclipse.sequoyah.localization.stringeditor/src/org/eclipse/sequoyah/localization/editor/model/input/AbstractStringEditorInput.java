@@ -11,7 +11,8 @@
  * Contributors:
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Marcel Gorri (Eldorado) - Adapting localization framework for automatic translations
- * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/make this editor a multipage one 
+ * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/make this editor a multipage one
+ * Paulo Faria (Eldorado) - Bug [326793] -  Fixing undo/redo edit for array items 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.input;
 
@@ -34,9 +35,9 @@ import org.eclipse.ui.IFileEditorInput;
 
 public abstract class AbstractStringEditorInput implements IEditorInput {
 
-	private List<IInputChangeListener> inputChangeListeners = new ArrayList<IInputChangeListener>();
+	private final List<IInputChangeListener> inputChangeListeners = new ArrayList<IInputChangeListener>();
 
-	private List<IEditorChangeListener> fileChangeListeners = new ArrayList<IEditorChangeListener>();
+	private final List<IEditorChangeListener> fileChangeListeners = new ArrayList<IEditorChangeListener>();
 
 	public abstract void init(IProject project) throws Exception;
 
@@ -90,22 +91,24 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	public abstract void removeColumn(String id);
 
 	/**
-	 * Set a translation value to the following key (array or single string) in the following language
+	 * Set a translation value to the following key (array or single string) in
+	 * the following language
 	 * 
 	 * @param columnID
 	 *            the column id
 	 * @param key
 	 *            the key
 	 * @param value
-	 *            the value        
-	 *            
+	 *            the value
+	 * 
 	 * @throws SequoyahException
 	 */
 	public abstract void setValue(String columnID, String key, String value)
 			throws SequoyahException;
-	
+
 	/**
-	 * Set a translation value to the following key (array item) in the following language
+	 * Set a translation value to the following key (array item) in the
+	 * following language
 	 * 
 	 * @param columnID
 	 *            the column id
@@ -114,12 +117,12 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	 * @param value
 	 *            the value
 	 * @param index
-	 * 			  index in the give array
-	 *            
+	 *            index in the give array
+	 * 
 	 * @throws SequoyahException
 	 */
-	public abstract void setValue(String columnID, String key, String value, Integer index)
-			throws SequoyahException;
+	public abstract void setValue(String columnID, String key, String value,
+			int index) throws SequoyahException;
 
 	/**
 	 * Get the value of a certain key at following column
@@ -198,13 +201,13 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	 * @param key
 	 */
 	public abstract void removeRow(String key);
-	
+
 	/**
 	 * Remove the child row with the following key, index from all columns
 	 * 
 	 * @param key
 	 */
-	public abstract void removeRow(String key, Integer index);
+	public abstract void removeChildRow(String key, int index);
 
 	/**
 	 * Remove the cell with the following key from the following column
@@ -212,6 +215,16 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	 * @param key
 	 */
 	public abstract void removeCell(String key, String columnID);
+
+	/**
+	 * Remove the cell with the following key from the following column into the
+	 * given position
+	 * 
+	 * @param key
+	 * @param columnID
+	 * @param position
+	 */
+	public abstract void removeCell(String key, String columnID, int position);
 
 	/**
 	 * Add a new row based on the following {@link RowInfo}
@@ -238,12 +251,25 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 			String tooltip) throws SequoyahException;
 
 	/**
+	 * Set the cell tooltip
+	 * 
+	 * @param columnID
+	 * @param key
+	 * @param tooltip
+	 * @throws SequoyahException
+	 */
+
+	public abstract void setCellTooltip(String text, String key,
+			String tooltipText, Integer position) throws SequoyahException;
+
+	/**
 	 * Do a Lightwight validation of the entire input This validation shall not
 	 * took much time to avoid lack of editor performance Preferentially,
 	 * validate top level errors, not doing a "bitwise verification"
 	 * 
 	 * @return the IStatus object of the validation results
 	 */
+
 	public abstract IStatus validate();
 
 	/**
@@ -359,4 +385,16 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	 * @return the String representation of the actual input state
 	 */
 	public abstract String getContentForFileAsText(IFileEditorInput editorInput);
+
+	/**
+	 * Rename a key to a new name
+	 * 
+	 * @param oldName
+	 *            the old name of the key
+	 * @param newName
+	 *            the new name of the key
+	 * @throws SequoyahException
+	 */
+	public abstract void renameKey(String oldName, String newName)
+			throws SequoyahException;
 }

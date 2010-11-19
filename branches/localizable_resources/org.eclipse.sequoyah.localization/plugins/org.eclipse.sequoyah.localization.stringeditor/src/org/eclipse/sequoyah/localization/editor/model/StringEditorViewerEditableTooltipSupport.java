@@ -8,7 +8,8 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Carlos Alberto Souto Junior (Eldorado) - Bug [326793] - Fixed the comment persistence issue
+ * Carlos Alberto Souto Junior (Eldorado) - Bug [326793] - Added new tooltip support method for StringArrayItem
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
@@ -29,9 +30,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 
 public class StringEditorViewerEditableTooltipSupport extends
 		ColumnViewerToolTipSupport {
@@ -47,10 +48,7 @@ public class StringEditorViewerEditableTooltipSupport extends
 	protected StringEditorViewerEditableTooltipSupport(ColumnViewer viewer,
 			int style, boolean manualActivation, StringEditorPart editor) {
 		super(viewer, style, manualActivation);
-		setHideDelay(0);
 		setHideOnMouseDown(false);
-		setPopupDelay(100);
-		setShift(new Point(-3, 0));
 		this.tooltipText = null;
 		this.viewer = viewer;
 		this.editor = editor;
@@ -112,37 +110,46 @@ public class StringEditorViewerEditableTooltipSupport extends
 
 	@Override
 	protected void afterHideToolTip(Event event) {
-
-		ViewerCell cell = viewer.getCell(new Point(currentTooltipEvent.x,
-				currentTooltipEvent.y));
-		if (cell.getColumnIndex() != 0) {
-			if (cell.getViewerRow().getElement() instanceof RowInfoLeaf) {
-				RowInfoLeaf row = ((RowInfoLeaf) cell.getViewerRow()
-						.getElement());
-				TableColumn column = ((Table) viewer.getControl())
-						.getColumn(cell.getColumnIndex());
-				if (tooltipText != null
-						&& !tooltipText.trim().equals(
-								row.getCells().get(column.getText())
-										.getComment())) {
-					row.getCells().get(column.getText())
-							.setComment(tooltipText.trim());
-					if (this.editor != null) {
-						try {
-							editor.getEditorInput()
-									.setCellTooltip(column.getText(),
-											row.getKey(), tooltipText);
-							editor.fireDirtyPropertyChanged();
-						} catch (SequoyahException e) {
-							BasePlugin.logError("Error setting cell tooltip: (" //$NON-NLS-1$
-									+ column.getText() + ", " + row.getKey() //$NON-NLS-1$
-									+ ") = " + tooltipText, e); //$NON-NLS-1$
+		if (currentTooltipEvent != null) {
+			ViewerCell cell = viewer.getCell(new Point(currentTooltipEvent.x,
+					currentTooltipEvent.y));
+			if (cell.getColumnIndex() != 0) {
+				if (cell.getViewerRow().getElement() instanceof RowInfoLeaf) {
+					RowInfoLeaf row = ((RowInfoLeaf) cell.getViewerRow()
+							.getElement());
+					TreeColumn column = ((Tree) viewer.getControl())
+							.getColumn(cell.getColumnIndex());
+					if (tooltipText != null
+							&& !tooltipText.trim().equals(
+									row.getCells().get(column.getText())
+											.getComment())) {
+						row.getCells().get(column.getText())
+								.setComment(tooltipText.trim());
+						if (this.editor != null) {
+							try {
+								if (row.getParent() == null) {
+									editor.getEditorInput().setCellTooltip(
+											column.getText(), row.getKey(),
+											tooltipText);
+								} else {
+									editor.getEditorInput().setCellTooltip(
+											column.getText(), row.getKey(),
+											tooltipText, row.getPosition());
+								}
+								editor.fireDirtyPropertyChanged();
+							} catch (SequoyahException e) {
+								BasePlugin.logError(
+										"Error setting cell tooltip: (" //$NON-NLS-1$
+												+ column.getText()
+												+ ", " + row.getKey() //$NON-NLS-1$
+												+ ") = " + tooltipText, e); //$NON-NLS-1$
+							}
 						}
 					}
 				}
+				this.tooltipText = null;
+				currentTooltipEvent = null;
 			}
-			this.tooltipText = null;
-			currentTooltipEvent = null;
 		}
 		super.afterHideToolTip(event);
 	}

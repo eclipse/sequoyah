@@ -33,7 +33,7 @@ public class AddKeysOperation extends EditorOperation {
 			RowInfo[] rows) {
 		super(label, editor);
 		for (int i = 0; i < rows.length; i++) {
-			this.addKeyOperations.add(new AddKeyOperation(label, editor,
+			this.addKeyOperations.add(i, new AddKeyOperation(label, editor,
 					rows[i]));
 		}
 	}
@@ -61,8 +61,8 @@ public class AddKeysOperation extends EditorOperation {
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		for (AddKeyOperation addKeyOperation : this.addKeyOperations) {
-			addKeyOperation.redo(monitor, info);
+		for (int i = 0; i < this.addKeyOperations.size(); i++) {
+			this.addKeyOperations.get(i).execute(monitor, info);
 		}
 		return Status.OK_STATUS;
 	}
@@ -77,8 +77,8 @@ public class AddKeysOperation extends EditorOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		for (AddKeyOperation addKeyOperation : this.addKeyOperations) {
-			addKeyOperation.undo(monitor, info);
+		for (int i = this.addKeyOperations.size(); i > 0; i--) {
+			this.addKeyOperations.get(i - 1).undo(monitor, info);
 		}
 		return Status.OK_STATUS;
 	}

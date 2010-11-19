@@ -21,8 +21,10 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayNode;
+import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.swt.SWT;
@@ -30,8 +32,10 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -57,6 +61,8 @@ public class NewRowInputDialog extends Dialog {
 
 	private IProject project = null;
 
+	ILocalizationSchema localizationSchema = null;
+
 	private String dialogTitle = null;
 
 	private String key;
@@ -64,6 +70,8 @@ public class NewRowInputDialog extends Dialog {
 	private boolean isArray = false;
 
 	private int numEntries = DEFAULT_NUM_ENTRIES;
+
+	Label errorMsg = null;
 
 	Combo addNewCombo = null;
 
@@ -100,6 +108,8 @@ public class NewRowInputDialog extends Dialog {
 			String dialogTitle) {
 		super(parentShell);
 		this.project = project;
+		this.localizationSchema = LocalizationManager.getInstance()
+				.getLocalizationSchema(project);
 		this.dialogTitle = dialogTitle;
 	}
 
@@ -158,6 +168,12 @@ public class NewRowInputDialog extends Dialog {
 		newRowComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true));
 		newRowComposite.setLayout(new GridLayout(2, false));
+
+		errorMsg = new Label(newRowComposite, SWT.NONE);
+		errorMsg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,
+				1));
+		errorMsg.setForeground(new Color(getShell().getDisplay(), new RGB(255,
+				0, 0)));
 
 		/*
 		 * Selection group
@@ -365,12 +381,14 @@ public class NewRowInputDialog extends Dialog {
 					.getLocalizationProject();
 		} catch (IOException e) {
 
+		} catch (SequoyahException e) {
+
 		}
 
-		Set<ArrayStringNode> allStringArrays = localizationProject
+		Set<StringArrayNode> allStringArrays = localizationProject
 				.getAllStringArrays();
 
-		Iterator<ArrayStringNode> iterator = allStringArrays.iterator();
+		Iterator<StringArrayNode> iterator = allStringArrays.iterator();
 
 		while (iterator.hasNext()) {
 			arrayNames.add(iterator.next().getKey());
@@ -460,51 +478,68 @@ public class NewRowInputDialog extends Dialog {
 	private void validateSelection() {
 
 		boolean result = true;
+		String msg = ""; //$NON-NLS-1$
 
 		/*
-		 * Strings
+		 * Check if keys can have blank spaces and validate it accordingly
 		 */
-		if (this.addNewCombo.getText().equals(Messages.NewRowDialog_String)) {
-			if (this.textNewString.getText().trim().length() == 0) {
-				result = false;
-			}
-		}
-		/*
-		 * Arrays
-		 */
-		else {
-			// existing
-			if (this.existingArray.getSelection()) {
-				if (this.arraysCombo.getText().equals("")) { //$NON-NLS-1$
-					result = false;
-				}
-				try {
-					int entries = Integer.parseInt(this.unitsExistingArray
-							.getText());
-					if (entries <= 0) {
-						result = false;
-					}
-				} catch (NumberFormatException e) {
+		boolean keyAcceptsBlankSpaces = localizationSchema
+				.keyAcceptsBlankSpaces();
+
+		if ((!keyAcceptsBlankSpaces)
+				&& (this.textNewString.getText().contains(" "))) { //$NON-NLS-1$
+
+			msg = Messages.NewRowDialog_Error_RowKeyHasBlankSpaces;
+			result = false;
+
+		} else {
+
+			/*
+			 * Strings
+			 */
+			if (this.addNewCombo.getText().equals(Messages.NewRowDialog_String)) {
+				if (this.textNewString.getText().trim().length() == 0) {
 					result = false;
 				}
 			}
-			// new
+			/*
+			 * Arrays
+			 */
 			else {
-				if (this.textNewArray.getText().trim().length() == 0) {
-					result = false;
-				}
-				try {
-					int entries = Integer
-							.parseInt(this.unitsNewArray.getText());
-					if (entries <= 0) {
+				// existing
+				if (this.existingArray.getSelection()) {
+					if (this.arraysCombo.getText().equals("")) { //$NON-NLS-1$
 						result = false;
 					}
-				} catch (NumberFormatException e) {
-					result = false;
+					try {
+						int entries = Integer.parseInt(this.unitsExistingArray
+								.getText());
+						if (entries <= 0) {
+							result = false;
+						}
+					} catch (NumberFormatException e) {
+						result = false;
+					}
+				}
+				// new
+				else {
+					if (this.textNewArray.getText().trim().length() == 0) {
+						result = false;
+					}
+					try {
+						int entries = Integer.parseInt(this.unitsNewArray
+								.getText());
+						if (entries <= 0) {
+							result = false;
+						}
+					} catch (NumberFormatException e) {
+						result = false;
+					}
 				}
 			}
 		}
 
 		getButton(IDialogConstants.OK_ID).setEnabled(result);
+		errorMsg.setText(msg);
 	}
 }

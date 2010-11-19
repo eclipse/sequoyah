@@ -23,8 +23,8 @@ import org.eclipse.sequoyah.localization.tools.persistence.PersistableAttributes
 /**
  * This class stores a comment associated to a Node.
  * 
- * It's intended to be persisted as part of the extra-info related to a
- * Node object
+ * It's intended to be persisted as part of the extra-info related to a Node
+ * object
  */
 public class NodeComment implements IPersistentExtraData {
 

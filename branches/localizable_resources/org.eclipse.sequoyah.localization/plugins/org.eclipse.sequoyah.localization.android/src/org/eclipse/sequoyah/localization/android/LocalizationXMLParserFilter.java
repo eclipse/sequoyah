@@ -33,7 +33,7 @@ import org.w3c.dom.traversal.NodeFilter;
  */
 public class LocalizationXMLParserFilter implements LSParserFilter {
 
-	/**
+/**
 	 * Checks if the content of a node from a DOM Document is from text type, 
 	 * and if so, checks if it contains any '<' or '>' characters. In this case, 
 	 * escapes correctly those characters by '&lt' and '&gt'. 
@@ -43,10 +43,11 @@ public class LocalizationXMLParserFilter implements LSParserFilter {
 	 * @return accept the node
 	 */
 	public short acceptNode(Node nodeArg) {
-		// If the node is of text type, it could contain '<' or '>' that should not be escaped
+		// If the node is of text type, it could contain '<' or '>' that should
+		// not be escaped
 		// automatically, but replaced by '&lt' or '&gt' instead
 		if (nodeArg.getNodeName() == "#text") { //$NON-NLS-1$
-			if ((nodeArg.getNodeValue().contains("<"))||(nodeArg.getNodeValue().contains(">"))){ //$NON-NLS-1$ //$NON-NLS-2$
+			if ((nodeArg.getNodeValue().contains("<")) || (nodeArg.getNodeValue().contains(">"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				String content = nodeArg.getNodeValue().replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
 				content = content.replaceAll(">", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
 				nodeArg.setNodeValue(content);
@@ -56,7 +57,7 @@ public class LocalizationXMLParserFilter implements LSParserFilter {
 	}
 
 	/**
-	 * Tells the LSParser what types of nodes to show to the method 
+	 * Tells the LSParser what types of nodes to show to the method
 	 * LSParserFilter.acceptNode.
 	 * 
 	 * @return show all nodes
@@ -66,13 +67,15 @@ public class LocalizationXMLParserFilter implements LSParserFilter {
 	}
 
 	/**
-	 * The parser will call this method after each Element start tag has been scanned, but 
-	 * before the remainder of the Element is processed. The intent is to allow the element, 
-	 * including any children, to be efficiently skipped. 
+	 * The parser will call this method after each Element start tag has been
+	 * scanned, but before the remainder of the Element is processed. The intent
+	 * is to allow the element, including any children, to be efficiently
+	 * skipped.
 	 * 
 	 * @param elementArg
-	 *            The newly encountered element. 
-	 * @return true if the Element should be included in the DOM document being built. 
+	 *            The newly encountered element.
+	 * @return true if the Element should be included in the DOM document being
+	 *         built.
 	 */
 	public short startElement(Element elementArg) {
 		return FILTER_ACCEPT;

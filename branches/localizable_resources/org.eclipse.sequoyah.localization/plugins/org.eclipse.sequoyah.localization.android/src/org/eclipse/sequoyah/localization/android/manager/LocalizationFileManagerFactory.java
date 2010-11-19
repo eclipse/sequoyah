@@ -78,8 +78,10 @@ public class LocalizationFileManagerFactory {
 	public ILocalizationFileManager createLocalizationFileManager(
 			String className) {
 		ILocalizationFileManager locFileManager = null;
+
 		try {
-			// Loading a class as the first step in order to be able to retrieve
+			// Loading a class as the first step in order to be able to
+			// retrieve
 			// it from the hash map based on its name
 			Class.forName(className);
 			// Creates a class of the desired type
@@ -115,20 +117,22 @@ public class LocalizationFileManagerFactory {
 			BasePlugin.logError(
 					"Could not call method for LocalizationFileManager", e); //$NON-NLS-1$
 		}
+
 		return locFileManager;
+
 	}
 
-//	public static void main(String[] args) {
-//		ILocalizationFileManager locFileManager1 = LocalizationFileManagerFactory
-//				.getInstance().createLocalizationFileManager(
-//						StringLocalizationFileManager.class.getName());
-//		System.out.println("locFileManager1: "
-//				+ locFileManager1.getClass().getName());
-//
-//		ILocalizationFileManager locFileManager2 = LocalizationFileManagerFactory
-//				.getInstance().createLocalizationFileManager(
-//						SoundLocalizationFileManager.class.getName());
-//		System.out.println("locFileManager2: "
-//				+ locFileManager2.getClass().getName());
-//	}
+	// public static void main(String[] args) {
+	// ILocalizationFileManager locFileManager1 = LocalizationFileManagerFactory
+	// .getInstance().createLocalizationFileManager(
+	// StringLocalizationFileManager.class.getName());
+	// System.out.println("locFileManager1: "
+	// + locFileManager1.getClass().getName());
+	//
+	// ILocalizationFileManager locFileManager2 = LocalizationFileManagerFactory
+	// .getInstance().createLocalizationFileManager(
+	// SoundLocalizationFileManager.class.getName());
+	// System.out.println("locFileManager2: "
+	// + locFileManager2.getClass().getName());
+	// }
 }

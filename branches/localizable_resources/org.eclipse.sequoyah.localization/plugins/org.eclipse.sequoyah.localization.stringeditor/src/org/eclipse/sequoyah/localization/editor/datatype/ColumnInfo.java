@@ -31,7 +31,7 @@ public class ColumnInfo {
 	private String tooltip;
 
 	/*
-	 * The cells of this column
+	 * The cells of this column where the key is the row key
 	 */
 	private final Map<String, CellInfo> cells;
 
@@ -122,6 +122,27 @@ public class ColumnInfo {
 	}
 
 	/**
+	 * get the cell with the following key
+	 * 
+	 * @param key
+	 */
+	public CellInfo getCell(String key) {
+		return cells.get(key);
+	}
+
+	/**
+	 * Change a key name to another value
+	 * 
+	 * @param old
+	 * @param newKey
+	 */
+	public void renameKey(String oldKey, String newKey) {
+		CellInfo theCell = getCell(oldKey);
+		removeCell(oldKey);
+		addCell(newKey, theCell);
+	}
+
+	/**
 	 * Check if we can remove this column
 	 * 
 	 * @return
@@ -132,7 +153,7 @@ public class ColumnInfo {
 
 	@Override
 	public String toString() {
-		return "ColumnInfo [id=" + id + ", cells=" + cells + "]";
+		return "ColumnInfo [id=" + id + ", cells=" + cells + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 }

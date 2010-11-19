@@ -8,7 +8,7 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (validate key) 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.providers;
 
@@ -22,4 +22,12 @@ public interface ICellValidator {
 	public void init(IProject project) throws Exception;
 
 	public IStatus isCellValid(String columnID, String key, String value);
+
+	/**
+	 * Validates if the key is valid
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public IStatus isKeyValid(String key);
 }

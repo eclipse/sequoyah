@@ -12,8 +12,8 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.persistence;
 
-import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 
 /**
  * 

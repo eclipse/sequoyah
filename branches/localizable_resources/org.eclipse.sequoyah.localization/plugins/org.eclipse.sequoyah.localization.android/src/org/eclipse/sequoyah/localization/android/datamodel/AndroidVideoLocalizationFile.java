@@ -33,20 +33,20 @@ public class AndroidVideoLocalizationFile extends VideoLocalizationFile {
 				AndroidVideoLocalizationFile.class.getName(),
 				AndroidVideoLocalizationFile.class);
 	}
-	
+
 	/**
 	 * Default constructor.
 	 */
-	public AndroidVideoLocalizationFile (){
+	public AndroidVideoLocalizationFile() {
 	}
-	
+
 	/**
 	 * 
 	 */
 	public AndroidVideoLocalizationFile(LocalizationFileBean bean) {
 		super(bean);
 	}
-	
+
 	/**
 	 * ImageLocalizationFile knows how to create itself.
 	 * 

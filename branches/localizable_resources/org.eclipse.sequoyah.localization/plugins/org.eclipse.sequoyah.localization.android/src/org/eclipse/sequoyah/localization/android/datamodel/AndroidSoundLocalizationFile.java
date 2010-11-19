@@ -30,20 +30,20 @@ public class AndroidSoundLocalizationFile extends SoundLocalizationFile {
 				AndroidSoundLocalizationFile.class.getName(),
 				AndroidSoundLocalizationFile.class);
 	}
-	
+
 	/**
 	 * Default constructor.
 	 */
-	public AndroidSoundLocalizationFile (){
+	public AndroidSoundLocalizationFile() {
 	}
-	
+
 	/**
 	 * 
 	 */
 	public AndroidSoundLocalizationFile(LocalizationFileBean bean) {
 		super(bean);
 	}
-	
+
 	/**
 	 * ImageLocalizationFile knows how to create itself.
 	 * 

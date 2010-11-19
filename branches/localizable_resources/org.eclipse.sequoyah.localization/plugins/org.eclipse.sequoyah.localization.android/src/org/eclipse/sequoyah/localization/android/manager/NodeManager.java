@@ -6,7 +6,7 @@
  * 
  * Contributors:
  * Marcel Gorri (Eldorado) - Bug 326793 -  Improvements on the String Arrays handling  
- * 
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (Refactor visitDomXYZ and NodeManagers)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.manager;
 
@@ -24,8 +24,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- *
- *
+ * Encapsulates the knowledge about manipulating String XML file for Android
  */
 public abstract class NodeManager {
 
@@ -38,6 +37,13 @@ public abstract class NodeManager {
 	public abstract void createFile(Document document, Element resources,
 			LocalizationFile localizationFile);
 
+	/**
+	 * Creates a comment inside XML file
+	 * 
+	 * @param document
+	 * @param stringNode
+	 * @param string
+	 */
 	public void createOrUpdateComment(Document document, StringNode stringNode,
 			Element string) {
 		NodeComment nodeComment = stringNode.getNodeComment();
@@ -100,16 +106,5 @@ public abstract class NodeManager {
 
 	public abstract void updateFile(LocalizationFile locFile,
 			Map<String, StringNode> singleStringsToUpdateOrAdd);
-
-	public abstract void visitToAddDOMChildren(Document document,
-			Map<String, StringNode> stringsToUpdateOrAdd, Element resource);
-
-	public abstract void visitToUpdateDOMChildren(Document document,
-			Node visitingNode, String attrName,
-			Map<String, StringNode> singleStringsToUpdateOrAdd);
-
-	public abstract void visitToRemoveDOMChildren(Document document,
-			Node visitingNode, String attrName,
-			Map<String, StringNode> arrayItemsToRemove);
 
 }

@@ -56,7 +56,7 @@ public class AddKeyOperation extends EditorOperation {
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		getEditor().addRow(row);
-		getEditor().getEditorViewer().refresh();
+		getEditor().refresh();
 		return Status.OK_STATUS;
 	}
 
@@ -71,7 +71,7 @@ public class AddKeyOperation extends EditorOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		getEditor().removeRow(row.getKey());
-		getEditor().getEditorViewer().refresh();
+		getEditor().refresh();
 		return Status.OK_STATUS;
 	}
 

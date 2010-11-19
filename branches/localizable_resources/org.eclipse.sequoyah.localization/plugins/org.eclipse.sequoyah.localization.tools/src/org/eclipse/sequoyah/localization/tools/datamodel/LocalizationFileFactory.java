@@ -80,56 +80,61 @@ public class LocalizationFileFactory {
 		try {
 			// Loading a class as the first step in order to be able to retrieve
 			// it from the hash map based on its name
-			Class.forName(bean.getType().getClass().getName());
+			Class.forName(bean.getType());
 			// Creates a class of the desired type
 			Class c = Class.forName(hashMap.get(bean.getType()).toString()
 					.substring(6));
 			// Instantiates a new object to invoke its methods
 			Object o = c.newInstance();
 			// Creates the desired method
-			Method mthd = c.getMethod("create", LocalizationFileBean.class);  //$NON-NLS-1$
+			Method mthd = c.getMethod("create", LocalizationFileBean.class); //$NON-NLS-1$
 			// Invokes the method of the desired type
 			locFile = (LocalizationFile) mthd.invoke(o, bean);
 		} catch (ClassNotFoundException e) {
 			BasePlugin.logError("Could not find class for LocalizationFile", e); //$NON-NLS-1$
 		} catch (InstantiationException e) {
-			BasePlugin.logError("Could not instantiate class for LocalizationFile", e); //$NON-NLS-1$
+			BasePlugin.logError(
+					"Could not instantiate class for LocalizationFile", e); //$NON-NLS-1$
 		} catch (IllegalAccessException e) {
-			BasePlugin.logError("Could not access class or method for LocalizationFile", e); //$NON-NLS-1$
+			BasePlugin.logError(
+					"Could not access class or method for LocalizationFile", e); //$NON-NLS-1$
 		} catch (SecurityException e) {
 			BasePlugin.logError("Access to method denied", e); //$NON-NLS-1$
 		} catch (NoSuchMethodException e) {
-			BasePlugin.logError("Could not find method for LocalizationFile", e); //$NON-NLS-1$
+			BasePlugin
+					.logError("Could not find method for LocalizationFile", e); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
-			BasePlugin.logError("Invalid arguments for method for LocalizationFile", e); //$NON-NLS-1$
+			BasePlugin.logError(
+					"Invalid arguments for method for LocalizationFile", e); //$NON-NLS-1$
 		} catch (InvocationTargetException e) {
-			BasePlugin.logError("Could not call method for LocalizationFile", e); //$NON-NLS-1$
+			BasePlugin
+					.logError("Could not call method for LocalizationFile", e); //$NON-NLS-1$
 		}
 		return locFile;
 	}
 
-//	public static void main(String[] args) {
-//		IFile file = null;
-//		LocaleInfo localeInfo = new LocaleInfo();
-//		StringNode node = new StringNode("", "");
-//		StringArray array = new StringArray("");
-//
-//		List<StringNode> stringNodes = new ArrayList<StringNode>();
-//		stringNodes.add(node);
-//		List<StringArray> stringArrays = new ArrayList<StringArray>();
-//		stringArrays.add(array);
-//
-//		LocalizationFileBean bean = new LocalizationFileBean(
-//				StringLocalizationFile.class.getName(), file, localeInfo,
-//				stringNodes, stringArrays);
-//		LocalizationFile locFile1 = LocalizationFileFactory.getInstance()
-//				.createLocalizationFile(bean);
-//		System.out.println("locFile1: " + locFile1.getClass().getName());
-//		bean = new LocalizationFileBean(ImageLocalizationFile.class.getName(),
-//				file, localeInfo, null, null);
-//		LocalizationFile locFile2 = LocalizationFileFactory.getInstance()
-//				.createLocalizationFile(bean);
-//		System.out.println("locFile2: " + locFile2.getClass().getName());
-//
-//	}
+	// public static void main(String[] args) {
+	// IFile file = null;
+	// LocaleInfo localeInfo = new LocaleInfo();
+	// StringNode node = new StringNode("", "");
+	// StringArray array = new StringArray("");
+	//
+	// List<StringNode> stringNodes = new ArrayList<StringNode>();
+	// stringNodes.add(node);
+	// List<StringArray> stringArrays = new ArrayList<StringArray>();
+	// stringArrays.add(array);
+	//
+	// LocalizationFileBean bean = new LocalizationFileBean(
+	// StringLocalizationFile.class.getName(), file, localeInfo,
+	// stringNodes, stringArrays);
+	// LocalizationFile locFile1 = LocalizationFileFactory.getInstance()
+	// .createLocalizationFile(bean);
+	// System.out.println("locFile1: " + locFile1.getClass().getName());
+	// bean = new LocalizationFileBean(ImageLocalizationFile.class.getName(),
+	// file, localeInfo, null, null);
+	// LocalizationFile locFile2 = LocalizationFileFactory.getInstance()
+	// .createLocalizationFile(bean);
+	// System.out.println("locFile2: " + locFile2.getClass().getName());
+	//
+	// }
 }

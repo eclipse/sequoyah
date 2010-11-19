@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,11 +17,28 @@
  * Paulo Faria (Eldorado) - Add option to expand rows for global maximum height (default) or let all lines with row 1 and include scroll for items with multiple lines
  * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/make this editor a multipage one
  * Paulo Faria (Eldorado) - Bug [326793] -  Improvements on the String Arrays handling 
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add single key and edit key in place)
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Allow edit keys in place
+ * Matheus Lima (Eldorado) - Bug [326793] - Fixed the update viewer so search values and highlight cells also work for array items
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array key)
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array item)
+ * Flavio Vantin (Eldorado) - Bug [326793] - Improvements on LFE tool bar
+ * Fabricio Violin (Eldorado) - Bug [326793] - Finishing new LFE workflow improvements (add array item)
+ * Flavio Vantin (Eldorado) � Bug [326793] - Improvements finished (remove key action)
+ * Carlos Alberto Souto Junior (Eldorado) - Bug [326793] - Fixed multiline behavior on keys columns
+ * Matheus Lima (Eldorado) � Bug [326793] - Fixing batch translation of cells (still do not work for array items
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
+ * Paulo Faria (Eldorado) - Bug [326793] -  Fix enablement for operations in columns (after change from Table to Tree)
+ * Paulo Faria (Eldorado) - Bug [326793] -  Validating duplicated items
+ * Thiago Junqueira (Eldorado) - Bug [326793] - Improved exception treatment in the init method a bit.
+ * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Added multiplicity behavior to add actions
+ * Paulo Faria (Eldorado) - Bug [326793] -  Enable delete only if there is an item selected
+ * Paulo Faria (Eldorado) - Bug [326793] -  Bug Fix: Highlight lost if modify array item and changes to the tab specific from the change
+ * Carlos Alberto Souto Junior (Eldorado) - Bug [326793] - Fixed the column clicking behavior when pressing the control key on Mac OS X 
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,7 +57,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -49,22 +65,14 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CellNavigationStrategy;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
-import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.FocusCellHighlighter;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TableViewerEditor;
-import org.eclipse.jface.viewers.TableViewerFocusCellManager;
-import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.TreeViewerEditor;
+import org.eclipse.jface.viewers.TreeViewerFocusCellManager;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -80,20 +88,24 @@ import org.eclipse.sequoyah.localization.editor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.IModelChangedListener;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
-import org.eclipse.sequoyah.localization.editor.datatype.TranslationInfo;
 import org.eclipse.sequoyah.localization.editor.i18n.Messages;
 import org.eclipse.sequoyah.localization.editor.model.EditorSession.PROPERTY;
+import org.eclipse.sequoyah.localization.editor.model.actions.AddArrayAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.AddArrayItemAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.AddColumnAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.AddSingleStringAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.CloneColumnAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.HideShowAllColumnsAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.HideShowColumnAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.MenuDropDownAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.RemoveColumnAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.RemoveKeyAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.RevertToSavedAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.TranslateCellAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.TranslateColumnAction;
 import org.eclipse.sequoyah.localization.editor.model.input.AbstractStringEditorInput;
 import org.eclipse.sequoyah.localization.editor.model.input.IInputChangeListener;
-import org.eclipse.sequoyah.localization.editor.model.operations.AddColumnOperation;
-import org.eclipse.sequoyah.localization.editor.model.operations.AddKeyOperation;
-import org.eclipse.sequoyah.localization.editor.model.operations.AddKeysOperation;
-import org.eclipse.sequoyah.localization.editor.model.operations.CloneOperation;
-import org.eclipse.sequoyah.localization.editor.model.operations.EditCellOperation;
-import org.eclipse.sequoyah.localization.editor.model.operations.EditCellsOperation;
 import org.eclipse.sequoyah.localization.editor.model.operations.EditorOperation;
-import org.eclipse.sequoyah.localization.editor.model.operations.RemoveColumnOperation;
-import org.eclipse.sequoyah.localization.editor.model.operations.RemoveKeyOperation;
 import org.eclipse.sequoyah.localization.editor.model.operations.RevertColumnToSavedStateOperation;
 import org.eclipse.sequoyah.localization.editor.providers.ContentProvider;
 import org.eclipse.sequoyah.localization.editor.providers.ICellValidator;
@@ -122,12 +134,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -173,21 +184,24 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 */
 	class ColumnSelectionListener implements SelectionListener {
 
-		private final TableViewer viewer;
+		private final TreeViewer viewer;
 
-		public ColumnSelectionListener(TableViewer theViewer) {
+		public ColumnSelectionListener(TreeViewer theViewer) {
 			this.viewer = theViewer;
 		}
 
 		public void widgetSelected(SelectionEvent e) {
-			TableColumn column = (TableColumn) e.widget;
-			this.viewer.getTable().setSortColumn(column);
-			this.viewer
-					.getTable()
-					.setSortDirection(
-							this.viewer.getTable().getSortDirection() == SWT.DOWN ? SWT.UP
-									: SWT.DOWN);
-			this.viewer.refresh();
+			if ((e.stateMask & SWT.CTRL) == 0) {
+				TreeColumn column = (TreeColumn) e.widget;
+
+				this.viewer.getTree().setSortColumn(column);
+				this.viewer
+						.getTree()
+						.setSortDirection(
+								this.viewer.getTree().getSortDirection() == SWT.DOWN ? SWT.UP
+										: SWT.DOWN);
+				this.viewer.refresh();
+			}
 		}
 
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -195,627 +209,11 @@ public class StringEditorPart extends MultiPageEditorPart {
 		}
 	}
 
-	/**
-	 * A editing support for this editor cells. Only the non keys cells are
-	 * editable
-	 */
-	class CellEditingSupport extends EditingSupport {
-
-		private final String columnID;
-
-		private final CellEditor editor;
-
-		public CellEditingSupport(TableViewer viewer, String columnID) {
-			super(viewer);
-			this.columnID = columnID;
-			this.editor = new TextCellEditor(viewer.getTable(), SWT.MULTI
-					| SWT.V_SCROLL);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang.Object)
-		 */
-		@Override
-		protected boolean canEdit(Object element) {
-			return !columnID
-					.equalsIgnoreCase(Messages.StringEditorPart_KeyLabel);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.
-		 * Object)
-		 */
-		@Override
-		protected CellEditor getCellEditor(Object element) {
-			return editor;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.EditingSupport#getValue(java.lang.Object)
-		 */
-		@Override
-		protected Object getValue(Object element) {
-			CellInfo info = null;
-			if (element instanceof RowInfoLeaf) {
-				info = ((RowInfoLeaf) element).getCells().get(columnID);
-			}
-			return ((info != null) && (info.getValue() != null)) ? info
-					.getValue() : ""; //$NON-NLS-1$
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.EditingSupport#setValue(java.lang.Object,
-		 * java.lang.Object)
-		 */
-		@Override
-		protected void setValue(Object element, Object value) {
-			if (element instanceof RowInfoLeaf) {
-				RowInfoLeaf theRow = (RowInfoLeaf) element;
-				CellInfo oldCell = theRow.getCells().get(columnID);
-				CellInfo newCell = null;
-
-				String EOL = System.getProperty("line.separator"); //$NON-NLS-1$
-				String oldValue = ((oldCell != null) ? oldCell.getValue() : ""); //$NON-NLS-1$
-				String newValue = ((String) value).replaceAll(EOL, "\n"); //$NON-NLS-1$
-				if (newValue.equals(oldValue)) {
-					return;
-				}
-
-				/*
-				 * If our new value is a valid one, we create a new cell
-				 */
-				if (value.toString().length() > 0) {
-					/*
-					 * if our old cell isn't a null one check if the values
-					 * aren't the same
-					 */
-					if (oldCell != null) {
-						/*
-						 * Our old cell is different from our new one
-						 */
-						if (((oldCell.getValue() != null) && !oldCell
-								.getValue().equals(value.toString()))
-								|| (oldCell.getValue() == null)) {
-							newCell = new CellInfo(value.toString(),
-									oldCell.getComment());
-						}
-					} else {
-						newCell = new CellInfo(value.toString(), null);
-					}
-				} else {
-					if (oldCell != null) {
-						newCell = new CellInfo(null, null);
-					}
-				}
-				if (newCell != null) {
-					newCell.setDirty(true);
-					EditCellOperation operation = new EditCellOperation(
-							theRow.getKey(), columnID, oldCell, newCell,
-							StringEditorPart.this, theRow);
-					executeOperation(operation);
-				}
-			}
-		}
-	}
-
-	class TranslateColumnAction extends Action {
-		public TranslateColumnAction() {
-			super(Messages.StringEditorPart_TranslateActionName);
-			this.setEnabled(activeColumn != 0);
-		}
-
-		@Override
-		public void run() {
-
-			TableColumn originalColumn = getEditorViewer().getTable()
-					.getColumn(activeColumn);
-
-			final TranslationInfo newColumnInfo = StringEditorPart.this
-					.getContentProvider().getOperationProvider()
-					.getTranslatedColumnInfo(originalColumn.getText());
-
-			if (newColumnInfo != null) {
-				try {
-					PlatformUI.getWorkbench().getProgressService()
-							.run(false, false, new IRunnableWithProgress() {
-								public void run(IProgressMonitor monitor)
-										throws InvocationTargetException,
-										InterruptedException {
-
-									monitor.setTaskName(Messages.TranslationProgress_Connecting);
-
-									TableColumn originalColumn = getEditorViewer()
-											.getTable().getColumn(activeColumn);
-
-									if ((newColumnInfo != null)
-											&& (getColumnByID(newColumnInfo
-													.getId()) == null)) {
-
-										if (getEditorInput().translateColumn(
-												originalColumn.getText(),
-												newColumnInfo, monitor)) {
-
-											getEditorInput().getValues(
-													newColumnInfo.getId());
-											AddColumnOperation operation = new AddColumnOperation(
-													Messages.StringEditorPart_TranslateActionName,
-													StringEditorPart.this,
-													newColumnInfo);
-
-											operation
-													.addContext(getUndoContext());
-											executeOperation(operation);
-										} else {
-											monitor.setCanceled(true);
-											MessageDialog
-													.openInformation(
-															getEditorSite()
-																	.getShell(),
-															Messages.StringEditorPart_TranslationError,
-															Messages.StringEditorPart_TranslationErrorCheckConnetion);
-										}
-
-									} else {
-										monitor.setCanceled(true);
-										MessageDialog
-												.openInformation(
-														getEditorSite()
-																.getShell(),
-														Messages.StringEditorPart_TranslationError,
-														Messages.StringEditorPart_TranslationErrorTargetExists);
-									}
-
-								}
-							});
-				} catch (InvocationTargetException e) {
-					// Do nothing
-				} catch (InterruptedException e) {
-					// Do nothing
-				}
-			}
-		}
-
-	}
-
-	class TranslateCellAction extends Action {
-
-		public TranslateCellAction() {
-			super(Messages.StringEditorPart_TranslateCellActionName);
-			this.setEnabled((activeColumn != 0) && (activeRow != null));
-		}
-
-		@Override
-		@SuppressWarnings("unused")
-		public void run() {
-			TableColumn originalColumn = getEditorViewer().getTable()
-					.getColumn(activeColumn);
-
-			StructuredSelection selection = (StructuredSelection) getEditorViewer()
-					.getSelection();
-			String[] selectedKeysText = new String[selection.size()];
-			String[] selectedCellsText = new String[selection.size()];
-			final Object[] selectedRows = selection.toArray();
-			for (int i = 0; i < selectedRows.length; i++) {
-				RowInfo rowInfo = (RowInfo) selectedRows[i];
-				if (rowInfo instanceof RowInfoLeaf) {
-					RowInfoLeaf leaf = (RowInfoLeaf) rowInfo;
-					CellInfo cellInfo = leaf.getCells().get(
-							originalColumn.getText());
-					selectedKeysText[i] = rowInfo.getKey();
-					selectedCellsText[i] = cellInfo.getValue();
-				}
-			}
-
-			String selectedCellText = activeRow.getViewerRow()
-					.getCell(activeColumn).getText();
-			TableColumn[] tableColumns = getEditorViewer().getTable()
-					.getColumns();
-
-			final TranslationInfo[] newColumnsInfo = StringEditorPart.this
-					.getContentProvider()
-					.getOperationProvider()
-					.getTranslatedColumnsInfo(originalColumn.getText(),
-							selectedKeysText, selectedCellsText, tableColumns);
-
-			if (newColumnsInfo != null) {
-				try {
-					PlatformUI.getWorkbench().getProgressService()
-							.run(false, false, new IRunnableWithProgress() {
-								public void run(IProgressMonitor monitor)
-										throws InvocationTargetException,
-										InterruptedException {
-
-									monitor.setTaskName(Messages.TranslationProgress_Connecting);
-
-									TableColumn originalColumn = getEditorViewer()
-											.getTable().getColumn(activeColumn);
-
-									if (getEditorInput().translateCells(
-											originalColumn.getText(),
-											newColumnsInfo, monitor)) {
-
-										int size = newColumnsInfo.length;
-										String[] keys = new String[size];
-										String[] columns = new String[size];
-										CellInfo[] oldValues = new CellInfo[size];
-										CellInfo[] newValues = new CellInfo[size];
-
-										int i = 0;
-										for (TranslationInfo translationInfo : newColumnsInfo) {
-											keys[i] = translationInfo
-													.getFromKey();
-											columns[i] = translationInfo
-													.getToColumn();
-
-											oldValues[i] = getCellInfo(
-													columns[i], keys[i]);
-											newValues[i] = new CellInfo(
-													translationInfo.getToWord(),
-													oldValues[i].getComment());
-
-											i++;
-										}
-
-										EditCellsOperation operation = new EditCellsOperation(
-												Messages.StringEditorPart_TranslateCellActionName,
-												keys, columns, oldValues,
-												newValues,
-												StringEditorPart.this,
-												selectedRows);
-
-										operation.addContext(getUndoContext());
-										executeOperation(operation);
-										getEditorViewer().refresh();
-
-									} else {
-										monitor.setCanceled(true);
-										MessageDialog
-												.openInformation(
-														getEditorSite()
-																.getShell(),
-														Messages.StringEditorPart_TranslationError,
-														Messages.StringEditorPart_TranslationErrorCheckConnetion);
-									}
-
-								}
-							});
-				} catch (InvocationTargetException e) {
-					// Do nothing
-				} catch (InterruptedException e) {
-					// Do nothing
-				}
-			}
-		}
-	}
-
-	class CloneColumnAction extends Action {
-		public CloneColumnAction() {
-			super(Messages.StringEditorPart_CloneActionName);
-			this.setEnabled(activeColumn != 0);
-		}
-
-		@Override
-		public void run() {
-			TableColumn column = getEditorViewer().getTable().getColumn(
-					activeColumn);
-			ColumnInfo newColumnInfo = StringEditorPart.this
-					.getContentProvider().getOperationProvider().getNewColumn();
-			if (newColumnInfo != null) {
-				CloneOperation operation = new CloneOperation(
-						StringEditorPart.this, column.getText(), newColumnInfo);
-				operation.addContext(getUndoContext());
-				executeOperation(operation);
-			}
-		}
-	}
-
-	class RevertToSavedAction extends Action {
-		public RevertToSavedAction() {
-			super(Messages.StringEditorPart_RevertColumnActionName);
-			this.setToolTipText(Messages.StringEditorPart_RevertColumnActionTooltip);
-			this.setEnabled(activeColumn != 0);
-		}
-
-		@Override
-		public void run() {
-			String column = viewer.getTable().getColumn(activeColumn).getText();
-			RevertColumnToSavedStateOperation operation = new RevertColumnToSavedStateOperation(
-					Messages.StringEditorPart_RevertColumnActionOperationName,
-					StringEditorPart.this, getModel().getColumn(column));
-			executeOperation(operation);
-		}
-	}
-
-	/**
-	 * An action to show/hide columns
-	 */
-	class HideShowColumnAction extends Action {
-		private final TableColumn column;
-
-		public HideShowColumnAction(String name, int style, TableColumn c) {
-			super(name, style);
-			column = c;
-			setChecked(c.getWidth() > 0);
-		}
-
-		@Override
-		public void run() {
-			if (!isChecked()) {
-				hideColumn(column);
-			} else {
-				showColumn(column);
-			}
-		}
-	}
-
-	/**
-	 * An action to show/hide columns
-	 */
-	class HideShowAllColumnsAction extends Action {
-		private final Table table;
-
-		private final boolean visible;
-
-		public HideShowAllColumnsAction(String name, int style, Table t,
-				boolean visible) {
-			super(name, style);
-			this.table = t;
-			this.visible = visible;
-		}
-
-		@Override
-		public void run() {
-			for (int i = 1; i < table.getColumnCount(); i++) {
-				if (visible) {
-					showColumn(table.getColumn(i));
-				} else {
-					hideColumn(table.getColumn(i));
-				}
-			}
-		}
-	}
-
-	/**
-	 * Action to add a new column
-	 */
-	class AddColumnAction extends Action {
-
-		public AddColumnAction() {
-			super(Messages.StringEditorPart_AddColumnActionName);
-			// FIXME change/remove wrong icon for this action
-			this.setImageDescriptor(StringEditorPlugin
-					.imageDescriptorFromPlugin(StringEditorPlugin.PLUGIN_ID,
-							"icons/string_array.gif"));
-		}
-
-		@Override
-		public void run() {
-			ColumnInfo info = getContentProvider().getOperationProvider()
-					.getNewColumn();
-
-			if (info != null) {
-				if (getColumnByID(info.getId()) == null) {
-					AddColumnOperation operation = new AddColumnOperation(
-							Messages.StringEditorPart_AddColumnOperationName,
-							StringEditorPart.this, info);
-					operation.addContext(getUndoContext());
-					executeOperation(operation);
-
-				} else {
-					MessageDialog
-							.openInformation(
-									getEditorSite().getShell(),
-									Messages.StringEditorPart_ColumnAlreadyExistTitle,
-									NLS.bind(
-											Messages.StringEditorPart_ColumnAlreadyExistMessage,
-											info.getId()));
-				}
-			}
-		}
-	}
-
-	/**
-	 * Action to remove a column
-	 */
-	class RemoveColumnAction extends Action {
-
-		public RemoveColumnAction() {
-			super(Messages.StringEditorPart_RemoveColumnActionName);
-			String activeColumnID = getEditorViewer().getTable()
-					.getColumn(activeColumn).getText();
-			this.setEnabled((activeColumn != 0)
-					&& ((getModel().getColumn(activeColumnID) != null) && getModel()
-							.getColumn(activeColumnID).canRemove()));
-		}
-
-		@Override
-		public void run() {
-			TableColumn selectedColumn = getEditorViewer().getTable()
-					.getColumn(activeColumn);
-			if (!selectedColumn.getText().equals(
-					Messages.StringEditorPart_KeyLabel)) {
-				if (MessageDialog.openQuestion(StringEditorPart.this
-						.getEditorSite().getShell(),
-						Messages.StringEditorPart_RemoveColumnActionName,
-						Messages.StringEditorPart_RemoveColumnQuestionMessage
-								+ " \"" + selectedColumn.getText() + "\"?")) { //$NON-NLS-1$ //$NON-NLS-2$
-					RemoveColumnOperation operation = new RemoveColumnOperation(
-							Messages.StringEditorPart_RemoveColumnOperationName,
-							StringEditorPart.this,
-							((StringEditorViewerModel) getEditorViewer()
-									.getInput()).getColumn(selectedColumn
-									.getText()), getEditorViewer().getTable()
-									.indexOf(selectedColumn), selectedColumn
-									.getWidth());
-					operation.addContext(getUndoContext());
-					executeOperation(operation);
-				}
-			}
-		}
-	}
-
-	private void generateArrayKeys(RowInfo[] infos) {
-		for (int i = 0; i < infos.length; i++) {
-
-			DecimalFormat formatter = new DecimalFormat("000"); //$NON-NLS-1$
-			String virtualKey = infos[i].getKey() + "_" //$NON-NLS-1$
-					+ formatter.format(i);
-
-			infos[i].setKey(virtualKey);
-		}
-	}
-
-	/**
-	 * Action to add a new key
-	 */
-	class AddKeyAction extends Action {
-
-		public AddKeyAction() {
-			super(Messages.StringEditorPart_AddKeyActionName);
-			this.setImageDescriptor(StringEditorPlugin
-					.imageDescriptorFromPlugin(StringEditorPlugin.PLUGIN_ID,
-							"icons/string.gif"));
-		}
-
-		@Override
-		public void run() {
-
-			RowInfo[] rowInfo = getContentProvider().getOperationProvider()
-					.getNewRow();
-
-			// generateArrayKeys(rowInfo);
-
-			// add new key only if the key isn't null and the new key does not
-			// exists
-			if (rowInfo != null) {
-				if (rowInfo.length > 1) {
-					AddKeysOperation operation = new AddKeysOperation(
-							Messages.StringEditorPart_AddKeyOperationName,
-							StringEditorPart.this, rowInfo);
-					operation.addContext(getUndoContext());
-					executeOperation(operation);
-				} else {
-					String arrayKey = rowInfo[0].getKey();
-					if (rowInfo[0] instanceof RowInfoLeaf) {// string or array
-															// item?
-						if (((RowInfoLeaf) rowInfo[0]).getParent() == null) {// string
-							if (getModel().getRow(arrayKey) == null) {// key
-																		// does
-																		// not
-																		// exist
-								AddKeyOperation operation = new AddKeyOperation(
-										Messages.StringEditorPart_AddKeyOperationName,
-										StringEditorPart.this, rowInfo[0]);
-								operation.addContext(getUndoContext());
-								executeOperation(operation);
-							} else { // key already exists
-								editorComposite
-										.setMessage(
-												Messages.StringEditorPart_KeyAlreadyExistsErrorMessage,
-												IMessage.ERROR);
-							}
-						} else {// array item
-
-						}
-					} else {// array
-						if (getModel().getRow(rowInfo[0].getKey()) == null) {
-							// new array
-							Map<Integer, RowInfoLeaf> children = rowInfo[0]
-									.getChildren();
-							// if (children.isEmpty()) {//empty array
-							for (int i = 0; i < children.size(); i++) {
-								if (getModel().getRow(
-										children.get(i).getCells().toString()) == null) {// child
-																							// does
-																							// not
-																							// exist
-									AddKeyOperation operation = new AddKeyOperation(
-											Messages.StringEditorPart_AddKeyOperationName,
-											StringEditorPart.this, rowInfo[0]);
-									operation.addContext(getUndoContext());
-									executeOperation(operation);
-								} else { // key already exists
-									editorComposite
-											.setMessage(
-													Messages.StringEditorPart_KeyAlreadyExistsErrorMessage,
-													IMessage.ERROR);
-
-								}
-							}
-						} else {
-							// existing array
-							RowInfo existingRowArray = getModel().getRow(
-									rowInfo[0].getKey());
-							Map<Integer, RowInfoLeaf> childrenExistentArray = existingRowArray
-									.getChildren();
-							Map<Integer, RowInfoLeaf> childrenToInsert = rowInfo[0]
-									.getChildren();
-							int lastIndex = childrenExistentArray.size();
-							for (RowInfoLeaf arrayItem : childrenToInsert
-									.values()) {
-								RowInfoLeaf rowInfoLeaf = new RowInfoLeaf(
-										arrayItem.getKey(), existingRowArray,
-										lastIndex, null);
-								AddKeyOperation operation = new AddKeyOperation(
-										Messages.StringEditorPart_AddKeyOperationName,
-										StringEditorPart.this, rowInfoLeaf);
-								operation.addContext(getUndoContext());
-								executeOperation(operation);
-								lastIndex++;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Action to remove a key
-	 */
-	class RemoveKeyAction extends Action {
-
-		public RemoveKeyAction() {
-			super(Messages.StringEditorPart_RemoveKeyActionName);
-			// FIXME change/remove wrong icon for this action
-			this.setImageDescriptor(StringEditorPlugin
-					.imageDescriptorFromPlugin(StringEditorPlugin.PLUGIN_ID,
-							"icons/string_array_item.gif"));
-		}
-
-		@Override
-		public void run() {
-			ISelection sel = viewer.getSelection();
-			List<RowInfo> toBeDeleted = new ArrayList<RowInfo>();
-			if ((sel != null) && (sel instanceof IStructuredSelection)) {
-				IStructuredSelection selection = (IStructuredSelection) sel;
-				for (Object o : selection.toArray()) {
-					if (o instanceof RowInfo) {
-						toBeDeleted.add((RowInfo) o);
-					}
-				}
-			}
-			if (toBeDeleted.size() > 0) {
-				RemoveKeyOperation operation = new RemoveKeyOperation(
-						Messages.StringEditorPart_RemoveKeyOperationName,
-						StringEditorPart.this, toBeDeleted);
-				operation.addContext(getUndoContext());
-				executeOperation(operation);
-			}
-		}
-	}
+	private AddSingleStringAction newSingleStringAction = null;
+	private AddArrayAction newArrayAction = null;
+	private AddArrayItemAction newArrayItemAction = null;
+	private RemoveKeyAction removeKeyAction = null;
+	private MenuDropDownAction menuArrayItem = null;
 
 	/*
 	 * This editor undo context
@@ -830,7 +228,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 	/*
 	 * List of columns changed in the file system
 	 */
-	private Set<String> changedColumns = new HashSet<String>();
+	private final Set<String> changedColumns = new HashSet<String>();
 
 	private boolean needToPromptFileSystemChange = false;
 
@@ -843,7 +241,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 	/*
 	 * the viewer
 	 */
-	private TableViewer viewer;
+	private TreeViewer viewer;
 
 	/*
 	 * A hint for size
@@ -1036,27 +434,41 @@ public class StringEditorPart extends MultiPageEditorPart {
 					.scaledTo(16, 16));
 
 			if (StringEditorPlugin.imageDescriptorFromPlugin(
-					StringEditorPlugin.PLUGIN_ID, "icons/obj16_ok.png") != null) {
+					StringEditorPlugin.PLUGIN_ID, "icons/obj16_ok.png") != null) { //$NON-NLS-1$
 				okImage = new Image(Display.getDefault(), StringEditorPlugin
 						.imageDescriptorFromPlugin(
 								StringEditorPlugin.PLUGIN_ID,
 								"icons/obj16_ok.png").getImageData()); //$NON-NLS-1$
 			} else {
 				BasePlugin
-						.logWarning("Could not find icons/obj16_ok.png file on plugin "
+						.logWarning("Could not find icons/obj16_ok.png file on plugin " //$NON-NLS-1$
 								+ StringEditorPlugin.PLUGIN_ID);
 			}
 		} catch (Exception e) {
 			handleInitFailure(e, input, site);
+			// Throw this exception to warn the caller (Eclipse Framework) that
+			// the init failed.
+			throw new PartInitException(
+					Messages.StringEditorPart_ErrorOpeningEditor, e);
 		}
 
 	}
 
-	private void handleInitFailure(Exception e, IEditorInput input,
+	private void handleInitFailure(final Exception e, IEditorInput input,
 			IEditorSite site) {
-		MessageDialog.openError(new Shell(),
-				"Error loading editor. Some available editor will be opened", e //$NON-NLS-1$
-						.getMessage());
+
+		String errorMessage = null;
+
+		// Exception message might be null
+		if (e.getMessage() != null) {
+			errorMessage = e.getLocalizedMessage();
+		} else {
+			errorMessage = Messages.StringEditorPart_ErrorOpeningEditorUnknown;
+		}
+
+		MessageDialog.openError(site.getShell(),
+				Messages.StringEditorPart_ErrorOpeningEditor, errorMessage);
+
 		IEditorDescriptor[] editors = PlatformUI
 				.getWorkbench()
 				.getEditorRegistry()
@@ -1065,6 +477,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 								+ ((IFileEditorInput) input).getFile()
 										.getLocation().getFileExtension());
 
+		// Try to open other available editors and ignore this one
 		if (editors.length > 0) {
 			int i = 0;
 			IEditorDescriptor editor = null;
@@ -1081,7 +494,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 					// do nothing
 				}
 			}
-			site.getPage().closeEditor(this, false);
+
 		}
 
 	}
@@ -1128,21 +541,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 			public void widgetSelected(SelectionEvent e) {
 				expandRow = ((Button) e.widget).getSelection();
-
-				viewer.getTable().setRedraw(true);
-				viewer.getTable().layout();
-				viewer.getTable().update();
-				viewer.getTable().redraw();
-				for (int i = 0; i < viewer.getTable().getColumnCount(); i++) {
-					viewer.getTable().getColumn(i).pack();
-				}
-				viewer.getTable().pack();
-
-				viewer.getTable().getParent().layout();
-				viewer.getTable().getParent().setRedraw(true);
-				viewer.getTable().getParent().redraw();
-				viewer.refresh();
-
+				viewer.getTree().redraw();
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -1206,27 +605,34 @@ public class StringEditorPart extends MultiPageEditorPart {
 			}
 		});
 
-		if (!Platform.getOS().equals(Platform.OS_LINUX)) {
-			highlightChangesButton = toolkit.createButton(optionsComposite,
-					Messages.StringEditorPart_HighlightChangesLabel, SWT.CHECK);
-			layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
-			highlightChangesButton.setLayoutData(layoutData);
-			highlightChangesButton
-					.addSelectionListener(new SelectionListener() {
+		// what if we enable for all OSes??
+		// if (!Platform.getOS().equals(Platform.OS_LINUX)) {
+		highlightChangesButton = toolkit.createButton(optionsComposite,
+				Messages.StringEditorPart_HighlightChangesLabel, SWT.CHECK);
+		layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+		highlightChangesButton.setLayoutData(layoutData);
+		highlightChangesButton.addSelectionListener(new SelectionListener() {
 
-						public void widgetSelected(SelectionEvent e) {
-							highlightChanges = ((Button) e.widget)
-									.getSelection();
-							for (RowInfo info : getModel().getRows().values()) {
-								viewer.update(info, null);
-							}
-						}
+			public void widgetSelected(SelectionEvent e) {
+				highlightChanges = ((Button) e.widget).getSelection();
+				for (RowInfo info : getModel().getRows().values()) {
 
-						public void widgetDefaultSelected(SelectionEvent e) {
-							// do nothing
+					if (info instanceof RowInfoLeaf) {
+						viewer.update(info, null);
+					} else {
+						for (RowInfoLeaf leaf : info.getChildren()) {
+							viewer.update(leaf, null);
 						}
-					});
-		}
+					}
+
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+		});
+		// }
 
 	}
 
@@ -1295,8 +701,9 @@ public class StringEditorPart extends MultiPageEditorPart {
 		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, false, false,
 				1, 1);
 		Label tblabel = toolkit.createLabel(editorComposite.getBody(),
-				"Editor actions: ", SWT.BOLD); // new Label(editorToolBar,
-												// SWT.NONE);
+				Messages.StringEditorPart_7, SWT.BOLD); // new
+														// Label(editorToolBar,
+		// SWT.NONE);
 		tblabel.setLayoutData(layoutData);
 		FontData[] fontData = tblabel.getFont().getFontData();
 		fontData[0].setStyle(SWT.BOLD);
@@ -1304,28 +711,38 @@ public class StringEditorPart extends MultiPageEditorPart {
 		// Add actions toolbar to form
 		ToolBar editorToolBar = new ToolBar(editorComposite.getBody(),
 				SWT.RIGHT | SWT.FLAT);
-		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
+		layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false, 5, 1);
 		editorToolBar.setLayoutData(layoutData);
 		toolkit.adapt(editorToolBar);
 		// Set toolbar manager
 		IToolBarManager lowertbmanager = new ToolBarManager(editorToolBar);
 		// Create toolbar items
-		lowertbmanager.add(new AddKeyAction());
+		lowertbmanager.add(new MenuDropDownAction(
+				newSingleStringAction = new AddSingleStringAction(this),
+				newSingleStringAction.getImageDescriptor()));
 		lowertbmanager.add(new Separator());
-		lowertbmanager.add(new AddColumnAction());
+		lowertbmanager.add(new MenuDropDownAction(
+				newArrayAction = new AddArrayAction(this), newArrayAction
+						.getImageDescriptor()));
+		lowertbmanager.add(menuArrayItem = new MenuDropDownAction(
+				newArrayItemAction = new AddArrayItemAction(this),
+				newArrayItemAction.getImageDescriptor()));
 		lowertbmanager.add(new Separator());
-		lowertbmanager.add(new RemoveKeyAction());
-		lowertbmanager.add(new Separator());
+		lowertbmanager.add(removeKeyAction = new RemoveKeyAction(this));
+		lowertbmanager.add(new UndoActionHandler(getEditorSite(),
+				getUndoContext()));
+		lowertbmanager.add(new RedoActionHandler(getEditorSite(),
+				getUndoContext()));
 		lowertbmanager.update(true);
 
-		Table t = toolkit.createTable(editorComposite.getBody(),
+		Tree t = toolkit.createTree(editorComposite.getBody(),
 				SWT.FULL_SELECTION | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
 						| SWT.BORDER | SWT.HIDE_SELECTION);
 
-		viewer = new TableViewer(t);
+		viewer = new TreeViewer(t);
 
 		layoutData = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
-		viewer.getTable().setLayoutData(layoutData);
+		viewer.getTree().setLayoutData(layoutData);
 		listener = new ColumnSelectionListener(viewer);
 
 		/*
@@ -1340,14 +757,14 @@ public class StringEditorPart extends MultiPageEditorPart {
 		/*
 		 * Configure the viewer
 		 */
-		ViewerComparator sorter = new TableComparator();
+		ViewerComparator sorter = new TreeComparator();
 		viewer.setComparator(sorter);
-		viewer.getTable().setSortDirection(SWT.DOWN);
+		viewer.getTree().setSortDirection(SWT.DOWN);
 		viewer.setContentProvider(new StringEditorViewerContentProvider());
 		viewer.setInput(new StringEditorViewerModel(infos, this
 				.getContentProvider().getValidator()));
-		viewer.getTable().setLinesVisible(true);
-		viewer.getTable().setHeaderVisible(true);
+		viewer.getTree().setLinesVisible(true);
+		viewer.getTree().setHeaderVisible(true);
 
 		/*
 		 * Enable tooltips
@@ -1367,16 +784,15 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 			public void menuDetected(MenuDetectEvent e) {
 
-				int position = viewer.getTable().toControl(e.x, e.y).x
-						+ viewer.getTable().getHorizontalBar().getSelection();
+				int position = viewer.getTree().toControl(e.x, e.y).x;
 
 				int x = 0;
-				for (int i = 0; i < viewer.getTable().getColumnCount(); i++) {
-					x += viewer.getTable().getColumn(i).getWidth();
+				for (int i = 0; i < viewer.getTree().getColumnCount(); i++) {
+					x += viewer.getTree().getColumn(i).getWidth();
 					if (position <= x) {
 						activeColumn = i;
-						int currentX = viewer.getTable().toControl(e.x, e.y).x;
-						int currentY = viewer.getTable().toControl(e.x, e.y).y;
+						int currentX = viewer.getTree().toControl(e.x, e.y).x;
+						int currentY = viewer.getTree().toControl(e.x, e.y).y;
 						activeRow = viewer
 								.getCell(new Point(currentX, currentY));
 						break;
@@ -1404,31 +820,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 			}
 		});
 
-		ColumnViewerEditorActivationStrategy activationStrategy = new ColumnViewerEditorActivationStrategy(
-				viewer) {
-
-			@Override
-			protected boolean isEditorActivationEvent(
-					ColumnViewerEditorActivationEvent event) {
-				boolean activate = false;
-				if ((event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED)
-						&& (event.stateMask == 0)) {
-					if ((event.character >= 32) && (event.character <= 127)) {
-						activate = true;
-					} else if ((event.keyCode == SWT.CR)
-							|| (event.keyCode == SWT.DEL)
-							|| (event.keyCode == SWT.KEYPAD_CR)) {
-						activate = true;
-					} else {
-						activate = super.isEditorActivationEvent(event);
-					}
-				} else if (event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION) {
-					activate = true;
-				}
-				return activate;
-			}
-
-		};
+		ColumnViewerEditorActivationStrategy activationStrategy = new StringEditorViewerEditorActivationStrategy(
+				viewer);
 		activationStrategy.setEnableEditorActivationWithKeyboard(true);
 
 		FocusCellHighlighter highlighter = new StringEditorCellHighlighter(
@@ -1436,10 +829,10 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 		CellNavigationStrategy navigationStrategy = new CellNavigationStrategy();
 
-		TableViewerFocusCellManager manager = new TableViewerFocusCellManager(
+		TreeViewerFocusCellManager manager = new TreeViewerFocusCellManager(
 				viewer, highlighter, navigationStrategy);
 
-		TableViewerEditor.create(viewer, manager, activationStrategy,
+		TreeViewerEditor.create(viewer, manager, activationStrategy,
 				ColumnViewerEditor.TABBING_HORIZONTAL
 						| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
 						| ColumnViewerEditor.TABBING_VERTICAL
@@ -1448,7 +841,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 		viewer.getColumnViewerEditor().addEditorActivationListener(
 				new StringEditorColumnViewerEditorActivationListener(viewer));
 
-		viewer.getTable().addDisposeListener(new DisposeListener() {
+		viewer.getTree().addDisposeListener(new DisposeListener() {
 
 			public void widgetDisposed(DisposeEvent e) {
 				session.clean();
@@ -1457,7 +850,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 				session.save();
 			}
 		});
-		viewer.getTable().layout(true, true);
+		viewer.getTree().layout(true, true);
 		restoreOptions();
 		session.clean();
 		saveOptions();
@@ -1475,21 +868,21 @@ public class StringEditorPart extends MultiPageEditorPart {
 			PlatformUI
 					.getWorkbench()
 					.getHelpSystem()
-					.setHelp(viewer.getTable(),
+					.setHelp(viewer.getTree(),
 							contentProvider.getContextHelpID());
 		}
 
 		// if (expandRow) {
 		// user preference is to view all the rows with the global maximum
 		// number of lines
-		viewer.getTable().addListener(SWT.MeasureItem, new Listener() {
+		viewer.getTree().addListener(SWT.MeasureItem, new Listener() {
 			final int TEXT_MARGIN = 3;
 
 			public void handleEvent(Event event) {
-				TableItem item = (TableItem) event.item;
+				TreeItem item = (TreeItem) event.item;
 				String text = item.getText(event.index);
 				Point size = event.gc.textExtent(text);
-				event.width = viewer.getTable().getColumn(event.index)
+				event.width = viewer.getTree().getColumn(event.index)
 						.getWidth() - 1;
 				if (event.index == 0) {
 					event.width = event.width - 3;
@@ -1503,37 +896,46 @@ public class StringEditorPart extends MultiPageEditorPart {
 			}
 		});
 
-		viewer.getTable().addListener(SWT.EraseItem, new Listener() {
+		viewer.getTree().addListener(SWT.EraseItem, new Listener() {
 			public void handleEvent(Event event) {
 				event.detail &= ~SWT.FOREGROUND;
 			}
 		});
 
-		viewer.getTable().addListener(SWT.PaintItem, new Listener() {
+		viewer.getTree().addListener(SWT.PaintItem, new Listener() {
 			final int TEXT_MARGIN = 3;
-
-			final int FIRST_COLUM_TEXT_MARGIN = 20;
 
 			public void handleEvent(Event event) {
 
 				int yOffset = 0;
-				TableItem item = (TableItem) event.item;
+				TreeItem item = (TreeItem) event.item;
 				String text = item.getText(event.index);
 				if (event.index > 0) {
 					event.gc.drawText(text, event.x + TEXT_MARGIN, event.y
 							+ yOffset, true);
 				} else if (event.index == 0) {
-					event.gc.drawImage(item.getImage(), event.x, event.y);
-					event.gc.drawText(text, event.x + FIRST_COLUM_TEXT_MARGIN,
+
+					if (item.getImage() != null) {
+						event.gc.drawImage(item.getImage(), event.x, event.y);
+					}
+					event.gc.drawText(text, event.x + item.getImageBounds(0).x,
 							event.y + yOffset, true);
+
 				}
 
 			}
 		});
 
+		viewer.getTree().addListener(SWT.Selection, new Listener() {
+
+			public void handleEvent(Event event) {
+				refreshButtonsEnabled();
+			}
+		});
+
 		/*
-		 * for (int i = 0; i < viewer.getTable().getColumnCount(); i++) {
-		 * viewer.getTable().getColumn(i).pack(); } viewer.getTable().pack();
+		 * for (int i = 0; i < viewer.getTree().getColumnCount(); i++) {
+		 * viewer.getTree().getColumn(i).pack(); } viewer.getTree().pack();
 		 */
 		// }
 		registerActionHandlers();
@@ -1541,11 +943,19 @@ public class StringEditorPart extends MultiPageEditorPart {
 		return editorComposite;
 	}
 
+	public void refreshButtonsEnabled() {
+		newArrayItemAction.setEnabled(newArrayItemAction.isEnabled());
+		// remove should be enabled only if there is at least one item
+		// selected
+		removeKeyAction.setEnabled(removeKeyAction.isEnabled());
+		menuArrayItem.setEnabled(menuArrayItem.isEnabled());
+	}
+
 	private void saveSession() {
-		Table t = viewer.getTable();
+		Tree t = viewer.getTree();
 		for (int i = 0; i < t.getColumnCount(); i++) {
 			{
-				TableColumn c = t.getColumn(t.getColumnOrder()[i]);
+				TreeColumn c = t.getColumn(t.getColumnOrder()[i]);
 				session.setProperty(c.getText(), PROPERTY.ORDER,
 						new Integer(i).toString());
 				session.setProperty(c.getText(), PROPERTY.VISIBLE, new Boolean(
@@ -1602,10 +1012,10 @@ public class StringEditorPart extends MultiPageEditorPart {
 			searchString = searchText.getText();
 		}
 		if (highlight != null) {
-			if (!Platform.getOS().equals(Platform.OS_LINUX)) {
-				highlightChangesButton.setSelection(new Boolean(highlight));
-				highlightChanges = highlightChangesButton.getSelection();
-			}
+			// if (!Platform.getOS().equals(Platform.OS_LINUX)) {
+			highlightChangesButton.setSelection(new Boolean(highlight));
+			highlightChanges = highlightChangesButton.getSelection();
+			// }
 		}
 		if (showComments != null) {
 			showCellCommentsButton.setSelection(new Boolean(showComments));
@@ -1660,7 +1070,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 			String visible = session
 					.getProperty(info.getId(), PROPERTY.VISIBLE);
 
-			TableViewerColumn column = createColumn(info.getId(),
+			TreeViewerColumn column = createColumn(info.getId(),
 					info.getTooltip(), -1);
 			if (width != null) {
 				column.getColumn().setWidth(Integer.parseInt(width));
@@ -1677,10 +1087,10 @@ public class StringEditorPart extends MultiPageEditorPart {
 		String visible = session.getProperty(
 				Messages.StringEditorPart_KeyLabel, PROPERTY.VISIBLE);
 		if (width != null) {
-			viewer.getTable().getColumn(0).setWidth(Integer.parseInt(width));
+			viewer.getTree().getColumn(0).setWidth(Integer.parseInt(width));
 		}
 		if (visible != null) {
-			viewer.getTable().getColumn(0)
+			viewer.getTree().getColumn(0)
 					.setResizable(Boolean.parseBoolean(visible));
 		}
 		String sortBy = session.getProperty(SORTER_PROPERTY_NAME,
@@ -1691,20 +1101,20 @@ public class StringEditorPart extends MultiPageEditorPart {
 		 * Try to restore the sort by. If no sort saved, use the key column
 		 */
 		if ((sortBy != null) && (sortBy.length() > 0)) {
-			for (TableColumn c : viewer.getTable().getColumns()) {
+			for (TreeColumn c : viewer.getTree().getColumns()) {
 				if (c.getText().equals(sortBy)) {
-					viewer.getTable().setSortColumn(c);
+					viewer.getTree().setSortColumn(c);
 				}
 			}
 		} else {
-			viewer.getTable().setSortColumn(viewer.getTable().getColumn(0));
+			viewer.getTree().setSortColumn(viewer.getTree().getColumn(0));
 		}
 		if (sortDirection != null) {
 			try {
 				int direction = Integer.parseInt(sortDirection);
-				viewer.getTable().setSortDirection(direction);
+				viewer.getTree().setSortDirection(direction);
 			} catch (NumberFormatException e) {
-				viewer.getTable().setSortDirection(SWT.DOWN);
+				viewer.getTree().setSortDirection(SWT.DOWN);
 			}
 		}
 		viewer.refresh();
@@ -1719,11 +1129,11 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 * 
 	 * @return the created columnviewer
 	 */
-	private TableViewerColumn createColumn(String id, String tooltip, int index) {
-		TableViewerColumn column = null;
-		column = new TableViewerColumn(viewer, SWT.NONE, index);
+	private TreeViewerColumn createColumn(String id, String tooltip, int index) {
+		TreeViewerColumn column = null;
+		column = new TreeViewerColumn(viewer, SWT.NONE, index);
 		column.setLabelProvider(new StringEditorColumnLabelProvider(id, this));
-		column.setEditingSupport(new CellEditingSupport(viewer, id));
+		column.setEditingSupport(new CellEditingSupport(this, viewer, id));
 		column.getColumn().setText(id);
 		column.getColumn().setToolTipText(tooltip);
 		column.getColumn().setWidth(
@@ -1739,7 +1149,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 * 
 	 * @param c
 	 */
-	private void hideColumn(TableColumn c) {
+	public void hideColumn(TreeColumn c) {
 		c.setResizable(false);
 		c.setData(PREVIOUS_WIDTH_PROPERTY_NAME,
 				new Integer(c.getWidth()).toString());
@@ -1751,7 +1161,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 * 
 	 * @param c
 	 */
-	private void showColumn(TableColumn c) {
+	public void showColumn(TreeColumn c) {
 		c.setResizable(true);
 		int preferedSize = -1;
 
@@ -1784,14 +1194,16 @@ public class StringEditorPart extends MultiPageEditorPart {
 		manager.add(getEditorSite().getActionBars().getGlobalActionHandler(
 				ActionFactory.REDO.getId()));
 		manager.add(new Separator());
-		manager.add(new AddKeyAction());
-		manager.add(new RemoveKeyAction());
-		manager.add(new AddColumnAction());
-		manager.add(new RemoveColumnAction());
-		manager.add(new RevertToSavedAction());
-		manager.add(new CloneColumnAction());
-		manager.add(new TranslateColumnAction());
-		manager.add(new TranslateCellAction());
+		manager.add(new AddSingleStringAction(this));
+		manager.add(new AddArrayAction(this));
+		manager.add(newArrayItemAction);
+		manager.add(removeKeyAction);
+		manager.add(new AddColumnAction(this));
+		manager.add(new RemoveColumnAction(this));
+		manager.add(new RevertToSavedAction(this));
+		manager.add(new CloneColumnAction(this));
+		manager.add(new TranslateColumnAction(this));
+		manager.add(new TranslateCellAction(this));
 
 	}
 
@@ -1805,20 +1217,20 @@ public class StringEditorPart extends MultiPageEditorPart {
 		MenuManager showColumnsMenu = new MenuManager(
 				Messages.StringEditorPart_ShowColumnsSubmenuLabel);
 
-		for (TableColumn column : viewer.getTable().getColumns()) {
+		for (TreeColumn column : viewer.getTree().getColumns()) {
 			if (!column.getText().equals(Messages.StringEditorPart_KeyLabel)) {
-				showColumnsMenu.add(new HideShowColumnAction(column.getText(),
-						Action.AS_CHECK_BOX, column));
+				showColumnsMenu.add(new HideShowColumnAction(this, column
+						.getText(), Action.AS_CHECK_BOX, column));
 			}
 		}
 
 		showColumnsMenu.add(new Separator());
-		showColumnsMenu.add(new HideShowAllColumnsAction(
+		showColumnsMenu.add(new HideShowAllColumnsAction(this,
 				Messages.StringEditorPart_ShowAllColumnsActionName,
-				Action.AS_PUSH_BUTTON, viewer.getTable(), true));
-		showColumnsMenu.add(new HideShowAllColumnsAction(
+				Action.AS_PUSH_BUTTON, viewer.getTree(), true));
+		showColumnsMenu.add(new HideShowAllColumnsAction(this,
 				Messages.StringEditorPart_HideAllColumnsActionName,
-				Action.AS_PUSH_BUTTON, viewer.getTable(), false));
+				Action.AS_PUSH_BUTTON, viewer.getTree(), false));
 
 		manager.add(showColumnsMenu);
 
@@ -1852,12 +1264,16 @@ public class StringEditorPart extends MultiPageEditorPart {
 		if (rows != null) {
 			for (RowInfo changedRow : rows) {
 				if (changedRow instanceof RowInfoLeaf) {
-					// string
+					// single string, update all
 					viewer.update(changedRow, null);
+					if (((RowInfoLeaf) changedRow).getParent() != null) {
+						viewer.update(((RowInfoLeaf) changedRow).getParent(),
+								null);
+					}
 				} else {
 					// array: update row and children rows
 					viewer.update(changedRow, null);
-					for (RowInfoLeaf child : changedRow.getChildren().values()) {
+					for (RowInfoLeaf child : changedRow.getChildren()) {
 						viewer.update(child, null);
 					}
 				}
@@ -1865,6 +1281,9 @@ public class StringEditorPart extends MultiPageEditorPart {
 		} else {
 			for (RowInfo changedRow : getModel().getRows().values()) {
 				viewer.update(changedRow, null);
+				for (RowInfoLeaf child : changedRow.getChildren()) {
+					viewer.update(child, null);
+				}
 			}
 		}
 	}
@@ -1903,7 +1322,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 * 
 	 * @return the editor viewer associated with this editor
 	 */
-	public TableViewer getEditorViewer() {
+	public TreeViewer getEditorViewer() {
 		return viewer;
 	}
 
@@ -1915,7 +1334,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 	@Override
 	public void setFocus() {
 
-		viewer.getTable().setFocus();
+		viewer.getTree().setFocus();
 
 		promptFileSystemChanges();
 
@@ -1956,7 +1375,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 		getModel().removeColumn(columnName);
 		getModel().addColumn(savedState);
 		unmarkColumnAsChanged(columnName);
-		getEditorViewer().refresh();
+		refresh();
 	}
 
 	/**
@@ -1987,9 +1406,48 @@ public class StringEditorPart extends MultiPageEditorPart {
 							destCell.setDirty(true);
 						}
 					}
+
+					if (sourceCell.hasChildren() && destCell.hasChildren()) {
+						// we have array items to analyse
+						List<CellInfo> sourceChildren = sourceCell
+								.getChildren();
+						List<CellInfo> destChildren = destCell.getChildren();
+						for (int i = 0; i < sourceChildren.size(); i++) {
+							CellInfo sourceChildCell = sourceChildren.get(i);
+							CellInfo destinationChildCell = destChildren.get(i);
+							// rule 1 - source was dirty, but destination is
+							// not => mark destination as dirty
+							if (sourceChildCell.isDirty()) {
+								if (destinationChildCell != null) {
+									destinationChildCell.setDirty(true);
+								}
+							}
+							// rule 2 - source and destination differ =>
+							// mark destination as dirty
+							if (sourceChildCell.getValue() != null) {
+								if (!sourceChildCell.getValue().equals(
+										destinationChildCell.getValue())) {
+									destinationChildCell.setDirty(true);
+								}
+							}
+						}
+						if (destChildren.size() > sourceChildren.size()) {
+							// destination array item have new items => mark the
+							// new ones as dirty
+							for (int j = sourceChildren.size(); j < destChildren
+									.size(); j++) {
+								CellInfo destinationChildCell = destChildren
+										.get(j);
+								destinationChildCell.setDirty(true);
+							}
+						}
+					}
+
 					// values differ
-					if (!sourceCell.getValue().equals(destCell.getValue())) {
-						destCell.setDirty(true);
+					if (sourceCell.getValue() != null) {
+						if (!sourceCell.getValue().equals(destCell.getValue())) {
+							destCell.setDirty(true);
+						}
 					}
 				}
 				// source cell does not exists: this is a new cell
@@ -2084,19 +1542,6 @@ public class StringEditorPart extends MultiPageEditorPart {
 
 	}
 
-	/**
-	 * @param columnID
-	 * @param key
-	 * @return
-	 */
-	private CellInfo getCellInfo(String columnID, String key) {
-		CellInfo cellInfo = null;
-
-		cellInfo = getEditorInput().getValue(columnID, key);
-
-		return cellInfo;
-	}
-
 	public ContentProvider getContentProvider() {
 		return contentProvider;
 	}
@@ -2109,8 +1554,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 *            index of the column or -1 if to be the last
 	 * @return the created column
 	 */
-	public TableColumn addColumn(ColumnInfo info, int index) {
-		TableViewerColumn tableViewerColumn = createColumn(info.getId(),
+	public TreeColumn addColumn(ColumnInfo info, int index) {
+		TreeViewerColumn tableViewerColumn = createColumn(info.getId(),
 				info.getTooltip(), index);
 		getEditorInput().addColumn(info.getId());
 		getModel().addColumn(info);
@@ -2121,11 +1566,10 @@ public class StringEditorPart extends MultiPageEditorPart {
 					getEditorInput().setValue(info.getId(), cellKey,
 							cell.getValue());
 				} else if (cell.hasChildren()) {
-					Map<Integer, CellInfo> children = cell.getChildren();
-					for (Integer cellIndex : children.keySet()) {
-						CellInfo childCell = children.get(cellIndex);
+					List<CellInfo> children = cell.getChildren();
+					for (CellInfo childCell : children) {
 						getEditorInput().setValue(info.getId(), cellKey,
-								childCell.getValue(), cellIndex);
+								childCell.getValue(), childCell.getPosition());
 					}
 				}
 			} catch (SequoyahException e) {
@@ -2133,7 +1577,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 			}
 		}
 
-		getEditorViewer().refresh();
+		refresh();
 		fireDirtyPropertyChanged();
 		syncPages();
 		return tableViewerColumn.getColumn();
@@ -2157,13 +1601,13 @@ public class StringEditorPart extends MultiPageEditorPart {
 	public void removeColumn(String columnID) {
 		getEditorInput().removeColumn(columnID);
 		getModel().removeColumn(columnID);
-		for (TableColumn column : getEditorViewer().getTable().getColumns()) {
+		for (TreeColumn column : getEditorViewer().getTree().getColumns()) {
 			if (column.getText().equals(columnID)) {
 				column.dispose();
 			}
 		}
 		fireDirtyPropertyChanged();
-		getEditorViewer().refresh();
+		refresh();
 		syncPages();
 	}
 
@@ -2197,8 +1641,23 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 */
 	public void removeRow(String key, Integer index) {
 		getModel().removeRow(key, index); // Remove the key from the ui model
-		getEditorInput().removeRow(key, index); // Remove the key from the
-												// persistence model
+		getEditorInput().removeChildRow(key, index); // Remove the key from the
+		// persistence model
+		fireDirtyPropertyChanged();
+	}
+
+	public void renameKey(String oldKey, String newKey) {
+		getModel().renameKey(oldKey, newKey);
+		try {
+			getEditorInput().renameKey(oldKey, newKey);
+		} catch (SequoyahException e) {
+			getModel().renameKey(newKey, oldKey);
+		}
+		RowInfo row = getModel().getRow(newKey);
+		boolean expanded = getEditorViewer().getExpandedState(row);
+		getEditorViewer().update(row, null);
+		getEditorViewer().setExpandedState(row, expanded);
+
 		fireDirtyPropertyChanged();
 	}
 
@@ -2218,8 +1677,10 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 */
 	@Override
 	public void dispose() {
-		getEditorInput().removeInputChangeListener(inputChangeListener);
-		getEditorInput().dispose();
+		if (getEditorInput() != null) {
+			getEditorInput().removeInputChangeListener(inputChangeListener);
+			getEditorInput().dispose();
+		}
 		super.dispose();
 	}
 
@@ -2271,7 +1732,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 * 
 	 * @param operation
 	 */
-	private void executeOperation(EditorOperation operation) {
+	public void executeOperation(EditorOperation operation) {
 		try {
 			operation.addContext(getUndoContext());
 			getOperationHistory()
@@ -2280,6 +1741,14 @@ public class StringEditorPart extends MultiPageEditorPart {
 			BasePlugin.logError("Error executing editor operation: " //$NON-NLS-1$
 					+ operation.getLabel(), e);
 		}
+	}
+
+	public ViewerCell getActiveRow() {
+		return activeRow;
+	}
+
+	public int getActiveColumn() {
+		return activeColumn;
 	}
 
 	public void setEditorStatus(IStatus status) {
@@ -2317,9 +1786,9 @@ public class StringEditorPart extends MultiPageEditorPart {
 	 * @param columnID
 	 * @return the column or null if not found
 	 */
-	public TableColumn getColumnByID(String columnID) {
-		TableColumn theColumn = null;
-		for (TableColumn column : getEditorViewer().getTable().getColumns()) {
+	public TreeColumn getColumnByID(String columnID) {
+		TreeColumn theColumn = null;
+		for (TreeColumn column : getEditorViewer().getTree().getColumns()) {
 			if (column.getText().equals(columnID)) {
 				theColumn = column;
 			}
@@ -2474,8 +1943,18 @@ public class StringEditorPart extends MultiPageEditorPart {
 		 */
 		else {
 			updatePageContent(newPageIndex);
-
 		}
 		super.pageChange(newPageIndex);
+	}
+
+	public void refresh() {
+		Object[] expanded = getEditorViewer().getExpandedElements();
+		getEditorViewer().refresh();
+		getEditorViewer().setExpandedElements(expanded);
+	}
+
+	public void setMessage(String message, int severity) {
+		editorComposite.setMessage(message, severity);
+
 	}
 }

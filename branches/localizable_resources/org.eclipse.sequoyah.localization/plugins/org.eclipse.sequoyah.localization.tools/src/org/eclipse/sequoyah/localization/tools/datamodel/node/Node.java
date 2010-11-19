@@ -279,9 +279,9 @@ public class Node implements Comparable<Node> {
 
 	@Override
 	public String toString() {
-		return "Node [localizationFile=" + localizationFile + ", key=" + key
-				+ ", value=" + value + ", dirty=" + dirty + ", nodeComment="
-				+ nodeComment + "]";
+		return "Node [localizationFile=" + localizationFile + ", key=" + key //$NON-NLS-1$ //$NON-NLS-2$
+				+ ", value=" + value + ", dirty=" + dirty + ", nodeComment=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				+ nodeComment + "]"; //$NON-NLS-1$
 	}
 
 }

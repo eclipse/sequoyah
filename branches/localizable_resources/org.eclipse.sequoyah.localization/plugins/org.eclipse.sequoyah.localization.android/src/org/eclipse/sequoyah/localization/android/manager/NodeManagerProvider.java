@@ -6,15 +6,17 @@
  * 
  * Contributors:
  * Marcel Gorri (Eldorado) - Bug 326793 -  Improvements on the String Arrays handling  
- * 
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (Refactor visitDomXYZ and NodeManagers)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.manager;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 
- *
+ * Factory to create nodes managers specialized to manipulate DOM for single
+ * string or array
  */
 public class NodeManagerProvider {
 	/**
@@ -22,10 +24,14 @@ public class NodeManagerProvider {
 	 */
 	private volatile static NodeManagerProvider nodeManagerProvider;
 
+	private static final String STRING_NODE_MANAGER = "StringNodeManager"; //$NON-NLS-1$
+	private static final String ARRAY_NODE_MANAGER = "ArrayNodeManager"; //$NON-NLS-1$
+
 	/**
-	 * Private map for keeping LocalizationFile instances for creation.
+	 * Private map for keeping Node Managers for strings or arrays for
+	 * StringLocalizationFileManager
 	 */
-	private ArrayList<NodeManager> list = new ArrayList<NodeManager>();
+	private Map<String, NodeManager> map = new HashMap<String, NodeManager>();
 
 	/**
 	 * Store NodeManager classes for creation.
@@ -33,9 +39,9 @@ public class NodeManagerProvider {
 	 */
 	private void addNodeManagers() {
 		NodeManager stringNodeManager = new StringNodeManager();
-		list.add(stringNodeManager);
+		map.put(STRING_NODE_MANAGER, stringNodeManager);
 		NodeManager arrayStringNodeManager = new ArrayStringNodeManager();
-		list.add(arrayStringNodeManager);
+		map.put(ARRAY_NODE_MANAGER, arrayStringNodeManager);
 	}
 
 	/**
@@ -72,7 +78,21 @@ public class NodeManagerProvider {
 	 *            a LocalizationFile.
 	 * @return LocalizationFile created if the parameter received is not null.
 	 */
-	public ArrayList<NodeManager> getNodeManagers() {
-		return list;
+	public Collection<NodeManager> getNodeManagers() {
+		return map.values();
+	}
+
+	/**
+	 * @return NodeManager to manipulate Single Strings into DOM
+	 */
+	public StringNodeManager getStringNodeManager() {
+		return (StringNodeManager) map.get(STRING_NODE_MANAGER);
+	}
+
+	/**
+	 * @return NodeManager to manipulate Arrays into DOM
+	 */
+	public ArrayStringNodeManager getArrayStringNodeManager() {
+		return (ArrayStringNodeManager) map.get(ARRAY_NODE_MANAGER);
 	}
 }

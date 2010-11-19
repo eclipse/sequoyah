@@ -45,14 +45,16 @@ public class EditCellsOperation extends EditorOperation {
 	 * @param editor
 	 *            - the editor Object.
 	 * @param infors
-	 * 			  - rows associated to each cell
+	 *            - rows associated to each cell
 	 */
 	public EditCellsOperation(String label, String[] key, String[] column,
-			CellInfo[] oldValue, CellInfo[] newValue, StringEditorPart editor, Object[] infos) {
+			CellInfo[] oldValue, CellInfo[] newValue, StringEditorPart editor,
+			Object[] infos) {
 		super(label, editor);
 		for (int i = 0; i < key.length; i++) {
 			this.editCellOperations.add(new EditCellOperation(key[i],
-					column[i], oldValue[i], newValue[i], editor, (RowInfo)infos[i]));
+					column[i], oldValue[i], newValue[i], editor,
+					(RowInfo) infos[i]));
 		}
 	}
 
@@ -95,8 +97,12 @@ public class EditCellsOperation extends EditorOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		// FIXME: Undo in inverse order
-		for (EditCellOperation cellOperation : this.editCellOperations) {
+
+		int size = this.editCellOperations.size();
+
+		for (int i = size; i > 0; i--) {
+			EditCellOperation cellOperation = this.editCellOperations
+					.get(i - 1);
 			cellOperation.undo(monitor, info);
 		}
 		return Status.OK_STATUS;

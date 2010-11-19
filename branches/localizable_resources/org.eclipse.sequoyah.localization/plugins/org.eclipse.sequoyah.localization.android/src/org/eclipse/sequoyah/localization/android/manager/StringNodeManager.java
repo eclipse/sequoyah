@@ -7,6 +7,7 @@
  * Contributors:
  * Marcel Gorri (Eldorado) - Bug 326793 -  Improvements on the String Arrays handling  
  * Matheus Lima (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (Refactor visitDomXYZ and NodeManagers)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.manager;
 
@@ -27,8 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * 
- *
+ * Encapsulates the knowledge about manipulating Single String items inside
+ * String XML file for Android
  */
 public class StringNodeManager extends NodeManager implements
 		IAndroidLocalizationSchemaConstants {
@@ -102,7 +103,7 @@ public class StringNodeManager extends NodeManager implements
 	 * @param resources
 	 * @param stringNode
 	 */
-	private void addSingleEntry(Document document, Element resources,
+	public void addSingleEntry(Document document, Element resources,
 			StringNode stringNode) {
 		Element string = document.createElement(XML_STRING_TAG);
 		string.setAttribute(XML_STRING_ATTR_NAME, stringNode.getKey());
@@ -119,26 +120,4 @@ public class StringNodeManager extends NodeManager implements
 			singleStringsToUpdateOrAdd.put(stringNode.getKey(), stringNode);
 		}
 	}
-
-	@Override
-	public void visitToAddDOMChildren(Document document,
-			Map<String, StringNode> stringsToUpdateOrAdd, Element resource) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void visitToUpdateDOMChildren(Document document, Node visitingNode,
-			String attrName, Map<String, StringNode> singleStringsToUpdateOrAdd) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void visitToRemoveDOMChildren(Document document, Node visitingNode,
-			String attrName, Map<String, StringNode> arrayItemsToRemove) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

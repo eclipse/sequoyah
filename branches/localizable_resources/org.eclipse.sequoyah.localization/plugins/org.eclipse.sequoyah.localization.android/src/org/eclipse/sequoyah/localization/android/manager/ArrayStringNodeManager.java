@@ -6,7 +6,7 @@
  * 
  * Contributors:
  * Marcel Gorri (Eldorado) - Bug 326793 -  Improvements on the String Arrays handling  
- * 
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (Refactor visitDomXYZ and NodeManagers)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.manager;
 
@@ -19,8 +19,8 @@ import org.eclipse.sequoyah.localization.android.IAndroidLocalizationSchemaConst
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.NodeComment;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,8 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * 
- *
+ * Encapsulates the knowledge about manipulating Arrays inside String XML file
+ * for Android
  */
 public class ArrayStringNodeManager extends NodeManager implements
 		IAndroidLocalizationSchemaConstants {
@@ -58,7 +58,7 @@ public class ArrayStringNodeManager extends NodeManager implements
 			Element arrayNode = (Element) arrayNodeList.item(i);
 			arrayKey = arrayNode.getAttributeNode(XML_STRING_ATTR_NAME)
 					.getNodeValue();
-			ArrayStringNode stringArray = new ArrayStringNode(arrayKey);
+			StringArrayNode stringArray = new StringArrayNode(arrayKey);
 			if (arrayNode.hasChildNodes()) {
 				NodeList arrayItems = arrayNode
 						.getElementsByTagName(XML_STRING_ARRAY_ITEM_TAG);
@@ -103,7 +103,7 @@ public class ArrayStringNodeManager extends NodeManager implements
 	public void createFile(Document document, Element resources,
 			LocalizationFile localizationFile) {
 
-		for (ArrayStringNode stringArray : ((StringLocalizationFile) localizationFile)
+		for (StringArrayNode stringArray : ((StringLocalizationFile) localizationFile)
 				.getStringArrays()) {
 			addArrayEntry(document, resources, stringArray);
 		}
@@ -117,8 +117,8 @@ public class ArrayStringNodeManager extends NodeManager implements
 	 * @param resources
 	 * @param stringArray
 	 */
-	private void addArrayEntry(Document document, Element resources,
-			ArrayStringNode stringArray) {
+	public void addArrayEntry(Document document, Element resources,
+			StringArrayNode stringArray) {
 		Element array = document.createElement(XML_STRING_ARRAY_TAG);
 		array.setAttribute(XML_STRING_ATTR_NAME, stringArray.getKey());
 		for (StringNode stringNode : stringArray.getValues()) {
@@ -127,13 +127,16 @@ public class ArrayStringNodeManager extends NodeManager implements
 		resources.appendChild(array);
 	}
 
-	/*
-	 * 
+	/**
+	 * Adds array item entry into XML Android Localization file
 	 */
-	private void createArrayItem(Document document, Element array,
+	public void createArrayItem(Document document, Element array,
 			StringNode stringNode) {
 		Element arrayItem = document.createElement(XML_STRING_ARRAY_ITEM_TAG);
-		arrayItem.appendChild(document.createTextNode(stringNode.getValue()));
+		arrayItem
+				.appendChild(document
+						.createTextNode(stringNode.getValue() != null ? stringNode
+								.getValue() : "")); //$NON-NLS-1$
 		array.appendChild(arrayItem);
 
 		createOrUpdateComment(document, stringNode, arrayItem);
@@ -142,31 +145,10 @@ public class ArrayStringNodeManager extends NodeManager implements
 	@Override
 	public void updateFile(LocalizationFile locFile,
 			Map<String, StringNode> arrayStringsToUpdateOrAdd) {
-		for (ArrayStringNode stringArray : ((StringLocalizationFile)locFile).getStringArrays()) {
-			arrayStringsToUpdateOrAdd
-					.put(stringArray.getKey(), stringArray);
+		for (StringArrayNode stringArray : ((StringLocalizationFile) locFile)
+				.getStringArrays()) {
+			arrayStringsToUpdateOrAdd.put(stringArray.getKey(), stringArray);
 		}
-	}
-
-	@Override
-	public void visitToAddDOMChildren(Document document,
-			Map<String, StringNode> stringsToUpdateOrAdd, Element resource) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void visitToUpdateDOMChildren(Document document, Node visitingNode,
-			String attrName, Map<String, StringNode> singleStringsToUpdateOrAdd) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void visitToRemoveDOMChildren(Document document, Node visitingNode,
-			String attrName, Map<String, StringNode> arrayItemsToRemove) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

@@ -119,7 +119,8 @@ public abstract class ITranslator {
 	 * given languages (given by a list, or course), using google Ajax API's for
 	 * that.
 	 * 
-	 * This comment feels like the"Three Swatch watch switching witches watched switched Swatch watch witches switch"
+	 * This comment feels like the
+	 * "Three Swatch watch switching witches watched switched Swatch watch witches switch"
 	 * , but I'll let it here anyway.
 	 * 
 	 * @param words

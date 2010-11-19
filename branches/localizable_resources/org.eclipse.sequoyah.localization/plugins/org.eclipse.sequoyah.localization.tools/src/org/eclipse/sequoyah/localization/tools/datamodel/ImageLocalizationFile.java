@@ -10,7 +10,6 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
-
 /**
  * This class represents a real localization file for images
  * 
@@ -25,13 +24,13 @@ public class ImageLocalizationFile extends LocalizationFile {
 				ImageLocalizationFile.class.getName(),
 				ImageLocalizationFile.class);
 	}
-	
+
 	/**
 	 * Default constructor.
 	 */
-	public ImageLocalizationFile (){
+	public ImageLocalizationFile() {
 	}
-	
+
 	/**
 	 * Constructor
 	 * 

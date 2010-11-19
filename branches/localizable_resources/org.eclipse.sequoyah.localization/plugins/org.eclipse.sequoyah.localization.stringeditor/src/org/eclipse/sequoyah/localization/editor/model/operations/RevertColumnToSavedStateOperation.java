@@ -46,16 +46,16 @@ public class RevertColumnToSavedStateOperation extends EditorOperation {
 			BasePlugin.logError("Error reverting column: " //$NON-NLS-1$
 					+ actualState.getId(), e);
 		}
-		savedState = new ColumnInfo(actualState.getId(), actualState
-				.getTooltip(), getEditorInput().getValues(actualState.getId()),
-				actualState.canRemove());
+		savedState = new ColumnInfo(actualState.getId(),
+				actualState.getTooltip(), getEditorInput().getValues(
+						actualState.getId()), actualState.canRemove());
 		return redo(monitor, info);
 	}
 
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		getModel().removeColumn(actualState.getId());
+		getModel().removeColumnForRevertion(actualState.getId());
 		getModel().addColumn(savedState);
 		changedColumn = getEditor().unmarkColumnAsChanged(actualState.getId());
 		getEditor().getEditorViewer().refresh();

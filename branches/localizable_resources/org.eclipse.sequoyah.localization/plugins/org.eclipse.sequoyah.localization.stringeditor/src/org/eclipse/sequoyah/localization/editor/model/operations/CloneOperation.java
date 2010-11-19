@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.sequoyah.localization.editor.datatype.CellInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.ColumnInfo;
+import org.eclipse.sequoyah.localization.editor.i18n.Messages;
 import org.eclipse.sequoyah.localization.editor.model.StringEditorPart;
 
 /**

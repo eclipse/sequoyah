@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,8 +9,14 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
- *  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
+ * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Paulo Faria (Eldorado) -  Bug [326793] -  Improvements on the String Arrays handling 
+ * Marcelo Marzola Bossoni (Eldorado) -  Bug [326793] -  Allow keys edition
+ * Fabricio Violin (Eldorado) -  Bug [326793] -  Revert to saved
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (validate key)
+ * Paulo Faria (Eldorado) - Bug [326793] - Fixing highlight problems 
+ * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Fixing array image according to array items status
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
@@ -36,6 +42,14 @@ import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 import org.eclipse.sequoyah.localization.editor.providers.ICellValidator;
 
+/**
+ * 
+ * @author rdbp36
+ * 
+ *         The editor internal model. Works with 3 basic items: Single, Arrays
+ *         and Array Items (children)
+ * 
+ */
 public class StringEditorViewerModel {
 
 	private static final int INDEX_NOT_REQUIRED = -1;
@@ -98,37 +112,41 @@ public class StringEditorViewerModel {
 					if (rowsMap.get(cellKey) == null) {
 						// first column
 						RowInfo arrayRow = new RowInfo(cellKey);
-						Map<Integer, CellInfo> subCells = cell.getChildren();
-						for (Integer subCellIndex : subCells.keySet()) {
-							CellInfo subCell = subCells.get(subCellIndex);
+						List<CellInfo> subCells = cell.getChildren();
+						for (CellInfo subCell : subCells) {
 							Map<String, CellInfo> cells = new HashMap<String, CellInfo>();
 							cells.put(column.getId(), subCell);
 							// it does not need to keep object instance because
 							// it is inserted on parent (RowInfo arrayRow)
-							new RowInfoLeaf(cellKey, arrayRow, subCellIndex,
-									cells);
+							arrayRow.addChild(new RowInfoLeaf(cellKey,
+									arrayRow, subCell.getPosition(), cells),
+									subCell.getPosition());
 						}
 						rowsMap.put(cellKey, arrayRow);
 					} else {
 						// other columns
 						RowInfo arrayRow = rowsMap.get(cellKey);
 
-						Map<Integer, CellInfo> subCells = cell.getChildren();
-						Map<Integer, RowInfoLeaf> subRows = arrayRow
-								.getChildren();
+						List<CellInfo> subCells = cell.getChildren();
+						List<RowInfoLeaf> subRows = arrayRow.getChildren();
 
-						for (Integer subCellIndex : subCells.keySet()) {
-							CellInfo subCell = subCells.get(subCellIndex);
-							if (subRows.containsKey(subCellIndex)) {
-								RowInfoLeaf leaf = subRows.get(subCellIndex);
+						for (CellInfo subCell : subCells) {
+							if (subCell.getPosition() >= 0
+									&& subCell.getPosition() < subRows.size()
+									&& subRows.get(subCell.getPosition()) != null) {
+								RowInfoLeaf leaf = subRows.get(subCell
+										.getPosition());
 								leaf.addCell(column.getId(), subCell);
 							} else {
 								// not found subcell at the given index, create
 								// row and add sub cell
 								Map<String, CellInfo> cells = new HashMap<String, CellInfo>();
 								cells.put(column.getId(), subCell);
-								new RowInfoLeaf(cellKey, arrayRow,
-										subCellIndex, cells);
+								arrayRow.addChild(
+										new RowInfoLeaf(cellKey, arrayRow,
+												subCell.getPosition(), cells),
+										subCell.getPosition());
+
 							}
 						}
 					}
@@ -138,7 +156,7 @@ public class StringEditorViewerModel {
 						// first column
 						Map<String, CellInfo> cells = new HashMap<String, CellInfo>();
 						cells.put(column.getId(), cell);
-						RowInfoLeaf row = new RowInfoLeaf(cellKey, null, null,
+						RowInfoLeaf row = new RowInfoLeaf(cellKey, null, -1,
 								cells);
 						rowsMap.put(cellKey, row);
 					} else {
@@ -206,36 +224,44 @@ public class StringEditorViewerModel {
 		columns.add(info);
 		columnsMap.put(info.getId(), info);
 		Map<String, CellInfo> cells = info.getCells();
-		for (String key : cells.keySet()) {
+		Map<String, CellInfo> cellsClone = new HashMap<String, CellInfo>(cells);
+		Iterator<String> keysIterator = cellsClone.keySet().iterator();
+
+		while (keysIterator.hasNext()) {
+			String key = keysIterator.next();
 			CellInfo cell = cells.get(key);
 
 			RowInfo row = rowsMap.get(key);
 
 			if (cell.hasChildren()) {
 				// array
-				Map<Integer, CellInfo> subCells = cell.getChildren();
+				List<CellInfo> subCells = cell.getChildren();
 
 				if (row == null) {
 					row = new RowInfo(key);
 					rowsMap.put(key, row);
-					for (Integer subCellIndex : subCells.keySet()) {
-						CellInfo subCell = subCells.get(subCellIndex);
+					for (CellInfo subCell : subCells) {
 						Map<String, CellInfo> cellsForRow = new HashMap<String, CellInfo>();
-						cells.put(info.getId(), subCell);
-						new RowInfoLeaf(key, row, subCellIndex, cellsForRow);
+						cellsForRow.put(info.getId(), subCell);
+						row.addChild(
+								new RowInfoLeaf(key, row,
+										subCell.getPosition(), cellsForRow),
+								subCell.getPosition());
 					}
 				} else {
-					Map<Integer, RowInfoLeaf> subRows = row.getChildren();
+					List<RowInfoLeaf> subRows = row.getChildren();
 
-					for (Integer subCellIndex : subCells.keySet()) {
-						CellInfo subCell = subCells.get(subCellIndex);
-						if (subRows.containsKey(subCellIndex)) {
-							RowInfoLeaf leaf = subRows.get(subCellIndex);
+					for (CellInfo subCell : subCells) {
+						if (subCell.getPosition() >= 0
+								&& subCell.getPosition() < subRows.size()
+								&& subRows.get(subCell.getPosition()) != null) {
+							RowInfoLeaf leaf = subRows.get(subCell
+									.getPosition());
 							leaf.addCell(info.getId(), subCell);
 						} else {
 							Map<String, CellInfo> cellsForArray = new HashMap<String, CellInfo>();
-							cells.put(info.getId(), subCell);
-							new RowInfoLeaf(key, row, subCellIndex,
+							cellsForArray.put(info.getId(), subCell);
+							new RowInfoLeaf(key, row, subCell.getPosition(),
 									cellsForArray);
 						}
 					}
@@ -244,8 +270,8 @@ public class StringEditorViewerModel {
 				// string
 				if (row == null) {
 					Map<String, CellInfo> cellsForArray = new HashMap<String, CellInfo>();
-					cells.put(info.getId(), cell);
-					row = new RowInfoLeaf(key, null, null, cellsForArray);
+					cellsForArray.put(info.getId(), cell);
+					row = new RowInfoLeaf(key, null, -1, cellsForArray);
 					rowsMap.put(key, row);
 				} else {
 					if (row instanceof RowInfoLeaf) {
@@ -289,6 +315,12 @@ public class StringEditorViewerModel {
 			} else {
 				// array item
 				RowInfo parentRowInfo = leaf.getParent();
+				if (rowsMap.get(parentRowInfo.getKey()) == null) {
+					rowsMap.put(parentRowInfo.getKey(), parentRowInfo);
+				}
+				if (!parentRowInfo.getChildren().contains(leaf)) {
+					parentRowInfo.addChild(leaf, leaf.getPosition());
+				}
 
 				for (String column : columnsMap.keySet()) {
 					ColumnInfo columnInfo = columnsMap.get(column);
@@ -306,20 +338,20 @@ public class StringEditorViewerModel {
 
 					CellInfo subcellInfo = leaf.getCells().get(column);
 					if (subcellInfo == null) {
-						subcellInfo = new CellInfo(null, null);
-						leaf.addCell(column, subcellInfo);
+						subcellInfo = new CellInfo(null, null,
+								leaf.getPosition());
 					}
-					parentCell.addChild(subcellInfo, leaf.getPosition());
+					parentCell.addChild(subcellInfo, leaf.getPosition(), false);
 				}
 			}
 		} else {
 			// array
-			Map<Integer, RowInfoLeaf> subrows = info.getChildren();
+			List<RowInfoLeaf> subrows = info.getChildren();
 			// columnName to parentCell
 			Map<String, CellInfo> parentsMap = new LinkedHashMap<String, CellInfo>();
 
-			for (Integer subrowIndex : subrows.keySet()) {
-				cells = subrows.get(subrowIndex).getCells();
+			for (RowInfoLeaf subrow : subrows) {
+				cells = subrow.getCells();
 				for (ColumnInfo cl : columns) {
 					String column = cl.getId();
 					CellInfo parentCell = parentsMap.get(column);
@@ -352,8 +384,18 @@ public class StringEditorViewerModel {
 		notifyListeners();
 	}
 
+	/**
+	 * Add a new cell
+	 * 
+	 * @param info
+	 *            the cell
+	 * @param key
+	 *            the key
+	 * @param column
+	 *            the column
+	 */
 	public void addCell(CellInfo info, String key, String column) {
-		addCell(info, key, column, INDEX_NOT_REQUIRED);
+		addCell(info, key, column, INDEX_NOT_REQUIRED, false);
 	}
 
 	/**
@@ -365,8 +407,15 @@ public class StringEditorViewerModel {
 	 *            the key
 	 * @param column
 	 *            the column
+	 * @param index
+	 *            the index of this cell within the array or -1 for non array
+	 *            cells
+	 * @param overwrite
+	 *            true to overwrite the cell in the position index or false to
+	 *            add this cell inside the position, moving the other cells
 	 */
-	public void addCell(CellInfo info, String key, String column, Integer index) {
+	public void addCell(CellInfo info, String key, String column,
+			Integer index, boolean overwrite) {
 		RowInfo rowInfo = rowsMap.get(key);
 		if (rowInfo instanceof RowInfoLeaf) {
 			// string or item array
@@ -379,7 +428,7 @@ public class StringEditorViewerModel {
 		} else {
 			// array-item
 			if (index >= 0) {
-				Map<Integer, RowInfoLeaf> rowChildren = rowInfo.getChildren();
+				List<RowInfoLeaf> rowChildren = rowInfo.getChildren();
 
 				Map<String, CellInfo> cells = rowChildren.get(index).getCells();
 				cells.put(column, info);
@@ -391,7 +440,7 @@ public class StringEditorViewerModel {
 					parentCell = new CellInfo(true);
 					columnInfo.addCell(key, parentCell);
 				}
-				parentCell.addChild(info, index);
+				parentCell.addChild(info, index, overwrite);
 			}
 		}
 		validateRow(key);
@@ -420,11 +469,100 @@ public class StringEditorViewerModel {
 		Iterator<RowInfo> it = rowsMapClone.values().iterator();
 		while (it.hasNext()) {
 			RowInfo row = it.next();
+			// string item
+			if (row instanceof RowInfoLeaf) {
+				((RowInfoLeaf) row).removeCell(column);
+			} else {
+				for (RowInfoLeaf leaf : row.getChildren()) {
+					leaf.removeCell(column);
+				}
+			}
+		}
+
+		notifyListeners();
+	}
+
+	/**
+	 * Remove column from the UI model. Special treatment to empty array items,
+	 * which will not be removed under certain circumstances.
+	 * 
+	 * @param column
+	 *            the columnID to remove
+	 */
+	public void removeColumnForRevertion(String column) {
+		ArrayList<Integer> itemsToRemove = new ArrayList<Integer>();
+		// remove from columns map
+		columnsMap.remove(column);
+		// remove from columns list
+		List<ColumnInfo> orig = new ArrayList<ColumnInfo>(columns);
+		for (ColumnInfo info : orig) {
+			if (info.getId().equals(column)) {
+				columns.remove(info);
+			}
+		}
+		// remove from rows map
+		Map<String, RowInfo> rowsMapClone = new HashMap<String, RowInfo>(
+				rowsMap);
+		Iterator<RowInfo> it = rowsMapClone.values().iterator();
+		while (it.hasNext()) {
+			RowInfo row = it.next();
 			if (row instanceof RowInfoLeaf) {
 				RowInfoLeaf leaf = (RowInfoLeaf) row;
 				leaf.removeCell(column);
 				if (isEmptyRow(row)) {
 					// TODO check this
+					removeRow(row.getKey());
+				}
+			} else {
+				List<RowInfoLeaf> arrMap = row.getChildren();
+				List<RowInfoLeaf> arrMapClone = new ArrayList<RowInfoLeaf>(
+						arrMap);
+
+				itemsToRemove.clear();
+				Iterator<RowInfoLeaf> iterator = arrMapClone.iterator();
+
+				int counter = 0;
+				int lastIndex = -2;
+				while (iterator.hasNext()) {
+					RowInfoLeaf tempLeaf = iterator.next();
+
+					tempLeaf.removeCell(column);
+					if (tempLeaf.getCells().isEmpty()) {
+						// the array empty rows are not removed if there is a
+						// valid and already saved row
+						// after it because it will change its position value
+						// that would become its later
+						// addition to the editor (on RevertToSavedOperation)
+						// very complex
+						if (!(itemsToRemove.isEmpty() || counter - lastIndex == 1)) {
+							itemsToRemove.clear();
+						}
+						// here we mark the array empty rows for a possible
+						// removal
+						itemsToRemove.add(counter);
+						lastIndex = counter;
+					}
+					counter++;
+				}
+
+				if (lastIndex < counter - 1) {
+					itemsToRemove.clear();
+				}
+
+				counter = 0;
+				iterator = arrMapClone.iterator();
+
+				while (iterator.hasNext()) {
+					// perform the removal
+					RowInfoLeaf tempLeaf = iterator.next();
+					if (itemsToRemove.contains(counter)) {
+						removeRow(row.getKey(), tempLeaf.getPosition());
+						arrMap.remove(tempLeaf.getPosition());
+					}
+					counter++;
+				}
+
+				if (arrMap.isEmpty()) {
 					removeRow(row.getKey());
 				}
 			}
@@ -441,55 +579,39 @@ public class StringEditorViewerModel {
 		}
 	}
 
-	public void removeRow(String key, Integer index) {
-		RowInfo row = rowsMap.remove(key);
-
+	/**
+	 * Remove a single row. If the array is empty, remove the array as well
+	 * 
+	 * @param key
+	 *            the row key
+	 * @param index
+	 *            if the row is an array item, the index within this array.
+	 */
+	public void removeRow(String key, int index) {
+		RowInfo row = rowsMap.get(key);
 		if (row != null) {
-			Map<Integer, RowInfoLeaf> children = row.getChildren();
-			RowInfo newRow = new RowInfo(key);
-			rowsMap.put(key, newRow);
-			int newCount = 0;
-			for (Integer childIndex : children.keySet()) {
-				if (index != childIndex) {
-					RowInfoLeaf child = children.get(childIndex);
-					RowInfoLeaf newChild = new RowInfoLeaf(key, newRow,
-							newCount++, child.getCells());
-					newChild.addStatus(child.getStatus());
-				}
-			}
-			if (newCount == 0) {
+			row.removeChild(index);
+			if (row.getChildren().size() == 0) {
 				rowsMap.remove(key);
 			}
 		}
-
 		Iterator<ColumnInfo> it = columnsMap.values().iterator();
 		while (it.hasNext()) {
 			ColumnInfo col = it.next();
 			CellInfo parent = col.getCells().get(key);
 			if (parent != null) {
-				Map<Integer, CellInfo> children = parent.getChildren();
-				parent.clearChildren();
-				if (children != null) {
-					int newCount = 0;
-					for (Integer childIndex : children.keySet()) {
-						if (index != childIndex) {
-							parent.addChild(children.get(childIndex),
-									newCount++);
-						}
-					}
-					if (newCount == 0) {
-						col.removeCell(key);
-					}
-				} else {
-					// this should not happen, but if it does, be safe
-					col.removeCell(key);
-				}
+				parent.removeChild(index);
 			}
 		}
-
+		validateRow(row);
 		notifyListeners();
 	}
 
+	/**
+	 * Remove entire row. If the row is an array, remove the entire array
+	 * 
+	 * @param key
+	 */
 	public void removeRow(String key) {
 		rowsMap.remove(key);
 
@@ -500,6 +622,33 @@ public class StringEditorViewerModel {
 		}
 
 		notifyListeners();
+	}
+
+	/**
+	 * Rename a key to another name
+	 * 
+	 * @param oldKey
+	 *            old key name
+	 * @param newKey
+	 *            the new name
+	 */
+	public void renameKey(String oldKey, String newKey) {
+		RowInfo theRow = rowsMap.get(oldKey);
+		if (theRow != null) {
+			rowsMap.remove(oldKey);
+			theRow.setKey(newKey);
+			rowsMap.put(newKey, theRow);
+			for (ColumnInfo column : columns) {
+				column.renameKey(oldKey, newKey);
+			}
+			validateRow(theRow);
+
+			// check if it is a rowinfo and change its children
+			for (RowInfoLeaf leaf : theRow.getChildren()) {
+				leaf.setKey(newKey);
+			}
+		}
+
 	}
 
 	public void addListener(IModelChangedListener listener) {
@@ -529,7 +678,7 @@ public class StringEditorViewerModel {
 				leaves = new ArrayList<RowInfoLeaf>(1);
 				leaves.add((RowInfoLeaf) info);
 			} else {
-				leaves = info.getChildren().values();
+				leaves = info.getChildren();
 			}
 			for (RowInfoLeaf leaf : leaves) {
 				for (CellInfo cell : leaf.getCells().values()) {
@@ -551,7 +700,7 @@ public class StringEditorViewerModel {
 				leaves = new ArrayList<RowInfoLeaf>(1);
 				leaves.add((RowInfoLeaf) info);
 			} else {
-				leaves = info.getChildren().values();
+				leaves = info.getChildren();
 			}
 			for (RowInfoLeaf leaf : leaves) {
 				for (Map.Entry<String, CellInfo> cellEntry : leaf.getCells()
@@ -564,6 +713,18 @@ public class StringEditorViewerModel {
 			}
 		}
 		return (new ArrayList<ColumnInfo>(changed));
+	}
+
+	/**
+	 * Validate key
+	 */
+	public IStatus validateRowKey(String key) {
+		RowInfo row = rowsMap.get(key);
+		IStatus rowKeyStatus = validator.isKeyValid(row.getKey());
+		if (!rowKeyStatus.isOK()) {
+			row.addStatus(rowKeyStatus);
+		}
+		return rowKeyStatus;
 	}
 
 	/**
@@ -580,8 +741,12 @@ public class StringEditorViewerModel {
 	public void validateRow(RowInfo row) {
 		row.cleanStatus();
 		if (row instanceof RowInfoLeaf) {
-			// string
+			// string or array item
 			RowInfoLeaf leaf = (RowInfoLeaf) row;
+			if (leaf.getParent() == null) {
+				// string => validate key
+				validateRowKey(row.getKey());
+			}
 			for (ColumnInfo column : columns) {
 				CellInfo cell = leaf.getCells().get(column.getId());
 				IStatus cellStatus = validator.isCellValid(column.getId(),
@@ -590,19 +755,40 @@ public class StringEditorViewerModel {
 					row.addStatus(cellStatus);
 				}
 			}
+			if (leaf.getParent() != null) {
+				IStatus parentStatus = leaf.getParent().getStatus();
+				if (leaf.getStatus().getSeverity() > parentStatus.getSeverity()) {
+					parentStatus = leaf.getStatus();
+					leaf.getParent().addStatus(parentStatus);
+				}
+			}
+
 		} else {
+			// array => validate key
+			validateRowKey(row.getKey());
+			IStatus cellStatus = null;
 			// array: validate each child
-			Map<Integer, RowInfoLeaf> children = row.getChildren();
-			for (RowInfoLeaf child : children.values()) {
+			List<RowInfoLeaf> children = row.getChildren();
+			for (RowInfoLeaf child : children) {
 				child.cleanStatus();
 				for (ColumnInfo column : columns) {
 					CellInfo cell = child.getCells().get(column.getId());
-					IStatus cellStatus = validator
+					cellStatus = validator
 							.isCellValid(column.getId(), row.getKey(),
 									cell != null ? cell.getValue() : null);
 					if (!cellStatus.isOK()) {
 						child.addStatus(cellStatus);
+						// if (cellStatus.getSeverity() >
+						// parentStatus.getSeverity())
+						// parentStatus = cellStatus;
+						// row.addStatus(parentStatus);
 					}
+				}
+				IStatus parentStatus = row.getStatus();
+				if (child.getStatus().getSeverity() > parentStatus
+						.getSeverity()) {
+					parentStatus = child.getStatus();
+					row.addStatus(parentStatus);
 				}
 			}
 		}
@@ -621,4 +807,21 @@ public class StringEditorViewerModel {
 		}
 		return status != null ? status : Status.OK_STATUS;
 	}
+
+	public CellInfo getCellInfo(String columnID, String key, int indexKey) {
+		CellInfo theCell = null;
+		ColumnInfo theColumn = columnsMap.get(columnID);
+		if (theColumn != null) {
+			CellInfo candidateCell = theColumn.getCell(key);
+			if (candidateCell != null) {
+				if (indexKey >= 0) {
+					theCell = candidateCell.getChildren().get(indexKey);
+				} else {
+					theCell = candidateCell;
+				}
+			}
+		}
+		return theCell;
+	}
+
 }

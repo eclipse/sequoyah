@@ -10,10 +10,9 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
-
 /**
  * This class represents a real localization file for videos
- *
+ * 
  */
 public class VideoLocalizationFile extends LocalizationFile {
 
@@ -24,14 +23,14 @@ public class VideoLocalizationFile extends LocalizationFile {
 		LocalizationFileFactory.getInstance().addFileType(
 				VideoLocalizationFile.class.getName(),
 				VideoLocalizationFile.class);
-	}	
-	
+	}
+
 	/**
 	 * Default constructor.
 	 */
-	public VideoLocalizationFile (){
-	}	
-	
+	public VideoLocalizationFile() {
+	}
+
 	/**
 	 * Constructor
 	 * 
@@ -41,7 +40,7 @@ public class VideoLocalizationFile extends LocalizationFile {
 	public VideoLocalizationFile(LocalizationFileBean bean) {
 		super(bean);
 	}
-	
+
 	/**
 	 * VideoLocalizationFile knows how to create itself.
 	 * 

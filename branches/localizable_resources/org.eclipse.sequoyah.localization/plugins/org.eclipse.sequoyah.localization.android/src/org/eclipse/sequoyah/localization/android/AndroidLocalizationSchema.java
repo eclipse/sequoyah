@@ -20,6 +20,10 @@
  * Daniel Drigo Pastore, Marcel Augusto Gorri (Eldorado) - Bug 312971 - Localization Editor does not accept < and > characters
  * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources
  * Matheus Lima (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add single key and edit key in place)
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array key) 
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (validate key)
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
 
@@ -75,12 +79,11 @@ import org.eclipse.sequoyah.localization.tools.datamodel.SoundLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.VideoLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
-import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.NewRowInputDialog;
 import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.TranslateColumnInputDialog;
 import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.TranslateColumnsInputDialog;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.sequoyah.localization.tools.managers.ProjectLocalizationManager;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -125,24 +128,28 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		InputStream xmlStream;
 		try {
 
-			xmlStream = AndroidLocalizationPlugin.getDefault().getBundle()
-					.getEntry(PREFERED_LANGUAGES_XML_PATH).openStream();
+			if (AndroidLocalizationPlugin.getDefault().getBundle()
+					.getEntry(PREFERED_LANGUAGES_XML_PATH) != null) {
 
-			// Load XML
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(xmlStream);
+				xmlStream = AndroidLocalizationPlugin.getDefault().getBundle()
+						.getEntry(PREFERED_LANGUAGES_XML_PATH).openStream();
 
-			/*
-			 * Iterate through Startup Groups
-			 */
-			Element rootNode = document.getDocumentElement();
-			NodeList languages = rootNode.getElementsByTagName("language"); //$NON-NLS-1$
-			for (int i = 0; i < languages.getLength(); i++) {
+				// Load XML
+				DocumentBuilderFactory factory = DocumentBuilderFactory
+						.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				Document document = builder.parse(xmlStream);
 
-				Element language = (Element) languages.item(i);
-				langIDs.add(language.getAttributeNode("id").getNodeValue()); //$NON-NLS-1$
+				/*
+				 * Iterate through Startup Groups
+				 */
+				Element rootNode = document.getDocumentElement();
+				NodeList languages = rootNode.getElementsByTagName("language"); //$NON-NLS-1$
+				for (int i = 0; i < languages.getLength(); i++) {
+
+					Element language = (Element) languages.item(i);
+					langIDs.add(language.getAttributeNode("id").getNodeValue()); //$NON-NLS-1$
+				}
 			}
 
 		} catch (Exception e) {
@@ -205,6 +212,31 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		return result;
 	}
 
+	/**
+	 * Key is valid on Android if it is a valid Java identifier
+	 */
+	@Override
+	public IStatus isKeyValid(String key) {
+		Status result = new Status(IStatus.OK,
+				AndroidLocalizationPlugin.PLUGIN_ID, ""); //$NON-NLS-1$
+
+		char[] keyChars = key.toCharArray();
+		for (int i = 0; i < keyChars.length; i++) {
+			boolean valid = (i > 0) ? Character
+					.isJavaIdentifierPart(keyChars[i]) : Character
+					.isJavaIdentifierStart(keyChars[i]);
+			if (!valid) {
+				result = new Status(IStatus.ERROR,
+						AndroidLocalizationPlugin.PLUGIN_ID, Messages.bind(
+								Messages.Invalid_Andr_Key_Name, "'" //$NON-NLS-1$
+										+ keyChars[i] + "'")); //$NON-NLS-1$
+				break;
+			}
+		}
+
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -234,41 +266,90 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		return newColumn;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.sequoyah.localization.tools.extensions.classes.
-	 * ILocalizationSchema#promptRowName(org.eclipse.core.resources.IProject)
-	 */
 	@Override
-	public RowInfo[] promptRowName(final IProject iProject) {
+	public RowInfo[] promptSingleRowName(final IProject iProject, int quantity) {
+		RowInfo[] rowInfo = new RowInfo[quantity];
+
+		String[] singleStringAutomaticKey = getAutomaticKeys(iProject, false,
+				quantity);
+
+		for (int i = 0; i < quantity; i++) {
+			RowInfoLeaf row = new RowInfoLeaf(singleStringAutomaticKey[i],
+					null, -1, null);
+			rowInfo[i] = row;
+		}
+		return rowInfo;
+	}
+
+	@Override
+	public RowInfo[] promptArrayRowName(IProject iProject, int quantity) {
 		RowInfo[] rowInfo = null;
 
-		NewRowInputDialog dialog = new NewRowInputDialog(PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				iProject, NEW_ROW_TITLE);
+		String[] arrayAutomaticKey = getAutomaticKeys(iProject, true, quantity);
 
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			String key = dialog.getKey();
-			boolean isArray = dialog.isArray();
-
-			int arraySize = dialog.getNumEntries();
-
-			if (isArray) {				
-				RowInfo row = new RowInfo(key);
-				for (int i = 0; i < arraySize; i++) {
-					new RowInfoLeaf(key, row, i, null);
-				}
-				rowInfo = new RowInfo[1];
-				rowInfo[0] = row;
-			} else {
-				RowInfoLeaf row = new RowInfoLeaf(key, null, null, null);
-				rowInfo = new RowInfo[1];
-				rowInfo[0] = row;
+		rowInfo = new RowInfo[arrayAutomaticKey.length];
+		for (int j = 0; j < arrayAutomaticKey.length; j++) {
+			RowInfo row = new RowInfo(arrayAutomaticKey[j]);
+			int arraySize = 1; // by default array will be created with 1 array
+								// item
+			for (int i = 0; i < arraySize; i++) {
+				row.addChild(
+						new RowInfoLeaf(arrayAutomaticKey[j], row, i, null), 0);
 			}
-		}
 
+			rowInfo[j] = row;
+		}
 		return rowInfo;
+	}
+
+	/**
+	 * Returns an automatic key for a single string or an array
+	 * 
+	 * @param iProject
+	 * @param isArray
+	 * @return
+	 */
+	private String[] getAutomaticKeys(final IProject iProject, boolean isArray,
+			int quantity) {
+		String[] automaticKeys = new String[quantity];
+		try {
+
+			// get new string automatic key
+			String key = (isArray) ? Messages.AndroidLocalizationSchema_NewArrayKeyPrefix
+					: Messages.AndroidLocalizationSchema_NewStringKeyPrefix;
+			int index = 0;
+
+			ProjectLocalizationManager projLocMgr = LocalizationManager
+					.getInstance().getProjectLocalizationManager(iProject,
+							false);
+			ILocalizationSchema schema = projLocMgr
+					.getProjectLocalizationSchema();
+			LocaleInfo locale = schema.getLocaleInfoFromID(schema
+					.getDefaultID());
+			if (locale != null) {
+				LocalizationFile mainFile = projLocMgr.getLocalizationProject()
+						.getLocalizationFile(locale);
+				for (int i = 0; i < quantity; i++, index++) {
+					automaticKeys[i] = key + index;
+					while (((StringLocalizationFile) mainFile)
+							.containsKey(automaticKeys[i])) {
+						// automatic key already exists => create a new one
+						index++;
+						automaticKeys[i] = key + index;
+						// i++;
+					}
+
+				}
+
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SequoyahException se) {
+
+		}
+		return automaticKeys;
 	}
 
 	/*
@@ -312,7 +393,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	@Override
 	public TranslationInfo[] promptTranslatedCollumnsName(
 			final IProject project, String selectedColumn,
-			String[] selectedKeys, String[] selectedCells, TableColumn[] columns) {
+			String[] selectedKeys, String[] selectedCells, TreeColumn[] columns) {
 		TranslationInfo[] newColumns = null;
 
 		// Ask user for the ID
@@ -350,6 +431,49 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		return newColumns;
 	}
 
+	@Override
+	public TranslationInfo[] promptTranslatedCollumnsName(
+			final IProject project, String selectedColumn,
+			String[] selectedKeys, String[] selectedCells,
+			Integer[] selectedIndexes, TreeColumn[] columns) {
+		TranslationInfo[] newColumns = null;
+
+		// Ask user for the ID
+		TranslateColumnsInputDialog dialog = new TranslateColumnsInputDialog(
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+				project, selectedColumn, selectedCells, columns,
+				TRANSLATE_CELLS_TITLE);
+
+		if (dialog.open() == IDialogConstants.OK_ID) {
+			List<TranslateColumnsInputDialog.DestinationColumn> destinationColumns = dialog
+					.getDestinationColumns();
+			newColumns = new TranslationInfo[selectedCells.length
+					* destinationColumns.size()];
+
+			int count = 0;
+			for (int i = 0; i < selectedCells.length; i++) {
+				String selectedCell = selectedCells[i];
+				String selectedKey = selectedKeys[i];
+				for (int j = 0; j < destinationColumns.size(); j++) {
+					TranslateColumnsInputDialog.DestinationColumn destColumn = destinationColumns
+							.get(j);
+					newColumns[count] = new TranslationInfo(
+							destColumn.getText(), destColumn.getText(), null,
+							true, dialog.getFromLanguage(),
+							destColumn.getLang(), selectedCell,
+							dialog.getTranslator());
+					newColumns[count].setFromKey(selectedKey);
+					newColumns[count].setToColumn(destColumn.getText());
+					newColumns[count].setIndexKey(selectedIndexes[i]);
+					count++;
+				}
+			}
+
+		}
+
+		return newColumns;
+	}
+
 	/**
 	 * Checks if the current input is a valid column name for a new column
 	 * 
@@ -371,6 +495,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 				manager = LocalizationManager.getInstance()
 						.getProjectLocalizationManager(project, false);
 			} catch (IOException e) {
+			} catch (SequoyahException e) {
 			}
 
 			if ((info.getLocaleAttributes().size() > 0)
@@ -378,7 +503,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 							.equalsIgnoreCase(AndroidLocalizationSchema.LOCALIZATION_FILES_FOLDER))) {
 				LocalizationFile file = manager.getLocalizationProject()
 						.getLocalizationFile(info);
-				if (file != null && !file.isToBeDeleted()) {
+				if ((file != null) && !file.isToBeDeleted()) {
 					result = Messages.AndroidNewColumnProvider_Dialog_FileAlreadyExists;
 				}
 			} else {
@@ -413,6 +538,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	 * @see org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema
 	 *      #createStringFile(org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo)
 	 */
+	@Override
 	public void createLocalizationFile(LocalizationFile localizationFile)
 			throws SequoyahException {
 
@@ -457,7 +583,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
 	 * ILocalizationSchema #getLocaleAttributes()
 	 */
 	@Override
@@ -475,7 +601,13 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.SCREEN_SIZE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.SCREEN_ASPECT.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.SCREEN_ORIENTATION.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.DOCK_MODE.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.NIGHT_MODE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(new Integer(12),
 				AndroidLocaleAttributes.PIXEL_DENSITY.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
@@ -484,6 +616,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 				AndroidLocaleAttributes.KEYBOARD_STATE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.TEXT_INPUT_METHOD.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.NAVIGATION_METHOD.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(new Dimension(1, 1),
@@ -739,6 +873,11 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		manager.updateLocalizationFileContent(locFile, content);
 	}
 
+	@Override
+	public boolean keyAcceptsBlankSpaces() {
+		return false;
+	}
+
 	/*
 	 * 
 	 */
@@ -818,7 +957,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.sequoyah.localization.tools.extensions.classes.
+	 * @seeorg.eclipse.sequoyah.localization.tools.extensions.classes.
 	 * ILocalizationSchema #getLocaleInfoFromID(java.lang.String)
 	 */
 	@Override
@@ -865,6 +1004,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 				lastQualifier = AndroidLocaleAttributes.SCREEN_SIZE.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.SCREEN_SIZE.ordinal()));
+			} else if (isScreenAspectSegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.SCREEN_ASPECT
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.SCREEN_ASPECT.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.SCREEN_ASPECT.ordinal()));
 			} else if (isOrientationSegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttributes.SCREEN_ORIENTATION
 							.ordinal())) {
@@ -872,6 +1017,18 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 						.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.SCREEN_ORIENTATION.ordinal()));
+			} else if (isDockSegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.DOCK_MODE
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.DOCK_MODE.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.DOCK_MODE.ordinal()));
+			} else if (isNightSegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.NIGHT_MODE
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.NIGHT_MODE.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.NIGHT_MODE.ordinal()));
 			} else if (isPixelDensitySegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttributes.PIXEL_DENSITY
 							.ordinal())) {
@@ -898,6 +1055,15 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 						.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.TEXT_INPUT_METHOD.ordinal()));
+			} else if (isNavigationKeySegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+						.ordinal();
+				localeAttributes
+						.add(new AndroidLocaleAttribute(segments[i],
+								AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+										.ordinal()));
 			} else if (isNavigationSegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttributes.NAVIGATION_METHOD
 							.ordinal())) {
@@ -948,9 +1114,24 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		return LOCALIZATION_FILES_FOLDER;
 	}
 
-	private boolean isNetworkCodeSegment(String value) {
-		return value.startsWith("mnc"); //$NON-NLS-1$
+	private boolean isScreenAspectSegment(String value) {
+		return ((value.equalsIgnoreCase("long") || value //$NON-NLS-1$
+				.equalsIgnoreCase("notlong"))); //$NON-NLS-1$
+	}
 
+	private boolean isDockSegment(String value) {
+		return ((value.equalsIgnoreCase("car") || value //$NON-NLS-1$
+				.equalsIgnoreCase("desk"))); //$NON-NLS-1$
+	}
+
+	private boolean isNightSegment(String value) {
+		return ((value.equalsIgnoreCase("night") || value //$NON-NLS-1$
+				.equalsIgnoreCase("notnight"))); //$NON-NLS-1$
+	}
+
+	private boolean isNavigationKeySegment(String value) {
+		return ((value.equalsIgnoreCase("navexposed") || value //$NON-NLS-1$
+				.equalsIgnoreCase("navhidden"))); //$NON-NLS-1$
 	}
 
 	private boolean isLanguageSegment(String value) {
@@ -1015,17 +1196,64 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	}
 
 	private boolean isCountryCodeSegment(String value) {
-		return value.startsWith("mcc"); //$NON-NLS-1$
+		boolean result = false;
+		if (value.startsWith("mcc")) { //$NON-NLS-1$
+			if (value.length() <= 6) {
+				Integer intValue = -1;
+				String source = (String) value;
+				String intValueAsText = source.substring(3, source.length());
+				try {
+					intValue = Integer.parseInt((String) intValueAsText);
+					result = true;
+				} catch (NumberFormatException nfe) {
+					// do nothing, the false value returned will
+					// take care of the correct validation
+				}
+			}
+		}
+		return result;
+	}
 
+	private boolean isNetworkCodeSegment(String value) {
+		boolean result = false;
+		if (value.startsWith("mnc")) { //$NON-NLS-1$
+			if (value.length() <= 6) {
+				Integer intValue = -1;
+				String source = (String) value;
+				String intValueAsText = source.substring(3, source.length());
+				try {
+					intValue = Integer.parseInt((String) intValueAsText);
+					result = true;
+				} catch (NumberFormatException nfe) {
+					// do nothing, the false value returned will
+					// take care of the correct validation
+				}
+			}
+		}
+		return result;
 	}
 
 	private boolean isScreenSizeSegment(String value) {
 		return value.equalsIgnoreCase("large") //$NON-NLS-1$
+				|| value.equalsIgnoreCase("xlarge") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("normal") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("small"); //$NON-NLS-1$
 	}
 
 	private boolean isAPIVersionSegment(String value) {
-		return value.startsWith("v"); //$NON-NLS-1$
+		boolean result = false;
+		if (value.startsWith("v")) { //$NON-NLS-1$
+			Integer intValue = -1;
+			String source = (String) value;
+			String intValueAsText = source.substring(1, source.length());
+			try {
+				intValue = Integer.parseInt((String) intValueAsText);
+				result = true;
+			} catch (NumberFormatException nfe) {
+				// do nothing, the false value returned will
+				// take care of the correct validation
+			}
+		}
+		return result;
 	}
 }

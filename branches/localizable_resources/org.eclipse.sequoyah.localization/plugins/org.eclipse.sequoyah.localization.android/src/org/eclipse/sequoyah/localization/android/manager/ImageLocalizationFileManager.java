@@ -15,10 +15,10 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 
 /**
  * This class deals specifically with localized image content.
- *
+ * 
  */
 public class ImageLocalizationFileManager extends ILocalizationFileManager {
-	
+
 	/*
 	 * Static code to add this manager to factory's hashmap
 	 */
@@ -26,25 +26,25 @@ public class ImageLocalizationFileManager extends ILocalizationFileManager {
 		LocalizationFileManagerFactory.getInstance().addManager(
 				ImageLocalizationFileManager.class.getName(),
 				ImageLocalizationFileManager.class);
-	}			
+	}
 
 	/**
 	 * Default constructor.
 	 */
 	public ImageLocalizationFileManager() {
-	}	
-	
+	}
+
 	/**
 	 * ImageLocalizationFileManager knows how to create itself.
 	 * 
-	 * @return StringLocalizationFileManager created 
+	 * @return StringLocalizationFileManager created
 	 */
 	public static ILocalizationFileManager create() {
 		ImageLocalizationFileManager locFileManager;
 		locFileManager = new ImageLocalizationFileManager();
 		return locFileManager;
 	}
-	
+
 	@Override
 	public LocalizationFile loadFile(LocalizationFile locFile) {
 		// TODO Auto-generated method stub
@@ -54,13 +54,13 @@ public class ImageLocalizationFileManager extends ILocalizationFileManager {
 	@Override
 	public void createFile(LocalizationFile locFile) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void updateFile(LocalizationFile locFile) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class ImageLocalizationFileManager extends ILocalizationFileManager {
 			LocalizationFile localizationFile, String content)
 			throws SequoyahException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

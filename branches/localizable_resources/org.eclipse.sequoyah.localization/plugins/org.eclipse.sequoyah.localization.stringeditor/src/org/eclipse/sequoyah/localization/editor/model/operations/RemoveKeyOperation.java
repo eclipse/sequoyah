@@ -13,6 +13,7 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.operations;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,24 @@ public class RemoveKeyOperation extends EditorOperation {
 			List<RowInfo> rows) {
 		super(label, editor);
 
-		this.rows = rows;
+		this.rows = new ArrayList<RowInfo>();
+
+		// only array items and string nodes are added to the list of rows
+		// if an array header is selected, all of its children will be added
+
+		for (RowInfo info : rows) {
+			if (info instanceof RowInfoLeaf) {
+				if (!this.rows.contains(info)) {
+					this.rows.add(info);
+				}
+			} else {
+				for (RowInfoLeaf leaf : info.getChildren()) {
+					if (!this.rows.contains(leaf)) {
+						this.rows.add(leaf);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -70,6 +88,12 @@ public class RemoveKeyOperation extends EditorOperation {
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 
+		/*
+		 * Remove all selected items
+		 * 
+		 * Put all array items of some array together to remove in reverse order
+		 * due to indexing problems.
+		 */
 		Map<RowInfo, TreeSet<RowInfoLeaf>> mapForRemovingArrayItems = new HashMap<RowInfo, TreeSet<RowInfoLeaf>>();
 
 		for (RowInfo row : rows) {
@@ -107,7 +131,7 @@ public class RemoveKeyOperation extends EditorOperation {
 			}
 		}
 
-		getEditor().getEditorViewer().refresh();
+		getEditor().refresh();
 		return Status.OK_STATUS;
 	}
 
@@ -149,7 +173,7 @@ public class RemoveKeyOperation extends EditorOperation {
 		for (RowInfo row : rows) {
 			getEditor().addRow(row);
 		}
-		getEditor().getEditorViewer().refresh();
+		getEditor().refresh();
 		return Status.OK_STATUS;
 	}
 

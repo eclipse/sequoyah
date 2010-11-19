@@ -9,6 +9,8 @@
  * 
  * Contributors:
  * Matheus Tait Lima (Eldorado) - Adapting localization plugins to accept automatic translations
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array key)
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.providers;
 
@@ -16,7 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.sequoyah.localization.editor.datatype.ColumnInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.TranslationInfo;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * 
@@ -38,12 +40,22 @@ public interface IOperationProvider {
 	public ColumnInfo getNewColumn();
 
 	/**
-	 * When creating a new row, providers will be asked to provide the key of
-	 * this row.
+	 * When creating a new single row, providers will be asked to provide the
+	 * key of this row.
 	 * 
-	 * @return the new row
+	 * @param quantity
+	 * 
+	 * @return the new single row
 	 */
-	public RowInfo[] getNewRow();
+	public RowInfo[] getNewSingleRow(int quantity);
+
+	/**
+	 * When creating a new array row, providers will be asked to provide the key
+	 * of this row.
+	 * 
+	 * @return the new array row
+	 */
+	public RowInfo[] getNewArrayRow(int quantity);
 
 	/**
 	 * When creating a new column, based on a translation, providers will be
@@ -60,6 +72,10 @@ public interface IOperationProvider {
 	 * @return the new columns
 	 */
 	public TranslationInfo[] getTranslatedColumnsInfo(String selectedColumn,
-			String[] selectedKeys, String[] selectedCells, TableColumn[] columns);
+			String[] selectedKeys, String[] selectedCells, TreeColumn[] columns);
+
+	public TranslationInfo[] getTranslatedColumnsInfo(String selectedColumn,
+			String[] selectedKeys, String[] selectedCells,
+			Integer[] selectedIndexes, TreeColumn[] columns);
 
 }

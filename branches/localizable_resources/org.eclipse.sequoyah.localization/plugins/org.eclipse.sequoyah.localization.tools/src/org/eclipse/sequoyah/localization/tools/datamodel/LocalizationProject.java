@@ -22,7 +22,7 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayNode;
 
 /**
  * This class represents a real project and contains other information about it
@@ -219,11 +219,11 @@ public class LocalizationProject {
 	/**
 	 * @return
 	 */
-	public Set<ArrayStringNode> getAllStringArrays() {
-		Set<ArrayStringNode> allStringArrays = new TreeSet<ArrayStringNode>(
-				new Comparator<ArrayStringNode>() {
+	public Set<StringArrayNode> getAllStringArrays() {
+		Set<StringArrayNode> allStringArrays = new TreeSet<StringArrayNode>(
+				new Comparator<StringArrayNode>() {
 
-					public int compare(ArrayStringNode o1, ArrayStringNode o2) {
+					public int compare(StringArrayNode o1, StringArrayNode o2) {
 						return o1.getKey().compareTo(o2.getKey());
 					}
 				});
@@ -231,7 +231,8 @@ public class LocalizationProject {
 		List<LocalizationFile> localizationFiles = getLocalizationFiles();
 
 		for (LocalizationFile locFile : localizationFiles) {
-			allStringArrays.addAll(((StringLocalizationFile)locFile).getStringArrays());
+			allStringArrays.addAll(((StringLocalizationFile) locFile)
+					.getStringArrays());
 		}
 
 		return allStringArrays;

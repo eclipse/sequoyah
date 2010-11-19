@@ -26,6 +26,10 @@ public class Messages extends NLS {
 
 	public static String AndroidLocalizationSchema_Default_Andr_Localization_File_Tooltip;
 
+	public static String AndroidLocalizationSchema_NewArrayKeyPrefix;
+
+	public static String AndroidLocalizationSchema_NewStringKeyPrefix;
+
 	public static String StringLocalizationFileManager_Exception_CouldNotLoadFile;
 
 	public static String AndroidNewColumnProvider_Dialog_FileAlreadyExists;
@@ -53,6 +57,8 @@ public class Messages extends NLS {
 	public static String Invalid_Andr_Value;
 
 	public static String Invalid_Andr_Value_Size;
+
+	public static String Invalid_Andr_Key_Name;
 
 	static {
 		// initialize resource bundle

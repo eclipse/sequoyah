@@ -17,10 +17,10 @@ import org.eclipse.sequoyah.localization.android.i18n.Messages;
  * 
  */
 public interface IAndroidLocalizationSchemaConstants {
-	
+
 	/*
 	 * Android resources info
-	 */	
+	 */
 	public String RESOURCES_FOLDER = "res"; //$NON-NLS-1$
 
 	public String PREFERED_LANGUAGES_XML_PATH = "resource/prefered_languages.xml"; //$NON-NLS-1$

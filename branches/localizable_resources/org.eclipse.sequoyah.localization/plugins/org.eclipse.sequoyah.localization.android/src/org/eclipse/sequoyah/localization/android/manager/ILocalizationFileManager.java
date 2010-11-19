@@ -21,52 +21,52 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 public abstract class ILocalizationFileManager {
 
 	/**
-	 * Load a localization file according to the rules for Android 
-	 * localization schema. 
-	 * The file loaded is based on the generic LocalizationFile object passed
-	 * as a parameter.
+	 * Load a localization file according to the rules for Android localization
+	 * schema. The file loaded is based on the generic LocalizationFile object
+	 * passed as a parameter.
 	 * 
 	 * @param locFile
-	 * 				 an object which has information about the localization file
-	 *           	 that shall be loaded, as well as its content
-	 * @return
-	 * 				 LocalizationFile created
+	 *            an object which has information about the localization file
+	 *            that shall be loaded, as well as its content
+	 * @return LocalizationFile created
 	 */
-	public abstract LocalizationFile loadFile(LocalizationFile locFile) throws SequoyahException;
+	public abstract LocalizationFile loadFile(LocalizationFile locFile)
+			throws SequoyahException;
 
 	/**
-	 * Create a new localization file according to the rules for Android 
-	 * localization schema. 
-	 * The file generated is based on the generic LocalizationFile object passed
-	 * as a parameter.
+	 * Create a new localization file according to the rules for Android
+	 * localization schema. The file generated is based on the generic
+	 * LocalizationFile object passed as a parameter.
 	 * 
 	 * @param locFile
-	 * 				 an object which has information about the localization file
-	 *           	 that shall be created, as well as its content
+	 *            an object which has information about the localization file
+	 *            that shall be created, as well as its content
 	 */
-	public abstract void createFile(LocalizationFile locFile) throws SequoyahException;
+	public abstract void createFile(LocalizationFile locFile)
+			throws SequoyahException;
 
 	/**
-	 * Update a localization file according to the rules for Android 
-	 * localization schema. 
-	 * The file udpated is based on the generic LocalizationFile object passed
-	 * as a parameter.
+	 * Update a localization file according to the rules for Android
+	 * localization schema. The file udpated is based on the generic
+	 * LocalizationFile object passed as a parameter.
 	 * 
 	 * @param locFile
-	 * 				 an object which has information about the localization file
-	 *           	 that shall be updated, as well as its content
+	 *            an object which has information about the localization file
+	 *            that shall be updated, as well as its content
 	 */
-	public abstract void updateFile(LocalizationFile locFile) throws SequoyahException;
-	
+	public abstract void updateFile(LocalizationFile locFile)
+			throws SequoyahException;
+
 	/**
 	 * 
 	 * @param localizationFile
 	 * @param content
 	 * @throws SequoyahException
 	 */
-	public abstract void updateLocalizationFileContent(LocalizationFile localizationFile, String content)
+	public abstract void updateLocalizationFileContent(
+			LocalizationFile localizationFile, String content)
 			throws SequoyahException;
-	
+
 	/**
 	 * 
 	 * @param locFile

@@ -30,20 +30,20 @@ public class AndroidImageLocalizationFile extends ImageLocalizationFile {
 				AndroidImageLocalizationFile.class.getName(),
 				AndroidImageLocalizationFile.class);
 	}
-	
+
 	/**
 	 * Default constructor.
 	 */
-	public AndroidImageLocalizationFile (){
+	public AndroidImageLocalizationFile() {
 	}
-	
+
 	/**
 	 * 
 	 */
 	public AndroidImageLocalizationFile(LocalizationFileBean bean) {
 		super(bean);
 	}
-	
+
 	/**
 	 * ImageLocalizationFile knows how to create itself.
 	 * 
@@ -61,6 +61,5 @@ public class AndroidImageLocalizationFile extends ImageLocalizationFile {
 		}
 		return locFile;
 	}
-
 
 }

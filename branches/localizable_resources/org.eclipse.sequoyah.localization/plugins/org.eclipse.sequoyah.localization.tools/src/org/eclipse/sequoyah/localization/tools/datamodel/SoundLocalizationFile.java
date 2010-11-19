@@ -10,7 +10,6 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
-
 /**
  * This class represents a real localization file for sounds
  * 
@@ -24,14 +23,14 @@ public class SoundLocalizationFile extends LocalizationFile {
 		LocalizationFileFactory.getInstance().addFileType(
 				SoundLocalizationFile.class.getName(),
 				SoundLocalizationFile.class);
-	}	
-	
+	}
+
 	/**
 	 * Default constructor.
 	 */
-	public SoundLocalizationFile (){
+	public SoundLocalizationFile() {
 	}
-	
+
 	/**
 	 * Constructor
 	 * 

@@ -11,6 +11,8 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Marcel Gorri (Eldorado) - Alter signatures to implement automatic translations
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array key)
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.classes;
 
@@ -30,7 +32,7 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * This interface is intended to be implemented by classes which define new
@@ -82,7 +84,7 @@ public abstract class ILocalizationSchema {
 	 * 
 	 * @return a RowInfo, which will be use by the editor to add a new row
 	 */
-	public abstract RowInfo[] promptRowName(IProject iProject);
+	public abstract RowInfo[] promptArrayRowName(IProject iProject, int quantity);
 
 	/**
 	 * Check if the value if valid for the locale
@@ -97,6 +99,14 @@ public abstract class ILocalizationSchema {
 	 */
 	public abstract IStatus isValueValid(String localeID, String key,
 			String value);
+
+	/**
+	 * Check if the key is valid
+	 * 
+	 * @param key
+	 * @return Status (warning, error or ok)
+	 */
+	public abstract IStatus isKeyValid(String key);
 
 	/**
 	 * Return the extension of the localization files
@@ -126,7 +136,8 @@ public abstract class ILocalizationSchema {
 	 * @param stringArrays
 	 * @return
 	 */
-	public abstract LocalizationFile createLocalizationFile(LocalizationFileBean bean);
+	public abstract LocalizationFile createLocalizationFile(
+			LocalizationFileBean bean);
 
 	/**
 	 * Update the content of the Localization File. This method will be used
@@ -169,8 +180,8 @@ public abstract class ILocalizationSchema {
 	 *            an object which has information about the localization file
 	 *            that shall be created, as well as its content
 	 */
-	public abstract void createLocalizationFile(LocalizationFile localizationFile)
-			throws SequoyahException;
+	public abstract void createLocalizationFile(
+			LocalizationFile localizationFile) throws SequoyahException;
 
 	/**
 	 * Update an already existent localization file according to the rules for
@@ -378,7 +389,16 @@ public abstract class ILocalizationSchema {
 	 */
 	public TranslationInfo[] promptTranslatedCollumnsName(IProject project,
 			String selectedColumn, String[] selectedKeys,
-			String[] selectedCells, TableColumn[] columns) {
+			String[] selectedCells, TreeColumn[] columns) {
+		// Must be overridden by subclasses if translation of cells is
+		// implemented
+		return null;
+	}
+
+	public TranslationInfo[] promptTranslatedCollumnsName(IProject project,
+			String selectedColumn, String[] selectedKeys,
+			String[] selectedCells, Integer[] selectedIndexes,
+			TreeColumn[] columns) {
 		// Must be overridden by subclasses if translation of cells is
 		// implemented
 		return null;
@@ -392,6 +412,19 @@ public abstract class ILocalizationSchema {
 	public abstract Object getLocalizationFileContent(LocalizationFile locFile);
 
 	/**
+	 * Determine if blank spaces are permitted in this schema when defining keys
+	 * for the localizable resources
+	 * 
+	 * @return true if the localizable resources can have blank spaces on their
+	 *         keys, false otherwise
+	 */
+	public boolean keyAcceptsBlankSpaces() {
+		// Must be overridden by subclasses if they want to change the default
+		// behavior, which is to deny blank spaces in keys
+		return false;
+	}
+
+	/**
 	 * 
 	 * @param type
 	 * @param file
@@ -403,7 +436,22 @@ public abstract class ILocalizationSchema {
 
 	public void createStringFile(LocalizationFile localizationFile) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	/**
+	 * Retrieves a RowInfo, which will be use by the editor to add new single
+	 * rows
+	 * 
+	 * @param iProject
+	 * @param quantity
+	 *            the quantity of new rows added
+	 * 
+	 * @return a RowInfo, which will be use by the editor to add new rows
+	 */
+	public RowInfo[] promptSingleRowName(IProject iProject, int quantity) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -8,7 +8,7 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfo;
 import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
@@ -24,8 +24,7 @@ import org.eclipse.sequoyah.localization.editor.datatype.RowInfoLeaf;
 /**
  * This class provides a content provider for the editor
  */
-public class StringEditorViewerContentProvider implements
-		IStructuredContentProvider {
+public class StringEditorViewerContentProvider implements ITreeContentProvider {
 
 	/*
 	 * (non-Javadoc)
@@ -43,13 +42,6 @@ public class StringEditorViewerContentProvider implements
 			for (String key : rows.keySet()) {
 				RowInfo aRow = rows.get(key);
 				rowsList.add(aRow);
-				// check if it is an array; if so, add its children
-				if (!(aRow instanceof RowInfoLeaf)) {
-					Map<Integer, RowInfoLeaf> children = aRow.getChildren();
-					for (RowInfoLeaf child : children.values()) {
-						rowsList.add(child);
-					}
-				}
 			}
 			elements = new Object[rowsList.size()];
 			elements = rowsList.toArray(elements);
@@ -76,5 +68,51 @@ public class StringEditorViewerContentProvider implements
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// do nothing
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.
+	 * Object)
+	 */
+	public Object[] getChildren(Object parentElement) {
+		Object[] elements = null;
+		if (parentElement instanceof RowInfo) {
+			RowInfo info = (RowInfo) parentElement;
+			List<RowInfoLeaf> rowsList = info.getChildren();
+			elements = new Object[rowsList.size()];
+			elements = rowsList.toArray(elements);
+		}
+
+		return elements;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object
+	 * )
+	 */
+	public Object getParent(Object element) {
+		RowInfo parent = null;
+		if (element instanceof RowInfoLeaf) {
+			parent = ((RowInfoLeaf) element).getParent();
+		}
+		return parent;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.
+	 * Object)
+	 */
+	public boolean hasChildren(Object element) {
+		return getChildren(element) != null ? getChildren(element).length > 0
+				: false;
 	}
 }

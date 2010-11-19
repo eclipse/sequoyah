@@ -17,7 +17,6 @@
 package org.eclipse.sequoyah.localization.tools.managers;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -151,7 +150,7 @@ public class ProjectLocalizationManager {
 	private void syncNodes(StringLocalizationFile destination,
 			StringLocalizationFile source) {
 		for (StringNode node : source.getStringNodes()) {
-			destination.getStringNodeByKey(node.getKey(), null);
+			destination.getStringNodeByKey(node.getKey());
 		}
 	}
 
@@ -165,7 +164,8 @@ public class ProjectLocalizationManager {
 			for (LocalizationFile locFile : localizationProject
 					.getLocalizationFiles()) {
 				if (locFile != mainFile) {
-					syncNodes((StringLocalizationFile)mainFile, (StringLocalizationFile)locFile);
+					syncNodes((StringLocalizationFile) mainFile,
+							(StringLocalizationFile) locFile);
 				}
 			}
 		}
@@ -198,7 +198,7 @@ public class ProjectLocalizationManager {
 	 * @param bean
 	 */
 	public boolean createOrUpdateFile(LocalizationFileBean bean) {
-		
+
 		LocalizationFile localizationFile = getProjectLocalizationSchema()
 				.createLocalizationFile(bean);
 

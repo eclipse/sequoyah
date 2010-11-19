@@ -34,15 +34,11 @@ public class Messages extends NLS {
 
 	public static String LocaleAttribute_Exception_NotAllowedMethod;
 
-	public static String LocaleAttribute_Exception_NullAllowedValues;
-
 	public static String LocaleAttribute_Exception_TypeDontExist;
 
 	public static String LocaleAttribute_Exception_ValueNotAllowed;
 
 	public static String LocaleAttribute_Exception_ValueNotAllowed2;
-
-	public static String LocaleAttribute_Exception_ValueNotAllowed3;
 
 	public static String LocaleAttribute_Exception_ValueNotNull;
 
@@ -66,8 +62,6 @@ public class Messages extends NLS {
 
 	public static String TranslationDialog_DeselectAll;
 
-	public static String TranslationDialog_SelectedText;
-
 	public static String TranslationDialog_ImageOKTooltip;
 
 	public static String TranslationDialog_ImageWARNTooltip;
@@ -77,8 +71,6 @@ public class Messages extends NLS {
 	public static String TranslationProgress_FetchingInformation;
 
 	public static String TranslationProgress_Connecting;
-
-	public static String Translator_RememberDecision;
 
 	public static String Translator_Text;
 
@@ -98,7 +90,7 @@ public class Messages extends NLS {
 
 	public static String NewRowDialog_AddToArray;
 
-	public static String NetworkConnection;
+	public static String NewRowDialog_Error_RowKeyHasBlankSpaces;
 
 	public static String NetworkLinkText;
 

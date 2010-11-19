@@ -8,12 +8,12 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
 import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Listener;
 
 class StringEditorCellHighlighter extends FocusCellOwnerDrawHighlighter {
 
-	public StringEditorCellHighlighter(TableViewer viewer) {
+	public StringEditorCellHighlighter(TreeViewer viewer) {
 		super(viewer);
 		// TODO: next release make things better than just avoid parent listener
 		for (Listener l : viewer.getControl().getListeners(SWT.EraseItem)) {

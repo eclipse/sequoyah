@@ -42,6 +42,8 @@ public class TranslationInfo extends ColumnInfo {
 
 	private String toWord = ""; //$NON-NLS-1$
 
+	private int index = -1;
+
 	/**
 	 * The constructor
 	 */
@@ -131,6 +133,14 @@ public class TranslationInfo extends ColumnInfo {
 
 	public void setFromKey(String fromKey) {
 		this.fromKey = fromKey;
+	}
+
+	public Integer getIndexKey() {
+		return index;
+	}
+
+	public void setIndexKey(Integer index) {
+		this.index = index;
 	}
 
 	public String getToWord() {

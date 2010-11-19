@@ -17,12 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
-import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahExceptionStatus;
-import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.TranslationResult;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 import org.eclipse.sequoyah.localization.tools.extensions.providers.TranslatorProvider;
@@ -152,13 +148,12 @@ public class TranslatorManager {
 	 * 
 	 * @param translatorBrandingImage
 	 *            Label that will display the image
-	 * @throws SequoyahException 
+	 * @throws SequoyahException
 	 */
 	public void setTranslatorBranding(String translatorName,
 			Label translatorBrandingImage) {
 		ITranslator translatorObj = getTranslatorByName(translatorName);
-		if (translatorObj!= null)
-		{
+		if (translatorObj != null) {
 			Image brandingImg = translatorObj.getBrandingImg();
 			if (brandingImg != null) {
 				translatorBrandingImage.setImage(brandingImg);

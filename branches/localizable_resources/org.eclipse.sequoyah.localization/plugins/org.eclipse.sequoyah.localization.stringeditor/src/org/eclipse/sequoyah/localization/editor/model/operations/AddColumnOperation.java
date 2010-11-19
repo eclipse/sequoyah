@@ -73,7 +73,6 @@ public class AddColumnOperation extends EditorOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		getEditor().removeColumn(columnInfo.getId());
-		getEditor().getEditorViewer().refresh();
 		return Status.OK_STATUS;
 	}
 

@@ -13,7 +13,7 @@ package org.eclipse.sequoyah.localization.tools.datamodel;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 
 /**
@@ -41,7 +41,7 @@ public class LocalizationFileBean {
 	/*
 	 * The list of StringArrays which are part of the file
 	 */
-	private List<ArrayStringNode> stringArrays;
+	private List<StringArrayNode> stringArrays;
 
 	/*
 	 * The list of StringNodes which are part of the file
@@ -96,7 +96,7 @@ public class LocalizationFileBean {
 	/**
 	 * @return the stringArrays
 	 */
-	public List<ArrayStringNode> getStringArrays() {
+	public List<StringArrayNode> getStringArrays() {
 		return stringArrays;
 	}
 
@@ -104,7 +104,7 @@ public class LocalizationFileBean {
 	 * @param stringArrays
 	 *            the stringArrays to set
 	 */
-	public void setStringArrays(List<ArrayStringNode> stringArrays) {
+	public void setStringArrays(List<StringArrayNode> stringArrays) {
 		this.stringArrays = stringArrays;
 	}
 
@@ -139,20 +139,20 @@ public class LocalizationFileBean {
 	 * @param locale
 	 */
 	public LocalizationFileBean(String type, IFile file, LocaleInfo locale,
-			List<StringNode> stringNodes, List<ArrayStringNode> stringArrays) {
+			List<StringNode> stringNodes, List<StringArrayNode> stringArrays) {
 		this.type = type;
 		this.file = file;
 		this.locale = locale;
 		this.stringNodes = stringNodes;
 		this.stringArrays = stringArrays;
 	}
-	
+
 	/**
 	 * Constructor based on a LocalizationFile.
 	 * 
 	 * @param locFile
 	 */
-	public LocalizationFileBean(LocalizationFile locFile){
+	public LocalizationFileBean(LocalizationFile locFile) {
 		this.file = locFile.getFile();
 		this.locale = locFile.getLocaleInfo();
 	}

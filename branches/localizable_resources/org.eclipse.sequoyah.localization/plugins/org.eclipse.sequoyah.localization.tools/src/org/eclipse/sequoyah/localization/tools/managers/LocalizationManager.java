@@ -37,7 +37,6 @@ import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.extensions.providers.LocalizationSchemaProvider;
@@ -70,29 +69,29 @@ public class LocalizationManager {
 	/*
 	 * The Localization Schemas, indexed by Project Nature Name
 	 */
-	private Map<String, ILocalizationSchema> localizationSchemas;
+	private final Map<String, ILocalizationSchema> localizationSchemas;
 
 	/*
 	 * The list of all natures supported, ordered by precedence
 	 */
-	private List<String> natures;
+	private final List<String> natures;
 
 	/*
 	 * The Managers for each Project
 	 */
-	private Map<IProject, ProjectLocalizationManager> projectLocalizationManagers = new HashMap<IProject, ProjectLocalizationManager>();
+	private final Map<IProject, ProjectLocalizationManager> projectLocalizationManagers = new HashMap<IProject, ProjectLocalizationManager>();
 
 	/*
 	 * A reference to the Localization Schema Provider
 	 */
-	private LocalizationSchemaProvider localizationSchemaProvider;
+	private final LocalizationSchemaProvider localizationSchemaProvider;
 
 	/*
 	 * Singleton instance
 	 */
 	private static LocalizationManager instance = null;
 
-	private Map<IProject, IFileChangeListener> fileChangeListeners = new HashMap<IProject, IFileChangeListener>();
+	private final Map<IProject, IFileChangeListener> fileChangeListeners = new HashMap<IProject, IFileChangeListener>();
 
 	class LocalizationDeltaVisitor implements IResourceDeltaVisitor {
 		public boolean visit(IResourceDelta delta) {
@@ -170,9 +169,11 @@ public class LocalizationManager {
 	 *            the project that will be handled by the manager
 	 * @return the manager of the localization for the project passed as a
 	 *         parameter
+	 * @throws SequoyahException
 	 */
 	public ProjectLocalizationManager getProjectLocalizationManager(
-			IProject project, boolean force) throws IOException {
+			IProject project, boolean force) throws IOException,
+			SequoyahException {
 
 		ProjectLocalizationManager projectManager = projectLocalizationManagers
 				.get(project);
@@ -183,21 +184,15 @@ public class LocalizationManager {
 				projectLocalizationManagers.put(project, projectManager);
 			}
 		}
-		if (projectManager != null
-				&& projectManager.getLocalizationProject() == null) {
+		if ((projectManager != null)
+				&& (projectManager.getLocalizationProject() == null)) {
 			ILocalizationSchema schema = getLocalizationSchema(project);
 			if (schema != null) {
 				projectManager.setProject(project);
 				List<LocalizationFile> locFiles = new ArrayList<LocalizationFile>();
-				try {
-					locFiles.addAll(schema.loadAllFiles(project).values());
-					projectManager
-							.setLocalizationProject(new LocalizationProject(
-									project, locFiles));
-				} catch (SequoyahException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				locFiles.addAll(schema.loadAllFiles(project).values());
+				projectManager.setLocalizationProject(new LocalizationProject(
+						project, locFiles));
 
 			}
 		} else if (force) {
@@ -306,8 +301,12 @@ public class LocalizationManager {
 	private void handleFileDeletion(IFile file) {
 		ProjectLocalizationManager projectLocalizationManager = null;
 		try {
-			projectLocalizationManager = getProjectLocalizationManager(file
-					.getProject(), false);
+			try {
+				projectLocalizationManager = getProjectLocalizationManager(
+						file.getProject(), false);
+			} catch (SequoyahException e) {
+
+			}
 		} catch (IOException e) {
 
 		}
@@ -330,8 +329,13 @@ public class LocalizationManager {
 
 		ProjectLocalizationManager projectLocalizationManager = null;
 		try {
-			projectLocalizationManager = LocalizationManager.getInstance()
-					.getProjectLocalizationManager(file.getProject(), false);
+			try {
+				projectLocalizationManager = LocalizationManager
+						.getInstance()
+						.getProjectLocalizationManager(file.getProject(), false);
+			} catch (SequoyahException e) {
+
+			}
 		} catch (IOException e) {
 
 		}
@@ -367,10 +371,11 @@ public class LocalizationManager {
 
 		LocalizationFile newLocalizationFile;
 		try {
-			String type = locFile.getClass().getName(); //type = <Type>LocalizationFile.class
-			//type.substring(0, type.length()-22);
+			String type = locFile.getClass().getName(); // type =
+														// <Type>LocalizationFile.class
+			// type.substring(0, type.length()-22);
 			newLocalizationFile = projectLocalizationManager
-					.getProjectLocalizationSchema().loadFile(type,file);
+					.getProjectLocalizationSchema().loadFile(type, file);
 
 			if (!locFile.equals(newLocalizationFile)) {
 				result = true;

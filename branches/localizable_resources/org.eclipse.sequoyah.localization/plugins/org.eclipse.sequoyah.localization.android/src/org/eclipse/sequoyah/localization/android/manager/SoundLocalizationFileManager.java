@@ -15,10 +15,10 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 
 /**
  * This class deals specifically with localized sound content.
- *
+ * 
  */
 public class SoundLocalizationFileManager extends ILocalizationFileManager {
-	
+
 	/*
 	 * Static code to add this manager to factory's hashmap
 	 */
@@ -26,24 +26,24 @@ public class SoundLocalizationFileManager extends ILocalizationFileManager {
 		LocalizationFileManagerFactory.getInstance().addManager(
 				SoundLocalizationFileManager.class.getName(),
 				SoundLocalizationFileManager.class);
-	}		
-	
+	}
+
 	/**
 	 * Default constructor.
 	 */
 	public SoundLocalizationFileManager() {
-	}		
-	
+	}
+
 	/**
 	 * SoundLocalizationFileManager knows how to create itself.
 	 * 
-	 * @return StringLocalizationFileManager created 
+	 * @return StringLocalizationFileManager created
 	 */
 	public static ILocalizationFileManager create() {
 		SoundLocalizationFileManager locFileManager;
 		locFileManager = new SoundLocalizationFileManager();
 		return locFileManager;
-	}	
+	}
 
 	@Override
 	public LocalizationFile loadFile(LocalizationFile locFile) {
@@ -54,13 +54,13 @@ public class SoundLocalizationFileManager extends ILocalizationFileManager {
 	@Override
 	public void createFile(LocalizationFile locFile) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void updateFile(LocalizationFile locFile) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class SoundLocalizationFileManager extends ILocalizationFileManager {
 			LocalizationFile localizationFile, String content)
 			throws SequoyahException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

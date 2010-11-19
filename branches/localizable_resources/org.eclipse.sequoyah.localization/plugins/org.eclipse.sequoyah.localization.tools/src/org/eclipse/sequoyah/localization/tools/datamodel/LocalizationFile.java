@@ -68,7 +68,7 @@ public class LocalizationFile implements IFilePersistentData {
 	 */
 	public LocalizationFile() {
 	}
-	
+
 	/**
 	 * Constructor method
 	 * 
@@ -231,7 +231,8 @@ public class LocalizationFile implements IFilePersistentData {
 	public boolean equals(Object obj) {
 		boolean result = true;
 
-		if (!this.getLocaleInfo().equals(((LocalizationFile) obj).getLocaleInfo())) {
+		if (!this.getLocaleInfo().equals(
+				((LocalizationFile) obj).getLocaleInfo())) {
 			result = false;
 		}
 		return result;

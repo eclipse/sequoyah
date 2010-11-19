@@ -17,12 +17,17 @@
  * Fabricio Violin (Eldorado) - Bug [316029] - Fix array behavior when switching between tabs
  * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug
  * Marcel Augusto Gorri (Eldorado) - Bug 323036 - Add support to other Localizable Resources 
- * Paulo Faria (Eldorado) - Bug [326793] -  Improvements on the String Arrays handling 
+ * Paulo Faria (Eldorado) - Bug [326793] -  Improvements on the String Arrays handling
+ * Thiago Junqueira (Eldorado) - Bug [326793] - Initial implementation of the renameKey method. 
+ * Fabricio Nallin Violin(Eldorado) - Bug [326793] - Added translation support to array items.
+ * Carlos Alberto Souto Junior (Eldorado) - Bug [326793] - Added new tooltip support method for StringArrayItem
+ * Paulo Faria (Eldorado) - Bug 326793 -  Fix: Array item was moving from one line to the other in non-default languages  
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -53,8 +58,9 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.NodeComment;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayItemNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.TranslationResult;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
@@ -175,13 +181,15 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				LocalizationFile mainFile = projectLocalizationManager
 						.getLocalizationProject().getLocalizationFile(locale);
 				StringNode stringNode = ((StringLocalizationFile) mainFile)
-						.getStringNodeByKey(row.getKey(), isArray);
+						.getStringNodeByKey(row.getKey());
 				if (stringNode == null) {
 					// not found => create a new one
-					((StringLocalizationFile) mainFile).createNode(rowInfo);
-				} else if (stringNode instanceof ArrayStringNode) {
-					//array item need to be inserted
-					((StringLocalizationFile) mainFile).createNode(rowInfo);
+					((StringLocalizationFile) mainFile).createNode(rowInfo, "", //$NON-NLS-1$
+							""); //$NON-NLS-1$
+				} else if (stringNode instanceof StringArrayNode) {
+					// array item need to be inserted
+					((StringLocalizationFile) mainFile).createNode(rowInfo, "", //$NON-NLS-1$
+							""); //$NON-NLS-1$
 				}
 			}
 		}
@@ -201,16 +209,22 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			LocaleInfo info = schema.getLocaleInfoFromID(column);
 			LocalizationFile file = projectLocalizationManager
 					.getLocalizationProject().getLocalizationFile(info);
-			String value = (cells.get(column)).getValue();
-			String comment = (cells.get(column)).getComment();
+			String comment = (cells.get(column)) != null ? (cells.get(column))
+					.getComment() : null;
 
-			StringNode newNode = ((StringLocalizationFile) file)
-					.createNode(rowInfo);
+			String value = cells.get(column) != null ? cells.get(column)
+					.getValue() : null;
+			StringNode newNode = ((StringLocalizationFile) file).createNode(
+					rowInfo, value, comment);
 
-			NodeComment commentNode = new NodeComment();
-			commentNode.setComment(comment);
-			newNode.setNodeComment(commentNode);
 			rowInfo.setKey(newNode.getKey());
+			if (rowInfo instanceof RowInfoLeaf) {
+				// update value on screen (as we modified the node value)
+				RowInfoLeaf leaf = (RowInfoLeaf) rowInfo;
+				if (leaf.getCells().get(column) != null) {
+					leaf.getCells().get(column).setValue(value);
+				}
+			}
 		}
 	}
 
@@ -239,7 +253,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.hasNext();) {
 			LocalizationFile localizationFile = iterator.next();
 			StringNode node = ((StringLocalizationFile) localizationFile)
-					.getStringNodeByKey(key, null);
+					.getStringNodeByKey(key);
 			if (node != null) {
 				((StringLocalizationFile) localizationFile)
 						.removeStringNode(node);
@@ -248,7 +262,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	}
 
 	@Override
-	public void removeRow(String key, Integer index) {
+	public void removeChildRow(String key, int index) {
 		List<LocalizationFile> files = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFiles();
 
@@ -256,11 +270,14 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.hasNext();) {
 			LocalizationFile localizationFile = iterator.next();
 			StringLocalizationFile stringFile = (StringLocalizationFile) localizationFile;
-			StringNode node = stringFile.getStringNodeByKey(key, true);
-			if (node instanceof ArrayStringNode) {
-				ArrayStringNode arrayNode = (ArrayStringNode) node;
-				StringNode arrayItemNode = arrayNode.getArrayItemByIndex(index);
-				stringFile.removeStringNode(arrayNode, arrayItemNode);
+			StringNode node = stringFile.getStringNodeByKey(key);
+			if (node instanceof StringArrayNode) {
+				StringArrayNode arrayNode = (StringArrayNode) node;
+				StringArrayItemNode arrayItemNode = arrayNode
+						.getArrayItemByIndex(index);
+				if (arrayItemNode != null) {
+					stringFile.removeStringArrayItemNode(arrayItemNode);
+				}
 			}
 		}
 	}
@@ -340,18 +357,19 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			}
 
 			// Iterating over arrays
-			List<ArrayStringNode> arrayNodes = ((StringLocalizationFile) localizationFile)
+			List<StringArrayNode> arrayNodes = ((StringLocalizationFile) localizationFile)
 					.getStringArrays();
-			for (Iterator<ArrayStringNode> nodes = arrayNodes.iterator(); nodes
+			for (Iterator<StringArrayNode> nodes = arrayNodes.iterator(); nodes
 					.hasNext();) {
-				ArrayStringNode stringNode = nodes.next();
+				StringArrayNode stringNode = nodes.next();
 				// List<String> contentOfThisArray =
 				// stringNode.getStringValues();
-				List<StringNode> contentOfThisArray = stringNode.getValues();
+				List<StringArrayItemNode> contentOfThisArray = stringNode
+						.getValues();
 				CellInfo arrayCell = new CellInfo(true);
 				for (StringNode item : contentOfThisArray) {
 					String comment = (item.getNodeComment() != null) ? item
-							.getNodeComment().getComment() : "";
+							.getNodeComment().getComment() : ""; //$NON-NLS-1$
 					CellInfo info = new CellInfo(item.getValue(), comment);
 					arrayCell.addChild(info);
 				}
@@ -392,7 +410,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			String path = schema.getPathFromLocaleInfo(infoTarget);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot()
 					.getFile(new Path(path));
-			LocalizationFileBean bean = new LocalizationFileBean("", file,
+			LocalizationFileBean bean = new LocalizationFileBean("", file, //$NON-NLS-1$
 					infoTarget, new ArrayList<StringNode>(), null);
 			LocalizationFile newFile = (StringLocalizationFile) projectLocalizationManager
 					.getProjectLocalizationSchema()
@@ -482,16 +500,37 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			StringLocalizationFile target, TranslationInfo destColumnInfo,
 			IProgressMonitor monitor) {
 
-		List<StringNode> originalNodes = source.getStringNodes();
+		boolean success = translateStringNodes(source, target, destColumnInfo,
+				monitor);
+
+		success &= translateStringArrayNodes(source, target, destColumnInfo,
+				monitor);
+
+		return success;
+	}
+
+	/**
+	 * Translate string nodes
+	 * 
+	 * @param source
+	 * @param target
+	 * @param destColumnInfo
+	 * @param monitor
+	 * @return
+	 */
+	private boolean translateStringNodes(StringLocalizationFile source,
+			StringLocalizationFile target, TranslationInfo destColumnInfo,
+			IProgressMonitor monitor) {
+		List<StringNode> originalStringNodes = source.getStringNodes();
+		ArrayList<String> stringValues = new ArrayList<String>();
 
 		monitor.beginTask(Messages.TranslationProgress_Connecting,
-				originalNodes.size());
+				originalStringNodes.size());
 
-		ArrayList<String> strings = new ArrayList<String>();
-		for (Iterator<StringNode> iterator = originalNodes.iterator(); iterator
+		for (Iterator<StringNode> iterator = originalStringNodes.iterator(); iterator
 				.hasNext();) {
 			StringNode originalNode = iterator.next();
-			strings.add(originalNode.getValue());
+			stringValues.add(originalNode.getValue());
 			monitor.worked(1);
 		}
 		monitor.done();
@@ -502,7 +541,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 					.getTranslatorByName(destColumnInfo.getTranslator());
 			monitor.beginTask(Messages.TranslationProgress_FetchingInformation,
 					100);
-			translationResults = translator.translateAll(strings,
+			translationResults = translator.translateAll(stringValues,
 					destColumnInfo.getFromLang(), destColumnInfo.getToLang(),
 					monitor);
 		} catch (Exception e) {
@@ -520,21 +559,95 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			TranslationResult translationResult = iterator.next();
 			String translatedString = translationResult.getTranslatedWord();
 
-			boolean isArray = (originalNodes.get(i) instanceof ArrayStringNode);
 			StringNode newNode = null;
-			if (isArray) {
-				newNode = new ArrayStringNode(originalNodes.get(i).getKey());
-				((ArrayStringNode) newNode).addValue(translatedString);
-			} else {
-				newNode = new StringNode(originalNodes.get(i).getKey(),
-						translatedString);
-			}
+			newNode = new StringNode(originalStringNodes.get(i).getKey(),
+					translatedString);
 
 			i++;
 			target.addStringNode(newNode);
 			destColumnInfo.addCell(newNode.getKey(),
 					new CellInfo(newNode.getValue(), "")); //$NON-NLS-1$
 		}
+		monitor.done();
+
+		return true;
+	}
+
+	/**
+	 * Translate array items keeping its original position
+	 * 
+	 * @param source
+	 * @param target
+	 * @param destColumnInfo
+	 * @param monitor
+	 * @return
+	 */
+	private boolean translateStringArrayNodes(StringLocalizationFile source,
+			StringLocalizationFile target, TranslationInfo destColumnInfo,
+			IProgressMonitor monitor) {
+
+		List<StringArrayNode> originalStringArrayNodes = source
+				.getStringArrays();
+
+		monitor.beginTask(Messages.ParsingAnswer,
+				originalStringArrayNodes.size());
+
+		List<StringArrayNode> newStringArrayNodesList = new ArrayList<StringArrayNode>();
+
+		int j = 0;
+		for (StringArrayNode currentArray : originalStringArrayNodes) {
+			// TODO handle empty cells
+			int size = currentArray.getStringValues().size();
+			TranslationResult translationResult = null;
+
+			StringArrayNode newStringArrayNode = null;
+			CellInfo parentCell = null;
+
+			ITranslator translator = TranslatorManager.getInstance()
+					.getTranslatorByName(destColumnInfo.getTranslator());
+
+			for (int k = 0; k < size; k++) {
+				try {
+					String oldValue = currentArray.getArrayItemByIndex(k)
+							.getValue();
+
+					if ((oldValue != null) && !oldValue.equals("")) { //$NON-NLS-1$
+						translationResult = translator.translate(oldValue,
+								destColumnInfo.getFromLang(),
+								destColumnInfo.getToLang());
+					} else {
+						translationResult = new TranslationResult("", //$NON-NLS-1$
+								translator, "", destColumnInfo.getFromLang(), //$NON-NLS-1$
+								destColumnInfo.getToLang(), new Date(), true);
+					}
+				} catch (Exception e) {
+					BasePlugin.logError(e.getMessage());
+					monitor.setCanceled(true);
+					return false;
+				}
+
+				String translatedString = translationResult.getTranslatedWord();
+
+				if (k == 0) {
+					newStringArrayNode = new StringArrayNode(
+							originalStringArrayNodes.get(j).getKey());
+					parentCell = new CellInfo(true);
+					destColumnInfo.addCell(originalStringArrayNodes.get(j)
+							.getKey(), parentCell);
+				}
+
+				newStringArrayNode.addValue(translatedString, k);
+				CellInfo info = new CellInfo(translatedString, ""); //$NON-NLS-1$
+				parentCell.addChild(info, k, false);
+
+			}
+			if (newStringArrayNode != null) {
+				newStringArrayNodesList.add(newStringArrayNode);
+			}
+			monitor.worked(1);
+			j++;
+		}
+		target.setStringArrayNodes(newStringArrayNodesList);
 
 		monitor.done();
 		return true;
@@ -561,7 +674,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			String path = schema.getPathFromLocaleInfo(info);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot()
 					.getFile(new Path(path));
-			LocalizationFileBean bean = new LocalizationFileBean("", file,
+			LocalizationFileBean bean = new LocalizationFileBean("", file, //$NON-NLS-1$
 					info, new ArrayList<StringNode>(), null);
 			LocalizationFile newFile = projectLocalizationManager
 					.getProjectLocalizationSchema()
@@ -587,10 +700,22 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	public void removeColumn(String columnID) {
 		LocaleInfo locale = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
-		LocalizationFile file = projectLocalizationManager
-				.getLocalizationProject().getLocalizationFile(locale);
-		projectLocalizationManager.markFileForDeletion(file);
-		projectLocalizationManager.getLocalizationProject().setDirty(true);
+		if (locale.getLocaleAttributes().isEmpty()) {// locale not found
+			List<LocalizationFile> files = projectLocalizationManager
+					.getLocalizationProject().getLocalizationFiles();
+			for (LocalizationFile file : files) {
+				if (file.getFile().toString().contains(columnID)) {
+					projectLocalizationManager.markFileForDeletion(file);
+					projectLocalizationManager.getLocalizationProject()
+							.setDirty(true);
+				}
+			}
+		} else {
+			LocalizationFile file = projectLocalizationManager
+					.getLocalizationProject().getLocalizationFile(locale);
+			projectLocalizationManager.markFileForDeletion(file);
+			projectLocalizationManager.getLocalizationProject().setDirty(true);
+		}
 	}
 
 	/*
@@ -610,12 +735,13 @@ public class StringEditorInput extends AbstractStringEditorInput {
 					Messages.StringEditorInput_ErrorManagerNotInitialized);
 			throw new SequoyahException(new SequoyahExceptionStatus(status));
 		}
+
 		LocaleInfo locale = projectLocalizationManager
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
 		LocalizationFile file = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(locale);
-		StringNode node = ((StringLocalizationFile) file).getStringNodeByKey(
-				key, null);
+		StringNode node = ((StringLocalizationFile) file)
+				.getStringNodeByKey(key);
 		if (node == null) {
 			node = new StringNode(key, value);
 			((StringLocalizationFile) file).addStringNode(node);
@@ -624,8 +750,8 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	}
 
 	@Override
-	public void setValue(String columnID, String key, String value,
-			Integer index) throws SequoyahException {
+	public void setValue(String columnID, String key, String value, int index)
+			throws SequoyahException {
 
 		if (projectLocalizationManager == null) {
 			Status status = new Status(Status.ERROR,
@@ -637,10 +763,10 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
 		LocalizationFile file = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(locale);
-		StringNode node = ((StringLocalizationFile) file).getStringNodeByKey(
-				key, null);
-		if (node instanceof ArrayStringNode) {
-			ArrayStringNode arrayNode = (ArrayStringNode) node;
+		StringNode node = ((StringLocalizationFile) file)
+				.getStringNodeByKey(key);
+		if (node instanceof StringArrayNode) {
+			StringArrayNode arrayNode = (StringArrayNode) node;
 			StringNode arrayItem = arrayNode.getArrayItemByIndex(index);
 			if (arrayItem != null) {
 				arrayItem.setLocalizationFile(file);
@@ -650,7 +776,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				nodeItem.setLocalizationFile(file);
 			}
 		} else if (node == null) {
-			ArrayStringNode arrayNode = new ArrayStringNode(key);
+			StringArrayNode arrayNode = new StringArrayNode(key);
 			arrayNode.setLocalizationFile(file);
 			StringNode nodeItem = arrayNode.addValue(value, index);
 			nodeItem.setLocalizationFile(file);
@@ -671,7 +797,13 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		LocalizationFile localizationFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(localeInfo);
 		StringNode stringNode = ((StringLocalizationFile) localizationFile)
-				.getStringNodeByKey(key, null);
+				.getStringNodeByKey(key);
+
+		if (stringNode == null) {
+			return new CellInfo("", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			// return null
+		}
+
 		return new CellInfo(stringNode.getValue(),
 				((stringNode.getNodeComment() != null) ? stringNode
 						.getNodeComment().getComment() : null));
@@ -702,6 +834,23 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			}
 			keyValueMap.put(stringNode.getKey(),
 					new CellInfo(stringNode.getValue(), comment));
+		}
+
+		// get array nodes values
+		List<StringArrayNode> arrayNodes = ((StringLocalizationFile) localizationFile)
+				.getStringArrays();
+		for (StringArrayNode arrayNode : arrayNodes) {
+			CellInfo arrayCellInfo = new CellInfo(true);
+
+			for (StringNode stringNode : arrayNode.getValues()) {
+				String comment = ""; //$NON-NLS-1$
+				if (stringNode.getNodeComment() != null) {
+					comment = stringNode.getNodeComment().getComment();
+				}
+				arrayCellInfo.addChild(new CellInfo(stringNode.getValue(),
+						comment));
+			}
+			keyValueMap.put(arrayNode.getKey(), arrayCellInfo);
 		}
 
 		return keyValueMap;
@@ -858,6 +1007,8 @@ public class StringEditorInput extends AbstractStringEditorInput {
 							.getProject(), false);
 		} catch (IOException e) {
 
+		} catch (SequoyahException e) {
+
 		}
 		return true;
 	}
@@ -884,7 +1035,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 
 			String type = file.getClass().toString(); // type =
 														// <Type>LocalizationFile.class
-			type.substring(0, type.length() - 22);
+			type = type.substring(6, type.length());
 
 			LocalizationFile newFile = null;
 			try {
@@ -952,7 +1103,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.getLocalizationProject().getLocalizationFile(locale);
 
 		// avoid total key deletion
-		if (schema.getDefaultID() != null
+		if ((schema.getDefaultID() != null)
 				&& schema.getDefaultID().equals(columnID)) {
 			try {
 				setValue(columnID, key, ""); //$NON-NLS-1$
@@ -962,9 +1113,73 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		} else {
 			((StringLocalizationFile) file)
 					.removeStringNode(((StringLocalizationFile) file)
-							.getStringNodeByKey(key, null));
+							.getStringNodeByKey(key));
 		}
 
+	}
+
+	public void removeCell(String key, String columnID, int position) {
+		ILocalizationSchema schema = projectLocalizationManager
+				.getProjectLocalizationSchema();
+		LocaleInfo locale = schema.getLocaleInfoFromID(columnID);
+		LocalizationFile file = projectLocalizationManager
+				.getLocalizationProject().getLocalizationFile(locale);
+
+		// avoid total key deletion
+		if ((schema.getDefaultID() != null)
+				&& schema.getDefaultID().equals(columnID)) {
+			// if is default column
+			try {
+				if (position >= 0) {
+					setValue(columnID, key, "", position); //$NON-NLS-1$	
+				} else {
+					setValue(columnID, key, ""); //$NON-NLS-1$
+				}
+			} catch (SequoyahException e) {
+				// do nothing
+			}
+		} else {
+			// if non-default column
+			StringLocalizationFile strFile = (StringLocalizationFile) file;
+			StringArrayItemNode nodeFromNonDefaultColumn = getArrayItemNodeByPosition(
+					key, position, strFile);
+
+			if (nodeFromNonDefaultColumn != null) {
+				// check if the item is on default locale
+				LocaleInfo defaultLocale = schema.getLocaleInfoFromID(schema
+						.getDefaultID());
+				LocalizationFile defaultFile = projectLocalizationManager
+						.getLocalizationProject().getLocalizationFile(
+								defaultLocale);
+				StringLocalizationFile strDefaultFile = (StringLocalizationFile) defaultFile;
+				StringArrayItemNode nodeOnDefaultColumn = getArrayItemNodeByPosition(
+						key, position, strDefaultFile);
+				if (nodeOnDefaultColumn != null) {
+					// node on default column exists => only set "" on item
+					try {
+						setValue(columnID, key, "", position); //$NON-NLS-1$
+					} catch (SequoyahException e) {
+						// do nothing
+					}
+				} else {
+					// node on default column was also removed => remove node on
+					// non-default column
+					strFile.removeStringArrayItemNode(nodeFromNonDefaultColumn);
+				}
+			}
+		}
+	}
+
+	private StringArrayItemNode getArrayItemNodeByPosition(String key,
+			int position, StringLocalizationFile strFile) {
+		StringArrayItemNode itemNode = null;
+
+		StringNode node = strFile.getStringNodeByKey(key);
+		if (node instanceof StringArrayNode) {
+			StringArrayNode arrNode = (StringArrayNode) node;
+			itemNode = arrNode.getArrayItemByIndex(position);
+		}
+		return itemNode;
 	}
 
 	/*
@@ -989,12 +1204,40 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.getLocalizationProject().getLocalizationFile(locale);
 
 		NodeComment comment = ((StringLocalizationFile) file)
-				.getStringNodeByKey(key, null).getNodeComment();
+				.getStringNodeByKey(key).getNodeComment();
 
 		if (comment == null) {
 			comment = new NodeComment();
 		}
-		((StringLocalizationFile) file).getStringNodeByKey(key, null)
+		((StringLocalizationFile) file).getStringNodeByKey(key).setNodeComment(
+				comment);
+		comment.setComment(tooltip);
+
+	}
+
+	@Override
+	public void setCellTooltip(String columnID, String key, String tooltip,
+			Integer index) throws SequoyahException {
+		if (projectLocalizationManager == null) {
+			Status status = new Status(Status.ERROR,
+					LocalizationToolsPlugin.PLUGIN_ID,
+					Messages.StringEditorInput_ErrorManagerNotInitialized);
+			throw new SequoyahException(new SequoyahExceptionStatus(status));
+		}
+		LocaleInfo locale = projectLocalizationManager
+				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
+		LocalizationFile file = projectLocalizationManager
+				.getLocalizationProject().getLocalizationFile(locale);
+
+		NodeComment comment = ((StringArrayNode) ((StringLocalizationFile) file)
+				.getStringNodeByKey(key)).getArrayItemByIndex(index)
+				.getNodeComment();
+
+		if (comment == null) {
+			comment = new NodeComment();
+		}
+		((StringArrayNode) ((StringLocalizationFile) file)
+				.getStringNodeByKey(key)).getArrayItemByIndex(index)
 				.setNodeComment(comment);
 		comment.setComment(tooltip);
 
@@ -1079,6 +1322,32 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		return (String) projectLocalizationManager
 				.getProjectLocalizationSchema().getLocalizationFileContent(
 						locFile);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.sequoyah.localization.editor.model.input.
+	 * AbstractStringEditorInput#renameKey(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void renameKey(String oldName, String newName)
+			throws SequoyahException {
+		if (projectLocalizationManager == null) {
+			Status status = new Status(Status.ERROR,
+					LocalizationToolsPlugin.PLUGIN_ID,
+					Messages.StringEditorInput_ErrorManagerNotInitialized);
+			throw new SequoyahException(new SequoyahExceptionStatus(status));
+		}
+
+		// Retrieve all localization files for the project and iterate through
+		// them, updating the key
+		for (LocalizationFile f : projectLocalizationManager
+				.getLocalizationProject().getLocalizationFiles()) {
+			if (f instanceof StringLocalizationFile) {
+				((StringLocalizationFile) f).renameNodeKey(oldName, newName);
+			}
+		}
 	}
 
 }

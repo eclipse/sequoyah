@@ -14,7 +14,10 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android.datamodel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.sequoyah.localization.android.manager.LocalizationFileManagerFactory;
@@ -22,7 +25,8 @@ import org.eclipse.sequoyah.localization.android.manager.StringLocalizationFileM
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileFactory;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.ArrayStringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayItemNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.w3c.dom.Document;
 
@@ -58,13 +62,13 @@ public class AndroidStringLocalizationFile extends StringLocalizationFile {
 	 * Kept to remove only one item inside array to be removed from
 	 * savedXMLDocument in the next save action
 	 */
-	private Map<String, StringNode> arrayItemsToRemove = new HashMap<String, StringNode>();
+	private List<StringArrayItemNode> arrayItemsToRemove = new ArrayList<StringArrayItemNode>();
 
 	/**
 	 * Kept to remove an entire array to be removed from savedXMLDocument in the
 	 * next save action
 	 */
-	private Map<String, ArrayStringNode> arrayEntryToRemove = new HashMap<String, ArrayStringNode>();
+	private Map<String, StringArrayNode> arraysToRemove = new HashMap<String, StringArrayNode>();
 
 	/**
 	 * 
@@ -101,9 +105,9 @@ public class AndroidStringLocalizationFile extends StringLocalizationFile {
 			removeNode(stringNode.getKey());
 			this.setDirty(true);
 			// check if it's is an array
-			if (stringNode instanceof ArrayStringNode) {
-				ArrayStringNode arrayNode = (ArrayStringNode) stringNode;
-				arrayEntryToRemove.put(arrayNode.getKey(), arrayNode);
+			if (stringNode instanceof StringArrayNode) {
+				StringArrayNode arrayNode = (StringArrayNode) stringNode;
+				arraysToRemove.put(arrayNode.getKey(), arrayNode);
 			} else {
 				// mark single entry to be removed
 				singleEntryToRemove.put(stringNode.getKey(), stringNode);
@@ -112,20 +116,72 @@ public class AndroidStringLocalizationFile extends StringLocalizationFile {
 	}
 
 	/**
+	 * Adds StringNode. If necessary undoes removal mark from StringNode fixing
+	 * maps to update savedXMLDocument file
+	 * 
+	 * @param stringNode
+	 */
+	public StringNode addStringNode(StringNode stringNode) {
+		StringNode node = super.addStringNode(stringNode);
+		// check if it's is an array
+		if (stringNode instanceof StringArrayNode) {
+			StringArrayNode arrayNode = (StringArrayNode) stringNode;
+			if (arraysToRemove.containsKey(arrayNode.getKey())) {
+				arraysToRemove.remove(arrayNode.getKey());
+			}
+		} else {
+			// unmark single entry to be removed
+			if (singleEntryToRemove.containsKey(stringNode.getKey())) {
+				singleEntryToRemove.remove(stringNode.getKey());
+			}
+		}
+		return node;
+	}
+
+	/**
 	 * Removes from non top level node
 	 * 
 	 * @param node
 	 * @param index
 	 */
-	public void removeStringNode(ArrayStringNode parent, StringNode child) {
-		super.removeStringNode(parent, child);
-		if (parent.getValues().size() == 0) {
+	public void removeStringArrayItemNode(StringArrayItemNode child) {
+		super.removeStringArrayItemNode(child);
+		if (child.getParent().getValues().size() == 0) {
 			// item removal make the array useless => remove array
-			arrayEntryToRemove.put(parent.getKey(), parent);
-			removeNode(parent.getKey());
+			arraysToRemove.put(child.getParent().getKey(), child.getParent());
+			removeNode(child.getParent().getKey());
 		} else {
-			arrayItemsToRemove.put(child.getKey(), child);
+			arrayItemsToRemove.add(child);
 		}
+	}
+
+	/**
+	 * Adds StringArrayItemNode. If necessary undoes removal mark from
+	 * StringArrayItemNode fixing maps to update savedXMLDocument file
+	 * 
+	 * @param stringNode
+	 */
+	public StringNode addStringArrayItemNode(StringArrayItemNode child) {
+		StringNode node = super.addStringArrayItemNode(child);
+		if (child.getParent() != null
+				&& child.getParent().getValues().size() == 0) {
+			// undo removal from item that made the array useless => return
+			// array
+			arraysToRemove.remove(child.getParent().getKey());
+			addStringNode(child.getParent());
+		} else {
+			// undo removal from item
+			// find item on list
+			Iterator<StringArrayItemNode> iter = arrayItemsToRemove.iterator();
+			while (iter.hasNext()) {
+				StringArrayItemNode currentNode = iter.next();
+				if (child.getParent().equals(currentNode.getParent())
+						&& child.getPosition() == currentNode.getPosition()) {
+					iter.remove();
+				}
+			}
+		}
+		return node;
 	}
 
 	/**
@@ -138,14 +194,14 @@ public class AndroidStringLocalizationFile extends StringLocalizationFile {
 	/**
 	 * @return the arrayItemsToRemove
 	 */
-	public Map<String, StringNode> getArrayItemsToRemove() {
+	public List<StringArrayItemNode> getArrayItemsToRemove() {
 		return arrayItemsToRemove;
 	}
 
 	/**
-	 * @return the arrayEntryToRemove
+	 * @return the arraysToRemove
 	 */
-	public Map<String, ArrayStringNode> getArrayEntryToRemove() {
-		return arrayEntryToRemove;
+	public Map<String, StringArrayNode> getArrayEntryToRemove() {
+		return arraysToRemove;
 	}
 }
