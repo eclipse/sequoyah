@@ -21,7 +21,9 @@
  * Thiago Junqueira (Eldorado) - Bug [326793] - Initial implementation of the renameKey method. 
  * Fabricio Nallin Violin(Eldorado) - Bug [326793] - Added translation support to array items.
  * Carlos Alberto Souto Junior (Eldorado) - Bug [326793] - Added new tooltip support method for StringArrayItem
- * Paulo Faria (Eldorado) - Bug 326793 -  Fix: Array item was moving from one line to the other in non-default languages  
+ * Paulo Faria (Eldorado) - Bug 326793 -  Fix: Array item was moving from one line to the other in non-default languages
+ * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Remove column: mark file for deletion based on filename
+ *   
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
@@ -500,8 +502,8 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			StringLocalizationFile target, TranslationInfo destColumnInfo,
 			IProgressMonitor monitor) {
 
-		boolean success = translateStringNodes(source, target, destColumnInfo,
-				monitor);
+		boolean success = source.getStringNodes().size() > 0 ? translateStringNodes(
+				source, target, destColumnInfo, monitor) : true;
 
 		success &= translateStringArrayNodes(source, target, destColumnInfo,
 				monitor);
@@ -1011,6 +1013,20 @@ public class StringEditorInput extends AbstractStringEditorInput {
 
 		}
 		return true;
+	}
+
+	public boolean isRevertable(String columnID) {
+		boolean isRevertable = false;
+
+		LocaleInfo localeInfo = projectLocalizationManager
+				.getProjectLocalizationSchema().getLocaleInfoFromID(columnID);
+		LocalizationFile file = projectLocalizationManager
+				.getLocalizationProject().getLocalizationFile(localeInfo);
+		if (file.getFile().exists()) {
+			isRevertable = true;
+		}
+
+		return isRevertable;
 	}
 
 	/*

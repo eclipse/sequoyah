@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * <name> (<company>) - Bug [<bugid>] - <bugDescription>
+ * Matheus Lima (Eldorado) - Bug [326793] -  Fixed action description
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.actions;
 
@@ -33,6 +34,7 @@ public class AddArrayAction extends Action {
 	 */
 	private final StringEditorPart stringEditorPart;
 	int quantity = 1;
+	public static final String ID = Messages.StringEditorPart_AddArrayActionName.substring(4);
 
 	public AddArrayAction(StringEditorPart stringEditorPart) {
 		super(Messages.StringEditorPart_AddArrayActionName);

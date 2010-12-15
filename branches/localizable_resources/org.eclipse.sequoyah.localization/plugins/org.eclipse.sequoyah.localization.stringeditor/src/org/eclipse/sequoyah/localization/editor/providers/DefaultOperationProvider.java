@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -177,7 +177,8 @@ public class DefaultOperationProvider implements IOperationProvider {
 	}
 
 	public RowInfo[] getNewSingleRow(int quantity) {
-		// TODO Auto-generated method stub
+		// This is a fallback. It will only be executed if there's no specific
+		// implementation.
 		return null;
 	}
 

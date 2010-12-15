@@ -336,13 +336,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 						// automatic key already exists => create a new one
 						index++;
 						automaticKeys[i] = key + index;
-						// i++;
 					}
-
 				}
-
 			}
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -695,14 +691,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 							.getFolder(LOCALIZATION_FILES_FOLDER);
 					try {
 						if (!valuesFolder.exists()) {
-
 							// try to create the folder
 							PlatformUI
 									.getWorkbench()
 									.getProgressService()
 									.run(false, false,
 											new IRunnableWithProgress() {
-
 												public void run(
 														IProgressMonitor monitor)
 														throws InvocationTargetException,
@@ -714,7 +708,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 													} catch (CoreException e) {
 														// do nothing
 													}
-
 												}
 											});
 						}
@@ -728,11 +721,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 											.getProjectRelativePath()),
 									valuesFile);
 						}
-
 					} catch (Exception e) {
 						// do nothing, just exit
 					}
-
 				}
 			}
 		} catch (CoreException e) {
@@ -756,12 +747,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 			// localizable resource
 			if (file.getProjectRelativePath().toString()
 					.matches(LF_REGULAR_EXPRESSION)) {
-
 				result = true;
 			}
 		}
 		return result;
-
 	}
 
 	/*
@@ -775,11 +764,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 			throws SequoyahException {
 
 		Map<LocaleInfo, LocalizationFile> filesMap = new LinkedHashMap<LocaleInfo, LocalizationFile>();
-
 		Map<LocaleInfo, IFile> localizationFiles = getLocalizationFiles(project);
-
+		
 		for (Map.Entry<LocaleInfo, IFile> entry : localizationFiles.entrySet()) {
-
 			String fileName = entry.getValue().getName();
 			if (fileName.endsWith(LOCALIZATION_FILE_NAME)) {
 				// Selecting the StringLocalizationFileManager for resources of
@@ -790,7 +777,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 								entry.getValue()));
 			}
 		}
-
 		return filesMap;
 	}
 

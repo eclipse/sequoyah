@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,8 @@
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Matheus Tait Lima (Eldorado) - Adapting localization plugins to accept automatic translations
  * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array key)
+ * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Adding array status tooltip message
+ * Matheus Lima (Eldorado) - Bug [326793] -  Fixed action description
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.i18n;
 
@@ -24,9 +26,23 @@ public class Messages extends NLS {
 
 	public static String AddArrayItemAction_DescriptionPrefix;
 
+	public static String AddMultipleItemsAction_0;
+
+	public static String AddMultipleItemsAction_2;
+
+	public static String AddMultipleItemsAction_4;
+
+	public static String AddMultipleItemsAction_6;
+
 	public static String AddSingleStringAction_DescriptionPrefix;
 
 	public static String StringEditorColumnLabelProvider_0;
+
+	public static String CellEditingSupport_0;
+
+	public static String CellEditingSupport_1;
+
+	public static String CellEditingSupport_2;
 
 	public static String CloneOperation_0;
 

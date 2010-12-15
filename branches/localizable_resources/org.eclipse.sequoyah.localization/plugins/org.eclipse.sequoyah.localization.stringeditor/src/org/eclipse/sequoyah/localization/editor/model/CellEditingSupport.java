@@ -12,8 +12,13 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.sequoyah.localization.editor.datatype.CellInfo;
@@ -39,7 +44,7 @@ class CellEditingSupport extends EditingSupport {
 
 	private final CellEditor editor;
 
-	public CellEditingSupport(StringEditorPart stringEditorPart,
+	public CellEditingSupport(final StringEditorPart stringEditorPart,
 			TreeViewer viewer, String columnID) {
 		super(viewer);
 		this.stringEditorPart = stringEditorPart;
@@ -47,7 +52,6 @@ class CellEditingSupport extends EditingSupport {
 		editor = columnID.equalsIgnoreCase(Messages.StringEditorPart_KeyLabel) ? new TextCellEditor(
 				viewer.getTree(), SWT.SINGLE) : new TextCellEditor(
 				viewer.getTree(), SWT.MULTI | SWT.V_SCROLL);
-
 	}
 
 	/*
@@ -127,19 +131,29 @@ class CellEditingSupport extends EditingSupport {
 	 * java.lang.Object)
 	 */
 	@Override
-	protected void setValue(Object element, Object value) {
+	protected void setValue(Object element, final Object value) {
 
 		if (columnID.equalsIgnoreCase(Messages.StringEditorPart_KeyLabel)) {
-			RowInfo theRow = null;
+			final RowInfo[] theRow = new RowInfo[1];
 			if (element instanceof RowInfo) {
-				theRow = (RowInfo) element;
+				theRow[0] = (RowInfo) element;
 			}
-			if (!value.equals(theRow.getKey())
+			if (!value.equals(theRow[0].getKey())
 					&& stringEditorPart.getModel().getRows().containsKey(value)) {
 				// key already exists at another row => notify user
-				stringEditorPart.setMessage(Messages.bind(
-						Messages.StringEditorPart_KeyAlreadyExistsErrorMessage,
-						value), IMessage.ERROR);
+				getViewer().getControl().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						MessageDialog.openError(
+								getViewer().getControl().getShell(),
+								Messages.CellEditingSupport_0,
+								Messages.CellEditingSupport_1
+										+ value.toString()
+										+ Messages.CellEditingSupport_2);
+						stringEditorPart.getEditorViewer().editElement(
+								theRow[0], 0);
+					}
+				});
+
 			} else {
 				// key does not exist
 
@@ -147,9 +161,10 @@ class CellEditingSupport extends EditingSupport {
 				// from
 				// the old one AND the value isn't blank
 				if (value != null && value.toString().trim().length() > 0
-						&& value.toString().compareTo(theRow.getKey()) != 0) {
+						&& value.toString().compareTo(theRow[0].getKey()) != 0) {
 					EditKeyOperation operation = new EditKeyOperation(
-							theRow.getKey(), value.toString(), stringEditorPart);
+							theRow[0].getKey(), value.toString(),
+							stringEditorPart);
 					stringEditorPart.executeOperation(operation);
 				}
 			}

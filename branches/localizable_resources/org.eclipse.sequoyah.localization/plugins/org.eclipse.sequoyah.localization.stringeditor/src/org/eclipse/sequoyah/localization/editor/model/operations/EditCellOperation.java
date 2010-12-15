@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,8 @@
  * Marcel Gorri (Eldorado) - Bug [326793] - Improvements on the string arrays handling
  * Paulo Faria (Eldorado) - Bug [326793] -  Fixing undo/redo edit for array items
  * Matheus Lima (Eldorado) - Bug [326793] -  Fixed translation of strings
+ * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Fixing array image according to array items status
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.operations;
 
@@ -160,6 +162,13 @@ public class EditCellOperation extends EditorOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 
+		if (getModel().getRow(rowInfo.getKey()) == null) {
+			if (rowInfo instanceof RowInfoLeaf) {
+				getModel().addRow(((RowInfoLeaf) rowInfo).getParent());
+			}
+			getModel().addRow(rowInfo);
+			getEditor().refresh();
+		}
 		if ((oldValue != null && oldValue.getPosition() >= 0)
 				|| (newValue != null && newValue.getPosition() >= 0)) {
 			getModel().addCell(
@@ -221,6 +230,7 @@ public class EditCellOperation extends EditorOperation {
 		}
 		getEditor().fireDirtyPropertyChanged();
 		getEditor().getEditorViewer().update(this.rowInfo, null);
+		// update parent
 		if (rowInfo instanceof RowInfoLeaf && ((RowInfoLeaf)rowInfo).getParent() != null) {
 			getEditor().getEditorViewer().update(((RowInfoLeaf)rowInfo).getParent(), null);
 		}

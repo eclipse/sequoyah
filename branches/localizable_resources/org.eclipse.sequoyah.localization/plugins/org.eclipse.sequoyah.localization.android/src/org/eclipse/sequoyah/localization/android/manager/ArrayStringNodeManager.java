@@ -95,7 +95,9 @@ public class ArrayStringNodeManager extends NodeManager implements
 				}
 
 			}
-			stringNodes.add(stringArray);
+			if (stringArray.getValues().size() > 0) {
+				stringNodes.add(stringArray);
+			}
 		}
 	}
 

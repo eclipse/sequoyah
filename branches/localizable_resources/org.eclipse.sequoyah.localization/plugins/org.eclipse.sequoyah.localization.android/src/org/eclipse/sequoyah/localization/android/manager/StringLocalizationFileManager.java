@@ -721,6 +721,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 									arrMgr.createArrayItem(document,
 											arrayElement, stringNode);
 									nodesIndex++;
+									arrayStringsToUpdateOrAdd.remove(keyName);
 								}
 							}
 

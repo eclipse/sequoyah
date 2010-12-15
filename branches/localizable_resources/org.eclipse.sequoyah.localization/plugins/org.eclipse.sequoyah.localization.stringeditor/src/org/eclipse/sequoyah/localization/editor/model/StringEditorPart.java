@@ -34,6 +34,7 @@
  * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Added multiplicity behavior to add actions
  * Paulo Faria (Eldorado) - Bug [326793] -  Enable delete only if there is an item selected
  * Paulo Faria (Eldorado) - Bug [326793] -  Bug Fix: Highlight lost if modify array item and changes to the tab specific from the change
+ * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Added tooltip to actions on the toolbar
  * Carlos Alberto Souto Junior (Eldorado) - Bug [326793] - Fixed the column clicking behavior when pressing the control key on Mac OS X 
  * 
  ********************************************************************************/
@@ -95,6 +96,7 @@ import org.eclipse.sequoyah.localization.editor.model.actions.AddArrayItemAction
 import org.eclipse.sequoyah.localization.editor.model.actions.AddColumnAction;
 import org.eclipse.sequoyah.localization.editor.model.actions.AddSingleStringAction;
 import org.eclipse.sequoyah.localization.editor.model.actions.CloneColumnAction;
+import org.eclipse.sequoyah.localization.editor.model.actions.CollapseExpandAllAction;
 import org.eclipse.sequoyah.localization.editor.model.actions.HideShowAllColumnsAction;
 import org.eclipse.sequoyah.localization.editor.model.actions.HideShowColumnAction;
 import org.eclipse.sequoyah.localization.editor.model.actions.MenuDropDownAction;
@@ -214,6 +216,8 @@ public class StringEditorPart extends MultiPageEditorPart {
 	private AddArrayItemAction newArrayItemAction = null;
 	private RemoveKeyAction removeKeyAction = null;
 	private MenuDropDownAction menuArrayItem = null;
+	private CollapseExpandAllAction collapseAllAction;
+	private CollapseExpandAllAction expandAllAction;
 
 	/*
 	 * This editor undo context
@@ -729,6 +733,12 @@ public class StringEditorPart extends MultiPageEditorPart {
 				newArrayItemAction.getImageDescriptor()));
 		lowertbmanager.add(new Separator());
 		lowertbmanager.add(removeKeyAction = new RemoveKeyAction(this));
+		lowertbmanager.add(new Separator());
+		lowertbmanager.add(collapseAllAction = new CollapseExpandAllAction(
+				this, false, "Collapse All", "Collapse all arrays"));
+		lowertbmanager.add(expandAllAction = new CollapseExpandAllAction(this,
+				true, "Expand All", "Expand all arrays"));
+		lowertbmanager.add(new Separator());
 		lowertbmanager.add(new UndoActionHandler(getEditorSite(),
 				getUndoContext()));
 		lowertbmanager.add(new RedoActionHandler(getEditorSite(),
@@ -1198,12 +1208,17 @@ public class StringEditorPart extends MultiPageEditorPart {
 		manager.add(new AddArrayAction(this));
 		manager.add(newArrayItemAction);
 		manager.add(removeKeyAction);
+		manager.add(new Separator());
 		manager.add(new AddColumnAction(this));
 		manager.add(new RemoveColumnAction(this));
 		manager.add(new RevertToSavedAction(this));
 		manager.add(new CloneColumnAction(this));
+		manager.add(new Separator());
 		manager.add(new TranslateColumnAction(this));
 		manager.add(new TranslateCellAction(this));
+		manager.add(new Separator());
+		manager.add(collapseAllAction);
+		manager.add(expandAllAction);
 
 	}
 
@@ -1412,7 +1427,7 @@ public class StringEditorPart extends MultiPageEditorPart {
 						List<CellInfo> sourceChildren = sourceCell
 								.getChildren();
 						List<CellInfo> destChildren = destCell.getChildren();
-						for (int i = 0; i < sourceChildren.size(); i++) {
+						for (int i = 0; i < sourceChildren.size() && i < destChildren.size(); i++) {
 							CellInfo sourceChildCell = sourceChildren.get(i);
 							CellInfo destinationChildCell = destChildren.get(i);
 							// rule 1 - source was dirty, but destination is
@@ -1568,8 +1583,11 @@ public class StringEditorPart extends MultiPageEditorPart {
 				} else if (cell.hasChildren()) {
 					List<CellInfo> children = cell.getChildren();
 					for (CellInfo childCell : children) {
-						getEditorInput().setValue(info.getId(), cellKey,
-								childCell.getValue(), childCell.getPosition());
+						if (childCell != null) {
+							getEditorInput().setValue(info.getId(), cellKey,
+									childCell.getValue(),
+									childCell.getPosition());
+						}
 					}
 				}
 			} catch (SequoyahException e) {

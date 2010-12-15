@@ -8,6 +8,7 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
+ * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Fixing enablement of the action
  * <name> (<company>) - Bug [<bugid>] - <bugDescription>
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.actions;
@@ -23,11 +24,21 @@ public class RevertToSavedAction extends Action {
 	 */
 	private final StringEditorPart stringEditorPart;
 
+	// private ProjectLocalizationManager projectLocalizationManager = null;
+
 	public RevertToSavedAction(StringEditorPart stringEditorPart) {
 		super(Messages.StringEditorPart_RevertColumnActionName);
 		this.stringEditorPart = stringEditorPart;
 		setToolTipText(Messages.StringEditorPart_RevertColumnActionTooltip);
-		setEnabled(stringEditorPart.getActiveColumn() != 0);
+		// Should be enabled only if the file already exists in the system
+		if (stringEditorPart.getEditorInput().isRevertable(
+				stringEditorPart.getEditorViewer().getTree()
+						.getColumn(stringEditorPart.getActiveColumn())
+						.getText())) {
+			setEnabled(true);
+		} else {
+			setEnabled(false);
+		}
 	}
 
 	@Override

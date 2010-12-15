@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * <name> (<company>) - Bug [<bugid>] - <bugDescription>
+ * Matheus Lima (Eldorado) - Bug [326793] -  Fixed action description
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.actions;
 
@@ -29,9 +30,25 @@ public class AddMultipleItemsAction extends Action {
 	int quantity = 1;
 	Control parent = null;
 	Action action = null;
+	private String title = Messages.StringEditorPart_2;
 
 	public AddMultipleItemsAction(Control parent, Action action) {
 		super(Messages.StringEditorPart_1 + action.getId());
+
+		if (action.getId().equals(AddArrayAction.ID)) {
+			title = Messages.StringEditorPart_1
+					+ Messages.AddMultipleItemsAction_2; //$NON-NLS-1$			
+			setText(title);
+		} else if (action.getId().equals(AddArrayItemAction.ID)) {
+			title = Messages.StringEditorPart_1
+					+ Messages.AddMultipleItemsAction_4; //$NON-NLS-1$
+			setText(title);
+		} else if (action.getId().equals(AddSingleStringAction.ID)) {
+			title = Messages.StringEditorPart_1
+					+ Messages.AddMultipleItemsAction_6; //$NON-NLS-1$
+			setText(title);
+		}
+
 		this.parent = parent;
 		this.action = action;
 	}
@@ -39,8 +56,11 @@ public class AddMultipleItemsAction extends Action {
 	@Override
 	public void run() {
 		// Creates a dialog to ask how many items to create
-		String dialogTitle = Messages.StringEditorPart_2;
-		String dialogMessage = Messages.StringEditorPart_3;
+		String dialogTitle = title;
+		String dialogMessage = Messages.StringEditorPart_3
+				+ action.getId().toLowerCase()
+				+ Messages.AddMultipleItemsAction_0
+				+ Messages.StringEditorPart_5;
 		String initialValue = Messages.StringEditorPart_4;
 		InputDialog dialog = new InputDialog(parent.getShell(), dialogTitle,
 				dialogMessage, initialValue, new IInputValidator() {
@@ -50,7 +70,7 @@ public class AddMultipleItemsAction extends Action {
 						try {
 							int items = Integer.parseInt(newText);
 							if (items < 0)
-								errorMessage = Messages.StringEditorPart_5;
+								errorMessage = Messages.StringEditorPart_6;
 						} catch (Exception e) {
 							errorMessage = Messages.StringEditorPart_6;
 						}

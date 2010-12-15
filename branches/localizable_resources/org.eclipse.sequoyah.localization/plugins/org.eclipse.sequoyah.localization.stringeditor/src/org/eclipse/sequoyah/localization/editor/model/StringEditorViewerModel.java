@@ -233,7 +233,7 @@ public class StringEditorViewerModel {
 
 			RowInfo row = rowsMap.get(key);
 
-			if (cell.hasChildren()) {
+			if (cell.hasChildren() && cell.getChildren().size() > 0) {
 				// array
 				List<CellInfo> subCells = cell.getChildren();
 
@@ -252,21 +252,23 @@ public class StringEditorViewerModel {
 					List<RowInfoLeaf> subRows = row.getChildren();
 
 					for (CellInfo subCell : subCells) {
-						if (subCell.getPosition() >= 0
-								&& subCell.getPosition() < subRows.size()
-								&& subRows.get(subCell.getPosition()) != null) {
-							RowInfoLeaf leaf = subRows.get(subCell
-									.getPosition());
-							leaf.addCell(info.getId(), subCell);
-						} else {
-							Map<String, CellInfo> cellsForArray = new HashMap<String, CellInfo>();
-							cellsForArray.put(info.getId(), subCell);
-							new RowInfoLeaf(key, row, subCell.getPosition(),
-									cellsForArray);
+						if (subCell != null) {
+							if (subCell.getPosition() >= 0
+									&& subCell.getPosition() < subRows.size()
+									&& subRows.get(subCell.getPosition()) != null) {
+								RowInfoLeaf leaf = subRows.get(subCell
+										.getPosition());
+								leaf.addCell(info.getId(), subCell);
+							} else {
+								Map<String, CellInfo> cellsForArray = new HashMap<String, CellInfo>();
+								cellsForArray.put(info.getId(), subCell);
+								addRow(new RowInfoLeaf(key, row,
+										subCell.getPosition(), cellsForArray));
+							}
 						}
 					}
 				}
-			} else {
+			} else if (!cell.hasChildren()) {
 				// string
 				if (row == null) {
 					Map<String, CellInfo> cellsForArray = new HashMap<String, CellInfo>();
@@ -279,8 +281,9 @@ public class StringEditorViewerModel {
 					}
 				}
 			}
-
-			validateRow(row);
+			if (row != null) {
+				validateRow(row);
+			}
 		}
 		notifyListeners();
 	}
@@ -472,9 +475,16 @@ public class StringEditorViewerModel {
 			// string item
 			if (row instanceof RowInfoLeaf) {
 				((RowInfoLeaf) row).removeCell(column);
+				if (isEmptyRow(row)) {
+					removeRow(row.getKey());
+				}
 			} else {
-				for (RowInfoLeaf leaf : row.getChildren()) {
+				for (RowInfoLeaf leaf : new ArrayList<RowInfoLeaf>(
+						row.getChildren())) {
 					leaf.removeCell(column);
+					if (isEmptyRow(leaf)) {
+						removeRow(leaf.getKey(), leaf.getPosition());
+					}
 				}
 			}
 		}
@@ -510,7 +520,6 @@ public class StringEditorViewerModel {
 				RowInfoLeaf leaf = (RowInfoLeaf) row;
 				leaf.removeCell(column);
 				if (isEmptyRow(row)) {
-					// TODO check this
 					removeRow(row.getKey());
 				}
 			} else {
@@ -589,10 +598,12 @@ public class StringEditorViewerModel {
 	 */
 	public void removeRow(String key, int index) {
 		RowInfo row = rowsMap.get(key);
+		boolean validate = true;
 		if (row != null) {
 			row.removeChild(index);
 			if (row.getChildren().size() == 0) {
 				rowsMap.remove(key);
+				validate = false;
 			}
 		}
 		Iterator<ColumnInfo> it = columnsMap.values().iterator();
@@ -601,9 +612,14 @@ public class StringEditorViewerModel {
 			CellInfo parent = col.getCells().get(key);
 			if (parent != null) {
 				parent.removeChild(index);
+				if (parent.getChildren().size() == 0) {
+					col.removeCell(key);
+				}
 			}
 		}
-		validateRow(row);
+		if (validate) {
+			validateRow(row);
+		}
 		notifyListeners();
 	}
 
@@ -755,8 +771,10 @@ public class StringEditorViewerModel {
 					row.addStatus(cellStatus);
 				}
 			}
+			// array item => update cell status
 			if (leaf.getParent() != null) {
 				IStatus parentStatus = leaf.getParent().getStatus();
+				// update parent status with child status
 				if (leaf.getStatus().getSeverity() > parentStatus.getSeverity()) {
 					parentStatus = leaf.getStatus();
 					leaf.getParent().addStatus(parentStatus);
@@ -778,12 +796,9 @@ public class StringEditorViewerModel {
 									cell != null ? cell.getValue() : null);
 					if (!cellStatus.isOK()) {
 						child.addStatus(cellStatus);
-						// if (cellStatus.getSeverity() >
-						// parentStatus.getSeverity())
-						// parentStatus = cellStatus;
-						// row.addStatus(parentStatus);
 					}
 				}
+				// update parent status with child status
 				IStatus parentStatus = row.getStatus();
 				if (child.getStatus().getSeverity() > parentStatus
 						.getSeverity()) {

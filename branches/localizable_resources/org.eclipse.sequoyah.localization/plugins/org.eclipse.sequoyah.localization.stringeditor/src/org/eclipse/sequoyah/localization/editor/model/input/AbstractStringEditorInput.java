@@ -397,4 +397,12 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	 */
 	public abstract void renameKey(String oldName, String newName)
 			throws SequoyahException;
+	
+	/**
+	 * Returns if the column can be reverted to saved
+	 * 
+	 * @param columnID
+	 * @return
+	 */
+	public abstract boolean isRevertable(String columnID);
 }

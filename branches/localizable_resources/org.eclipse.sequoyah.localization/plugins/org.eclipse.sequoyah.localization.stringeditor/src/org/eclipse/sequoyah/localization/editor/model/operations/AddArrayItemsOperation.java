@@ -8,7 +8,7 @@
  * Daniel Drigo Pastore (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Fix execute/redo to avoid recreate row objects
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.operations;
 
@@ -27,13 +27,11 @@ import org.eclipse.sequoyah.localization.editor.model.StringEditorPart;
  * The operation of adding a new key (row) to the editor.
  */
 public class AddArrayItemsOperation extends EditorOperation {
-	private int quantity = 1;
 	private List<AddArrayItemOperation> addArrayItemsOperation = new ArrayList<AddArrayItemOperation>();
 
 	public AddArrayItemsOperation(String label, StringEditorPart editor,
 			RowInfo[] rows, int quantity) {
 		super(label, editor);
-		this.quantity = quantity;
 		for (int i = 0; i < rows.length; i++) {
 			this.addArrayItemsOperation.add(i, new AddArrayItemOperation(label,
 					editor, rows[i]));
@@ -50,7 +48,10 @@ public class AddArrayItemsOperation extends EditorOperation {
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		return redo(monitor, info);
+		for (int i = 0; i < this.addArrayItemsOperation.size(); i++) {
+			this.addArrayItemsOperation.get(i).execute(monitor, info);
+		}
+		return Status.OK_STATUS;
 	}
 
 	/*
@@ -63,8 +64,9 @@ public class AddArrayItemsOperation extends EditorOperation {
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+
 		for (int i = 0; i < this.addArrayItemsOperation.size(); i++) {
-			this.addArrayItemsOperation.get(i).execute(monitor, info);
+			this.addArrayItemsOperation.get(i).redo(monitor, info);
 		}
 		return Status.OK_STATUS;
 	}
