@@ -15,6 +15,7 @@
  * Mauren Brenner (Eldorado) - Bug [274503] - Added name suffix along with getter and setter methods
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  * Flavio Vantin (Eldorado) - Bug [315851] Implemented methods to get and set the separator between name and suffix.
+ * Marcelo Bossoni (Eldorado) - Bug [318990] Fix NPE on getStatus method
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.model;
@@ -144,7 +145,7 @@ public abstract class AbstractMobileInstance implements IInstance {
 	 * @return The instance status.
 	 */
 	public String getStatus() {
-		return getStateMachineHandler().getState();
+		return getStateMachineHandler() != null ? getStateMachineHandler().getState() : "unknown";
 	}
 
 	/**
@@ -174,7 +175,7 @@ public abstract class AbstractMobileInstance implements IInstance {
 	}
 
 	public String toString() {
-		String status = stateMachineHandler.getState();
+		String status = getStatus();
 		return "[Device Instance: " + //$NON-NLS-1$
 				"id=" + (id==null?"":id) + //$NON-NLS-1$ //$NON-NLS-2$
 				",name=" + (name==null?"":name) + //$NON-NLS-1$ //$NON-NLS-2$

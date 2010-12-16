@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Motorola, Inc. All rights reserved.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Initial contributors:
+ * Carlos Alberto Souto Junior (Eldorado)
+ * 
+ * Contributors:
+ * Carlos Alberto Souto Junior (Eldorado) - [317327] Major UI bugfixes and improvements in Android Native support
+ *******************************************************************************/
+
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
 import org.eclipse.core.resources.IProject;

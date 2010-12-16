@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
-<toc link_to="../com.motorola.studio.android.tooldocs.studio.helpbase/main.xml#reference_end" label="Sequoyah Android Localization Files Editor Help"
-     >
+<toc link_to="../com.motorola.studio.android.tooldocs.studio.helpbase/main.xml#reference_end" label="Sequoyah User Guide" >
    
       <topic label="Localization Files Editor"
              href="topics/r_localization-string-editor.html"/>

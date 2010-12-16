@@ -7,8 +7,10 @@
  * Initial Contributors:
  * Marcel Gorri (Eldorado)
  * Vinicius Hernandes (Eldorado)
- * Paulo Faria (Eldorado) - Add methods for not to lose comments on save (currently only on update)
  * 
+ * Contributors:
+ * Paulo Faria (Eldorado) - Add methods for not to lose comments on save (currently only on update)
+ * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 

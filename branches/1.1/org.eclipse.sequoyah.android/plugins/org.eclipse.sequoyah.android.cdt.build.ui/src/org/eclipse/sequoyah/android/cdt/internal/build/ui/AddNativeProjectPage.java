@@ -1,9 +1,16 @@
-/**
- * Contributors
- * 
- * Carlos Alberto Souto Junior - Initial contributor
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2010 Wind River Systems and others.
+ * Copyright (c) 2010 Motorola, Inc. All rights reserved.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Doug Schaefer (WRS) - Initial API and implementation
+ * Carlos Alberto Souto Junior (Eldorado) - [315122] Improvements in the Android NDK support UI
+ * Carlos Alberto Souto Junior (Eldorado) - [317327] Major UI bugfixes and improvements in Android Native support
+ *******************************************************************************/
 
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
@@ -376,21 +383,11 @@ public class AddNativeProjectPage extends WizardPage
                 IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
                 IConfiguration configs[] = buildInfo.getManagedProject().getConfigurations();
 
-                configs[0].setCleanCommand("");
-
-                configs[0].getBuilder().setAutoBuildEnable(true);
-                configs[0].getBuilder().setCleanBuildEnable(false);
-                configs[0].getBuilder().setIncrementalBuildTarget("-B");
-                configs[0].getBuilder().setCleanBuildTarget("");
-
-                IWorkspaceDescription desc = project.getWorkspace().getDescription();
-                desc.setAutoBuilding(true);
-
-                project.getWorkspace().setDescription(desc);
-
+                            
                 if (Platform.getOS().equals(Platform.OS_WIN32))
                 {
-                    configs[0].setBuildCommand("bash " + getNDKLocation() + "\\ndk-build"); //$NON-NLS-1$ //$NON-NLS-2$
+                    configs[0].setBuildCommand("bash");
+                    configs[0].setBuildArguments(getNDKLocation() + "\\ndk-build");
                 }
                 subMonitor.worked(1);
 

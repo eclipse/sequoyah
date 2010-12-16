@@ -1,6 +1,17 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2010 Wind River Systems and others.
+ * Copyright (c) 2010 Motorola, Inc. All rights reserved.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Doug Schaefer (WRS) - Initial API and implementation
+ * Thiago Faustini Junqueira (Eldorado) - [314314] NDK - Re-generate Makefile when project property value is changed
+ * Carlos Alberto Souto Junior (Eldorado) - [315122] Improvements in the Android NDK support UI
+ * Carlos Alberto Souto Junior (Eldorado) - [317327] Major UI bugfixes and improvements in Android Native support
+ *******************************************************************************/
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +27,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.sequoyah.android.cdt.internal.build.ui.AddNativeProjectPage;
 
 /**
  * @author dschaefer
@@ -96,7 +106,7 @@ public class AddNativeWizard extends Wizard
         {
             // treat error - log, show the error message and set the flag for performing finish
             UIPlugin.getDefault().getLog()
-                    .log(new Status(IStatus.ERROR, PLUGIN_ID, ex.getMessage(), ex));
+                    .log(new Status(IStatus.ERROR, UIPlugin.PLUGIN_ID, ex.getMessage(), ex));
             MessageDialog.openError(getShell(), Messages.AddNativeWizard_native_wizard_title,
                     Messages.AddNativeWizard__Message_UnexpectedErrorWhileAddingNativeSupport);
             isOKPerformFinish[0] = false;

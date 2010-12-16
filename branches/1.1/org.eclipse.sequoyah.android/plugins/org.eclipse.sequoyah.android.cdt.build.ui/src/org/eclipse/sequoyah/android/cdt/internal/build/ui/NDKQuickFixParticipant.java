@@ -1,6 +1,14 @@
-/**
- * @author: Carlos Alberto Souto Junior
- */
+/*******************************************************************************
+ * Copyright (c) 2010 Motorola, Inc. All rights reserved.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Initial contributors:
+ * Carlos Alberto Souto Junior (Eldorado)
+ *******************************************************************************/
+
 package org.eclipse.sequoyah.android.cdt.internal.build.ui;
 
 import org.eclipse.core.runtime.CoreException;
@@ -52,7 +60,8 @@ public class NDKQuickFixParticipant extends CompilationParticipant
 
         try
         {
-            Boolean isAndroid = true;
+            Boolean isAndroid = false;
+            Boolean isCNature = false;
             visitor.resetVisitor();
             compilationUnit = context.getAST3();
             compilationUnit.accept(visitor);
@@ -62,13 +71,15 @@ public class NDKQuickFixParticipant extends CompilationParticipant
 
                 for (String s : projectNature)
                 {
-                    isAndroid =
-                            isAndroid
-                                    && (!(s.equals("org.eclipse.cdt.core.cnature") || s
-                                            .equals("org.eclipse.cdt.core.ccnature")));
+                    isAndroid = isAndroid || s.equals("com.android.ide.eclipse.adt.AndroidNature");
+                    isCNature =
+                            isCNature
+                                    || (s.equals("org.eclipse.cdt.core.cnature") || s
+                                            .equals("org.eclipse.cdt.core.ccnature"));
                 }
 
                 if (isAndroid
+                        && !(isCNature)
                         && (Platform.getBundle("org.eclipse.sequoyah.android.cdt.build.core") != null))
                 {
                     NDKNativeProblem[] problems;

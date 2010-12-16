@@ -53,10 +53,6 @@
             class="org.eclipse.sequoyah.android.cdt.internal.build.ui.NDKPropertyPage"
             id="org.eclipse.sequoyah.android.cdt.build.ui.NDKPropertiesPage"
             name="%androidNDKPropertiesPageName">
-         <filter
-               name="nature"
-               value="org.eclipse.cdt.core.cnature">
-       	 </filter>
        	 <enabledWhen>
             <or>
                <instanceof
@@ -69,7 +65,7 @@
          </enabledWhen>
          <filter
                name="nature"
-               value="com.android.ide.eclipse.adt.AndroidNature">
+               value="com.eclipse.cdt.core.cnature">
          </filter>
       </page>
    </extension>

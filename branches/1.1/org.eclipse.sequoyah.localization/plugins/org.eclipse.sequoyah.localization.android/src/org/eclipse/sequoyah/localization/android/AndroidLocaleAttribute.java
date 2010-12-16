@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2009 Motorola Inc.
- * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -9,6 +9,9 @@
  * 
  * Contributors:
  * name (company) - description.
+ * Marcel Gorri (Eldorado) - Bug 325110 - Add support to new Android Localization qualifiers
+ * Marcel Gorri (Eldorado) - Bug 325630 - Fix validation of some Android localization qualifiers
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
 
@@ -21,7 +24,9 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 public class AndroidLocaleAttribute extends LocaleAttribute {
 
 	public enum AndroidLocaleAttributes {
-		COUNTRY_CODE, NETWORK_CODE, LANGUAGE, REGION, SCREEN_SIZE, SCREEN_ORIENTATION, PIXEL_DENSITY, TOUCH_TYPE, KEYBOARD_STATE, TEXT_INPUT_METHOD, NAVIGATION_METHOD, SCREEN_DIMENSION, API_VERSION, COUNT
+		COUNTRY_CODE, NETWORK_CODE, LANGUAGE, REGION, SCREEN_SIZE, SCREEN_ASPECT, SCREEN_ORIENTATION, 
+		DOCK_MODE, NIGHT_MODE, PIXEL_DENSITY, TOUCH_TYPE, KEYBOARD_STATE, TEXT_INPUT_METHOD, 
+		NAVIGATION_KEY_STATE, NAVIGATION_METHOD, SCREEN_DIMENSION, API_VERSION, COUNT
 	};
 
 	private int androidType;
@@ -150,32 +155,34 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 			result = strValue.substring(1);
 		} else if (androidType == AndroidLocaleAttributes.SCREEN_SIZE.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.SCREEN_ORIENTATION
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_ASPECT.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.PIXEL_DENSITY
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_ORIENTATION.ordinal()) {
+			result = strValue;
+		} else if (androidType == AndroidLocaleAttributes.DOCK_MODE.ordinal()) {
+			result = strValue;
+		} else if (androidType == AndroidLocaleAttributes.NIGHT_MODE.ordinal()) {
+			result = strValue;
+		} else if (androidType == AndroidLocaleAttributes.PIXEL_DENSITY.ordinal()) {
 			int index = strValue.indexOf("dpi"); //$NON-NLS-1$
 			result = strValue.substring(0, index);
 		} else if (androidType == AndroidLocaleAttributes.TOUCH_TYPE.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.KEYBOARD_STATE
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.KEYBOARD_STATE.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.TEXT_INPUT_METHOD
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.TEXT_INPUT_METHOD.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_METHOD
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.SCREEN_DIMENSION
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_METHOD.ordinal()) {
+			result = strValue;
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_DIMENSION.ordinal()) {
 			String[] numbers = strValue.split("x"); //$NON-NLS-1$
 			int x = Integer.parseInt(numbers[0]);
 			int y = Integer.parseInt(numbers[1]);
 			result = new Dimension(x, y);
 		} else if (androidType == AndroidLocaleAttributes.API_VERSION.ordinal()) {
-			result = strValue.substring(1);
+			result = strValue.substring(0, strValue.length());
 		}
 
 		return result;
@@ -217,25 +224,28 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 			setRegionNode(value);
 		} else if (androidType == AndroidLocaleAttributes.SCREEN_SIZE.ordinal()) {
 			setScreenSizeNode(value);
-		} else if (androidType == AndroidLocaleAttributes.SCREEN_ORIENTATION
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_ASPECT.ordinal()) {
+			setScreenAspectNode(value);
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_ORIENTATION.ordinal()) {
 			setOrientationNode(value);
+		} else if (androidType == AndroidLocaleAttributes.DOCK_MODE.ordinal()) {
+			setDockNode(value);
+		} else if (androidType == AndroidLocaleAttributes.NIGHT_MODE.ordinal()) {
+			setNightNode(value);
 		} else if (androidType == AndroidLocaleAttributes.PIXEL_DENSITY
 				.ordinal()) {
 			setPixelNode(value);
 		} else if (androidType == AndroidLocaleAttributes.TOUCH_TYPE.ordinal()) {
 			setTouchNode(value);
-		} else if (androidType == AndroidLocaleAttributes.KEYBOARD_STATE
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.KEYBOARD_STATE.ordinal()) {
 			setKeyboardNode(value);
-		} else if (androidType == AndroidLocaleAttributes.TEXT_INPUT_METHOD
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.TEXT_INPUT_METHOD.ordinal()) {
 			setTextInputNode(value);
-		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_METHOD
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal()) {
+			setNavigationKeyStateNode(value);
+		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_METHOD.ordinal()) {
 			setNavigationNode(value);
-		} else if (androidType == AndroidLocaleAttributes.SCREEN_DIMENSION
-				.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_DIMENSION.ordinal()) {
 			setDimensionNode(value);
 		} else if (androidType == AndroidLocaleAttributes.API_VERSION.ordinal()) {
 			setAPIVersionNode(value);
@@ -270,6 +280,66 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		setIntValue(value);
 		folderValue = getCountryCodeFolder(displayValue);
 	}
+	
+	/**
+	 * Sets the type and values of this attribute according to the object
+	 * received.
+	 * 
+	 * @param value
+	 */
+	private void setScreenAspectNode(Object value) {
+		displayName = "Screen Ratio"; //$NON-NLS-1$
+		type = LocaleAttribute.FIXED_TEXT_TYPE;
+		fixedSize = 0;
+		maximumSize = 0;
+		allowedValues = new HashMap<String, String>();
+		setValuesBasedOnDisplayValue((String) value);
+	}
+	
+	/**
+	 * Sets the type and values of this attribute according to the object
+	 * received.
+	 * 
+	 * @param value
+	 */
+	private void setDockNode(Object value) {
+		displayName = "Dock Mode"; //$NON-NLS-1$
+		type = LocaleAttribute.FIXED_TEXT_TYPE;
+		fixedSize = 0;
+		maximumSize = 0;
+		allowedValues = new HashMap<String, String>();
+		setValuesBasedOnDisplayValue((String) value);
+	}
+
+	/**
+	 * Sets the type and values of this attribute according to the object
+	 * received.
+	 * 
+	 * @param value
+	 */
+	private void setNightNode(Object value) {
+		displayName = "Night Mode"; //$NON-NLS-1$
+		type = LocaleAttribute.FIXED_TEXT_TYPE;
+		fixedSize = 0;
+		maximumSize = 0;
+		allowedValues = new HashMap<String, String>();
+		setValuesBasedOnDisplayValue((String) value);
+	}	
+	
+	/**
+	 * Sets the type and values of this attribute according to the object
+	 * received.
+	 * 
+	 * @param value
+	 */
+	private void setNavigationKeyStateNode(Object value) {
+		displayName = "Navigation State"; //$NON-NLS-1$
+		type = LocaleAttribute.FIXED_TEXT_TYPE;
+		fixedSize = 0;
+		maximumSize = 0;
+		allowedValues = new HashMap<String, String>();
+		setValuesBasedOnDisplayValue((String) value);		
+	}	
 
 	/**
 	 * Sets the type and values of this attribute according to the object
@@ -408,8 +478,26 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		fixedSize = 0;
 		maximumSize = 3;
 		allowedValues = null;
-		setIntValue(value);
+		setAPIValue(value);
 		folderValue = displayValue;
+	}
+	
+	/*
+	 * 
+	 * @param value
+	 */
+	private void setAPIValue(Object value){
+		if (value instanceof String) {
+			Integer intValue = -1;
+			String source = (String) value;
+			String intValueAsText = source.substring(1, source.length());
+			try {
+				intValue = Integer.parseInt((String) intValueAsText);
+			} catch (NumberFormatException nfe) {
+				throw new IllegalArgumentException(Messages.Invalid_Andr_Value);
+			}
+			displayValue = (String) value;
+		}
 	}
 
 	/**

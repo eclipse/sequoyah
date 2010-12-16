@@ -1,6 +1,6 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
- * All rights reserved. All rights reserved. This program and the accompanying materials are made available under the terms
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
+ * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
@@ -17,6 +17,10 @@
  * Paulo Faria (Eldorado) - Add method to retrieve formatted (bold, underline, italics) string
  * Paulo Faria (Eldorado) - Add methods for not to lose comments on save
  * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
+ * Daniel Drigo Pastore, Marcel Augusto Gorri (Eldorado) - Bug 312971 - Localization Editor does not accept < and > characters
+ * Marcel Gorri (Eldorado) - Bug 325110 - Add support to new Android Localization qualifiers
+ * Marcel Gorri (Eldorado) - Bug 325630 - Fix validation of some Android localization qualifiers
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
 
@@ -97,11 +101,17 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSParser;
+import org.w3c.dom.ls.LSParserFilter;
 
 /**
  * The Android Localization Schema provides the localization schema for Android
@@ -332,9 +342,9 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 		if (dialog.open() == IDialogConstants.OK_ID) {
 
-			newColumn = new TranslationInfo(dialog.getValue(), dialog
-					.getValue(), null, true, dialog.getFromLanguage(), dialog
-					.getToLanguage(), null, dialog.getTranslator());
+			newColumn = new TranslationInfo(dialog.getValue(),
+					dialog.getValue(), null, true, dialog.getFromLanguage(),
+					dialog.getToLanguage(), null, dialog.getTranslator());
 		}
 
 		return newColumn;
@@ -365,10 +375,11 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				for (int j = 0; j < destinationColumns.size(); j++) {
 					TranslateColumnsInputDialog.DestinationColumn destColumn = destinationColumns
 							.get(j);
-					newColumns[count] = new TranslationInfo(destColumn
-							.getText(), destColumn.getText(), null, true,
-							dialog.getFromLanguage(), destColumn.getLang(),
-							selectedCell, dialog.getTranslator());
+					newColumns[count] = new TranslationInfo(
+							destColumn.getText(), destColumn.getText(), null,
+							true, dialog.getFromLanguage(),
+							destColumn.getLang(), selectedCell,
+							dialog.getTranslator());
 					newColumns[count].setFromKey(selectedKey);
 					newColumns[count].setToColumn(destColumn.getText());
 					count++;
@@ -498,8 +509,11 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 					document);
 			((AndroidLocalizationFile) localizationFile)
 					.setSavedXMLDocument(document);
-			localizationFile.getFile().getProject().refreshLocal(
-					IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			localizationFile
+					.getFile()
+					.getProject()
+					.refreshLocal(IResource.DEPTH_INFINITE,
+							new NullProgressMonitor());
 			// loadAllFiles(localizationFile.getLocalizationProject().getProject());
 
 		} catch (Exception e) {
@@ -790,7 +804,13 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.SCREEN_SIZE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.SCREEN_ASPECT.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.SCREEN_ORIENTATION.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.DOCK_MODE.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.NIGHT_MODE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(new Integer(12),
 				AndroidLocaleAttributes.PIXEL_DENSITY.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
@@ -799,6 +819,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				AndroidLocaleAttributes.KEYBOARD_STATE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.TEXT_INPUT_METHOD.ordinal()));
+		localeAttributes.add(new AndroidLocaleAttribute(null,
+				AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(null,
 				AndroidLocaleAttributes.NAVIGATION_METHOD.ordinal()));
 		localeAttributes.add(new AndroidLocaleAttribute(new Dimension(1, 1),
@@ -876,21 +898,26 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 						if (!valuesFolder.exists()) {
 
 							// try to create the folder
-							PlatformUI.getWorkbench().getProgressService().run(
-									false, false, new IRunnableWithProgress() {
+							PlatformUI
+									.getWorkbench()
+									.getProgressService()
+									.run(false, false,
+											new IRunnableWithProgress() {
 
-										public void run(IProgressMonitor monitor)
-												throws InvocationTargetException,
-												InterruptedException {
-											try {
-												valuesFolder.create(true, true,
-														monitor);
-											} catch (CoreException e) {
-												// do nothing
-											}
+												public void run(
+														IProgressMonitor monitor)
+														throws InvocationTargetException,
+														InterruptedException {
+													try {
+														valuesFolder.create(
+																true, true,
+																monitor);
+													} catch (CoreException e) {
+														// do nothing
+													}
 
-										}
-									});
+												}
+											});
 						}
 						// check if folder was created
 						// create the default file
@@ -910,7 +937,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				}
 			}
 		} catch (CoreException e) {
-			// 
+			//
 		}
 		return localizationFiles;
 	}
@@ -926,8 +953,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 
 		boolean result = false;
 		if (file != null) {
-			if (file.getProjectRelativePath().toString().matches(
-					LF_REGULAR_EXPRESSION)) {
+			if (file.getProjectRelativePath().toString()
+					.matches(LF_REGULAR_EXPRESSION)) {
 
 				result = true;
 			}
@@ -965,6 +992,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	 */
 	@Override
 	public LocalizationFile loadFile(IFile file) throws IOException {
+		Document document;
 		AndroidLocalizationFile localizationFile = null;
 		LocaleInfo localeInfo = getLocaleInfoFromPath(file.getFullPath());
 
@@ -979,12 +1007,31 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		}
 
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
+			if (System.getProperty("java.version").startsWith("1.5")) {
+				DocumentBuilderFactory factory = DocumentBuilderFactory
+						.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
 
-			Document document = builder.parse(new File(file.getLocation()
-					.toString()));
+				document = builder
+						.parse(new File(file.getLocation().toString()));
+			} else {
+				InputStream inputStream = new FileInputStream(file
+						.getLocation().toFile());
+				DOMImplementation dimp = DOMImplementationRegistry
+						.newInstance().getDOMImplementation("XML 3.0"); //$NON-NLS-1$
+				DOMImplementationLS dimpls = (DOMImplementationLS) dimp
+						.getFeature("LS", "3.0"); //$NON-NLS-1$ //$NON-NLS-2$
+				LSInput lsi = dimpls.createLSInput();
+				LSParser lsp = dimpls.createLSParser(
+						DOMImplementationLS.MODE_SYNCHRONOUS,
+						"http://www.w3.org/2001/XMLSchema"); //$NON-NLS-1$
+				LSParserFilter filter = new LocalizationXMLParserFilter();
+				lsp.setFilter(filter);
+				lsi.setEncoding("UTF-8"); //$NON-NLS-1$
+				lsi.setByteStream(inputStream);
+				document = lsp.parse(lsi);
+			}
+
 			localizationFile = new AndroidLocalizationFile(file, localeInfo,
 					new ArrayList<StringNode>(), new ArrayList<StringArray>());
 			updateLocalizationFileContent(localizationFile, document);
@@ -1431,6 +1478,12 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 				lastQualifier = AndroidLocaleAttributes.SCREEN_SIZE.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.SCREEN_SIZE.ordinal()));
+			} else if (isScreenAspectSegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.SCREEN_ASPECT
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.SCREEN_ASPECT.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.SCREEN_ASPECT.ordinal()));
 			} else if (isOrientationSegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttributes.SCREEN_ORIENTATION
 							.ordinal())) {
@@ -1438,6 +1491,18 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 						.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.SCREEN_ORIENTATION.ordinal()));
+			} else if (isDockSegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.DOCK_MODE
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.DOCK_MODE.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.DOCK_MODE.ordinal()));
+			} else if (isNightSegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.NIGHT_MODE
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.NIGHT_MODE.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.NIGHT_MODE.ordinal()));
 			} else if (isPixelDensitySegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttributes.PIXEL_DENSITY
 							.ordinal())) {
@@ -1464,6 +1529,15 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 						.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.TEXT_INPUT_METHOD.ordinal()));
+			} else if (isNavigationKeySegment(segments[i])
+					&& lastQualifier < AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+							.ordinal()) {
+				lastQualifier = AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+						.ordinal();
+				localeAttributes
+						.add(new AndroidLocaleAttribute(segments[i],
+								AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+										.ordinal()));
 			} else if (isNavigationSegment(segments[i])
 					&& (lastQualifier < AndroidLocaleAttributes.NAVIGATION_METHOD
 							.ordinal())) {
@@ -1514,9 +1588,24 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		return LOCALIZATION_FILES_FOLDER;
 	}
 
-	private boolean isNetworkCodeSegment(String value) {
-		return value.startsWith("mnc"); //$NON-NLS-1$
+	private boolean isScreenAspectSegment(String value) {
+		return ((value.equalsIgnoreCase("long") || value //$NON-NLS-1$
+				.equalsIgnoreCase("notlong"))); //$NON-NLS-1$
+	}
 
+	private boolean isDockSegment(String value) {
+		return ((value.equalsIgnoreCase("car") || value //$NON-NLS-1$
+				.equalsIgnoreCase("desk"))); //$NON-NLS-1$
+	}
+
+	private boolean isNightSegment(String value) {
+		return ((value.equalsIgnoreCase("night") || value //$NON-NLS-1$
+				.equalsIgnoreCase("notnight"))); //$NON-NLS-1$
+	}
+
+	private boolean isNavigationKeySegment(String value) {
+		return ((value.equalsIgnoreCase("navexposed") || value //$NON-NLS-1$
+				.equalsIgnoreCase("navhidden"))); //$NON-NLS-1$
 	}
 
 	private boolean isLanguageSegment(String value) {
@@ -1550,7 +1639,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	private boolean isKeyboardStateSegment(String value) {
 		return ((value.equalsIgnoreCase("keysexposed") || value //$NON-NLS-1$
 				.equalsIgnoreCase("keyshidden"))); //$NON-NLS-1$
-
 	}
 
 	private boolean isTextInputSegment(String value) {
@@ -1581,18 +1669,65 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 	}
 
 	private boolean isCountryCodeSegment(String value) {
-		return value.startsWith("mcc"); //$NON-NLS-1$
+		boolean result = false;
+		if (value.startsWith("mcc")) { //$NON-NLS-1$
+			if (value.length() <= 6) {
+				Integer intValue = -1;
+				String source = (String) value;
+				String intValueAsText = source.substring(3, source.length());
+				try {
+					intValue = Integer.parseInt((String) intValueAsText);
+					result = true;
+				} catch (NumberFormatException nfe) {
+					// do nothing, the false value returned will
+					// take care of the correct validation
+				}
+			}
+		}
+		return result;
+	}
 
+	private boolean isNetworkCodeSegment(String value) {
+		boolean result = false;
+		if (value.startsWith("mnc")) { //$NON-NLS-1$
+			if (value.length() <= 6) {
+				Integer intValue = -1;
+				String source = (String) value;
+				String intValueAsText = source.substring(3, source.length());
+				try {
+					intValue = Integer.parseInt((String) intValueAsText);
+					result = true;
+				} catch (NumberFormatException nfe) {
+					// do nothing, the false value returned will
+					// take care of the correct validation
+				}
+			}
+		}
+		return result;
 	}
 
 	private boolean isScreenSizeSegment(String value) {
 		return value.equalsIgnoreCase("large") //$NON-NLS-1$
+				|| value.equalsIgnoreCase("xlarge") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("normal") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("small"); //$NON-NLS-1$
 	}
 
 	private boolean isAPIVersionSegment(String value) {
-		return value.startsWith("v"); //$NON-NLS-1$
+		boolean result = false;
+		if (value.startsWith("v")) { //$NON-NLS-1$
+			Integer intValue = -1;
+			String source = (String) value;
+			String intValueAsText = source.substring(1, source.length());
+			try {
+				intValue = Integer.parseInt((String) intValueAsText);
+				result = true;
+			} catch (NumberFormatException nfe) {
+				// do nothing, the false value returned will
+				// take care of the correct validation
+			}
+		}
+		return result;
 	}
 
 	/*
@@ -1618,8 +1753,8 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 		if (locFile instanceof AndroidLocalizationFile) {
 			AndroidLocalizationFile localizationFile = (AndroidLocalizationFile) locFile;
 			try {
-				updateFile(localizationFile, localizationFile
-						.getSavedXMLDocument());
+				updateFile(localizationFile,
+						localizationFile.getSavedXMLDocument());
 			} catch (SequoyahException e) {
 
 			}
@@ -1749,5 +1884,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema {
 			throw new SequoyahException(status);
 		}
 
+	}
+
+	@Override
+	public boolean keyAcceptsBlankSpaces() {
+		return false;
 	}
 }
