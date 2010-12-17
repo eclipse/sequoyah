@@ -11,6 +11,7 @@
  *     Daniel Barboza Franco (Eldorado Research Institute) - Bug [271695] - Support to non-persistent instances of devices
  *     Mauren Brenner (Eldorado) - [281377] Support device types whose instances cannot be created by user
  *     Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ *     Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View 
  *******************************************************************************/
 package org.eclipse.sequoyah.device.framework.internal.model;
 
@@ -107,10 +108,6 @@ public class MobileDeviceType implements IDeviceType {
 
 	public void setServices(List<IService> services) {
 		this.services = services;
-		for (IService service : services) {
-			service.setParent(this);
-		}
-
 	}
 	
 	public IDeviceHandler getHandler() {

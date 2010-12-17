@@ -20,20 +20,20 @@
  * Mauren Brenner (Eldorado) - Bug [282271] - Applying solution contributed by Vinicius Hernandes (Eldorado)
  * Mauren Brenner (Eldorado) - Bug [289577] - Add condition to handle case where button image is not defined
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.view;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.sequoyah.device.framework.DeviceUtils;
-import org.eclipse.sequoyah.device.framework.model.AbstractMobileInstance;
-import org.eclipse.sequoyah.device.framework.model.IDeviceType;
+import org.eclipse.sequoyah.device.framework.manager.ServiceManager;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
 import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.model.handler.ServiceHandlerAction;
@@ -63,7 +63,7 @@ public class InstanceServicesComposite extends Composite {
 
 	private static boolean showAllServices = true;
 	private static int buttonsOrienation = SWT.HORIZONTAL;
-	private IInstance instance = null;
+	private List<IInstance> instances = null;
 	
 	private static final String SERVICES_LABEL = Messages.InstanceServicesComposite_1; 
 	private static final String SERVICES_FILTERED_LABEL = Messages.InstanceServicesComposite_2; 
@@ -166,9 +166,9 @@ public class InstanceServicesComposite extends Composite {
 		});
 	}
 
-	public void setSelectedInstance(IInstance instance)
+	public void setSelectedInstances(List<IInstance> instances)
 	{
-		this.instance = instance;
+		this.instances = instances;
 		
 		createServicesArea();
 	}	
@@ -229,24 +229,22 @@ public class InstanceServicesComposite extends Composite {
 		
 		servicesComposite.setLayout(rowLayout);
 
-		if (instance != null)
-		{			
-			IDeviceType device = DeviceUtils.getDeviceType(instance);
+		if (instances != null && !instances.isEmpty())
+		{	
+			List<IService> commonServices = ServiceManager.getCommonServices(instances, (instances.size() > 1));
+			List<IService> allServices = ServiceManager.getAllServices(instances, false);
+			
+			
 			final ArrayList<Button> buttons = new ArrayList<Button>();
-			List<IService> services = device.getServices();
-			for (IService service:services){
+			for (IService service:allServices){
 				if (service.isVisible()) {
 
-					boolean inTransition = ((AbstractMobileInstance)instance).getStateMachineHandler().isTransitioning();
-					boolean isServiceEnabled = (service.getStatusTransitions(instance.getStatus()) != null);
-					isServiceEnabled = isServiceEnabled && !inTransition;
-					
-					if ((showAllServices) || (isServiceEnabled))
+					if ((showAllServices) || (commonServices.contains(service)))
 					{
 						Button serviceButton = new Button(servicesComposite, SWT.PUSH);
 						buttons.add(serviceButton);
-						serviceButton.setEnabled(isServiceEnabled);
-						serviceButton.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
+						serviceButton.setEnabled(commonServices.contains(service));
+						serviceButton.addListener(SWT.Selection,  new ServiceHandlerAction(instances, service.getId()));
 						
 						// Set button enabled to false when performing an operation
 						serviceButton.addListener(SWT.Selection, createServicesAreaListener);
@@ -296,7 +294,7 @@ public class InstanceServicesComposite extends Composite {
 	    scrollComposite.setMinSize(DEFAULT_BUTTONS_WIDTH + 10, compositeSize.y);
 		viewForm.setContent(scrollComposite);
 		
-		if (instance == null)
+		if (instances == null)
 		{
 			label.setText(NO_LABEL);
 			toolBar.setVisible(false);

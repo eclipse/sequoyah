@@ -12,6 +12,7 @@
  * Fabio Rigo (Eldorado Research Institute) - Bug [251595] - Proportion of ticks in ServiceHandler class is not adequate
  * Fabio Rigo (Eldorado Research Institute) - Bug [287995] - Provide an instance is about to transition event
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View 
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.statemachine;
@@ -53,7 +54,7 @@ public class StateMachineHandler {
 
 		HashSet transitions = new HashSet();
 		for (IService service:services){
-			transitions.addAll(service.getStatusTransitions());
+			transitions.addAll(service.getStatusTransitions(instance.getDeviceTypeId()));
 		}
 
 		StateMachine stm = new StateMachine(transitions);
@@ -67,7 +68,7 @@ public class StateMachineHandler {
         IStatus status = Status.OK_STATUS;
 		this.setTransitioning(true);
 
-        transition = svcHnd.getService().getStatusTransitions(instance.getStatus());
+        transition = svcHnd.getService().getStatusTransitions(instance.getDeviceTypeId(), instance.getStatus());
         
         if (!transition.getStartId().equals(stmModel.getState())) {
         	throw new SequoyahException();

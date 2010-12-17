@@ -22,9 +22,11 @@
  * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [288301] - Device view crashes when there is a device plug-in missing.
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Daniel Barboza Franco (Eldorado) - [329548] - Allow multiple instances selection on Device Manager View
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.manager;
 
+import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
@@ -165,6 +167,16 @@ public class InstanceManager {
         InstanceEventManager.getInstance().notifyListeners(new InstanceEvent(InstanceEventType.INSTANCE_DELETED, instance));
     }
 	
+	public static void deleteInstances(List<Object> instances) {
+		
+		for (Object instance: instances) {
+			if (instance instanceof IInstance) {
+				deleteInstance((IInstance)instance);
+			}
+		}
+		
+	}
+	
 	/**
 	 * Creates an instance, sets it as the currently selected and adds it to the
 	 * instance registry.
@@ -184,4 +196,6 @@ public class InstanceManager {
 		registry.addInstance(inst);
 		DeviceXmlWriter.saveInstances();
 	}
+
+
 }

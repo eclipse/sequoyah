@@ -11,14 +11,18 @@
  * Daniel Barboza Franco - Bug [239970] - Invisible Services
  * Yu-Fen Kuo (MontaVista) - Bug [236476 ]- provide a generic device type
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah 
+ * Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View 
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.model;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.sequoyah.device.framework.internal.model.DeviceServicesTransitions;
 import org.eclipse.sequoyah.device.framework.model.handler.IServiceHandler;
 import org.eclipse.sequoyah.device.framework.status.IStatusTransition;
 
@@ -56,20 +60,17 @@ public interface IService {
 
 	void setHandler(IServiceHandler handler);
 	
-	IDeviceType getParent();
-	
-	void setParent(IDeviceType device);
-	
 	Object clone();
 	
-	Collection<IStatusTransition> getStatusTransitions();
+	Collection<IStatusTransition> getStatusTransitions(String deviceTypeId);
 	
-	IStatusTransition getStatusTransitions(String startId);
-	
-	void setStatusTransitions(List<IStatusTransition> status);
+	IStatusTransition getStatusTransitions(String deviceTypeId, String startId);
 	
 	void setVisible(boolean visible);
 	
 	boolean isVisible();
-	
+
+    void setDevicesTransitions(List<DeviceServicesTransitions> devicesTransitions);
+
+    List<DeviceServicesTransitions> getDevicesTransitions();
 }

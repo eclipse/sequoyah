@@ -87,6 +87,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="defaultServiceId" type="string">
+            <annotation>
+               <documentation>
+                  Indicates the default service id which executes a transition starting from this status. Example: for an &quot;online&quot; equivalent status, the default service id may be a stopping service id.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

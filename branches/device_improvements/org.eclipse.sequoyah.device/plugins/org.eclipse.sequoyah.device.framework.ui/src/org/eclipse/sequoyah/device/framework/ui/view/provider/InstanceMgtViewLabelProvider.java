@@ -12,6 +12,7 @@
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [259243] - instance management view is showing device type ids instead of names
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Julia Martinez Perdigueiro (Eldorado) - [329548] Adding tooltip support for double click behavior
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.view.provider;
@@ -180,5 +181,28 @@ public class InstanceMgtViewLabelProvider extends ColumnLabelProvider
         columnIndex = cell.getColumnIndex();
         super.update(cell);
         columnIndex = firstColumnIndex;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.CellLabelProvider#getToolTipText(java.lang.Object)
+     */
+    @Override
+    public String getToolTipText(Object element) {
+    	String tooltipText = null;
+    	if (element instanceof ViewerInstanceNode) {
+    		ViewerInstanceNode instanceNode = (ViewerInstanceNode) element;
+    		tooltipText = StatusRegistry.getInstance().getTooltipTextForStatus(instanceNode.getInstance().getStatus());    		
+    	}
+    	return tooltipText;
+    }
+    
+    @Override
+    public int getToolTipDisplayDelayTime(Object object) {
+      return 0;
+    }
+
+    @Override
+    public int getToolTipTimeDisplayed(Object object) {
+      return 5000;
     }
 }

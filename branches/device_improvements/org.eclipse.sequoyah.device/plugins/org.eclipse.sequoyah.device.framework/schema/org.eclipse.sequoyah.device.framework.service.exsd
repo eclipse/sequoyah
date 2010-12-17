@@ -130,6 +130,20 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="parallelized" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Specify wether more than on instance of this service can be executed at the same time on different devices
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="interval" type="string" use="default" value="0">
+            <annotation>
+               <documentation>
+                  Interval in ms between execution of two instances of this service. This is only used if parallelized is true.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

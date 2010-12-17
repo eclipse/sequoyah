@@ -11,6 +11,7 @@
  * Yu-Fen Kuo (MontaVista) - bug#236476 - provide a generic device type
  * Yu-Fen Kuo (MontaVista)  - [236476] - provide a generic device type
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View 
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.factory;
 
@@ -227,10 +228,13 @@ public class DeviceTypeRegistry implements IDeviceTypeRegistry {
 		List<IService> services = new ArrayList<IService>();
 		Collection<IExtension> servs = PluginUtils
 				.getInstalledExtensions(DevicePlugin.SERVICE_DEF_ID);
-		for (IExtension service : servs) {
-			if (service.getUniqueIdentifier().equals(deviceTypeId)) {
+		for (IExtension serviceDef : servs) {
+			if (serviceDef.getUniqueIdentifier().equals(deviceTypeId)) {
 				try {
-					services.add(ServiceFactory.createService(service));
+					IService service = ServiceFactory.createService(serviceDef);
+					if(service != null) {
+					    services.add(service);
+					}
 				} catch (SequoyahException t) {
 					t.printStackTrace();
 				}
