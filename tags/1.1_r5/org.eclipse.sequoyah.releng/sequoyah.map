@@ -1,0 +1,41 @@
+##### features
+feature@org.eclipse.sequoyah.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/features/org.eclipse.sequoyah.feature
+### device features
+features@org.eclipse.sequoyah.device.common.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/features/org.eclipse.sequoyah.device.common.feature
+feature@org.eclipse.sequoyah.device.examples.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/features/org.eclipse.sequoyah.device.examples.feature
+feature@org.eclipse.sequoyah.device.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/features/org.eclipse.sequoyah.device.feature
+### localization features
+feature@org.eclipse.sequoyah.localization.android.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.localization/features/org.eclipse.sequoyah.localization.android.feature
+feature@org.eclipse.sequoyah.localization.tools.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.localization/features/org.eclipse.sequoyah.localization.tools.feature
+### vnc features
+feature@org.eclipse.sequoyah.vnc.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.vnc/features/org.eclipse.sequoyah.vnc.feature
+feature@org.eclipse.sequoyah.vnc.protocol.examples.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.vnc/features/org.eclipse.sequoyah.vnc.protocol.examples.feature
+feature@org.eclipse.sequoyah.vnc.protocol.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.vnc/features/org.eclipse.sequoyah.vnc.protocol.feature
+feature@org.eclipse.sequoyah.vnc.vncviewer.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.vnc/features/org.eclipse.sequoyah.vnc.vncviewer.feature
+
+##### plugins
+### device plugins
+plugin@org.eclipse.sequoyah.device.common.utilities=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/plugins/org.eclipse.sequoyah.device.common.utilities
+plugin@org.eclipse.sequoyah.device.framework=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/plugins/org.eclipse.sequoyah.device.framework
+plugin@org.eclipse.sequoyah.device.framework.ui=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/plugins/org.eclipse.sequoyah.device.framework.ui
+plugin@org.eclipse.sequoyah.device.framework.wizard=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/plugins/org.eclipse.sequoyah.device.framework.wizard
+plugin@org.eclipse.sequoyah.device.service.start=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/plugins/org.eclipse.sequoyah.device.service.start
+plugin@org.eclipse.sequoyah.device.service.stop=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/plugins/org.eclipse.sequoyah.device.service.stop
+plugin@org.eclipse.sequoyah.device.service.vncviewer=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/plugins/org.eclipse.sequoyah.device.service.vncviewer
+### localization plugins
+plugin@org.eclipse.sequoyah.localization.android=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.localization/plugins/org.eclipse.sequoyah.localization.android
+plugin@org.eclipse.sequoyah.localization.android.help=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.localization/plugins/org.eclipse.sequoyah.localization.android.help
+plugin@org.eclipse.sequoyah.localization.stringeditor=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.localization/plugins/org.eclipse.sequoyah.localization.stringeditor
+plugin@org.eclipse.sequoyah.localization.tools=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.localization/plugins/org.eclipse.sequoyah.localization.tools
+### vnc plugins
+plugin@org.eclipse.sequoyah.vnc.protocol=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.vnc/plugins/org.eclipse.sequoyah.vnc.protocol
+plugin@org.eclipse.sequoyah.vnc.vncviewer=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.vnc/plugins/org.eclipse.sequoyah.vnc.vncviewer
+plugin@org.eclipse.sequoyah.vnc.vncviewer.vncviews=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.vnc/plugins/org.eclipse.sequoyah.vnc.vncviewer.vncviews
+
+##### examples
+### device examples
+plugin@org.eclipse.sequoyah.device.qemu=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/examples/org.eclipse.sequoyah.device.qemu
+plugin@org.eclipse.sequoyah.device.qemuarm=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/examples/org.eclipse.sequoyah.device.qemuarm
+plugin@org.eclipse.sequoyah.device.qemureact=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.device/examples/org.eclipse.sequoyah.device.qemureact
+### vnc examples
+plugin@org.eclipse.sequoyah.vnc.echo=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.vnc/examples/org.eclipse.sequoyah.vnc.echo
