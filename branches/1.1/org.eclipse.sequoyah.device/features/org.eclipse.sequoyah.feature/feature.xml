@@ -19,7 +19,7 @@
    <includes
          id="org.eclipse.sequoyah.android.cdt.feature"
          version="0.0.0"/>
-         
+
    <includes
          id="org.eclipse.sequoyah.device.common.feature"
          version="0.0.0"/>
