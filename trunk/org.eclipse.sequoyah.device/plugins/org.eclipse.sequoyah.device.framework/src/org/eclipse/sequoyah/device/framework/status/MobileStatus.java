@@ -11,6 +11,7 @@
  * Fabio Rigo (Eldorado) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Julia Martinez Perdigueiro (Eldorado) - [329548] Adding default service attribute for double click behavior on dev mgt view
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.status;
@@ -26,6 +27,7 @@ public class MobileStatus implements IStatus {
 	private Object parent;
 	private boolean canDeleteInstance;
 	private boolean canEditProperties;
+	private String defaultServiceId;
 	
 	public MobileStatus(){
 		this.id = DevicePlugin.SEQUOYAH_STATUS_UNAVAILABLE;
@@ -90,6 +92,16 @@ public class MobileStatus implements IStatus {
 	{
 	    this.canEditProperties = canEditProperties;
 	}
+	
+    public String getDefaultServiceId() 
+    { 
+    	return defaultServiceId; 
+    }
+    
+    public void setDefaultServiceId(String defaultServiceId)
+    {
+    	this.defaultServiceId = defaultServiceId;
+    }
 	
 	public Object clone(){
 		MobileStatus clone = new MobileStatus(this.id,this.name);

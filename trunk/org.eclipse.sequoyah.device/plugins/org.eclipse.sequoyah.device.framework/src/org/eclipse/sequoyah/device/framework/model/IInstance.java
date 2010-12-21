@@ -14,6 +14,7 @@
  * Mauren Brenner (Eldorado) - Bug [274503] - Added methods to get and set the name suffix
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  * Flavio Vantin (Eldorado) - Bug [315158] Added methods to get and set the separator between name and suffix.
+ * Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View 
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.model;
@@ -21,6 +22,7 @@ package org.eclipse.sequoyah.device.framework.model;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.sequoyah.device.framework.statemachine.StateMachineHandler;
 
 /**
  * Interface which defines the requirements of the device instance classes 
@@ -43,4 +45,6 @@ public interface IInstance extends IAdaptable {
 	public void setNameSuffix(String suffix);
 	public String getSeparator();
 	public void setSeparator(String separator);
+	public void setStateMachineHandler(StateMachineHandler stateMachineHandler);
+	public StateMachineHandler getStateMachineHandler();
 }

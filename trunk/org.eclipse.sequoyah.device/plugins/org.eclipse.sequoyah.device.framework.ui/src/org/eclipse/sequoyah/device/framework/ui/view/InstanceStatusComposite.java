@@ -32,13 +32,18 @@
  * Eric Cloninger (Motorola) - [287883] Adjust the status column in device management view - Modified relative widths
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  * Marcel Gorri (Eldorado) - [303646] Add support for UI styles.
+ * Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View
+ * Daniel Barboza Franco (Eldorado) - [329548] Allow multiple instances selection on Device Manager View
+ * Julia Martinez Perdigueiro (Eldorado) - [329548] Adding double click behavior and tooltip support for double click behavior 
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,7 +59,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -62,10 +70,14 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.framework.DeviceUtils;
 import org.eclipse.sequoyah.device.framework.events.IInstanceListener;
 import org.eclipse.sequoyah.device.framework.events.InstanceAdapter;
@@ -73,12 +85,13 @@ import org.eclipse.sequoyah.device.framework.events.InstanceEvent;
 import org.eclipse.sequoyah.device.framework.events.InstanceEventManager;
 import org.eclipse.sequoyah.device.framework.factory.DeviceTypeRegistry;
 import org.eclipse.sequoyah.device.framework.manager.InstanceManager;
-import org.eclipse.sequoyah.device.framework.model.AbstractMobileInstance;
+import org.eclipse.sequoyah.device.framework.manager.ServiceManager;
 import org.eclipse.sequoyah.device.framework.model.IDeviceType;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
 import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.model.handler.ServiceHandlerAction;
 import org.eclipse.sequoyah.device.framework.status.IStatus;
+import org.eclipse.sequoyah.device.framework.status.StatusManager;
 import org.eclipse.sequoyah.device.framework.status.StatusRegistry;
 import org.eclipse.sequoyah.device.framework.ui.DeviceUIPlugin;
 import org.eclipse.sequoyah.device.framework.ui.view.model.InstanceMgtViewComparator;
@@ -224,7 +237,7 @@ public class InstanceStatusComposite extends Composite
 	private void createContents()
 	{
 		setLayout(new FillLayout());
-		viewer = new TreeViewer(this, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL)
+		viewer = new TreeViewer(this, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL)
 		{
 			@Override
 			protected void createTreeItem(Widget parent, Object element,
@@ -243,6 +256,33 @@ public class InstanceStatusComposite extends Composite
 				}
 			}
 		};
+		viewer.addDoubleClickListener(new IDoubleClickListener()
+        {
+            
+            public void doubleClick(DoubleClickEvent event)
+            {
+                ISelection selection = event.getSelection();
+                if (selection instanceof TreeSelection) {
+                    TreeSelection treeSelection = (TreeSelection) selection;
+                    Object obj = treeSelection.getFirstElement();
+                    if (obj instanceof ViewerInstanceNode) {
+                        ViewerInstanceNode instanceNode = (ViewerInstanceNode) obj;                        
+                        IStatus status = StatusRegistry.getInstance().getStatus(instanceNode.getInstanceStatus());
+                        if (status != null && status.getDefaultServiceId() != null) {
+                            // run service
+                            String serviceId = status.getDefaultServiceId();
+                            try {
+                                List<IInstance> instances = new ArrayList<IInstance>(1);
+                                instances.add(instanceNode.getInstance());
+                                ServiceManager.runServices(instances, serviceId);
+                            } catch (SequoyahException te){
+                                BasePlugin.logError("Error running default service " + serviceId + " for instance " + instanceNode.getInstanceName(), te); //$NON-NLS-1$ //$NON-NLS-1$
+                            }
+                        }
+                    }
+                }
+            }
+        });
 		
 		Tree tree = viewer.getTree();
 		TableLayout layout = new TableLayout();
@@ -253,6 +293,8 @@ public class InstanceStatusComposite extends Composite
 		createColumn(Messages.InstanceStatusComposite_11, 9);
 
 		InstanceMgtViewLabelProvider labelProvider = new InstanceMgtViewLabelProvider();
+
+		ColumnViewerToolTipSupport.enableFor(viewer,ToolTip.NO_RECREATE);
 		viewer.setLabelProvider(labelProvider);
 
 		viewer.setContentProvider(new InstanceMgtViewContentProvider());
@@ -264,6 +306,7 @@ public class InstanceStatusComposite extends Composite
 		{
 			public void selectionChanged(SelectionChangedEvent event) {
 				notifyInstanceSelectionChangeListeners(getSelectedInstance());
+				InstanceMgtView.updateServicesToolbar();
 			}	
 		});
 
@@ -348,19 +391,26 @@ public class InstanceStatusComposite extends Composite
         ISelection selection = viewer.getSelection();
         if (selection instanceof IStructuredSelection)
         {
-            IStructuredSelection strSelection = (IStructuredSelection) selection;
-            Object firstSelection = strSelection.getFirstElement(); // TODO support multiple selection
-
-            if (firstSelection instanceof ViewerInstanceNode)
-            {
-                ViewerInstanceNode node = (ViewerInstanceNode) firstSelection;
-                if (node.containsInstance())
-                {
-                    IInstance instance = getSelectedInstance();
-                    fillMenuContext(menu, instance, justActions);
-                }
+            List <ViewerInstanceNode> instanceNodes = new ArrayList<ViewerInstanceNode>();
+            List <ViewerDeviceNode> deviceNodes = new ArrayList<ViewerDeviceNode>();
+            
+            boolean containInstance = false;
+            for (Object item: ((IStructuredSelection) selection).toArray()) {
+            	if (item instanceof ViewerInstanceNode) {
+            		instanceNodes.add((ViewerInstanceNode)item);
+            		containInstance = containInstance || ((ViewerInstanceNode) item).containsInstance();
+            	}
+            	else if (item instanceof ViewerDeviceNode) {
+            		deviceNodes.add((ViewerDeviceNode)item);
+            	}
             }
-            else if (firstSelection instanceof ViewerDeviceNode)
+            
+            
+            if (containInstance)
+            {
+                fillMenuContextMultiple(menu, getSelection(), justActions);
+            }
+            else if ((deviceNodes.size() == 1 ))
             {
             	IDeviceType device = getSelectedDevice();
             	
@@ -368,6 +418,7 @@ public class InstanceStatusComposite extends Composite
             		// menu item "New..."
             		newItem = new MenuItem(menu, SWT.PUSH);
             		newItem.setText(MENU_NEW);
+            		Object firstSelection = ((IStructuredSelection)selection).getFirstElement();
             		String deviceName = ((ViewerDeviceNode) firstSelection).getDeviceName();
             		newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
             	}
@@ -375,19 +426,58 @@ public class InstanceStatusComposite extends Composite
         }  
     }
     
-	private void fillMenuContext(Menu menu, IInstance instance, boolean dropDown) {
+    private void insertInstanceOperations(Menu menu, List <Object> selection, boolean dropDown) {
+    	
 		MenuItem newItem = null;
-		String statusId = instance.getStatus();
-        IStatus status = StatusRegistry.getInstance().getStatus(statusId);
-        IDeviceType device = DeviceUtils.getDeviceType(instance);
-        String deviceName = device.getLabel();
-        if (device.supportsUserInstances()) {
+
+		boolean canEditProperties = false;
+		boolean atLeastOneSupportsUserInstances = false;
+		boolean canDeleteInstances = true;
+		IStatus status = null;
+		IDeviceType device = null;
+		
+		Set <String> deviceTypesSelected = new HashSet<String>();
+		List <IInstance> instances = new ArrayList<IInstance>();
+		
+		
+		for (Object selectionItem: selection) {
+			
+			if (selectionItem instanceof IInstance) {
+				
+				IInstance instance = (IInstance)selectionItem; 
+				instances.add(instance);
+				String statusId = instance.getStatus();
+	        	status = StatusRegistry.getInstance().getStatus(statusId);
+	        	device = DeviceUtils.getDeviceType(instance);
+	        	deviceTypesSelected.add(device.getId());
+	        	atLeastOneSupportsUserInstances = atLeastOneSupportsUserInstances || device.supportsUserInstances();
+	        	//supportUserInstances = supportUserInstances & device.supportsUserInstances();
+	        	canDeleteInstances = canDeleteInstances & status.canDeleteInstance();
+	        	canEditProperties = status.canEditProperties();
+	        }
+			else if (selectionItem instanceof IDeviceType) {
+				
+				IDeviceType deviceType = (IDeviceType) selectionItem;
+				
+	        	deviceTypesSelected.add(deviceType.getId());
+	        	//atLeastOneSupportsUserInstances = atLeastOneSupportsUserInstances || deviceType.supportsUserInstances();
+	        	//supportUserInstances = supportUserInstances & deviceType.supportsUserInstances();
+	        	canDeleteInstances = false;
+			}
+		}
+        
+        if (atLeastOneSupportsUserInstances) {
             if(!dropDown)
             {
                 // menu item "New..."
                 newItem = new MenuItem(menu, SWT.PUSH);
                 newItem.setText(MENU_NEW);
+                String deviceName = device.getLabel();
                 newItem.addListener(SWT.Selection, new WizardSelectionListener(deviceName));
+                
+                if (deviceTypesSelected.size() > 1){
+                	newItem.setEnabled(false);
+                }
 
                 newItem = new MenuItem(menu, SWT.SEPARATOR);
             }
@@ -395,53 +485,110 @@ public class InstanceStatusComposite extends Composite
             // menu item "Delete"
             newItem = new MenuItem(menu, SWT.PUSH);
             newItem.setText(MENU_DELETE);
-            newItem.addListener(SWT.Selection, new MenuDeleteListener(instance));
+            
+            newItem.addListener(SWT.Selection, new MenuDeleteListener(instances));
             newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
-            newItem.setEnabled(status.canDeleteInstance());
+            newItem.setEnabled(canDeleteInstances);
 
             newItem = new MenuItem(menu, SWT.SEPARATOR);
 
         }
         
         // menu item "Properties"
-        newItem = new MenuItem(menu, SWT.PUSH);
-        newItem.setText(MENU_PROPERTIES);
-        newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DeviceUIPlugin.ICON_PROPERTY));
-        newItem.addListener(SWT.Selection, new MenuPropertiesListener(instance));
-        newItem.setEnabled(status.canEditProperties());
+        if (instances.size() >= 1) {
+	        newItem = new MenuItem(menu, SWT.PUSH);
+	        newItem.setText(MENU_PROPERTIES);
+	        newItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(DeviceUIPlugin.ICON_PROPERTY));
 
-        newItem = new MenuItem(menu, SWT.SEPARATOR);
-        
-        for (IService service:device.getServices()){
+			canEditProperties = canEditProperties && (selection.size() == 1);
+
+			if (canEditProperties) {
+	        	newItem.addListener(SWT.Selection, new MenuPropertiesListener(instances.get(0)));
+	        	newItem.setEnabled(true); // this call is safe because there is only one status since size==1
+	        }
+	        else {
+	        	newItem.setEnabled(false);
+	        }
+        }
+
+	}
+	
+	
+	private void fillMenuContextMultiple(Menu menu, List <Object> selection, boolean dropDown) {
+	
+		List <IInstance> instances = new ArrayList<IInstance>();
+		for (Object item: selection) {
+			if (item instanceof IInstance) {
+				instances.add((IInstance)item);
+			}
+		}
+		
+		insertInstanceOperations(menu, selection, dropDown);
+		
+		//If there's only instances selected, insert services.
+		if (instances.size() == selection.size()) {
+	        insertServices(menu, instances);			
+		}
+
+
+	}
+	
+
+
+	private void insertServices(Menu menu, List <IInstance> instances) {
+
+		MenuItem newItem = null;
+		
+		List<IService> services = ServiceManager.getCommonServices(instances, (instances.size() > 1));
+
+		if (services.size() > 0 ) {
+			newItem = new MenuItem(menu, SWT.SEPARATOR);
+		}
+		
+        for (IService service: services){
             if (service.isVisible()) {
-            	
-            	boolean inTransition = ((AbstractMobileInstance)instance).getStateMachineHandler().isTransitioning();
-            	boolean isServiceEnabled = (service.getStatusTransitions(instance.getStatus())!=null);
-            	isServiceEnabled = isServiceEnabled && !inTransition;
             	
                 newItem = new MenuItem(menu, SWT.PUSH);  
                 ImageData serviceImageData = service.getImage().getImageData().scaledTo(DEFAULT_MENU_IMAGE_SIZE, DEFAULT_MENU_IMAGE_SIZE);
                 Image serviceImage = new Image(getDisplay(), serviceImageData);
                 newItem.setImage(serviceImage);
-                newItem.setEnabled(isServiceEnabled);
+                newItem.setEnabled(true);
                 newItem.setText(service.getName());
-                newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instance,service.getHandler()));
+                
+                newItem.addListener(SWT.Selection,  new ServiceHandlerAction(instances, service.getId()));
 
                 // The listener below updates the services composite
-                final IInstance inst = instance;
-                newItem.addListener(SWT.Selection,  new Listener(){
-					public void handleEvent(Event event) {
-					    InstanceServicesComposite composite = InstanceMgtView.getInstanceServicesComposite();
-						if (composite != null)
-						    composite.setSelectedInstance(inst);
-					}
-					
-				} );
+                updateServicesComposite(newItem, instances);
+
                 
             }
         }
 	}
-    
+
+	protected List<IInstance> getSelectedInstances() {
+		List<Object> selection = getSelection();
+		List<IInstance> selectedInstances = new ArrayList<IInstance>(selection.size());
+		for(Object selected : selection)
+		{
+			if(selected instanceof IInstance)
+			{
+				IInstance instance = (IInstance) selected;
+				selectedInstances.add(instance);
+			}
+		}
+		return selectedInstances;
+	}
+
+	private void updateServicesComposite(MenuItem newItem, final List<IInstance> instances) {
+        newItem.addListener(SWT.Selection,  new Listener(){
+			public void handleEvent(Event event) {
+			    InstanceServicesComposite composite = InstanceMgtView.getInstanceServicesComposite();
+				if (composite != null)
+				    composite.setSelectedInstances(instances);
+			}
+		} );	
+	}
+
 	private void fillViewMenu()
 	{
 	    IMenuManager rootMenuManager = viewSite.getActionBars().getMenuManager();
@@ -523,7 +670,10 @@ public class InstanceStatusComposite extends Composite
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						clearContextMenu(menu);
-						fillMenuContext(menu, instanceNode.getInstance(), true);
+						List <Object> instances = new ArrayList<Object>();
+						instances.add(instanceNode.getInstance());
+						fillMenuContextMultiple(menu, instances, true);
+						selectInstance(instanceNode.getInstance());
 						Rectangle rect = menuButton.getBounds();
 						Point pt = new Point(0, rect.height);
 						pt = menuButton.toDisplay(pt);
@@ -621,6 +771,37 @@ public class InstanceStatusComposite extends Composite
         
         return lastSelection;
 	}
+	
+	protected List<Object> getSelection()
+	{
+	    ISelection selection = viewer.getSelection();
+	    List<Object> selectedItems = null;
+        if (selection instanceof IStructuredSelection)
+        {
+            IStructuredSelection strSelection = (IStructuredSelection) selection;
+
+			selectedItems = new ArrayList<Object>(strSelection.size());
+			@SuppressWarnings("rawtypes")
+			Iterator it = strSelection.iterator();
+			while(it.hasNext())
+			{
+				Object selected = it.next();
+				if (selected instanceof ViewerInstanceNode)
+				{
+					ViewerInstanceNode node = (ViewerInstanceNode) selected;
+					selected = node.getInstance();
+				}
+				else if (selected instanceof ViewerDeviceNode)
+				{
+					ViewerDeviceNode node = (ViewerDeviceNode) selected;
+					selected = node.getDevice();
+				}
+				selectedItems.add(selected);
+			}
+        }
+        
+        return selectedItems != null? selectedItems : Collections.emptyList();
+	}
 
 	private void columnSelected(SelectionEvent e)
 	{
@@ -683,6 +864,23 @@ public class InstanceStatusComposite extends Composite
 		}
 	}
 	
+	
+	/** 
+	 * Remove the selected instances.
+	 */
+	protected void removeSelectedInstances() {
+		if (viewer.getSelection().isEmpty()) {
+			return;
+		}
+		
+		List<Object> instances = getSelection();
+
+		if (instances != null)
+		{
+		    InstanceManager.deleteInstances(instances);
+		}
+	}
+	
 	private void instanceLoaded(final IInstance instance)
 	{
 	    Display.getDefault().asyncExec(new Runnable() {
@@ -710,6 +908,9 @@ public class InstanceStatusComposite extends Composite
 	{
 	    Display.getDefault().asyncExec(new Runnable() {
             public void run() {
+            	
+            	InstanceMgtView.updateServicesToolbar();
+            	
                 ViewerInstanceNode node = getInstanceNode(instance);
                 if (node != null)
                 {
@@ -760,31 +961,36 @@ public class InstanceStatusComposite extends Composite
      */
 	private class MenuDeleteListener implements Listener {
 		
-		private IInstance instance;
+		private List <IInstance> instances;
 		
-		public MenuDeleteListener(IInstance instance)
+		public MenuDeleteListener(List <IInstance> instances)
         {
             super();
-            this.instance = instance;
+            this.instances = instances;
         }
 		
 		public void handleEvent(Event event) {
 			final boolean[] result = new boolean[1];
-			if(instance != null)
+			if(instances != null)
 			{
 				//Check with User if he really want to remove the instance.
 				Display.getDefault().syncExec(new Runnable()
 				{
 					public void run()
 					{
+						String instanceNames = "";
+						for (IInstance instance: instances) {
+							instanceNames += (instanceNames == "") ? "" : ", ";
+							instanceNames += instance.getName();
+						}				
 						IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						result[0] = MessageDialog.openQuestion(ww.getShell(), Messages.InstanceStatusComposite_0, Messages.InstanceStatusComposite_1 + instance.getName() + Messages.InstanceStatusComposite_2);
+						result[0] = MessageDialog.openQuestion(ww.getShell(), Messages.InstanceStatusComposite_0, Messages.InstanceStatusComposite_1 + instanceNames + Messages.InstanceStatusComposite_2);
 					}
 				});
 				
 				if(result[0])
 				{
-					removeSelected();
+					removeSelectedInstances();
 				}
 			}
 		}

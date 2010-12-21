@@ -13,13 +13,17 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [221739] - Improvements to State machine implementation
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [252261] - Internal class MobileInstance providing functionalities
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Pablo Leite (Eldorado) - [329548] Changed job name
+ * Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View 
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.model.handler;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.framework.model.AbstractMobileInstance;
@@ -78,7 +82,7 @@ public abstract class ServiceHandler implements IServiceHandler
 
     private void createJob(final IInstance instance, final Map<Object, Object> arguments)
     {
-        final String jobName = (service != null ? service.getName() : ""); //$NON-NLS-1$
+        final String jobName = (service != null ? service.getName() + ":" + instance.getName() : ""); //$NON-NLS-1$
         final Job serviceJob = new Job(jobName)
         {
             @Override
@@ -109,7 +113,7 @@ public abstract class ServiceHandler implements IServiceHandler
             String jobName, IProgressMonitor monitor) throws SequoyahException
     {
     	
-    	return ((AbstractMobileInstance)instance).getStateMachineHandler().runService(this, instance, arguments, jobName, monitor);
+    	return instance.getStateMachineHandler().runService(this, instance, arguments, jobName, monitor);
     	
     }
 
@@ -137,7 +141,7 @@ public abstract class ServiceHandler implements IServiceHandler
 
     public boolean verifyStatus(IInstance instance)
     {
-        IStatusTransition transition = getService().getStatusTransitions(instance.getStatus());
+        IStatusTransition transition = getService().getStatusTransitions(instance.getDeviceTypeId(), instance.getStatus());
         return (transition != null);
     }
 
@@ -154,5 +158,11 @@ public abstract class ServiceHandler implements IServiceHandler
         newHandler.setService(service);
         return newHandler;
     }
+    
+    public IStatus singleInit(List<IInstance> instances)
+    {
+        return Status.OK_STATUS;
+    }
+
 
 }

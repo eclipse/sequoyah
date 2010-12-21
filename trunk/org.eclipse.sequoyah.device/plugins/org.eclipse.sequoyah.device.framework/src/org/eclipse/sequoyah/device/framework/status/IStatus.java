@@ -11,6 +11,7 @@
  * Fabio Rigo (Eldorado) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Julia Martinez Perdigueiro (Eldorado) - [329548] Adding default service id getter/setter for double click support behavior
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.status;
@@ -60,6 +61,12 @@ public interface IStatus {
 	public boolean canEditProperties();
 	public void setCanEditProperties(boolean canEditProperties);
 
+	   
+    /**
+     * @return
+     */
+    public String getDefaultServiceId();
+    public void setDefaultServiceId(String defaultServiceId);
 	
 	/**
 	 * @return

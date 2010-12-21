@@ -16,17 +16,32 @@
  * Mauren Brenner (Eldorado) - [282724] Add dispose listener to the top composite
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
  * Marcel Gorri (Eldorado) - [303646] Add support for UI styles.
+ * Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View 
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.view;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.device.framework.factory.DeviceTypeRegistry;
+import org.eclipse.sequoyah.device.framework.manager.ServiceManager;
+import org.eclipse.sequoyah.device.framework.model.IDeviceType;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
+import org.eclipse.sequoyah.device.framework.model.IParallelService;
+import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.ui.view.model.InstanceSelectionChangeEvent;
 import org.eclipse.sequoyah.device.framework.ui.view.model.InstanceSelectionChangeListener;
 import org.eclipse.swt.SWT;
@@ -34,6 +49,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -52,6 +68,7 @@ public class InstanceMgtView extends ViewPart
 	private static String contextId;
 	private boolean useDropDown;
 	private String viewLayout;
+	private static HashMap<String, Action> serviceActionMap = new HashMap();
 	
 	private static final String LAYOUT_HORIZONTAL = "horizontal"; //$NON-NLS-1$
 	private static final String LAYOUT_VERTICAL = "vertical"; //$NON-NLS-1$
@@ -83,8 +100,61 @@ public class InstanceMgtView extends ViewPart
     		});
     	}
     }
+
+    private List<IService> getServicesFromDeviceTypes() {
+
+    	Collection<IDeviceType> devices = DeviceTypeRegistry.getInstance().getDeviceTypes();
+    	List<IService> services = new ArrayList<IService>();
+
+    	Set<String> addedServices = new HashSet<String>();
+    	
+    	for (IDeviceType device : devices) {
+    		for (IService service : device.getServices()) {
+    			//if (service.isVisible() && ((IParallelService)service).isParallelized() && addedServices.add(service.getId())) {
+    			if (service.isVisible() && addedServices.add(service.getId())) {
+    				services.add(service);
+    			}
+    		}
+    	}
+		
+    	return services;
+	}
+
     
-    public void createPartControl(Composite parent)
+    private void createServicesToolbar() {
+        IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+        
+        List <IService> services = getServicesFromDeviceTypes();
+        
+        for (final IService service: services) {
+        	
+            Action action = new Action(service.getName()) {
+            	public void run() { 
+            		List<IInstance> instances = getSelectedInstances();
+					try {
+						ServiceManager.runServices(instances, service.getId());
+					} catch (SequoyahException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+            	}
+            };
+            action.setImageDescriptor(service.getImage());
+            action.setEnabled(false);
+            
+            serviceActionMap.put(service.getId(), action);
+            mgr.add(action);
+        }
+        
+        if (services.size() > 0) {
+        	mgr.add(new Separator());
+        }
+	}
+    
+
+
+	public void createPartControl(Composite parent)
     {
 
     	IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
@@ -95,6 +165,8 @@ public class InstanceMgtView extends ViewPart
     		useDropDown = Boolean.parseBoolean(attribute);
     		viewLayout = configElement.getAttribute("viewLayout");//$NON-NLS-1$
     	}
+    	
+    	createServicesToolbar();
     	
     	if(LAYOUT_VERTICAL.equals(viewLayout)) {
     		form = new SashForm(parent,SWT.VERTICAL);
@@ -130,7 +202,7 @@ public class InstanceMgtView extends ViewPart
         	selectionChangeListener = new InstanceSelectionChangeListener() {
         		public void instanceSelectionChanged(InstanceSelectionChangeEvent event)
         		{
-        			bottomComposite.setSelectedInstance(event.getInstance());
+        			bottomComposite.setSelectedInstances(getSelectedInstances());
         		}
         	};
         	topComposite.addInstanceSelectionChangeListener(selectionChangeListener);
@@ -144,7 +216,8 @@ public class InstanceMgtView extends ViewPart
         }
     }
 
-    public void setFocus()
+
+	public void setFocus()
     {
     	if (form != null) { 
     		form.setFocus();
@@ -178,6 +251,24 @@ public class InstanceMgtView extends ViewPart
 		return selectedInstance;
 	}
 	
+	public static List<IInstance> getSelectedInstances() {
+		
+		if (topComposite != null) {
+			return topComposite.getSelectedInstances();
+		}
+		
+		return null;
+	}
+	
+	   public static List<Object> getSelection() {
+	        
+	        if (topComposite != null) {
+	            return topComposite.getSelection();
+	        }
+	        
+	        return null;
+	    }
+	
 	public static void addInstanceSelectionChangeListener(InstanceSelectionChangeListener listener)	{
 		listeners.add(listener);
 	}
@@ -202,5 +293,35 @@ public class InstanceMgtView extends ViewPart
 		
 		super.dispose();
 	}
+
+	
+	private static void disableAllServices() {
+
+		for (Action action : serviceActionMap.values() ) {
+			action.setEnabled(false);
+		}
+	}
+
+	public static void updateServicesToolbar() {
+		
+	    List<Object> selection = getSelection();
+		List<IInstance> instances = getSelectedInstances();
+		disableAllServices();
+		
+		if (selection.size() == instances.size() && instances != null && !instances.isEmpty()) {	
+			List<IService> commonServices = ServiceManager.getCommonServices(instances, (instances.size() > 1));
+			List<IService> allServices = ServiceManager.getAllServices(instances, false);
+			
+			for (IService service:allServices){
+				Action action = serviceActionMap.get(service.getId());
+
+				if (action != null) {
+					action.setEnabled(service.isVisible() && commonServices.contains(service));
+				}
+			}
+			
+		}
+	}
+
 	
 }

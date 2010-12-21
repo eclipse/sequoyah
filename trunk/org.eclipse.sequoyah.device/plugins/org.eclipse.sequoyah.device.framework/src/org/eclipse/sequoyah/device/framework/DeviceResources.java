@@ -28,6 +28,8 @@ public class DeviceResources extends NLS {
 	public static String SEQUOYAH_Resource_Not_Available;
 	public static String SEQUOYAH_Handler_Not_Instanced;
 	public static String SEQUOYAH_STATUS_UNAVAILABLE;
+
+	public static String StatusManager_TooltipTextMessage;
 		
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, DeviceResources.class);

@@ -12,6 +12,7 @@
  * Fabio Rigo (Eldorado) - [245111] Disable the "Delete" option in popup if the instance is not prepared for deletion
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [246082] - Complement bug #245111 by allowing disable of "Properties" option as well
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Julia Martinez Perdigueiro (Eldorado) - [329548] Adding default service id retrieval from extension point for double click support behavior
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.status;
 
@@ -32,6 +33,7 @@ public class StatusFactory {
 	private static final String ATR_IMAGE = "image"; //$NON-NLS-1$
 	private static final String ATR_CANDELETE = "canDeleteInstance"; //$NON-NLS-1$
 	private static final String ATR_CANEDITPROPERTIES = "canEditProperties"; //$NON-NLS-1$
+	private static final String ATR_DEFAULTSERVICEID = "defaultServiceId"; //$NON-NLS-1$
 	
 	@SuppressWarnings("deprecation")
 	public static IStatus createStatus(String statusId) {
@@ -40,9 +42,11 @@ public class StatusFactory {
 		String name = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_NAME);
 		boolean canDelete = Boolean.parseBoolean(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_CANDELETE));
 		boolean canEditProperties = Boolean.parseBoolean(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_CANEDITPROPERTIES));
+		String defaultServiceId = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_DEFAULTSERVICEID);
 		IStatus status = new MobileStatus(id,name);
 		status.setCanDeleteInstance(canDelete);
 		status.setCanEditProperties(canEditProperties);
+		status.setDefaultServiceId(defaultServiceId);
 		String imageName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_STATUS, ATR_IMAGE);		
 		ImageDescriptor image = null;
 			try {
