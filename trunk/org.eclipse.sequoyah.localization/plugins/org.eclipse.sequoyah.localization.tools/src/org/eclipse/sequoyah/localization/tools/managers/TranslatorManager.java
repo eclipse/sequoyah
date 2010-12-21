@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Marcel Gorri (Eldorado) - Implement methods to make automatic translation
+ * Matheus Lima (Eldorado) - Bug [326793] - Fixed so no exception occurs when no translator is associated
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.managers;
 
@@ -17,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
-import org.eclipse.sequoyah.localization.tools.datamodel.TranslationResult;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.TranslationResult;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 import org.eclipse.sequoyah.localization.tools.extensions.providers.TranslatorProvider;
 import org.eclipse.swt.graphics.Image;
@@ -146,13 +148,17 @@ public class TranslatorManager {
 	 * 
 	 * @param translatorBrandingImage
 	 *            Label that will display the image
+	 * @throws SequoyahException
 	 */
 	public void setTranslatorBranding(String translatorName,
 			Label translatorBrandingImage) {
 		ITranslator translatorObj = getTranslatorByName(translatorName);
-		Image brandingImg = translatorObj.getBrandingImg();
-		if (brandingImg != null) {
-			translatorBrandingImage.setImage(brandingImg);
+		if (translatorObj != null) {
+			Image brandingImg = translatorObj.getBrandingImg();
+			if (brandingImg != null) {
+				translatorBrandingImage.setImage(brandingImg);
+			}
 		}
+
 	}
 }

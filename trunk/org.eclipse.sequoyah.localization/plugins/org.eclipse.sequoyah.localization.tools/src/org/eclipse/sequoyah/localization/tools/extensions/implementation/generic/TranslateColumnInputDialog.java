@@ -253,7 +253,8 @@ public class TranslateColumnInputDialog extends InputDialog {
 				fromLanguage = fromCombo.getText();
 				if (!fromLanguage.equals(LanguagesUtil.getComboSeparator())) {
 					// update default language
-					PreferencesManager.getInstance()
+					PreferencesManager
+							.getInstance()
 							.getProjectPreferencesManager(project)
 							.setDefaultLanguageForColumn(selectedColumn,
 									LanguagesUtil.getLanguageID(fromLanguage));
@@ -371,8 +372,8 @@ public class TranslateColumnInputDialog extends InputDialog {
 	private boolean openNetworkPreferencesPage() {
 		// Creates the dialog every time, because it is disposed when it is
 		// closed.
-		networkPreferencesDialog = new WorkbenchPreferenceDialog(this
-				.getShell(), prefMan);
+		networkPreferencesDialog = new WorkbenchPreferenceDialog(
+				this.getShell(), prefMan);
 		networkPreferencesDialog.create();
 		centralizeShell(networkPreferencesDialog.getShell());
 		networkPreferencesDialog.open();

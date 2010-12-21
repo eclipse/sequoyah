@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
+ * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (validate key) 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
@@ -19,7 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahExceptionStatus;
-import org.eclipse.sequoyah.localization.stringeditor.providers.ICellValidator;
+import org.eclipse.sequoyah.localization.editor.providers.ICellValidator;
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
@@ -72,6 +73,11 @@ public class CellValidator implements ICellValidator {
 	public IStatus isCellValid(String columnID, String key, String value) {
 		return projectLocalizationManager.getProjectLocalizationSchema()
 				.isValueValid(columnID, key, value);
+	}
+
+	public IStatus isKeyValid(String key) {
+		return projectLocalizationManager.getProjectLocalizationSchema()
+				.isKeyValid(key);
 	}
 
 }

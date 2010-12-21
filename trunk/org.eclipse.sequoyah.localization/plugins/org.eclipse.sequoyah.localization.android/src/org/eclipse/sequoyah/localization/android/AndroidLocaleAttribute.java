@@ -24,9 +24,7 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 public class AndroidLocaleAttribute extends LocaleAttribute {
 
 	public enum AndroidLocaleAttributes {
-		COUNTRY_CODE, NETWORK_CODE, LANGUAGE, REGION, SCREEN_SIZE, SCREEN_ASPECT, SCREEN_ORIENTATION, 
-		DOCK_MODE, NIGHT_MODE, PIXEL_DENSITY, TOUCH_TYPE, KEYBOARD_STATE, TEXT_INPUT_METHOD, 
-		NAVIGATION_KEY_STATE, NAVIGATION_METHOD, SCREEN_DIMENSION, API_VERSION, COUNT
+		COUNTRY_CODE, NETWORK_CODE, LANGUAGE, REGION, SCREEN_SIZE, SCREEN_ASPECT, SCREEN_ORIENTATION, DOCK_MODE, NIGHT_MODE, PIXEL_DENSITY, TOUCH_TYPE, KEYBOARD_STATE, TEXT_INPUT_METHOD, NAVIGATION_KEY_STATE, NAVIGATION_METHOD, SCREEN_DIMENSION, API_VERSION, COUNT
 	};
 
 	private int androidType;
@@ -155,28 +153,36 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 			result = strValue.substring(1);
 		} else if (androidType == AndroidLocaleAttributes.SCREEN_SIZE.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.SCREEN_ASPECT.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_ASPECT
+				.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.SCREEN_ORIENTATION.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_ORIENTATION
+				.ordinal()) {
 			result = strValue;
 		} else if (androidType == AndroidLocaleAttributes.DOCK_MODE.ordinal()) {
 			result = strValue;
 		} else if (androidType == AndroidLocaleAttributes.NIGHT_MODE.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.PIXEL_DENSITY.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.PIXEL_DENSITY
+				.ordinal()) {
 			int index = strValue.indexOf("dpi"); //$NON-NLS-1$
 			result = strValue.substring(0, index);
 		} else if (androidType == AndroidLocaleAttributes.TOUCH_TYPE.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.KEYBOARD_STATE.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.KEYBOARD_STATE
+				.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.TEXT_INPUT_METHOD.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.TEXT_INPUT_METHOD
+				.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+				.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_METHOD.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_METHOD
+				.ordinal()) {
 			result = strValue;
-		} else if (androidType == AndroidLocaleAttributes.SCREEN_DIMENSION.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_DIMENSION
+				.ordinal()) {
 			String[] numbers = strValue.split("x"); //$NON-NLS-1$
 			int x = Integer.parseInt(numbers[0]);
 			int y = Integer.parseInt(numbers[1]);
@@ -224,9 +230,11 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 			setRegionNode(value);
 		} else if (androidType == AndroidLocaleAttributes.SCREEN_SIZE.ordinal()) {
 			setScreenSizeNode(value);
-		} else if (androidType == AndroidLocaleAttributes.SCREEN_ASPECT.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_ASPECT
+				.ordinal()) {
 			setScreenAspectNode(value);
-		} else if (androidType == AndroidLocaleAttributes.SCREEN_ORIENTATION.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_ORIENTATION
+				.ordinal()) {
 			setOrientationNode(value);
 		} else if (androidType == AndroidLocaleAttributes.DOCK_MODE.ordinal()) {
 			setDockNode(value);
@@ -237,15 +245,20 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 			setPixelNode(value);
 		} else if (androidType == AndroidLocaleAttributes.TOUCH_TYPE.ordinal()) {
 			setTouchNode(value);
-		} else if (androidType == AndroidLocaleAttributes.KEYBOARD_STATE.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.KEYBOARD_STATE
+				.ordinal()) {
 			setKeyboardNode(value);
-		} else if (androidType == AndroidLocaleAttributes.TEXT_INPUT_METHOD.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.TEXT_INPUT_METHOD
+				.ordinal()) {
 			setTextInputNode(value);
-		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_KEY_STATE.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_KEY_STATE
+				.ordinal()) {
 			setNavigationKeyStateNode(value);
-		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_METHOD.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.NAVIGATION_METHOD
+				.ordinal()) {
 			setNavigationNode(value);
-		} else if (androidType == AndroidLocaleAttributes.SCREEN_DIMENSION.ordinal()) {
+		} else if (androidType == AndroidLocaleAttributes.SCREEN_DIMENSION
+				.ordinal()) {
 			setDimensionNode(value);
 		} else if (androidType == AndroidLocaleAttributes.API_VERSION.ordinal()) {
 			setAPIVersionNode(value);
@@ -280,7 +293,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		setIntValue(value);
 		folderValue = getCountryCodeFolder(displayValue);
 	}
-	
+
 	/**
 	 * Sets the type and values of this attribute according to the object
 	 * received.
@@ -295,7 +308,7 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		allowedValues = new HashMap<String, String>();
 		setValuesBasedOnDisplayValue((String) value);
 	}
-	
+
 	/**
 	 * Sets the type and values of this attribute according to the object
 	 * received.
@@ -324,8 +337,8 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		maximumSize = 0;
 		allowedValues = new HashMap<String, String>();
 		setValuesBasedOnDisplayValue((String) value);
-	}	
-	
+	}
+
 	/**
 	 * Sets the type and values of this attribute according to the object
 	 * received.
@@ -338,8 +351,8 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		fixedSize = 0;
 		maximumSize = 0;
 		allowedValues = new HashMap<String, String>();
-		setValuesBasedOnDisplayValue((String) value);		
-	}	
+		setValuesBasedOnDisplayValue((String) value);
+	}
 
 	/**
 	 * Sets the type and values of this attribute according to the object
@@ -481,12 +494,12 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		setAPIValue(value);
 		folderValue = displayValue;
 	}
-	
+
 	/*
 	 * 
 	 * @param value
 	 */
-	private void setAPIValue(Object value){
+	private void setAPIValue(Object value) {
 		if (value instanceof String) {
 			Integer intValue = -1;
 			String source = (String) value;

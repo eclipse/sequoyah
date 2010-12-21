@@ -16,7 +16,7 @@ package org.eclipse.sequoyah.localization.tools.extensions.classes;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.sequoyah.localization.tools.datamodel.TranslationResult;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.TranslationResult;
 import org.eclipse.swt.graphics.Image;
 
 public abstract class ITranslator {
@@ -119,7 +119,8 @@ public abstract class ITranslator {
 	 * given languages (given by a list, or course), using google Ajax API's for
 	 * that.
 	 * 
-	 * This comment feels like the"Three Swatch watch switching witches watched switched Swatch watch witches switch"
+	 * This comment feels like the
+	 * "Three Swatch watch switching witches watched switched Swatch watch witches switch"
 	 * , but I'll let it here anyway.
 	 * 
 	 * @param words

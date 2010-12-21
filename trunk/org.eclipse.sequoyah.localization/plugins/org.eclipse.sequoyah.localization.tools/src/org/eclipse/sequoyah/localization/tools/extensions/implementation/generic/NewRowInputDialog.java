@@ -21,8 +21,9 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringArray;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayNode;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
@@ -380,12 +381,14 @@ public class NewRowInputDialog extends Dialog {
 					.getLocalizationProject();
 		} catch (IOException e) {
 
+		} catch (SequoyahException e) {
+
 		}
 
-		Set<StringArray> allStringArrays = localizationProject
+		Set<StringArrayNode> allStringArrays = localizationProject
 				.getAllStringArrays();
 
-		Iterator<StringArray> iterator = allStringArrays.iterator();
+		Iterator<StringArrayNode> iterator = allStringArrays.iterator();
 
 		while (iterator.hasNext()) {
 			arrayNames.add(iterator.next().getKey());
@@ -475,7 +478,7 @@ public class NewRowInputDialog extends Dialog {
 	private void validateSelection() {
 
 		boolean result = true;
-		String msg = "";
+		String msg = ""; //$NON-NLS-1$
 
 		/*
 		 * Check if keys can have blank spaces and validate it accordingly
@@ -484,7 +487,7 @@ public class NewRowInputDialog extends Dialog {
 				.keyAcceptsBlankSpaces();
 
 		if ((!keyAcceptsBlankSpaces)
-				&& (this.textNewString.getText().contains(" "))) {
+				&& (this.textNewString.getText().contains(" "))) { //$NON-NLS-1$
 
 			msg = Messages.NewRowDialog_Error_RowKeyHasBlankSpaces;
 			result = false;
@@ -538,6 +541,5 @@ public class NewRowInputDialog extends Dialog {
 
 		getButton(IDialogConstants.OK_ID).setEnabled(result);
 		errorMsg.setText(msg);
-
 	}
 }

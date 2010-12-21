@@ -46,9 +46,9 @@ public class LanguagesUtil implements TranslatorConstants {
 
 	// Images
 	private static Image warningImage = new Image(Display.getDefault(),
-			PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJS_WARN_TSK).getImageData().scaledTo(
-					16, 16));
+			PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJS_WARN_TSK).getImageData()
+					.scaledTo(16, 16));
 
 	private static Image okImage = new Image(Display.getDefault(),
 			LocalizationToolsPlugin.imageDescriptorFromPlugin(
@@ -225,8 +225,7 @@ public class LanguagesUtil implements TranslatorConstants {
 		ITranslator defaultTranslator = PreferencesManager.getInstance()
 				.getDefaultTranslator();
 		String defaultTranslatorName = ((defaultTranslator != null) ? defaultTranslator
-				.getName()
-				: ""); //$NON-NLS-1$
+				.getName() : ""); //$NON-NLS-1$
 
 		translatorsCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY
 				| SWT.SINGLE);
@@ -264,8 +263,8 @@ public class LanguagesUtil implements TranslatorConstants {
 				| SWT.SINGLE);
 
 		if (allLangs.size() > 0) {
-			languagesCombo.setItems(allLangs
-					.toArray(new String[allLangs.size()]));
+			languagesCombo
+					.setItems(allLangs.toArray(new String[allLangs.size()]));
 
 			String comboSelection = initialSelection;
 

@@ -12,8 +12,8 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.persistence;
 
-import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
 
 /**
  * 
@@ -45,7 +45,7 @@ public class ProjectPersistenceManager {
 	/**
 	 * @param file
 	 */
-	public void loadDataForFile(LocalizationFile file) {
+	public void loadDataForFile(StringLocalizationFile file) {
 
 	}
 
@@ -81,7 +81,7 @@ public class ProjectPersistenceManager {
 	 * @param file
 	 * @return
 	 */
-	public LocalizationFile clearDataForFile(LocalizationFile file) {
+	public StringLocalizationFile clearDataForFile(StringLocalizationFile file) {
 		return null;
 	}
 
@@ -95,7 +95,7 @@ public class ProjectPersistenceManager {
 	/**
 	 * @param file
 	 */
-	public void removeOrphanKeysForFile(LocalizationFile file) {
+	public void removeOrphanKeysForFile(StringLocalizationFile file) {
 
 	}
 
@@ -117,7 +117,7 @@ public class ProjectPersistenceManager {
 	 * @param file
 	 * @return
 	 */
-	public boolean isFileDataLoaded(LocalizationFile file) {
+	public boolean isFileDataLoaded(StringLocalizationFile file) {
 		return false;
 	}
 

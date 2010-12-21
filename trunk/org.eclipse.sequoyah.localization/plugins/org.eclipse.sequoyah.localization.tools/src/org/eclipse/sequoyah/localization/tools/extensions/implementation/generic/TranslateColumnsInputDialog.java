@@ -10,6 +10,7 @@
  * Marcel Gorri (Eldorado)
  * 
  * Contributors:
+ * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.implementation.generic;
 
@@ -41,7 +42,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 
@@ -76,7 +77,7 @@ public class TranslateColumnsInputDialog extends Dialog {
 	// "To" information
 	private List<DestinationColumn> destinationColumns = null;
 
-	private TableColumn[] columns = null;
+	private TreeColumn[] columns = null;
 
 	private PreferenceDialog networkPreferencesDialog;
 
@@ -89,7 +90,7 @@ public class TranslateColumnsInputDialog extends Dialog {
 	 */
 	public TranslateColumnsInputDialog(Shell parentShell, IProject project,
 			String selectedColumn, String[] selectedCells,
-			TableColumn[] columns, String dialogTitle) {
+			TreeColumn[] columns, String dialogTitle) {
 		super(parentShell);
 		this.project = project;
 		this.selectedColumn = selectedColumn;
@@ -149,8 +150,8 @@ public class TranslateColumnsInputDialog extends Dialog {
 	private boolean openNetworkPreferencesPage() {
 		// Creates the dialog every time, because it is disposed when it is
 		// closed.
-		networkPreferencesDialog = new WorkbenchPreferenceDialog(this
-				.getShell(), prefMan);
+		networkPreferencesDialog = new WorkbenchPreferenceDialog(
+				this.getShell(), prefMan);
 		networkPreferencesDialog.create();
 		centralizeShell(networkPreferencesDialog.getShell());
 		networkPreferencesDialog.open();
@@ -339,7 +340,7 @@ public class TranslateColumnsInputDialog extends Dialog {
 		this.destinationColumns = new ArrayList<DestinationColumn>();
 
 		int i = 0;
-		for (TableColumn column : this.columns) {
+		for (TreeColumn column : this.columns) {
 			if ((i > 0) && (!column.getText().equals(this.selectedColumn))) {
 
 				// checkbox
@@ -503,7 +504,8 @@ public class TranslateColumnsInputDialog extends Dialog {
 					fromLanguage = fromCombo.getText();
 					if (!fromLanguage.equals(LanguagesUtil.getComboSeparator())) {
 						// update default language
-						PreferencesManager.getInstance()
+						PreferencesManager
+								.getInstance()
 								.getProjectPreferencesManager(project)
 								.setDefaultLanguageForColumn(
 										selectedColumn,
@@ -604,6 +606,10 @@ public class TranslateColumnsInputDialog extends Dialog {
 				result = false;
 				break;
 			}
+		}
+
+		if (translator == null || translator.length() == 0) {
+			result = false;
 		}
 
 		getButton(IDialogConstants.OK_ID).setEnabled(result);

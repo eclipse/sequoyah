@@ -17,7 +17,6 @@
 package org.eclipse.sequoyah.localization.tools.managers;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,11 +32,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
-import org.eclipse.sequoyah.localization.tools.datamodel.GrammarCheckerResult;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
-import org.eclipse.sequoyah.localization.tools.datamodel.StringNode;
+import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.GrammarCheckerResult;
+import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.persistence.ProjectPersistenceManager;
 import org.eclipse.ui.PlatformUI;
@@ -96,9 +97,9 @@ public class ProjectLocalizationManager {
 			this.project = project;
 			syncDefaultColumn();
 
-		} catch (IOException e) {
-			BasePlugin.logError("Could not load the localization manager: " //$NON-NLS-1$
-					+ e.getMessage());
+		} catch (SequoyahException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -138,14 +139,16 @@ public class ProjectLocalizationManager {
 				localizationProject.addLocalizationFile(file);
 			}
 			syncDefaultColumn();
-		} catch (IOException e) {
-
+		} catch (SequoyahException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
 
 	// add missing string nodes from source to destination
-	private void syncNodes(LocalizationFile destination, LocalizationFile source) {
+	private void syncNodes(StringLocalizationFile destination,
+			StringLocalizationFile source) {
 		for (StringNode node : source.getStringNodes()) {
 			destination.getStringNodeByKey(node.getKey());
 		}
@@ -161,7 +164,8 @@ public class ProjectLocalizationManager {
 			for (LocalizationFile locFile : localizationProject
 					.getLocalizationFiles()) {
 				if (locFile != mainFile) {
-					syncNodes(mainFile, locFile);
+					syncNodes((StringLocalizationFile) mainFile,
+							(StringLocalizationFile) locFile);
 				}
 			}
 		}
@@ -191,20 +195,14 @@ public class ProjectLocalizationManager {
 	 * 
 	 * The new localization file refers to a locale also passed as a parameter
 	 * 
-	 * @param localeInfo
-	 * @param stringNodes
+	 * @param bean
 	 */
-	public boolean createOrUpdateFile(LocaleInfo localeInfo,
-			List<StringNode> stringNodes) {
+	public boolean createOrUpdateFile(LocalizationFileBean bean) {
 
 		LocalizationFile localizationFile = getProjectLocalizationSchema()
-				.createLocalizationFile(null, localeInfo, stringNodes, null);
+				.createLocalizationFile(bean);
 
-		try {
-			projectLocalizationSchema.createFile(localizationFile);
-		} catch (SequoyahException e) {
-			BasePlugin.logInfo("Error while creating file"); //$NON-NLS-1$
-		}
+		projectLocalizationSchema.createStringFile(localizationFile);
 
 		return true;
 	}
@@ -287,24 +285,31 @@ public class ProjectLocalizationManager {
 
 	private void refreshWorkspace() {
 		try {
-			PlatformUI.getWorkbench().getProgressService().runInUI(
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
-					new IRunnableWithProgress() {
+			PlatformUI
+					.getWorkbench()
+					.getProgressService()
+					.runInUI(
+							PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow(),
+							new IRunnableWithProgress() {
 
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException,
-								InterruptedException {
+								public void run(IProgressMonitor monitor)
+										throws InvocationTargetException,
+										InterruptedException {
 
-							try {
-								localizationProject.getProject().refreshLocal(
-										IResource.DEPTH_INFINITE, monitor);
-							} catch (CoreException e) {
-								// Do nothing
-							}
+									try {
+										localizationProject
+												.getProject()
+												.refreshLocal(
+														IResource.DEPTH_INFINITE,
+														monitor);
+									} catch (CoreException e) {
+										// Do nothing
+									}
 
-						}
+								}
 
-					}, null);
+							}, null);
 		} catch (InvocationTargetException e) {
 			// Do nothing
 		} catch (InterruptedException e) {
@@ -317,7 +322,7 @@ public class ProjectLocalizationManager {
 	 * @param localizationFile
 	 * @param newFileLangInfo
 	 */
-	public void translateAndCreateFile(LocalizationFile localizationFile,
+	public void translateAndCreateFile(StringLocalizationFile localizationFile,
 			LocaleInfo newFileLangInfo) {
 
 		// TODO: implement translateAndCreateFile
@@ -329,14 +334,14 @@ public class ProjectLocalizationManager {
 	 * @return
 	 */
 	public List<GrammarCheckerResult> checkGrammar(
-			LocalizationFile localizationFile) {
+			StringLocalizationFile localizationFile) {
 		return null;
 	}
 
 	/**
 	 * @return
 	 */
-	public Map<LocalizationFile, List<GrammarCheckerResult>> checkAllGrammar() {
+	public Map<StringLocalizationFile, List<GrammarCheckerResult>> checkAllGrammar() {
 		return null;
 	}
 

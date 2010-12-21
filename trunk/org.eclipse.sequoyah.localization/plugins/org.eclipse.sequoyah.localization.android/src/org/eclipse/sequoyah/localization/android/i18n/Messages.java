@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Mobility, Inc.
+ * Copyright (c) 2009 Motorola Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -26,7 +26,11 @@ public class Messages extends NLS {
 
 	public static String AndroidLocalizationSchema_Default_Andr_Localization_File_Tooltip;
 
-	public static String AndroidLocalizationSchema_Exception_CouldNotLoadFile;
+	public static String AndroidLocalizationSchema_NewArrayKeyPrefix;
+
+	public static String AndroidLocalizationSchema_NewStringKeyPrefix;
+
+	public static String StringLocalizationFileManager_Exception_CouldNotLoadFile;
 
 	public static String AndroidNewColumnProvider_Dialog_FileAlreadyExists;
 
@@ -53,6 +57,8 @@ public class Messages extends NLS {
 	public static String Invalid_Andr_Value;
 
 	public static String Invalid_Andr_Value_Size;
+
+	public static String Invalid_Andr_Key_Name;
 
 	static {
 		// initialize resource bundle

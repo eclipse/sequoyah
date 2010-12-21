@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Inc.
+ * Copyright (c) 2009-2010 Motorola Mobility, Inc.
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,15 +11,14 @@
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [289146] - Performance and Usability Issues
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
- * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug 
+ * Fabricio Violin (Eldorado) - Bug [317065] - Localization file initialization bug
+ * Daniel Pastore (Eldorado) - Bug [323036] - Add support to other localizable resources
+ *  
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.datamodel;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.sequoyah.localization.tools.persistence.IFilePersistentData;
@@ -35,48 +34,40 @@ public class LocalizationFile implements IFilePersistentData {
 	/*
 	 * The LocalizationProject which the LocalizationFile belongs to
 	 */
-	private LocalizationProject localizationProject;
+	protected LocalizationProject localizationProject;
 
 	/*
 	 * A reference to the file being represented
 	 */
-	private IFile file;
+	protected IFile file;
 
 	/*
 	 * The information about the locale represented by the localization file
 	 */
-	private LocaleInfo localeInfo;
-
-	/*
-	 * The list of StringNodes which are part of the file
-	 */
-	private List<StringNode> stringNodes;
-
-	/*
-	 * The list of StringArrays which are part of the file
-	 */
-	private List<StringArray> stringArrays;
-
-	/*
-	 * String nodes indexed by key
-	 */
-	Map<String, StringNode> stringNodesMap = new HashMap<String, StringNode>();
+	protected LocaleInfo localeInfo;
 
 	/*
 	 * Whether the data in the model has been modified and differs from the
 	 * values saved
 	 */
-	private boolean dirty = false;
+	protected boolean dirty = false;
 
 	/*
 	 * Whether there are changes in the associated meta-data / extra-info or not
 	 */
-	private boolean dirtyMetaExtraData = false;
+	protected boolean dirtyMetaExtraData = false;
 
 	/*
 	 * Whether the file is marked to be deleted or not
 	 */
-	private boolean toBeDeleted = false;
+	protected boolean toBeDeleted = false;
+
+	/**
+	 * Default constructor
+	 * 
+	 */
+	public LocalizationFile() {
+	}
 
 	/**
 	 * Constructor method
@@ -85,17 +76,10 @@ public class LocalizationFile implements IFilePersistentData {
 	 *            a reference to the file being represented
 	 * @param localeInfo
 	 *            the locale represented by the localization file
-	 * @param stringNodes
-	 *            the list of StringNodes which are part of the file
 	 */
-	public LocalizationFile(IFile file, LocaleInfo localeInfo,
-			List<StringNode> stringNodes, List<StringArray> stringArrays) {
-		this.file = file;
-		this.localeInfo = localeInfo;
-		this.stringNodes = new ArrayList<StringNode>();
-		this.stringArrays = new ArrayList<StringArray>();
-		setStringNodes(stringNodes);
-		setStringArrays(stringArrays);
+	public LocalizationFile(LocalizationFileBean bean) {
+		this.file = bean.getFile();
+		this.localeInfo = bean.getLocale();
 	}
 
 	/**
@@ -135,117 +119,6 @@ public class LocalizationFile implements IFilePersistentData {
 	 */
 	public void setLocaleInfo(LocaleInfo localeInfo) {
 		this.localeInfo = localeInfo;
-	}
-
-	/**
-	 * Get the list of StringNodes which are part of the file
-	 * 
-	 * @return the list of StringNodes which are part of the file
-	 */
-	public List<StringNode> getStringNodes() {
-		return stringNodes;
-	}
-
-	/**
-	 * Get the list of StringNodes which are part of the file
-	 * 
-	 * @return the list of StringNodes which are part of the file
-	 */
-	public List<StringArray> getStringArrays() {
-		return stringArrays;
-	}
-
-	/**
-	 * Get the StringNodes which represents a specific key. If there is no node
-	 * for this key, a new node is created and returned
-	 * 
-	 * @param key
-	 *            the StringNode key attribute
-	 * @return the StringNode which represents the key passed as a parameter
-	 */
-	public StringNode getStringNodeByKey(String key) {
-		boolean isArray = false;
-		for (StringArray stringArray : this.getLocalizationProject()
-				.getAllStringArrays()) {
-			if (stringArray.isPartOfTheArray(key)) {
-				isArray = true;
-				break;
-			}
-		}
-		return getStringNodeByKey(key, isArray);
-	}
-
-	/**
-	 * Get the StringNodes which represents a specific key. If there is no node
-	 * for this key, a new node is created and returned
-	 * 
-	 * @param key
-	 *            the StringNode key attribute
-	 * @param isArray
-	 *            if it's an array or not
-	 * @return the StringNode which represents the key passed as a parameter
-	 */
-	public StringNode getStringNodeByKey(String key, boolean isArray) {
-		StringNode result = stringNodesMap.get(key);
-		if (result == null) {
-			StringNode newNode = new StringNode(key, ""); //$NON-NLS-1$
-			newNode.setLocalizationFile(this);
-			newNode.setArray(isArray);
-			result = this.addStringNode(newNode);
-		}
-		return result;
-	}
-
-	/**
-	 * Set the list of StringNodes which are part of the file.
-	 * NOTE: it will clear the StringNodes associated with StringArray.
-	 * You should call setStringArrays after this operation.
-	 * 
-	 * @param stringNodes
-	 *            the list of StringNodes which are part of the file
-	 */
-	public void setStringNodes(List<StringNode> stringNodes) {
-		this.stringNodes.clear();
-		stringNodesMap.clear();
-		if(stringNodes != null)
-		{
-			for (StringNode stringNode : stringNodes) {
-				this.stringNodesMap.put(stringNode.getKey(), stringNode);
-				stringNode.setLocalizationFile(this);
-
-			}
-			this.stringNodes.addAll(stringNodes);
-		}
-	}
-
-	/**
-	 * Set the list of StringArrays which are part of the file
-	 * 
-	 * @param stringArrays
-	 *            the list of StringArrays which are part of the file
-	 */
-	public void setStringArrays(List<StringArray> stringArrays) {
-		if (stringArrays != null) {
-			this.stringArrays.clear();
-			this.stringArrays.clear();
-			for (StringArray stringArray : stringArrays) {
-				List<StringNode> stringNodes = stringArray.getValues();
-				for (StringNode stringNode : stringNodes) {
-					this.stringNodesMap.put(stringNode.getKey(), stringNode);
-					stringNode.setLocalizationFile(this);
-					stringNode.setArray(true);
-				}
-				this.stringNodes.addAll(stringNodes);
-			}
-			this.stringArrays.addAll(stringArrays);
-		}
-	}
-
-	/**
-	 * @return the stringNodesMap
-	 */
-	public Map<String, StringNode> getStringNodesMap() {
-		return stringNodesMap;
 	}
 
 	/**
@@ -309,65 +182,6 @@ public class LocalizationFile implements IFilePersistentData {
 	}
 
 	/**
-	 * Get only the modified StringNodes in this localization file
-	 * 
-	 * @return the modified StringNodes in this localization file
-	 */
-	public List<StringNode> getModifiedStringNodes() {
-		List<StringNode> modifiedStringNodes = new ArrayList<StringNode>();
-		for (StringNode stringNode : stringNodes) {
-			if (stringNode.isDirty()) {
-				modifiedStringNodes.add(stringNode);
-			}
-		}
-		return modifiedStringNodes;
-	}
-
-	/**
-	 * Add a new StringNode to the list
-	 */
-	public StringNode addStringNode(StringNode stringNode) {
-		StringNode newStringNode = stringNode;
-
-		// check if it's is an array
-		if (stringNode.isArray()) {
-			StringArray stringArray = findStringArray(stringNode.getKey());
-			int position = -1;
-			if (StringArray.isArrayItem(stringNode.getKey())) {
-				position = StringArray.findItemPosition(stringNode.getKey());
-			}
-			newStringNode = stringArray.addValue(stringNode.getValue(),
-					((position != -1) ? position : null));
-		}
-
-		newStringNode.setLocalizationFile(this);
-		stringNodes.add(newStringNode);
-		stringNodesMap.put(newStringNode.getKey(), newStringNode);
-
-		this.setDirty(true);
-
-		return newStringNode;
-	}
-
-	/**
-	 * Remove a StringNode from the list
-	 */
-	public void removeStringNode(StringNode stringNode) {
-		if (stringNodes.contains(stringNode)) {
-			stringNodes.remove(stringNode);
-			stringNodesMap.remove(stringNode.getKey());
-			this.setDirty(true);
-			// check if it's is an array
-			if (stringNode.isArray()) {
-				stringNode.getStringArray().removeValue(stringNode);
-				if (stringNode.getStringArray().getValues().size() == 0) {
-					this.stringArrays.remove(stringNode.getStringArray());
-				}
-			}
-		}
-	}
-
-	/**
 	 * Return the file that is being represented
 	 * 
 	 * @see org.eclipse.sequoyah.localization.tools.persistence.IFilePersistentData#getFile()
@@ -406,8 +220,8 @@ public class LocalizationFile implements IFilePersistentData {
 	/**
 	 * Set whether the file shall be deleted or not
 	 * 
-	 * @param shallBeDeleted
-	 *            true if the shall be deleted or not, false otherwise
+	 * @param toBeDeleted
+	 *            true if the file shall be deleted or false otherwise
 	 */
 	public void setToBeDeleted(boolean toBeDeleted) {
 		this.toBeDeleted = toBeDeleted;
@@ -419,87 +233,9 @@ public class LocalizationFile implements IFilePersistentData {
 
 		if (!this.getLocaleInfo().equals(
 				((LocalizationFile) obj).getLocaleInfo())) {
-
 			result = false;
-
-		} else {
-			LocalizationFile locFile = (LocalizationFile) obj;
-			List<StringNode> locFileStringNodes = locFile.getStringNodes();
-
-			// skip blank array items
-			List<StringNode> thisStringNodes = removeBlankArrayItems(stringNodes);
-			List<StringNode> otherStringNodes = removeBlankArrayItems(locFileStringNodes);
-
-			Collections.sort(thisStringNodes);
-			Collections.sort(otherStringNodes);
-
-			if ((thisStringNodes.size() != otherStringNodes.size())) {
-				result = false;
-			} else {
-				boolean keyEqual, valueEqual;
-				for (int i = 0; i < thisStringNodes.size(); i++) {
-					keyEqual = thisStringNodes.get(i).getKey().equals(
-							otherStringNodes.get(i).getKey());
-					String EOL = System.getProperty("line.separator"); //$NON-NLS-1$
-					String fromFile = thisStringNodes.get(i).getValue()
-							.replaceAll(EOL, "\n"); //$NON-NLS-1$
-					valueEqual = fromFile.equals(otherStringNodes.get(i)
-							.getValue());
-					if ((!keyEqual) || (!valueEqual)) {
-						result = false;
-						break;
-					}
-				}
-			}
 		}
 		return result;
-	}
-
-	/**
-	 * Remove blank array items
-	 * 
-	 * @param nodes
-	 *            all nodes
-	 * @return only non blank array items
-	 */
-	private List<StringNode> removeBlankArrayItems(List<StringNode> nodes) {
-		List<StringNode> noBlankArrayItems = new ArrayList<StringNode>();
-
-		for (StringNode node : nodes) {
-			if (node.isArray()) {
-				if (!node.getValue().equals("")) { //$NON-NLS-1$
-					noBlankArrayItems.add(node);
-				}
-			} else {
-				noBlankArrayItems.add(node);
-			}
-		}
-		return noBlankArrayItems;
-	}
-
-	/**
-	 * Find and retrieve an String Array If it doesn't exist, create a new one
-	 * 
-	 * @param key
-	 *            array key
-	 * @return StringArray object
-	 */
-	private StringArray findStringArray(String key) {
-		if (StringArray.isArrayItem(key)) {
-			key = StringArray.getArrayKeyFromItemKey(key);
-		}
-		StringArray stringArray = null;
-		for (StringArray sArray : this.stringArrays) {
-			if (sArray.getKey().equals(key)) {
-				stringArray = sArray;
-				break;
-			}
-		}
-		if (stringArray == null) {
-			stringArray = new StringArray(key);
-			this.stringArrays.add(stringArray);
-		}
-		return stringArray;
 	}
 
 }
