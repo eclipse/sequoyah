@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.sequoyah.device.common.feature"
       label="%featureName"
-      version="1.0.1.qualifier"
+      version="2.0.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.sequoyah.device.common.utilities">
 
@@ -19,8 +19,8 @@
    </license>
 
    <url>
-      <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/1.0/"/>
-      <discovery label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/1.0/"/>
+      <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>
+      <discovery label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>
    </url>
 
    <requires>
