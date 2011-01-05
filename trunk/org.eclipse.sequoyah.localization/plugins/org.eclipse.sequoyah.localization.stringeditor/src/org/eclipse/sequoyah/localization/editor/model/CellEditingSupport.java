@@ -146,8 +146,8 @@ class CellEditingSupport extends EditingSupport {
 						MessageDialog.openError(
 								getViewer().getControl().getShell(),
 								Messages.CellEditingSupport_0,
-								Messages.CellEditingSupport_1
-										+ value.toString()
+								Messages.CellEditingSupport_1 + "'" //$NON-NLS-1$
+										+ value.toString() + "'" //$NON-NLS-1$
 										+ Messages.CellEditingSupport_2);
 						stringEditorPart.getEditorViewer().editElement(
 								theRow[0], 0);
