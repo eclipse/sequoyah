@@ -82,7 +82,7 @@ public abstract class ServiceHandler implements IServiceHandler
 
     private void createJob(final IInstance instance, final Map<Object, Object> arguments)
     {
-        final String jobName = (service != null ? service.getName() + ":" + instance.getName() : ""); //$NON-NLS-1$
+        final String jobName = (service != null ? service.getName() + " : " + instance.getName() : ""); //$NON-NLS-1$
         final Job serviceJob = new Job(jobName)
         {
             @Override
