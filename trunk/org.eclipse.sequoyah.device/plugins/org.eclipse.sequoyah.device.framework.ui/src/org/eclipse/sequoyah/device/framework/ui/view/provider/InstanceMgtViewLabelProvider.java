@@ -23,6 +23,7 @@ import java.util.Map;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.sequoyah.device.framework.model.IInstance;
 import org.eclipse.sequoyah.device.framework.status.IStatus;
 import org.eclipse.sequoyah.device.framework.status.StatusRegistry;
 import org.eclipse.sequoyah.device.framework.ui.DeviceUIPlugin;
@@ -189,9 +190,15 @@ public class InstanceMgtViewLabelProvider extends ColumnLabelProvider
     @Override
     public String getToolTipText(Object element) {
     	String tooltipText = null;
-    	if (element instanceof ViewerInstanceNode) {
+    	if (element != null && element instanceof ViewerInstanceNode) {
     		ViewerInstanceNode instanceNode = (ViewerInstanceNode) element;
-    		tooltipText = StatusRegistry.getInstance().getTooltipTextForStatus(instanceNode.getInstance().getStatus());    		
+    		IInstance instance = instanceNode.getInstance();
+    		if (instance != null) {
+    			String status = instance.getStatus();
+    			if (status != null) {
+    				tooltipText = StatusRegistry.getInstance().getTooltipTextForStatus(status);
+    			}
+    		}
     	}
     	return tooltipText;
     }
