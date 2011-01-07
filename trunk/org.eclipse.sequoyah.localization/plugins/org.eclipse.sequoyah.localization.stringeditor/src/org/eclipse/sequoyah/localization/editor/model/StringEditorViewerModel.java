@@ -17,6 +17,7 @@
  * Paulo Faria (Eldorado) - Bug [326793] - Fixing highlight problems 
  * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Fixing array image according to array items status
  * Paulo Faria (Eldorado) - Bug [326793] - 0007372: Undo/Redo operations are not properly working.
+ * Paulo Faria (Eldorado) - Bug [326793] - 0007419: Issue when doing undo after clone 
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model;
@@ -53,6 +54,8 @@ import org.eclipse.sequoyah.localization.editor.providers.ICellValidator;
  */
 public class StringEditorViewerModel
 {
+
+    private static final String DEFAULT_COLUMN_NAME = "values";
 
     private static final int INDEX_NOT_REQUIRED = -1;
 
@@ -287,6 +290,7 @@ public class StringEditorViewerModel
                                     && subRows.get(subCell.getPosition()) != null)
                             {
                                 RowInfoLeaf leaf = subRows.get(subCell.getPosition());
+                                addCellIfItIsNotOnDefaultColumn(info, leaf);
                                 leaf.addCell(info.getId(), subCell);
                             }
                             else
@@ -315,7 +319,9 @@ public class StringEditorViewerModel
                 {
                     if (row instanceof RowInfoLeaf)
                     {
-                        ((RowInfoLeaf) row).addCell(info.getId(), cell);
+                        RowInfoLeaf leaf = ((RowInfoLeaf) row);
+                        addCellIfItIsNotOnDefaultColumn(info, leaf);
+                        leaf.addCell(info.getId(), cell);
                     }
                 }
             }
@@ -325,6 +331,22 @@ public class StringEditorViewerModel
             }
         }
         notifyListeners();
+    }
+
+    /**
+     * Add cell if it being insert on non-default column and it is not already on default column 
+     * @param info
+     * @param leaf
+     */
+    private void addCellIfItIsNotOnDefaultColumn(ColumnInfo info, RowInfoLeaf leaf)
+    {
+        if (!info.getId().equals(DEFAULT_COLUMN_NAME) && leaf.getCells() != null
+                && leaf.getCells().get(DEFAULT_COLUMN_NAME) == null)
+        {
+            //it is trying to insert a new value on non-default column, but there is no cell in the default column
+            //=> add cell into default column
+            leaf.addCell(DEFAULT_COLUMN_NAME, new CellInfo("", ""));
+        }
     }
 
     /**

@@ -101,5 +101,6 @@ public class AddArrayAction extends Action {
 		int columnIndex = 0; // key index
 		stringEditorPart.getEditorViewer().editElement(rowInfo[0], columnIndex);
 		stringEditorPart.refreshButtonsEnabled();
+		quantity = 1;
 	}
 }

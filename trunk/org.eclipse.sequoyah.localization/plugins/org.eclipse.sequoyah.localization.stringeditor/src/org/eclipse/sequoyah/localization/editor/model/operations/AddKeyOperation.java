@@ -23,56 +23,79 @@ import org.eclipse.sequoyah.localization.editor.model.StringEditorPart;
 /**
  * The operation of adding a new key (row) to the editor.
  */
-public class AddKeyOperation extends EditorOperation {
+public class AddKeyOperation extends EditorOperation
+{
 
-	private final RowInfo row;
+    private final RowInfo row;
 
-	public AddKeyOperation(String label, StringEditorPart editor, RowInfo row) {
-		super(label, editor);
-		this.row = row;
-	}
+    private boolean doRefresh = true;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.commands.operations.AbstractOperation#execute(org.eclipse
-	 * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
-	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		return redo(monitor, info);
-	}
+    public AddKeyOperation(String label, StringEditorPart editor, RowInfo row)
+    {
+        super(label, editor);
+        this.row = row;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.commands.operations.AbstractOperation#redo(org.eclipse
-	 * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
-	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		getEditor().addRow(row);
-		getEditor().refresh();
-		return Status.OK_STATUS;
-	}
+    /**
+     * 
+     * @param label
+     * @param editor
+     * @param row
+     * @param doRefresh set to false when adding multiple strings.
+     */
+    public AddKeyOperation(String label, StringEditorPart editor, RowInfo row, boolean doRefresh)
+    {
+        this(label, editor, row);
+        this.doRefresh = doRefresh;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.commands.operations.AbstractOperation#undo(org.eclipse
-	 * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-	 */
-	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		getEditor().removeRow(row.getKey());
-		getEditor().refresh();
-		return Status.OK_STATUS;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.core.commands.operations.AbstractOperation#execute(org.eclipse
+     * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+     */
+    @Override
+    public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+    {
+        return redo(monitor, info);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.core.commands.operations.AbstractOperation#redo(org.eclipse
+     * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+     */
+    @Override
+    public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+    {
+        getEditor().addRow(row);
+        if (doRefresh)
+        {
+            getEditor().refresh();
+        }
+        return Status.OK_STATUS;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.core.commands.operations.AbstractOperation#undo(org.eclipse
+     * .core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+     */
+    @Override
+    public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException
+    {
+        getEditor().removeRow(row.getKey());
+        if (doRefresh)
+        {
+            getEditor().refresh();
+        }
+        return Status.OK_STATUS;
+    }
 
 }

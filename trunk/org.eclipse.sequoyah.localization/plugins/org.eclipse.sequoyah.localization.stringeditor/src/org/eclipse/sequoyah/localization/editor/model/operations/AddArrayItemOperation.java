@@ -25,6 +25,7 @@ public class AddArrayItemOperation extends EditorOperation {
 	private int index = 0;
 	private RowInfoLeaf item;
 	private boolean wasExpanded = false;
+	private boolean doRefresh = true;
 
 	public AddArrayItemOperation(String label, StringEditorPart editor,
 			RowInfo row) {
@@ -32,6 +33,19 @@ public class AddArrayItemOperation extends EditorOperation {
 		this.row = row;
 		// this.index = row.getChildren().size();
 	}
+	
+	/**
+	 * 
+	 * @param label
+	 * @param editor
+	 * @param row
+	 * @param doRefresh set to false when adding multiple array items.
+	 */
+	public AddArrayItemOperation(String label, StringEditorPart editor,
+            RowInfo row, boolean doRefresh) {
+	    this(label, editor, row);
+        this.doRefresh = doRefresh;
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -69,7 +83,11 @@ public class AddArrayItemOperation extends EditorOperation {
 					AbstractTreeViewer.ALL_LEVELS);
 		}
 		getEditor().addRow(item);
-		getEditor().refresh();
+		
+		if(doRefresh)
+		{
+		    getEditor().refresh();
+		}
 
 		return Status.OK_STATUS;
 	}
@@ -90,7 +108,12 @@ public class AddArrayItemOperation extends EditorOperation {
 			getEditor().getEditorViewer().collapseToLevel(item.getParent(),
 					AbstractTreeViewer.ALL_LEVELS);
 		}
-		getEditor().refresh();
+		
+		if(doRefresh)
+        {
+            getEditor().refresh();
+        }
+		
 		return Status.OK_STATUS;
 	}
 }

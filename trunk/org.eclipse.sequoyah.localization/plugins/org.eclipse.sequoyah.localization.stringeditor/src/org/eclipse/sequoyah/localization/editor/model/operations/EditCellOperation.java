@@ -186,6 +186,10 @@ public class EditCellOperation extends EditorOperation {
 			getModel().addCell(oldValue, key, column);
 
 		}
+		
+		if (oldValue != null && !oldValue.isDirty()) {
+		    oldValue.setDirty(true);
+        }
 		try {
 			if (oldValue != null && oldValue.getValue() != null) {
 				// there is old value

@@ -25,6 +25,7 @@ import org.eclipse.sequoyah.localization.editor.i18n.Messages;
 import org.eclipse.sequoyah.localization.editor.model.StringEditorPart;
 import org.eclipse.sequoyah.localization.editor.model.operations.AddArrayItemOperation;
 import org.eclipse.sequoyah.localization.editor.model.operations.AddArrayItemsOperation;
+import org.eclipse.sequoyah.localization.editor.model.StringEditorPart;
 
 /**
  * Action to add a new key (array item)
@@ -219,5 +220,6 @@ public class AddArrayItemAction extends Action
             }
         }
         this.stringEditorPart.refreshButtonsEnabled();
+        quantity = 1;
     }
 }

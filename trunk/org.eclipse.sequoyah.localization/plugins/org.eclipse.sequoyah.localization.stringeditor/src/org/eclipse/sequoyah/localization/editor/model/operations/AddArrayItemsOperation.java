@@ -34,7 +34,7 @@ public class AddArrayItemsOperation extends EditorOperation {
 		super(label, editor);
 		for (int i = 0; i < rows.length; i++) {
 			this.addArrayItemsOperation.add(i, new AddArrayItemOperation(label,
-					editor, rows[i]));
+					editor, rows[i], false));
 		}
 	}
 
@@ -51,6 +51,7 @@ public class AddArrayItemsOperation extends EditorOperation {
 		for (int i = 0; i < this.addArrayItemsOperation.size(); i++) {
 			this.addArrayItemsOperation.get(i).execute(monitor, info);
 		}
+		getEditor().refresh();
 		return Status.OK_STATUS;
 	}
 
@@ -68,6 +69,7 @@ public class AddArrayItemsOperation extends EditorOperation {
 		for (int i = 0; i < this.addArrayItemsOperation.size(); i++) {
 			this.addArrayItemsOperation.get(i).redo(monitor, info);
 		}
+		getEditor().refresh();
 		return Status.OK_STATUS;
 	}
 
@@ -84,6 +86,7 @@ public class AddArrayItemsOperation extends EditorOperation {
 		for (int i = this.addArrayItemsOperation.size(); i > 0; i--) {
 			this.addArrayItemsOperation.get(i - 1).undo(monitor, info);
 		}
+		getEditor().refresh();
 		return Status.OK_STATUS;
 	}
 

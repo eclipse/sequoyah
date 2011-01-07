@@ -1692,60 +1692,66 @@ public class StringEditorPart extends MultiPageEditorPart
         }
 
         return result;
-
     }
+
+	/**
+	 * Add a new column based in the {@link ColumnInfo}
+	 * 
+	 * @param info
+	 * @param index
+	 *            index of the column or -1 if to be the last
+	 * @return the created column
+	 */
+	public TreeColumn addColumn(ColumnInfo info, int index) {
+		TreeViewerColumn tableViewerColumn = createColumn(info.getId(),
+				info.getTooltip(), index);
+		getEditorInput().addColumn(info.getId());
+		getModel().addColumn(info);
+		for (String cellKey : info.getCells().keySet()) {
+			try {
+				CellInfo cell = info.getCells().get(cellKey);
+				if (cell.getValue() != null) {
+					getEditorInput().setValue(info.getId(), cellKey,
+							cell.getValue());
+				} else if (cell.hasChildren()) {
+					List<CellInfo> children = cell.getChildren();
+					boolean emptyArray = true;
+                    for (CellInfo childCell : children)
+                    {
+                        if (childCell != null)
+                        {
+                            if (childCell.getValue() != null)
+                            {
+                                emptyArray = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (!emptyArray)
+                    {
+                        for (CellInfo childCell : children)
+                        {
+                            getEditorInput().setValue(info.getId(), cellKey, childCell.getValue(),
+                                    childCell.getPosition());
+                        }
+                    }
+				}
+			} catch (SequoyahException e) {
+				BasePlugin.logError("Error adding column: " + info.getId(), e); //$NON-NLS-1$
+			}
+		}
+		
+		refresh();
+        fireDirtyPropertyChanged();
+        syncPages();
+        return tableViewerColumn.getColumn();
+	}
 
     public ContentProvider getContentProvider()
     {
         return contentProvider;
     }
 
-    /**
-     * Add a new column based in the {@link ColumnInfo}
-     * 
-     * @param info
-     * @param index
-     *            index of the column or -1 if to be the last
-     * @return the created column
-     */
-    public TreeColumn addColumn(ColumnInfo info, int index)
-    {
-        TreeViewerColumn tableViewerColumn = createColumn(info.getId(), info.getTooltip(), index);
-        getEditorInput().addColumn(info.getId());
-        getModel().addColumn(info);
-        for (String cellKey : info.getCells().keySet())
-        {
-            try
-            {
-                CellInfo cell = info.getCells().get(cellKey);
-                if (cell != null && cell.getValue() != null)
-                {
-                    getEditorInput().setValue(info.getId(), cellKey, cell.getValue());
-                }
-                else if (cell != null && cell.hasChildren())
-                {
-                    List<CellInfo> children = cell.getChildren();
-                    for (CellInfo childCell : children)
-                    {
-                        if (childCell != null)
-                        {
-                            getEditorInput().setValue(info.getId(), cellKey, childCell.getValue(),
-                                    childCell.getPosition());
-                        }
-                    }
-                }
-            }
-            catch (SequoyahException e)
-            {
-                BasePlugin.logError("Error adding column: " + info.getId(), e); //$NON-NLS-1$
-            }
-        }
-
-        refresh();
-        fireDirtyPropertyChanged();
-        syncPages();
-        return tableViewerColumn.getColumn();
-    }
 
     /*
      * (non-Javadoc)
