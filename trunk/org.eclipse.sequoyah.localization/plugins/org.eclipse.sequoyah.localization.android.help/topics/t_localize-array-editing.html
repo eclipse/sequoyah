@@ -13,8 +13,8 @@
 <meta name="DC.Relation" scheme="URI" content="../topics/r_localization-string-editor.html"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-string-editing.html"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-new-array-adding.html"/>
-<meta name="copyright" content="Motorola, Inc. 2009-2010" type="primary"/>
-<meta name="DC.Rights.Owner" content="Motorola, Inc. 2009-2010" type="primary"/>
+<meta name="copyright" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
+<meta name="DC.Rights.Owner" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
 <meta name="DC.Format" content="XHTML"/>
 <meta name="DC.Identifier" content="t_localize-array-editing"/>
 <meta name="DC.Language" content="en-us"/>
@@ -46,15 +46,13 @@
          The Localization Files Editor appears, showing the base (or default) strings file and any localized
           strings files. If it does not exist, the default strings file (<samp class="codeph">values/strings.xml</samp>) will be
           created. Within the editor each column (other than the <span class="uicontrol">Key</span> column) represents a unique
-          locale. Each row represents a single text string, identified by a key (string array entries are identified by
-          a key that follows the pattern <em>key_nnn</em> where <em>key</em> is the actual key used to identify the array,
-          and <em>nnn</em> is a numeric suffix used only within the Android Localization Files editor to uniquely identify
-          that entry within the array). A cell contains the version of the row's string localized for the column's
-          locale. In Android, if a given cell is blank, at runtime the operating system picks the column that best
-          matches the current locale (and has a value for the row), falling back on the default string value for that
-          key if necessary (the column labeled <span class="uicontrol">values</span> contains these default string values). See
-          the Android documentation for a complete description of the algorithm the operating system uses to determine
-          the resource file that best matches the device's current locale.
+          locale. Each row represents a single text string, identified by a key and an integer array index. A cell
+          contains the version of the row's string localized for the column's locale. In Android, if a given cell is
+          blank, at runtime the operating system picks the column that best matches the current locale (and has a value
+          for the row), falling back on the default string value for that key if necessary (the column labeled
+            <span class="uicontrol">values</span> contains these default string values). See the Android documentation for a
+          complete description of the algorithm the operating system uses to determine the resource file that best
+          matches the device's current locale.
       </li>
 
       <li>
@@ -70,23 +68,13 @@
           given column you can see which strings are localized for that column's locale, and which rely on the default
           string value. Also note that you can enter multi-line string values by pressing the Return key between lines.</span>
         <ul>
-          <li>To add additional entries to the array:<ol type="a">
-              <li>Right-click within the Android Localization Files editor table and select <span class="uicontrol">Add
-                Key</span>.</li>
+          <li>To add additional entries to the array, click any of the array's rows to select it and then click
+              <img src="../images/loc_editor-add-array-item-button.png"/> (Add Array Item). Note that you can add
+            multiple entries by clicking the downward-pointing arrow to the right of the Add Array Item action and
+            specifying the number of entries to be added.</li>
 
-              <li>From <span class="uicontrol">Add new</span> select <span class="uicontrol">Array</span>.</li>
-
-              <li>Ensure that <span class="uicontrol">Add to array</span> is selected, then choose the array to which the
-                entries are to be added from the list to the right. Finally, specify the number of entries to be added.</li>
-
-              <li>Click <span class="uicontrol">OK</span>.</li>
-
-            </ol>
-</li>
-
-          <li>To delete a string array, select each of the rows that makes up the array (click in the first row, and
-            then while holding the shift key click in the last row to select a range), then right-click the selected
-            rows and select <span class="uicontrol">Remove Key</span>.</li>
+          <li>To remove an individual array entry simply click within the row to select it and then click <img src="../images/loc_editor-remove-line-button.png"/>. To remove an entire string array, click the table
+            row that contains the array's key and then click <img src="../images/loc_editor-remove-line-button.png"/>.</li>
 
         </ul>
 

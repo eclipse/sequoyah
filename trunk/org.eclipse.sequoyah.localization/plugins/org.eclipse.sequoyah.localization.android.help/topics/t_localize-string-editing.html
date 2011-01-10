@@ -13,8 +13,8 @@
 <meta name="DC.Relation" scheme="URI" content="../topics/r_localization-string-editor.html"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-array-editing.html"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-new-string-adding.html"/>
-<meta name="copyright" content="Motorola, Inc. 2009-2010" type="primary"/>
-<meta name="DC.Rights.Owner" content="Motorola, Inc. 2009-2010" type="primary"/>
+<meta name="copyright" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
+<meta name="DC.Rights.Owner" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
 <meta name="DC.Format" content="XHTML"/>
 <meta name="DC.Identifier" content="t_localize-string-editing"/>
 <meta name="DC.Language" content="en-us"/>
@@ -45,13 +45,13 @@
          The Localization Files Editor appears, showing the base (or default) strings file and any localized
           strings files. If it does not exist, the default strings file (<samp class="codeph">values/strings.xml</samp>) will be
           created. Within the editor each column (other than the <span class="uicontrol">Key</span> column) represents a unique
-          locale. Each row represents a single text string, identified by a key. A cell contains the version of the
-          row's string localized for the column's locale. In Android, if a given cell is blank, at runtime the operating
-          system picks the column that best matches the current locale (and has a value for the row), falling back on
-          the default string value for that key if necessary (the column labeled <span class="uicontrol">values</span> contains
-          these default string values). See the Android documentation for a complete description of the algorithm the
-          operating system uses to determine the resource file that best matches the device's current
-        locale.
+          locale. Each row represents a single text string, identified by a key (or, in the case of a string array, a
+          key and an index value). A cell contains the version of the row's string localized for the column's locale. In
+          Android, if a given cell is blank, at runtime the operating system picks the column that best matches the
+          current locale (and has a value for the row), falling back on the default string value for that key if
+          necessary (the column labeled <span class="uicontrol">values</span> contains these default string values). See the
+          Android documentation for a complete description of the algorithm the operating system uses to determine the
+          resource file that best matches the device's current locale.
       </li>
 
       <li>

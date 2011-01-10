@@ -13,8 +13,8 @@
 <meta name="DC.Relation" scheme="URI" content="../topics/r_localization-string-editor.html"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-new-string-adding.html"/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-array-editing.html"/>
-<meta name="copyright" content="Motorola, Inc. 2009-2010" type="primary"/>
-<meta name="DC.Rights.Owner" content="Motorola, Inc. 2009-2010" type="primary"/>
+<meta name="copyright" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
+<meta name="DC.Rights.Owner" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
 <meta name="DC.Format" content="XHTML"/>
 <meta name="DC.Identifier" content="t_localize-new-array-adding"/>
 <meta name="DC.Language" content="en-us"/>
@@ -47,47 +47,35 @@
       </li>
 
       <li>
-        <span>Right-click anywhere within the Localization Files Editor table and select <span class="uicontrol">Add Key</span>.</span>
-         The <span class="uicontrol">New Row</span> dialog appears.
+        <span>Click <img src="../images/loc_editor-add-array-button.png"/> (located immediately above the Localization
+          Files Editor table).</span>
+          A new array with a single entry is added to the table, and the default key value is highlighted.
+          Note that a warning icon (<img src="../images/localization-warning-icon.png"/>) appears next to the key,
+          indicating that the default strings file does not yet have a value defined for the key and index that identify
+          the single array entry. 
       </li>
 
       <li>
-        <span>From <span class="uicontrol">Add new</span> select <span class="uicontrol">Array</span>.</span>
+        <span>Enter the key that will be used to access the new string array, replacing the default value that was
+          generated when the new array was created.</span>
       </li>
 
       <li>
-        <span>Select <span class="uicontrol">Add new array</span>, enter the key that will be used to access the new string
-          array, and specify the number of entries in the array.</span>
+        <span>Click the disclosure triangle below and to the left of the array key to expose the array's entries.</span>
       </li>
 
       <li>
-        <span>Click <span class="uicontrol">OK</span>.</span>
-         
-          <div class="p">A set of new, empty rows are added to the table, one for each array entry, identified by the supplied key
-            with a numeric index added (for instance, "myKey_002"). Although the Android Localization Files Editor shows
-            a set of keys with varying numeric indexes, the underlying XML creates a single &lt;string-array&gt; element
-            with the supplied key that contains the specified number of &lt;item&gt; elements. For example, if you create a
-            string array with the key "myKey" and three entries, the Android Localization Files editor would show three
-            rows with keys "myKey_000", "myKey_001", and "myKey_002" while the corresponding portion of the underlying
-            XML would look like the
-            following:<pre class="codeblock">&lt;string-array name="myKey"&gt;
-        &lt;item&gt;the first entry value goes here&lt;/item&gt;
-        &lt;item&gt;the second entry value goes here&lt;/item&gt;
-        &lt;item&gt;the third entry value goes here&lt;/item&gt;
-&lt;/string-array&gt;</pre>
-</div>
-
-          <p>Note that after creating a new string array a warning icon (<img src="../images/localization-warning-icon.png"/>) appears to the left of each key, indicating that the
-            default strings file does not yet have a value defined for these keys.</p>
-
-        
-      </li>
-
-      <li>
-        <span>Enter string values for each key in the appropriate columns. Generally you will enter a default, or base,
+        <span>Enter string values for the row in the appropriate columns. Generally you will enter a default, or base,
           string in the <span class="uicontrol">values</span> column and localized versions of that string in columns for those
           locales in which the default string is not appropriate. Note that you can enter multi-line string values by
           pressing the Return key between lines.</span>
+      </li>
+
+      <li>
+        <span>With an of the array's rows selected, add additional array entries by clicking <img src="../images/loc_editor-add-array-item-button.png"/> once for each entry, or by clicking the
+          downward-pointing arrow to the right of this action and specifying the number of entries to be added.</span>
+         The new entry or entries are added to the end of the array. Fill in the string values for each new
+          row in the appropriate columns as in the previous step.
       </li>
 
       <li>
@@ -97,10 +85,8 @@
 
     </ol>
 
-    <div class="section">To remove an individual string simply right-click within the row and select <span class="uicontrol">Remove
-      Key</span>. To remove a string array you must select each of the rows that makes up the array (click in the
-      first row, and then while holding the shift key click in the last row to select a range), then right-click the
-      selected rows and select <span class="uicontrol">Remove Key</span>.</div>
+    <div class="section">To remove an individual array entry simply click within the row to select it and then click <img src="../images/loc_editor-remove-line-button.png"/>. To remove an entire string array, click the table row that
+      contains the array's key and then click <img src="../images/loc_editor-remove-line-button.png"/>.</div>
 
   </div>
 
