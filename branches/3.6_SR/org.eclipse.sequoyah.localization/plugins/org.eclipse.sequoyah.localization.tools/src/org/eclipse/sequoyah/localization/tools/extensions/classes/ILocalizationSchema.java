@@ -403,4 +403,13 @@ public abstract class ILocalizationSchema {
 
 	public abstract String getLocalizationFileContent(LocalizationFile locFile);
 
+	/**
+	 * Determine if blank spaces are permitted in this schema when defining keys
+	 * for the localizable resources
+	 * 
+	 * @return true if the localizable resources can have blank spaces on their
+	 *         keys, false otherwise
+	 */
+	public abstract boolean keyAcceptsBlankSpaces();
+
 }
