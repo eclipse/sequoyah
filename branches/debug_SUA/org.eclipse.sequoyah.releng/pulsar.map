@@ -1,0 +1,10 @@
+##### features
+feature@org.eclipse.sequoyah.pulsar=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.pulsar/features/org.eclipse.sequoyah.pulsar
+feature@org.eclipse.sequoyah.pulsar.test=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.pulsar/features/org.eclipse.sequoyah.pulsar.test
+feature@org.eclipse.sequoyah.pulsar.tool=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.pulsar/features/org.eclipse.sequoyah.pulsar.tool
+
+##### plugins
+plugin@org.eclipse.sequoyah.pulsar.core=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.pulsar/plugins/org.eclipse.sequoyah.pulsar.core
+plugin@org.eclipse.sequoyah.pulsar.core.tests=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.pulsar/plugins/org.eclipse.sequoyah.pulsar.core.tests
+plugin@org.eclipse.sequoyah.pulsar.metadata.generator=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.pulsar/plugins/org.eclipse.sequoyah.pulsar.metadata.generator
+plugin@org.eclipse.sequoyah.pulsar.ui=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah,,org.eclipse.sequoyah.pulsar/plugins/org.eclipse.sequoyah.pulsar.ui
