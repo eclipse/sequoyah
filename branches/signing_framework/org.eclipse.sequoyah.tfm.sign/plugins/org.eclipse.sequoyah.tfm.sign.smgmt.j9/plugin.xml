@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.sequoyah.tfm.sign.core.securityManagement">
+      <security_Management
+            class="org.eclipse.sequoyah.tfm.sign.smgmt.j9.J9SecurityManagement"
+            id="org.eclipse.sequoyah.tfm.sign.smgmt.j9.impl.J9SecurityManager"
+            name="org.eclipse.sequoyah.tfm.sign.smgmt.j9.impl.J9SecurityManager">
+         <platform
+               name="JAVAME">
+         </platform>
+      </security_Management>
+   </extension>
+      <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.sequoyah.tfm.sign.internal.smgmt.j9.PreferenceInitializer"/>
+   </extension>
+
+</plugin>
