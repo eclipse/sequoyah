@@ -14,9 +14,9 @@
       %copyright
    </copyright>
 
-   <includes
+   <!-- includes
          id="org.eclipse.sequoyah.license.feature"
-         version="0.0.0"/>
+         version="0.0.0"/ -->
          
    <includes
          id="org.eclipse.sequoyah.android.cdt.feature"

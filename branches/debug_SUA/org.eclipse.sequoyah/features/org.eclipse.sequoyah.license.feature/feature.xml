@@ -4,9 +4,4 @@
       label="Sequoyah License Feature"
       version="1.0.0.qualifier"
       provider-name="Eclipse.org">
-
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
-   </license>
-
 </feature>
