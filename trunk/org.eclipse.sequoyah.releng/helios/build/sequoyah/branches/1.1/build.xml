@@ -15,20 +15,14 @@
 	<property environment="env" />
 	<property name="BUILD_BASE_PATH" value="${env.BUILD_BASE_PATH}" />
 	<property name="BUILD_DIR" value="${BUILD_BASE_PATH}/build/sequoyah" />
+	<property name="OUTPUT_DIR" value="${BUILD_BASE_PATH}/output" />
+	<property name="SOURCE_DIR" value="${BUILD_BASE_PATH}/src" />
 	<property file="${BUILD_DIR}/build.properties" />
-	
 
 	<property name="eclipse.base" value="${BUILD_BASE_PATH}/eclipse" />
-
-	<!-- property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.v20100118.jar" />
-	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.v20100123-1019" / -->
-	<!-- property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.v20100307.jar" />
-	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.v20100311-1400" / -->
-
 	<!-- plugins from the latest version (3.6) -->
 	<property name="eclipse.base.launcher" value="org.eclipse.equinox.launcher_1.1.0.v20100507.jar" />
 	<property name="eclipse.base.pde" value="org.eclipse.pde.build_3.6.0.v20100603" />
-	
 
 	<property name="forceContextQualifier" value="${buildType}${timestamp}" />
 
@@ -36,12 +30,13 @@
 	<target name="clean">
 		<delete includeemptydirs="true" failonerror="false">
 			<fileset dir="${OUTPUT_DIR}/" includes="**/*" />
+			<fileset dir="${SOURCE_DIR}/" includes="**/*" />
 			<fileset dir="${buildDirectory}" includes="**/**" />
 		</delete>
 	</target>
 
 	<!-- initialize build (remove all previous output and copy source to a temporary location) -->
-	<target name="init">
+	<target name="init" depends="clean">
 		<echo level="info">
 			###################################
 			1 Init phase: cleaning previous build
@@ -62,24 +57,30 @@
 		</fileset>
 		</path> 
 		<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
-		<property name="svnrepo" value="http://dev.eclipse.org/svnroot/dsdp/org.eclipse.sequoyah" />
-		<echo level="info" message="Checking out plugins and features from SVN repository..." />
+		<tstamp>
+			<format property="startCheckout" pattern="yyyyMMdd-hhmm" />
+		</tstamp>
+		<echo message="Starting checkout from SVN repository @ ${startCheckout}..."/>
+		<property name="svnrepo" value="file:///svnroot/dsdp/org.eclipse.sequoyah" />
 
 		<mkdir dir="${SOURCE_DIR}" />
 		<mkdir dir="${buildDirectory}" />
 
 		<svn javahl="false">
-			<checkout url="${svnrepo}/trunk" destPath="${SOURCE_DIR}" />
+			<checkout url="${svnrepo}/branches/1.1" destPath="${SOURCE_DIR}" />
 		</svn>
 
+		<tstamp>
+			<format property="finishCheckout" pattern="yyyyMMdd-hhmm" />
+		</tstamp>
+		<echo message="Finished checkout from SVN repository @ ${finishCheckout}..."/>
+
 		<copy todir="${buildDirectory}">
+			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.android/" includes="**" />
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.device/" includes="**" />
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.localization/" includes="**" />
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.vnc/" includes="**" />
 			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah/" includes="**" />
-			<fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.android/" includes="**" />
-			<!-- fileset dir="${SOURCE_DIR}/org.eclipse.sequoyah.tfm.sign/" includes="**" / -->
-
 		</copy>
 		<move todir="${buildDirectory}/plugins">
 			<fileset dir="${buildDirectory}/examples/" includes="**" />
@@ -104,7 +105,7 @@
 				</dirset>
 			</path>
 			<sequential>
-				<echo message="[${timestamp}] file=@{file}/about.mappings" />
+				<!-- echo message="[${timestamp}] file=@{file}/about.mappings" / -->
 				<echo message="0=${timestamp}" file="@{file}/about.mappings" />				
 			</sequential>
 		</for>
@@ -120,12 +121,14 @@
 		</delete>
 	</target>
 
-	<target name="generate.release.artifacts" depends="clean, init, build.pde, build.pde.publish" description="Generate Release Artifacts">
+	<target name="generate.release.artifacts" depends="init, build.pde, build.pde.publish" description="Generate Release Artifacts">
 		<echo level="info">
 			###################################
 			BUILD COMPLETELY DONE
 			###################################
 		</echo>
+
+		<antcall target="tag.build" />
 	</target>
 
 	<target name="build.pde" unless="publish">
@@ -192,6 +195,38 @@
 			<arg value="-DforceContextQualifier=${forceContextQualifier}" />
 			<arg value="-Dpublish=${publish}" />
 		</java>
+	</target>
+
+	<target name="tag.build" if="tagging">
+		<echo level="info">
+			###################################
+			5 Tagging build
+			###################################
+		</echo>
+
+		<!-- path and typedef necessary for checking out SVN repo -->
+		<path id="svnant.classpath">
+			<fileset dir="${BUILD_BASE_PATH}/svnant/svnant-1.3.0/lib/">
+				<include name="*.jar" />
+			</fileset>
+		</path> 
+		<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
+		<tstamp>
+			<format property="startTag" pattern="yyyyMMdd-hhmm" />
+		</tstamp>
+		<property name="svnrepo" value="file:///svnroot/dsdp/org.eclipse.sequoyah" />
+		<echo message="Starting tagging from ${svnrepo}/${branch} @ ${startTag}..."/>
+
+		<svn javahl="false">
+			<copy 	srcPath="${SOURCE_DIR}" 
+				destUrl="${svnrepo}/tags/${tagName}" 
+				message="Tagging build ${timestamp} = ${tagName}" />
+		</svn>
+
+		<tstamp>
+			<format property="finishTag" pattern="yyyyMMdd-hhmm" />
+		</tstamp>
+		<echo message="Finished tagging SVN repository @ ${finishTag}..."/>
 	</target>
 
 </project>

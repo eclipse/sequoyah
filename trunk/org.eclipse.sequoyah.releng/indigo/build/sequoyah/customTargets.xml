@@ -152,13 +152,13 @@
 	<target name="postBuild">
 		<antcall target="gatherLogs" />
 		<property name="fileName" value="${topLevelElementId}.${buildId}.${buildType}${timestamp}" />
-		<property name="updateSite" value="/home/data/httpd/download.eclipse.org/sequoyah/updates/1.1.2/pulsar"/>
-		<property name="downloadSite" value="/home/data/httpd/download.eclipse.org/sequoyah/downloads/drops/1.1.2/pulsar"/>
+		<property name="updateSite" value="/home/data/httpd/download.eclipse.org/sequoyah/updates/2.0"/>
+		<property name="downloadSite" value="/home/data/httpd/download.eclipse.org/sequoyah/downloads/drops/2.0"/>
 		<property name="stagingHome" value="/home/data/httpd/download-staging.priv" />
-		<property name="projectPath" value="dsdp/sequoyah" />
+		<property name="projectPath" value="tools/sequoyah" />
 		<property name="buildServerUser" value="${env.USER}@build.eclipse.org" />
 		<property name="stagingDirectory" value="${stagingHome}/${projectPath}" />
-		<property name="stagingDirectoryOutput" value="${stagingDirectory}/1.1.2/pulsar" />
+		<property name="stagingDirectoryOutput" value="${stagingDirectory}/2.0" />
 		<property name="mailStatus" value="nomail" />
 
 		<move file="${buildDirectory}/${buildLabel}/${topLevelElementId}-${buildId}-group.group.group.zip"
@@ -171,37 +171,71 @@
 			<fileset dir="${buildDirectory}/${buildLabel}" includes="*.zip"/>
 		</copy>
 
+		<echo message="Starting signer..." />
 		<exec dir="." executable="/usr/bin/sign" output="signing.txt" append="false">
 			<arg line="${stagingDirectory}/${fileName}.zip ${mailStatus} ${stagingDirectoryOutput}"/>
 		</exec>
 
-		<echo message="Waiting for signer..." />
-		<waitfor maxwait="10" maxwaitunit="minute" checkevery="1" checkeveryunit="minute">
+		<echo message="... and waiting for signer to finish..." />
+		<waitfor maxwait="20" maxwaitunit="minute" checkevery="1" checkeveryunit="minute">
 			<available file="${stagingDirectoryOutput}/${fileName}.zip" />
 		</waitfor>
+		<echo message="Signing successful!" />
 
-		<echo message="Copying output to Update Site." />
-		<copy file="${stagingDirectoryOutput}/${fileName}.zip" toDir="${downloadSite}/${buildLabel}" />
-		<unzip dest="${updateSite}/${buildLabel}" src="${stagingDirectoryOutput}/${fileName}.zip" />
+		<!-- BEGIN: Remove Sequoyah feature to avoid installation conflicts for the user -->
+		<echo message="Unzipping ${fileName}..."/>
+		<unzip dest="${buildDirectory}/${buildLabel}/${fileName}_tmp" src="${stagingDirectoryOutput}/${fileName}.zip" />
+		
+		<echo message="p2.publish.featuresAndBundles..." />
+		<p2.publish.featuresAndBundles 
+			source="${buildDirectory}/${buildLabel}/${fileName}_tmp" 
+			artifactrepository="file:${buildDirectory}/${buildLabel}/${fileName}_dest"
+			artifactrepositoryname="Sequoyah Artifact Repository"
+			metadatarepository="file:${buildDirectory}/${buildLabel}/${fileName}_dest"
+			metadatarepositoryname="Sequoyah Metadata Repository"
+			append="false"
+			publishartifacts="true"
+			compress="true">
+			
+			<bundles dir="${buildDirectory}/${buildLabel}/${fileName}_tmp/plugins"/>
+			
+			<features dir="${buildDirectory}/${buildLabel}/${fileName}_tmp/features" 
+				excludes="**/org.eclipse.sequoyah.feature*"/>
+			
+		</p2.publish.featuresAndBundles>
+
+		<!-- echo message="Deleting ${fileName}..."/>
+		<delete file="${buildDirectory}/${buildLabel}/${fileName}.zip" / -->
+
+		<echo message="Zipping new ${fileName}..."/>
+		<zip destfile="${buildDirectory}/${buildLabel}/${fileName}.zip" 
+			basedir="${buildDirectory}/${buildLabel}/${fileName}_dest"/>
+		<!-- END: Remove Sequoyah feature to avoid installation conflicts for the user -->
+
+		<echo message="Copying output to Update Site..." />
+		<copy file="${buildDirectory}/${buildLabel}/${fileName}.zip" toDir="${downloadSite}/${buildLabel}" />
+		<echo message="File successfully copied!" />
+		<echo message="Unzipping file [${buildDirectory}/${buildLabel}/${fileName}.zip] to [${updateSite}/${buildLabel}]..." />
+		<unzip dest="${updateSite}/${buildLabel}" src="${buildDirectory}/${buildLabel}/${fileName}.zip" />
+		<echo message="File successfully unzipped!" />
 
 		<antcall target="publishUpdateSite"/>
 		
 	</target>
 
 	<target name="publishUpdateSite" if="publish">
-		<property name="updateSite" value="/home/data/httpd/download.eclipse.org/sequoyah/updates/1.1.2/pulsar"/>
+		<property name="updateSite" value="/home/data/httpd/download.eclipse.org/sequoyah/updates/2.0"/>
 
 		<echo message="Deleting old update site" />
 		<delete dir="${updateSite}/features"/>
 		<delete dir="${updateSite}/plugins"/>
-		<delete dir="${updateSite}/artifacts.xml"/>
-		<delete dir="${updateSite}/content.xml"/>
+		<delete dir="${updateSite}/artifacts.jar"/>
+		<delete dir="${updateSite}/content.jar"/>
 
 		<echo message="Copying new update site" />
 		<copy toDir="${updateSite}">
 			<fileset dir="${updateSite}/${buildLabel}" />
 		</copy>
-
 
 	</target>
 
