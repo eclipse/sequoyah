@@ -15,6 +15,10 @@
    <copyright>
       %copyright
    </copyright>
+   
+   <license url="%licenseURL">
+      %license
+   </license>
 
    <url>
       <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>

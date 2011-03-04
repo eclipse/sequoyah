@@ -14,6 +14,10 @@
       %copyright
    </copyright>
 
+   <license url="%licenseURL">
+      %license
+   </license>
+   
    <!-- includes
          id="org.eclipse.sequoyah.license.feature"
          version="0.0.0"/ -->
