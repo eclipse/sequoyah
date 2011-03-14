@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.sequoyah.device.sdk.feature"
+      label="%featureName"
+      version="0.5.0.qualifier"
+      provider-name="%providerName"
+      plugin="org.eclipse.sequoyah.device.framework.sdk">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/0.5/"/>
+      <discovery label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/0.5/"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.sequoyah.device.common.utilities"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.sequoyah.device.framework"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import feature="org.eclipse.sequoyah.device.feature"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.sequoyah.device.framework.sdk"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
