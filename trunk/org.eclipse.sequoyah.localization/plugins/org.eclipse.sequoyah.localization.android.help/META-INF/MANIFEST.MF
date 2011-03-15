@@ -6,4 +6,3 @@ Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
 Bundle-SymbolicName: org.eclipse.sequoyah.localization.android.help; singleton:=true
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
