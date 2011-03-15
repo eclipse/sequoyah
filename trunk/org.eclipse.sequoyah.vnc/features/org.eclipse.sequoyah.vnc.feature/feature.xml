@@ -28,7 +28,7 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.sequoyah.vnc.vncviewer"/>
       <import plugin="org.eclipse.sequoyah.vnc.protocol"/>
-      <import feature="org.eclipse.sequoyah.vnc.vncviewer.feature"/>
+      <import feature="org.eclipse.sequoyah.vnc.vncviewer.feature" version="1.0.0" match="equivalent"/>
    </requires>
 
    <plugin

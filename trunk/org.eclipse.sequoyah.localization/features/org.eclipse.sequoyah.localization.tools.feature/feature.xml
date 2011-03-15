@@ -30,7 +30,7 @@
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.forms"/>
-      <import feature="org.eclipse.sequoyah.device.common.feature"/>
+      <import feature="org.eclipse.sequoyah.device.common.feature" version="2.0.0" match="equivalent"/>
    </requires>
 
    <plugin

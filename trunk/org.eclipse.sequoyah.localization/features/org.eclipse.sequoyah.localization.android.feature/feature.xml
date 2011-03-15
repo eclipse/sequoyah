@@ -23,7 +23,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.sequoyah.localization.tools.feature"/>
+      <import feature="org.eclipse.sequoyah.localization.tools.feature" version="2.0.0" match="equivalent"/>
    </requires>
 
    <plugin

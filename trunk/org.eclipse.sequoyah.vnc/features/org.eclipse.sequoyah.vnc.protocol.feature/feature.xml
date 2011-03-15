@@ -26,7 +26,7 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import feature="org.eclipse.sequoyah.device.common.feature"/>
+      <import feature="org.eclipse.sequoyah.device.common.feature" version="2.0.0" match="equivalent"/>
    </requires>
 
    <plugin
