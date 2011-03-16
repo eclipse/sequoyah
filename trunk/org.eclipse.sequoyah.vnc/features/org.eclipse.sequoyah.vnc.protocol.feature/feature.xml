@@ -4,7 +4,9 @@
       label="%featureName"
       version="1.0.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.sequoyah.vnc.protocol">
+      plugin="org.eclipse.sequoyah.vnc.protocol"
+      license-feature="org.eclipse.sequoyah.license.feature"
+      license-feature-version="1.0.0.qualifier">
 
    <description>
       %description
@@ -14,10 +16,6 @@
       %copyright
    </copyright>
 
-   <license url="%licenseURL">
-      %license
-   </license>
-
    <url>
       <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>
       <discovery label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>
@@ -26,7 +24,7 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import feature="org.eclipse.sequoyah.device.common.feature" version="2.0.0" match="equivalent"/>
+      <import feature="org.eclipse.sequoyah.device.common.feature"/>
    </requires>
 
    <plugin

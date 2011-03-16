@@ -4,7 +4,9 @@
       label="%featureName"
       version="2.0.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.sequoyah.localization.android">
+      plugin="org.eclipse.sequoyah.localization.android"
+      license-feature="org.eclipse.sequoyah.license.feature"
+      license-feature-version="1.0.0.qualifier">
 
    <description>
       %description
@@ -14,16 +16,12 @@
       %copyright
    </copyright>
 
-   <license url="%licenseURL">
-      %license
-   </license>
-
    <url>
       <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>
    </url>
 
    <requires>
-      <import feature="org.eclipse.sequoyah.localization.tools.feature" version="2.0.0" match="equivalent"/>
+      <import feature="org.eclipse.sequoyah.localization.tools.feature"/>
    </requires>
 
    <plugin
