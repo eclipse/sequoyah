@@ -779,9 +779,9 @@ public class StringEditorPart extends MultiPageEditorPart
         lowertbmanager.add(removeKeyAction = new RemoveKeyAction(this));
         lowertbmanager.add(new Separator());
         lowertbmanager.add(collapseAllAction =
-                new CollapseExpandAllAction(this, false, "Collapse All", "Collapse all arrays"));
+                new CollapseExpandAllAction(this, false, Messages.StringEditorPart_8, Messages.StringEditorPart_9));
         lowertbmanager.add(expandAllAction =
-                new CollapseExpandAllAction(this, true, "Expand All", "Expand all arrays"));
+                new CollapseExpandAllAction(this, true, Messages.StringEditorPart_10, Messages.StringEditorPart_11));
         lowertbmanager.add(new Separator());
         lowertbmanager.add(new UndoActionHandler(getEditorSite(), getUndoContext()));
         lowertbmanager.add(new RedoActionHandler(getEditorSite(), getUndoContext()));

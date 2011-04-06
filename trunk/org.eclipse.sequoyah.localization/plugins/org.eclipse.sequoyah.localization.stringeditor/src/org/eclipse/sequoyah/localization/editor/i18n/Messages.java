@@ -52,6 +52,10 @@ public class Messages extends NLS {
 
 	public static String StringEditorPart_1;
 
+	public static String StringEditorPart_10;
+
+	public static String StringEditorPart_11;
+
 	public static String StringEditorPart_2;
 
 	public static String StringEditorPart_3;
@@ -63,6 +67,10 @@ public class Messages extends NLS {
 	public static String StringEditorPart_6;
 
 	public static String StringEditorPart_7;
+
+	public static String StringEditorPart_8;
+
+	public static String StringEditorPart_9;
 
 	public static String StringEditorPart_Apply;
 
