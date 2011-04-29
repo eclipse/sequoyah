@@ -26,10 +26,6 @@
          id="org.eclipse.sequoyah.device.common.feature"
          version="0.0.0"/>
 
-   <!-- includes
-         id="org.eclipse.sequoyah.device.examples.feature"
-         version="0.0.0"/ -->
-
    <includes
          id="org.eclipse.sequoyah.device.feature"
          version="0.0.0"/>
@@ -45,10 +41,6 @@
    <includes
          id="org.eclipse.sequoyah.vnc.feature"
          version="0.0.0"/>
-
-   <!-- includes
-         id="org.eclipse.sequoyah.vnc.protocol.examples.feature"
-         version="0.0.0"/ -->
 
    <includes
          id="org.eclipse.sequoyah.vnc.protocol.feature"
