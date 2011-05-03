@@ -39,7 +39,7 @@ public class AddArrayItemAction extends Action
 
     int quantity = 1;
 
-    public static final String ID = Messages.StringEditorPart_AddArrayItemActionName.substring(4);
+    public static final String ID = "Array Item"; //$NON-NLS-1$
 
     public AddArrayItemAction(StringEditorPart stringEditorPart)
     {
@@ -47,8 +47,8 @@ public class AddArrayItemAction extends Action
         this.stringEditorPart = stringEditorPart;
         this.setImageDescriptor(StringEditorPlugin.imageDescriptorFromPlugin(
                 StringEditorPlugin.PLUGIN_ID, "icons/string_array_item.png")); //$NON-NLS-1$
-        this.setId(Messages.StringEditorPart_AddArrayItemActionName.substring(4));
-        this.setDescription(Messages.AddArrayItemAction_DescriptionPrefix + getId());
+        this.setId(ID);
+        this.setDescription(Messages.AddArrayItemAction_DescriptionPrefix + ID);
         this.setEnabled(false);
     }
 

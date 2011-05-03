@@ -34,15 +34,15 @@ public class AddArrayAction extends Action {
 	 */
 	private final StringEditorPart stringEditorPart;
 	int quantity = 1;
-	public static final String ID = Messages.StringEditorPart_AddArrayActionName.substring(4);
+	public static final String ID = "Array"; //$NON-NLS-1$
 
 	public AddArrayAction(StringEditorPart stringEditorPart) {
 		super(Messages.StringEditorPart_AddArrayActionName);
 		this.stringEditorPart = stringEditorPart;
 		setImageDescriptor(StringEditorPlugin.imageDescriptorFromPlugin(
 				StringEditorPlugin.PLUGIN_ID, "icons/string_array.png")); //$NON-NLS-1$
-		setId(Messages.StringEditorPart_AddArrayActionName.substring(4));
-		setDescription(Messages.AddArrayAction_DescriptionPrefix + getId());
+		setId(ID);
+		setDescription(Messages.AddArrayAction_DescriptionPrefix + ID);
 	}
 
 	public void setQuantity(int i) {

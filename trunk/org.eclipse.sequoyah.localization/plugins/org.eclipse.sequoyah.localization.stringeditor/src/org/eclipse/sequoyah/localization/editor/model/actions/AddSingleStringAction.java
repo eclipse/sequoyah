@@ -32,16 +32,15 @@ public class AddSingleStringAction extends Action {
 	 */
 	private final StringEditorPart stringEditorPart;
 	int quantity = 1;
-	public static final String ID = Messages.StringEditorPart_AddSingleStringActionName.substring(4);
+	public static final String ID = "String"; //$NON-NLS-1$
 
 	public AddSingleStringAction(StringEditorPart stringEditorPart) {
 		super(Messages.StringEditorPart_AddSingleStringActionName);
 		this.stringEditorPart = stringEditorPart;
 		setImageDescriptor(StringEditorPlugin.imageDescriptorFromPlugin(
 				StringEditorPlugin.PLUGIN_ID, "icons/string.png")); //$NON-NLS-1$
-		setId(Messages.StringEditorPart_AddSingleStringActionName.substring(4));
-		setDescription(Messages.AddSingleStringAction_DescriptionPrefix
-				+ getId());
+		setId(ID);
+		setDescription(Messages.AddSingleStringAction_DescriptionPrefix + ID);
 	}
 
 	public void setQuantity(int i) {
