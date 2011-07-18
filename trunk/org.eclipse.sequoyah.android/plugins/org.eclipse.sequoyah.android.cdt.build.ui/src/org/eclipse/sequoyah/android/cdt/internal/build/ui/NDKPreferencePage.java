@@ -47,6 +47,10 @@ public class NDKPreferencePage extends PreferencePage implements
 
 	private static final String AndroidNDKr5ValidationPathWin32 = "\\" + "toolchains" + "\\" + "arm-eabi-4.4.0" + "\\" + "prebuilt"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
+	private static final String AndroidNDKr6ValidationPathLinuxMac = "/" + "toolchains" + "/" + "arm-linux-androideabi-4.4.3" + "/" + "prebuilt"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	
+	private static final String AndroidNDKr6ValidationPathWin32 = "\\" + "toolchains" + "\\" + "arm-linux-androideabi-4.4.3" + "\\" + "prebuilt"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	
 	private DirectoryFieldEditor directoryEditorNDK;
 
 	private boolean isNDKPathValid = true;
@@ -118,11 +122,14 @@ public class NDKPreferencePage extends PreferencePage implements
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			pathPrefix[0] = AndroidNDKr4ValidationPathWin32;
 			pathPrefix[1] = AndroidNDKr5ValidationPathWin32;
+			pathPrefix[2] = AndroidNDKr6ValidationPathWin32;
+			
 		}
 		// linux or mac
 		else {
 			pathPrefix[0] = AndroidNDKr4ValidationPathLinuxMac;
 			pathPrefix[1] = AndroidNDKr5ValidationPathLinuxMac;
+			pathPrefix[2] = AndroidNDKr6ValidationPathLinuxMac;
 
 		}
 		return pathPrefix;
