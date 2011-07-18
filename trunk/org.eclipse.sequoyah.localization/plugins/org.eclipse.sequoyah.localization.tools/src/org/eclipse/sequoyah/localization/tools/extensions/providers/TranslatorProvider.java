@@ -45,7 +45,7 @@ public class TranslatorProvider {
 
 	private final String EXTENSION_FIELD_CLASS = "class"; //$NON-NLS-1$
 
-	private final String EXTENSION_FIELD_BRANDING_IMG = "brandingImage "; //$NON-NLS-1$
+	private final String EXTENSION_FIELD_BRANDING_IMG = "brandingImage"; //$NON-NLS-1$
 
 	/*
 	 * Singleton instance
