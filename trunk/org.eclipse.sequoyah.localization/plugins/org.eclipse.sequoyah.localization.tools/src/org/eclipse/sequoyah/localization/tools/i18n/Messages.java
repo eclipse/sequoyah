@@ -8,7 +8,7 @@
  * Matheus Tait Lima (Eldorado)
  * 
  * Contributors:
- * name (company) - description.
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [352375] - Let translators contribute with translate dialog
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.i18n;
 
@@ -47,6 +47,14 @@ public class Messages extends NLS {
 	public static String Warning_NoDefaultFile;
 
 	public static String TranslateColumnInputDialog_0;
+
+	public static String TranslateColumnInputDialog_Error_ToOrFromNotSet;
+
+	public static String TranslateColumnsInputDialog_Error_NoDestinationColumnSelected;
+
+	public static String TranslateColumnsInputDialog_Error_NoLanguageSet;
+
+	public static String TranslateColumnsInputDialog_Error_NoTranslatorsAvailable;
 
 	public static String TranslationDialog_LanguageAreaLabel;
 
