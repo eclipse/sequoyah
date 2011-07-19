@@ -34,7 +34,8 @@
  * Marcel Gorri (Eldorado) - [303646] Add support for UI styles.
  * Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View
  * Daniel Barboza Franco (Eldorado) - [329548] Allow multiple instances selection on Device Manager View
- * Julia Martinez Perdigueiro (Eldorado) - [329548] Adding double click behavior and tooltip support for double click behavior 
+ * Julia Martinez Perdigueiro (Eldorado) - [329548] Adding double click behavior and tooltip support for double click behavior
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - [352157] Added basic drag and drop support 
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.ui.view;
@@ -91,7 +92,6 @@ import org.eclipse.sequoyah.device.framework.model.IInstance;
 import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.model.handler.ServiceHandlerAction;
 import org.eclipse.sequoyah.device.framework.status.IStatus;
-import org.eclipse.sequoyah.device.framework.status.StatusManager;
 import org.eclipse.sequoyah.device.framework.status.StatusRegistry;
 import org.eclipse.sequoyah.device.framework.ui.DeviceUIPlugin;
 import org.eclipse.sequoyah.device.framework.ui.view.model.InstanceMgtViewComparator;
@@ -104,6 +104,10 @@ import org.eclipse.sequoyah.device.framework.ui.view.provider.InstanceMgtViewLab
 import org.eclipse.sequoyah.device.framework.ui.wizard.DeviceWizardExtensionManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -309,6 +313,14 @@ public class InstanceStatusComposite extends Composite
 				InstanceMgtView.updateServicesToolbar();
 			}	
 		});
+		
+		ArrayList<Transfer> types = new ArrayList<Transfer>();
+		types.add(FileTransfer.getInstance());
+		types.add(TextTransfer.getInstance());
+		viewer.addDropSupport(DND.DROP_COPY | DND.DROP_DEFAULT | DND.DROP_MOVE
+				| DND.DROP_LINK | DND.DROP_TARGET_MOVE,
+				types.toArray(new Transfer[0]),
+				new InstanceStatusCompositeDropAdapter());
 
         createActions();   
 		fillMenuContext();

@@ -11,7 +11,8 @@
  *     Daniel Barboza Franco (Eldorado Research Institute) - Bug [271695] - Support to non-persistent instances of devices
  *     Mauren Brenner (Eldorado) - [281377] Support device types whose instances cannot be created by user
  *     Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
- *     Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View 
+ *     Pablo Leite (Eldorado) - [329548] Allow multiple instances selection on Device Manager View
+ *     Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - [352157] Added basic drag and drop support  
  *******************************************************************************/
 package org.eclipse.sequoyah.device.framework.internal.model;
 
@@ -21,22 +22,24 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.sequoyah.device.common.utilities.PluginUtils;
 import org.eclipse.sequoyah.device.framework.DevicePlugin;
 import org.eclipse.sequoyah.device.framework.model.IDeviceType;
+import org.eclipse.sequoyah.device.framework.model.IDeviceTypeDropSupport;
 import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.model.handler.IDeviceHandler;
 import org.eclipse.swt.graphics.Image;
 
 public class MobileDeviceType implements IDeviceType {
-	
+
 	private static final String ELEMENT_DEVICE = "deviceType";//$NON-NLS-1$
 	private static final String ATR_ICON = "icon";//$NON-NLS-1$
 	private static final String ATR_IS_PERSISTENT = "isPersistent";//$NON-NLS-1$
 	private static final String ATR_SUPPORTS_USER_INSTANCES = "supportsUserInstances";//$NON-NLS-1$
-	
-	
+	private static final String ATR_DROP_SUPPORT_HANDLER = "dropSupportHandler";//$NON-NLS-1$
+
 	private static final String PROPERTY_ICON = "icon"; //$NON-NLS-1$
 	private String id;
 	private String label;
@@ -44,19 +47,31 @@ public class MobileDeviceType implements IDeviceType {
 	private boolean isAbstract = false;
 	private String superClass;
 	private IDeviceHandler handler;
-	private ImageDescriptor image;
 	private Properties properties = new Properties();
 	private List<IService> services;
 	private boolean isPersistent = true;
 	private boolean supportsUserInstances = true;
+	private final IDeviceTypeDropSupport dropSupport;
 
 	public MobileDeviceType(String id, String label) {
 		this.id = id;
 		this.label = label;
-		
+
 		IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, id);
 		String isPersistentStr = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_IS_PERSISTENT);
 		String supportsUserInstancesStr = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_SUPPORTS_USER_INSTANCES);
+		Object dropSupportExtension;
+		IDeviceTypeDropSupport dropSupportObj = null;
+		try {
+			dropSupportExtension = PluginUtils.getExecutableAttribute(
+					fromPlugin, ELEMENT_DEVICE, ATR_DROP_SUPPORT_HANDLER);
+			if (dropSupportExtension instanceof IDeviceTypeDropSupport) {
+				dropSupportObj = (IDeviceTypeDropSupport) dropSupportExtension;
+			}
+		} catch (CoreException e) {
+			// do nothing
+		}
+		dropSupport = dropSupportObj;
 
 		if (isPersistentStr != null) {
 			isPersistent = Boolean.valueOf(isPersistentStr);
@@ -109,7 +124,7 @@ public class MobileDeviceType implements IDeviceType {
 	public void setServices(List<IService> services) {
 		this.services = services;
 	}
-	
+
 	public IDeviceHandler getHandler() {
 		return handler;
 	}
@@ -117,7 +132,7 @@ public class MobileDeviceType implements IDeviceType {
 	public void setHandler(IDeviceHandler handler) {
 		this.handler = handler;
 	}
-	
+
 	public Image getImage() {
 		if (getProperties().containsKey(PROPERTY_ICON)) {
 			String path = getProperties().getProperty(PROPERTY_ICON);
@@ -129,17 +144,14 @@ public class MobileDeviceType implements IDeviceType {
 			IExtension fromPlugin =  PluginUtils.getExtension(DevicePlugin.DEVICE_TYPES_EXTENSION_POINT_ID, id);
 			String iconName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_ICON);
 			ImageDescriptor descr = null;
-			
+
 			try {
-				descr = DevicePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), iconName);
+				descr = DevicePlugin.getPluginImage(Platform.getBundle(fromPlugin.getContributor().getName()), iconName);
 			} catch (InvalidRegistryObjectException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			
+
 			return descr.createImage();
 		}
 	}
@@ -172,5 +184,9 @@ public class MobileDeviceType implements IDeviceType {
 
 	public boolean supportsUserInstances() {
 		return supportsUserInstances;
+	}
+
+	public IDeviceTypeDropSupport getDropSupport() {
+		return dropSupport;
 	}
 }
