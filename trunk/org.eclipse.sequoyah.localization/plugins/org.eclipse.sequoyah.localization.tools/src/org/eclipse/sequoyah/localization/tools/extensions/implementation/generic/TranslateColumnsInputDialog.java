@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -650,7 +651,16 @@ public class TranslateColumnsInputDialog extends TitleAreaDialog implements ITra
 		}
 
 		setErrorMessage(errorMessage);
+		if (getButton(IDialogConstants.OK_ID) != null) {
+			getButton(IDialogConstants.OK_ID).setEnabled(errorMessage == null);
+		}
 		
+	}
+	
+	@Override
+	public void create() {
+		super.create();
+		validate();
 	}
 
 	private String[] getDestinationColumnsNames() {

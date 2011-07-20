@@ -17,6 +17,7 @@ package org.eclipse.sequoyah.localization.tools.extensions.implementation.generi
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -365,6 +366,15 @@ public class TranslateColumnInputDialog extends TitleAreaDialog implements ITran
 		}
 		
 		setErrorMessage(errorMessage);
+		if (getButton(IDialogConstants.OK_ID) != null) {
+			getButton(IDialogConstants.OK_ID).setEnabled(errorMessage == null);
+		}
+	}
+	
+	@Override
+	public void create() {
+		super.create();
+		validate();
 	}
 	
 	
