@@ -118,7 +118,7 @@ public class NDKPreferencePage extends PreferencePage implements
 	};
 
 	private static String[] getPathPrefix() {
-		String[] pathPrefix = new String[2];
+		String[] pathPrefix = new String[50];
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			pathPrefix[0] = AndroidNDKr4ValidationPathWin32;
 			pathPrefix[1] = AndroidNDKr5ValidationPathWin32;
