@@ -1,12 +1,12 @@
 /********************************************************************************
- * Copyright (c) 2010 Motorola Mobility, Inc.
+ * 
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- * Marcel Gorri (Eldorado) - Bug 326793 -  Improvements on the String Arrays handling  
- * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (Refactor visitDomXYZ and NodeManagers)
+ * Initial Contributors:
+ * Lucas Tiago de Castro Jesus (GSoC)
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde.manager;
 
@@ -85,9 +85,4 @@ public class NodeManagerProvider {
 	public StringNodeManager getStringNodeManager() {
 		return (StringNodeManager) map.get(STRING_NODE_MANAGER);
 	}
-
-	/**
-	 * @return NodeManager to manipulate Arrays into DOM
-	 */
-
 }

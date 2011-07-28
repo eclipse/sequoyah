@@ -1,11 +1,11 @@
 /********************************************************************************
- * Copyright (c) 2010 Motorola Mobility, Inc.
+ *
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- * Marcel Augusto Gorri (Eldorado) - Bug [323036] - Add support to other localizable resources
+ * Initial Contributors:
+ * Lucas Tiago de Castro Jesus (GSoC)
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde.manager;
@@ -15,7 +15,7 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 
 /**
  * This abstract class defined the operations to be executed with each specific
- * type of LocalizationFile in the AndroidLocalizationSchema.
+ * type of LocalizationFile in the PDELocalizationSchema.
  * 
  */
 public abstract class ILocalizationFileManager {
@@ -34,7 +34,7 @@ public abstract class ILocalizationFileManager {
 			throws SequoyahException;
 
 	/**
-	 * Create a new localization file according to the rules for Android
+	 * Create a new localization file according to the rules for Properties
 	 * localization schema. The file generated is based on the generic
 	 * LocalizationFile object passed as a parameter.
 	 * 
@@ -46,7 +46,7 @@ public abstract class ILocalizationFileManager {
 			throws SequoyahException;
 
 	/**
-	 * Update a localization file according to the rules for Android
+	 * Update a localization file according to the rules for PDE
 	 * localization schema. The file udpated is based on the generic
 	 * LocalizationFile object passed as a parameter.
 	 * 

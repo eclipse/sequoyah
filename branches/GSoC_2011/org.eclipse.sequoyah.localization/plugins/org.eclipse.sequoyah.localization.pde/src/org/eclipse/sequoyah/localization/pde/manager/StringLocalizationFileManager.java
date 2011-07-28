@@ -1,34 +1,38 @@
 /********************************************************************************
- * Copyright (c) 2010 Motorola Mobility, Inc.
+ * 
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- * Marcel Augusto Gorri (Eldorado) - Bug [323036] - Add support to other localizable resources
- * Matheus Lima (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
- * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (Refactor visitDomXYZ and NodeManagers)
+ * Initial Contributors:
+ * Lucas Tiago de Castro Jesus (GSoC)
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde.manager;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -51,6 +55,8 @@ import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.FileUtil;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahExceptionStatus;
+import org.eclipse.sequoyah.localization.pde.manager.NodeManagerProvider;
+import org.eclipse.sequoyah.localization.pde.manager.StringNodeManager;
 import org.eclipse.sequoyah.localization.pde.PDELocalizationPlugin;
 import org.eclipse.sequoyah.localization.pde.IPDELocalizationSchemaConstants;
 import org.eclipse.sequoyah.localization.pde.datamodel.PDEStringLocalizationFile;
@@ -117,8 +123,9 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	@Override
 	public LocalizationFile loadFile(LocalizationFile locFile)
 			throws SequoyahException {
-	
+		Properties property = new Properties();
 		if (!locFile.getFile().exists()) {
+	
 			LocalizationFileBean bean = new LocalizationFileBean(locFile);
 			bean.setType(StringLocalizationFile.class.getName());
 			for (NodeManager nodeManager : NodeManagerProvider.getInstance()
@@ -137,9 +144,9 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 						"Could not create StringLocalizationFile: ", e); //$NON-NLS-1$
 			}
 		}
-		try {			
-
-		} catch (Exception e) {
+		try {
+			property.load(new FileInputStream(locFile.getFile().getLocation().toString()));					
+		} catch (Exception e) {			
 			SequoyahExceptionStatus status = new SequoyahExceptionStatus(
 					IStatus.ERROR,
 					PDELocalizationPlugin.PLUGIN_ID,
@@ -149,41 +156,37 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 							+ ". " + e.getMessage(), e); //$NON-NLS-1$
 			throw new SequoyahException(status);
 		}
-
+		updateLocalizationFileContent(locFile, property);
+		
 		return locFile;
 	}
 
 	/*
 	 * 
 	 */
+	
 	private void updateLocalizationFileContent(
-			LocalizationFile localizationFile, Document document) {
+			LocalizationFile localizationFile, Properties property) {
+		
 		ArrayList<StringNode> stringNodes = new ArrayList<StringNode>();
-		ArrayList<StringNode> stringArrays = new ArrayList<StringNode>();
-
 		for (NodeManager nodeManager : NodeManagerProvider.getInstance()
 				.getNodeManagers()) {
+			
 			if (nodeManager instanceof StringNodeManager) {
 				nodeManager
-						.updateLocalizationFileContent(document, stringNodes);
+						.updateLocalizationFileContent(property, stringNodes);
 			}
 		}
 
 		((PDEStringLocalizationFile) localizationFile)
-				.setSavedPDEDocument(document);
+				.setSavedPDEProperty(property);
 
-		((PDEStringLocalizationFile) localizationFile).clearStringNodes();
+		((PDEStringLocalizationFile) localizationFile)
+				.clearStringNodes();
+		
 		((PDEStringLocalizationFile) localizationFile)
 				.setStringNodes(stringNodes);
-
-		ArrayList<StringArrayNode> stringArrays2 = new ArrayList<StringArrayNode>();
-		for (StringNode node : stringArrays) {
-			stringArrays2.add((StringArrayNode) node);
-		}
-		((PDEStringLocalizationFile) localizationFile)
-				.setStringArrayNodes(stringArrays2);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -201,6 +204,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 					.toOSString();
 
 			if (!localizationFile.getFile().exists()) {
+				
 				localizationFile.getFile().getLocation();
 				IPath fileToSave = null;
 				if (localizationFile.getLocalizationProject() != null) {
@@ -211,8 +215,10 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 				} else {
 					fileToSave = localizationFile.getFile().getLocation();
 				}
-
+				//TODO warning
+				//fileToSave.removeLastSegments(1).toFile().mkdirs();
 				fileToSave.removeLastSegments(1).toFile().mkdirs();
+								
 				fileToSave.toFile().createNewFile();
 
 				if (localizationFile.getLocalizationProject() != null) {
@@ -221,79 +227,50 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 					localizationFile.setFile(iFile);
 				}
 			}
-
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document document = db.newDocument();
-
-			/*
-			 * Create XML nodes
-			 */
-			Element resources = document.createElement(PDE_RESOURCES_TAG);
-
-			for (NodeManager nodeManager : NodeManagerProvider.getInstance()
-					.getNodeManagers()) {
-				// according to NodeManagerProvider, the first element is a
-				// StringNodeManager and the second is an ArrayStringNodeManager
-				nodeManager.createFile(document, resources, localizationFile);
-			}
-
-			document.appendChild(resources);
-
-			saveXMLDocument(localizationFile.getFile().getLocation().toFile(),
-					document);
+			
+			Properties property = new Properties();
+			
+			savePDEProperty(localizationFile.getFile().getLocation().toFile(),
+					property);
 			((PDEStringLocalizationFile) localizationFile)
-					.setSavedPDEDocument(document);
+					.setSavedPDEProperty(property);
 			localizationFile
 					.getFile()
 					.getProject()
 					.refreshLocal(IResource.DEPTH_INFINITE,
 							new NullProgressMonitor());
-			// loadAllFiles(localizationFile.getLocalizationProject().getProject());
 
+			
 		} catch (Exception e) {
 			throw new SequoyahException();
 		}
 	}
 
 	/**
-	 * Saves XML file into the file system
+	 * Saves PDE file into the file system
 	 * 
 	 * @param file
-	 * @param document
+	 * @param property
+	 * @throws IOException 
 	 * @throws TransformerFactoryConfigurationError
 	 * @throws TransformerConfigurationException
-	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
 	 * @throws TransformerException
 	 */
-	private void saveXMLDocument(File file, Document document)
-			throws TransformerFactoryConfigurationError,
-			TransformerConfigurationException, FileNotFoundException,
-			UnsupportedEncodingException, TransformerException {
-
-		TransformerFactory transformerFactory = TransformerFactory
-				.newInstance();
-		transformerFactory.setAttribute("indent-number", 4); //$NON-NLS-1$
-		Transformer transformer = transformerFactory.newTransformer();
-		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-
-		FileOutputStream fileOutputStream = null;
-
+	private void savePDEProperty(File file, Properties property)
+			throws  IOException{
+				
+		BufferedWriter fileOutputStream = null;
 		/*
 		 * At this point, localization file has the correct file
 		 */
-		fileOutputStream = new FileOutputStream(file);
-
+		fileOutputStream = new BufferedWriter(new FileWriter(file));		
+		
 		try {
-			StreamResult result = new StreamResult(new OutputStreamWriter(
-					fileOutputStream, "UTF-8")); //$NON-NLS-1$
-
-			removePDEDocumentBlankNodes(document);
-			DOMSource source = new DOMSource(document);
-
-			transformer.transform(source, result);
+			//TODO Complete here
+			String result = getPropertyAsString(property);
+			result.replaceAll("\n",System.getProperty("line.separator"));
+			
+			fileOutputStream.write(result);
 		} finally {
 			if (fileOutputStream != null) {
 				try {
@@ -304,100 +281,8 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			}
 		}
 
-		unescapeEntity(file);
-
 	}
 
-	/**
-	 * Unescape some entities (such as &lt;) replacing it for the character form
-	 * (such as <) in a file. This entities are automatically created by the
-	 * Transform object, but we need the character form in the localization
-	 * file.
-	 * 
-	 * @param the
-	 *            text file whose entities are to be unescaped
-	 */
-	private void unescapeEntity(File file1) {
-		File file2 = null;
-		DataOutputStream dataOutput = null;
-		FileInputStream inputStream = null;
-		FileOutputStream fileOutputStream = null;
-		BufferedReader reader = null;
-
-		try {
-			file2 = File.createTempFile("temp_localization", //$NON-NLS-1$
-					"dom"); //$NON-NLS-1$
-			FileUtil.copyFile(file1, file2);
-			inputStream = new FileInputStream(file2);
-			fileOutputStream = new FileOutputStream(file1);
-			dataOutput = new DataOutputStream(fileOutputStream);
-			reader = new BufferedReader(new InputStreamReader(inputStream,
-					"UTF-8")); //$NON-NLS-1$
-			String line = null;
-
-			if (reader != null) {
-				line = reader.readLine();
-				while (line != null) {
-					line = unescapeEntity(line);
-					dataOutput.write(line.getBytes("UTF-8")); //$NON-NLS-1$
-					String eol = System.getProperty("line.separator"); //$NON-NLS-1$
-					dataOutput.write(eol.getBytes("UTF-8")); //$NON-NLS-1$
-					line = reader.readLine();
-				}
-			}
-		} catch (Exception e) {
-			BasePlugin.logError("Error translating file.", e); //$NON-NLS-1$
-		} finally {
-
-			try {
-				if (inputStream != null) {
-					inputStream.close();
-					inputStream = null;
-				}
-				if (fileOutputStream != null) {
-					fileOutputStream.close();
-					fileOutputStream = null;
-				}
-				if (reader != null) {
-					reader.close();
-					reader = null;
-				}
-			} catch (IOException e) {
-				BasePlugin.logError(
-						"Error cleaning up objects after translation", e); //$NON-NLS-1$
-			}
-
-			if (dataOutput != null) {
-				try {
-					dataOutput.close();
-				} catch (IOException e) {
-					BasePlugin.logError("Error closing file after translation", //$NON-NLS-1$
-							e);
-				}
-				dataOutput = null;
-			}
-
-			if (file2 != null) {
-				if (!file2.delete()) {
-					file2.deleteOnExit();
-				}
-			}
-			file1 = null;
-		}
-	}
-
-	/*
-	 * 
-	 */
-	private String unescapeEntity(String content) {
-		String returnContent = content;
-		returnContent = returnContent.replaceAll("&lt;", //$NON-NLS-1$
-				"<"); //$NON-NLS-1$
-		returnContent = returnContent.replaceAll("&gt;", //$NON-NLS-1$
-				">"); //$NON-NLS-1$
-		returnContent = returnContent.replaceAll("&#13;", ""); //$NON-NLS-2$ //$NON-NLS-1$
-		return returnContent;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -410,15 +295,16 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 */
 	@Override
 	public void updateFile(LocalizationFile locFile) throws SequoyahException {
-		PDEStringLocalizationFile androidLocalizationFile = (PDEStringLocalizationFile) locFile;
-		Document document = androidLocalizationFile.getSavedPDEDocument();
-		updateFile(androidLocalizationFile, document);
-		if (document == null) {
-			document = androidLocalizationFile.getSavedPDEDocument();
+		PDEStringLocalizationFile pdeLocalizationFile = (PDEStringLocalizationFile) locFile;
+		
+		Properties property = pdeLocalizationFile.getSavedPDEProperty();
+		updateFile(pdeLocalizationFile, property);
+		if (property == null) {
+			property = pdeLocalizationFile.getSavedPDEProperty();
 		}
 		// save modified document
 		try {
-			saveXMLDocument(locFile.getFile().getLocation().toFile(), document);
+			savePDEProperty(locFile.getFile().getLocation().toFile(), property);
 		} catch (Exception e) {
 			SequoyahException sqE = new SequoyahException();
 			sqE.setStackTrace(e.getStackTrace());
@@ -428,59 +314,36 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	}
 
 	/**
-	 * Update the XML representation of the file
+	 * Update the Property representation of the file
 	 * 
 	 * @param locFile
 	 * @param document
 	 * @throws SequoyahException
 	 */
-	private void updateFile(LocalizationFile locFile, Document document)
+	private void updateFile(LocalizationFile locFile, Properties property)
 			throws SequoyahException {
 
 		PDEStringLocalizationFile PDELocalizationFile = (PDEStringLocalizationFile) locFile;
-		if (document == null) {
+		if (property == null) {
 			// file not created yet, do it
 			createFile(PDELocalizationFile);
-			document = PDELocalizationFile.getSavedPDEDocument();
+			property = PDELocalizationFile.getSavedPDEProperty();
 		} else {
 			// file already created, update
-			// update nodes on XML Document according to LocalizationFile model
+			// update nodes on Property according to LocalizationFile model
 			Map<String, StringNode> singleStringsToUpdateOrAdd = new HashMap<String, StringNode>();
-			Map<String, StringArrayNode> arrayStringsToUpdateOrAdd = new HashMap<String, StringArrayNode>();
-
+			
 			for (StringNode stringNode : ((StringLocalizationFile) locFile)
-					.getStringNodes()) {
-
-				if (!(stringNode instanceof StringArrayNode)) {
+					.getStringNodes()){
+				if (stringNode instanceof StringNode){
 					singleStringsToUpdateOrAdd.put(stringNode.getKey(),
 							stringNode);
 				}
 			}
-
-			for (StringArrayNode stringArray : ((StringLocalizationFile) locFile)
-					.getStringArrays()) {
-				arrayStringsToUpdateOrAdd
-						.put(stringArray.getKey(), stringArray);
-			}
-
-			NodeList resourcesList = document.getElementsByTagName("resources"); //$NON-NLS-1$
-			// if there is no resource tag, add at least one
-			if (resourcesList.getLength() == 0) {
-				Element resources = document.createElement(PDE_RESOURCES_TAG);
-				document.appendChild(resources);
-				resourcesList = document.getElementsByTagName("resources"); //$NON-NLS-1$
-			}
-			for (int i = 0; i < resourcesList.getLength(); i++) {
-				Element resource = (Element) resourcesList.item(i);
-				// // remove nodes
-				visitToRemoveDOMChildren(
-						document,
-						resource.getFirstChild(),
-						"name", //$NON-NLS-1$
-						PDELocalizationFile.getSingleEntryToRemove());
-				// add new nodes (append in the end of file)
-				visitToAddDOMChildren(document, singleStringsToUpdateOrAdd,resource);
-			}
+			
+			visitToUpdateDOMChildren(property, null,"", singleStringsToUpdateOrAdd);
+			visitToRemoveDOMChildren(property, null,"", PDELocalizationFile.getSingleEntryToRemove());
+			visitToAddDOMChildren(property, singleStringsToUpdateOrAdd, null);
 		}
 	}
 
@@ -497,15 +360,17 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 *            add item should
 	 * @param resource
 	 */
-	public void visitToAddDOMChildren(Document document,
+	
+	public void visitToAddDOMChildren(Properties property,
 			Map<String, StringNode> singleStringsToUpdateOrAdd,
 			Element resource) {
 		for (Map.Entry<String, StringNode> singleEntry : singleStringsToUpdateOrAdd
 				.entrySet()) {
 			StringNode stringNode = singleEntry.getValue();
+			
 			StringNodeManager stMgr = NodeManagerProvider.getInstance()
 					.getStringNodeManager();
-			stMgr.addSingleEntry(document, resource, stringNode);
+			stMgr.addSingleEntry(property, resource, stringNode);
 		}	
 	}
 
@@ -542,6 +407,77 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			visitingNode = nextNodeToVisit;
 		}
 	}
+	
+	public void visitToRemoveDOMChildren(Properties property, Node visitingNode,
+			String attrName, Map<String, StringNode> singleStringsToRemove) {
+		for (Enumeration keyProperties = property.propertyNames(); keyProperties.hasMoreElements();) {
+			String key = (String) keyProperties.nextElement();
+			StringNode foundStringNode = singleStringsToRemove
+				.get(key);
+			if (foundStringNode != null) {
+
+				property.remove(key);				
+				// remove item from map (it was already updated and it
+				// does
+				// not need to add in the end)
+				singleStringsToRemove.remove(key);
+			}
+			
+	     }	
+	}
+	
+	public void visitToUpdateDOMChildren(Document document, Node visitingNode,
+			String attrName,
+			Map<String, StringNode> singleStringsToUpdateOrAdd) {
+		
+		
+		while (visitingNode != null) {
+			if (visitingNode.getNodeType() == Node.ELEMENT_NODE) {
+				Attr attribute = getAttribute((Element) visitingNode, attrName);
+				if (attribute != null) {
+					// check LocalizationFile to get new value for attribute
+					String keyName = attribute.getValue();
+					// try to find as single string entry
+					StringNode foundStringNode = singleStringsToUpdateOrAdd
+							.get(keyName);
+					if (foundStringNode != null) {
+						// update single entry
+						
+						String newSingleEntryValue = foundStringNode.getValue();
+						visitingNode.setTextContent(newSingleEntryValue);
+						StringNodeManager stMgr = NodeManagerProvider
+								.getInstance().getStringNodeManager();
+						// remove item from map (it was already updated and it
+						// does
+						// not need to add in the end)
+						singleStringsToUpdateOrAdd.remove(keyName);
+					}
+				}
+			}
+			visitingNode = visitingNode.getNextSibling();
+		}
+	}
+	
+	public void visitToUpdateDOMChildren(Properties property, Node visitingNode,
+			String attrName,
+			Map<String, StringNode> singleStringsToUpdateOrAdd) {
+		for (Enumeration keyProperties = property.propertyNames(); keyProperties.hasMoreElements();) {
+			String key = (String) keyProperties.nextElement();
+			StringNode foundStringNode = singleStringsToUpdateOrAdd
+				.get(key);
+			if (foundStringNode != null) {
+				// update single entry
+				
+				String newSingleEntryValue = foundStringNode.getValue();
+				property.setProperty(key,newSingleEntryValue);				
+				// remove item from map (it was already updated and it
+				// does
+				// not need to add in the end)
+				singleStringsToUpdateOrAdd.remove(key);
+			}
+			
+	     }	
+	}
 
 
 	/**
@@ -559,51 +495,36 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	}
 
 	/*
-	 * 
+	 * Get PropertieAsString
 	 */
-	private String getXMLAsString(Document document) {
+	private String getPropertyAsString(Properties property) {
 		String resultString = null;
-		try {
-			TransformerFactory transformerFactory = TransformerFactory
-					.newInstance();
-			transformerFactory.setAttribute("indent-number", 4); //$NON-NLS-1$
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+		try {			
+			resultString = "";
+			for (Enumeration keyProperties = property.propertyNames(); keyProperties.hasMoreElements();) {
+				String keyProperty = (String) keyProperties.nextElement();
+				String valueProperty = property.getProperty(keyProperty);
+				
+				valueProperty = valueProperty.replace("\r","");
+				resultString += keyProperty + " = " + valueProperty.replace("\n", "\\n\\" + "\n") + "\n";
+		     }
 
-			/*
-			 * At this point, localization file has the correct file
-			 */
-			StringWriter writer = new StringWriter();
-
-			StreamResult result = new StreamResult(writer); //$NON-NLS-1$
-
-			removePDEDocumentBlankNodes(document);
-
-			DOMSource source = new DOMSource(document);
-
-			transformer.transform(source, result);
-
-			resultString = writer.toString();
-
-			resultString = unescapeEntity(resultString);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		return resultString;
 	}
-
+	
 	/**
 	 * Text nodes are removed from document
 	 * 
 	 * @param document
-	 *            Propertie document to be edited
+	 *            Properties document to be edited
 	 */
 	void removePDEDocumentBlankNodes(Document document) {
 		ArrayList<Node> nodesToRemove = new ArrayList<Node>();
-		ArrayList<Node> arrayItemsToRemove = new ArrayList<Node>();
-
+		
 		NodeList resourceNodeList = document.getElementsByTagName("resources"); //$NON-NLS-1$
 		// exactly one resource node
 		if (resourceNodeList.getLength() == 1) {
@@ -612,26 +533,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = nodeList.item(i);
-
-				if (node.getNodeType() == Node.TEXT_NODE) {
-					nodesToRemove.add(node);
-				}
-				// element nodes enter here
-				else if (node.getNodeName().equals("string-array")) { //$NON-NLS-1$
-					arrayItemsToRemove.clear();
-					NodeList arrayItemList = node.getChildNodes();
-					for (int j = 0; j < arrayItemList.getLength(); j++) {
-						Node arrayItem = arrayItemList.item(j);
-
-						if (arrayItem.getNodeType() == Node.TEXT_NODE) {
-							// mark it for removal
-							arrayItemsToRemove.add(arrayItem);
-						}
-					}
-					for (Node current : arrayItemsToRemove) {
-						node.removeChild(current);
-					}
-				}
+				nodesToRemove.add(node);				
 			}
 			// remove blank nodes
 			for (Node current : nodesToRemove) {
@@ -653,15 +555,17 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			LocalizationFile localizationFile, String content)
 			throws SequoyahException {
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder;
+		Properties property;
+		InputStream streamContent;
 		try {
-			builder = factory.newDocumentBuilder();
-			ByteArrayInputStream byteInputStream = new ByteArrayInputStream(
-					content.getBytes("UTF-8")); //$NON-NLS-1$
-			Document document = builder.parse(byteInputStream);
-			updateLocalizationFileContent(
-					(StringLocalizationFile) localizationFile, document);
+				property = new Properties();
+
+				streamContent  = new ByteArrayInputStream(content.getBytes());
+				property.load(streamContent);
+				
+				updateLocalizationFileContent(
+					(StringLocalizationFile) localizationFile, property);
+			
 		} catch (Exception e) {
 			SequoyahExceptionStatus status = new SequoyahExceptionStatus(
 					IStatus.ERROR, PDELocalizationPlugin.PLUGIN_ID, 0,
@@ -671,6 +575,8 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 		}
 	}
 
+
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -679,19 +585,20 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 * # getLocalizationFileContent()
 	 */
 	@Override
-	//Modificar aqui 
 	public Object getLocalizationFileContent(LocalizationFile locFile) {
 		String text = null;
 		if (locFile instanceof PDEStringLocalizationFile) {
 			PDEStringLocalizationFile localizationFile = (PDEStringLocalizationFile) locFile;
+
 			try {
 				updateFile(localizationFile,
-						localizationFile.getSavedPDEDocument());
+						localizationFile.getSavedPDEProperty());
 			} catch (SequoyahException e) {
-
+				
 			}
-			text = getXMLAsString(localizationFile.getSavedPDEDocument());
+			text = getPropertyAsString(localizationFile.getSavedPDEProperty());	
 		}
+		
 		return text;
 	}
 }

@@ -1,17 +1,18 @@
 /********************************************************************************
- * Copyright (c) 2010 Motorola Mobility, Inc.
+ * 
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- * Marcel Gorri (Eldorado) - Bug 326793 -  Improvements on the String Arrays handling  
- * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (Refactor visitDomXYZ and NodeManagers)
+ * Initial Contributors:
+ * Lucas Tiago de Castro Jesus (GSoC)
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde.manager;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Properties;
 
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
@@ -29,22 +30,23 @@ public abstract class NodeManager {
 	public abstract void loadFile(LocalizationFileBean bean,
 			LocalizationFile locFile);
 
-	public abstract void updateLocalizationFileContent(Document document,
+	public abstract void updateLocalizationFileContent(Properties property,
 			ArrayList<StringNode> stringNodes);
-
-	public abstract void createFile(Document document, Element resources,
+	
+	public abstract void createFile(Properties property, Element resources,
 			LocalizationFile localizationFile);
 
 
 	/**
-	 * Extracts the text with the right formatting from DOM properties representation
+	 * Extracts the text with the right formatting from DOM representation
 	 * 
 	 * @param valueText
 	 *            string to return, in the initial recursion set it as ""
 	 * @param firstChildNode
 	 *            node to start iterating over siblings
 	 */
-	protected void getStringByNodes(StringBuffer valueText, Node firstChildNode) {
+
+	protected void getStringByNodes(StringBuffer valueText, Node firstChildNode){
 		
 		Node auxNode = firstChildNode;
 		while (auxNode != null) {
@@ -80,7 +82,7 @@ public abstract class NodeManager {
 			auxNode = auxNode.getNextSibling();
 		}
 	}
-
+	
 	public abstract void updateFile(LocalizationFile locFile,Map<String, StringNode> singleStringsToUpdateOrAdd);
 
 }

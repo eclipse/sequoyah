@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Pde
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.sequoyah.localization.pde;singleton:=true
-Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.sequoyah.localization.pde.Activator
+Bundle-Version: 2.0.0.qualifier
+Bundle-Activator: org.eclipse.sequoyah.localization.pde.PDELocalizationPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %pluginProvider

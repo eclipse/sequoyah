@@ -6,7 +6,7 @@
       <localizationSchema
             class="org.eclipse.sequoyah.localization.pde.PDELocalizationSchema"
             name="PDE"
-            nature="com.android.ide.eclipse.adt.AndroidNature"
+            nature="org.eclipse.pde.PluginNature"
             naturePrecedence="org.eclipse.jdt.core.javanature">
       </localizationSchema>
    </extension>

@@ -1,16 +1,11 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Mobility, Inc.
+ * 
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
- * Matheus Tait Lima (Eldorado)
- * 
- * Contributors:
- * name (company) - description.
- * Marcel Gorri (Eldorado) - Bug 325110 - Add support to new Android Localization qualifiers
- * Marcel Gorri (Eldorado) - Bug 325630 - Fix validation of some Android localization qualifiers
+ * Lucas Tiago de Castro Jesus (GSoC)
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde;
@@ -27,20 +22,17 @@ public class PDELocaleAttribute extends LocaleAttribute {
 		COUNTRY_CODE, LANGUAGE
 	};
 
-	//O que seria esse tipo PDE?
-	//O tipo do atributo que está sendo traduzido
 	private int pdeType;
 
 	private String stringValue = ""; //$NON-NLS-1$
 
-	//Verifica se os atributos estão setados devidamente
 	protected boolean isSet = false;
 
 	/***
-	 * Creates a new AndroidLocaleAttribute
+	 * Creates a new PDELocaleAttribute
 	 * 
 	 * @param value
-	 * @param androidType
+	 * @param pdeType
 	 */
 	public PDELocaleAttribute(Object value, int pdeType) {
 		super("", LocaleAttribute.STRING_TYPE, 0, 0, null, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -55,7 +47,6 @@ public class PDELocaleAttribute extends LocaleAttribute {
 	 * 
 	 * @param qualifier
 	 */
-	// What is qualifier?
 	public PDELocaleAttribute(String qualifier, int type) {
 		super("", LocaleAttribute.STRING_TYPE, 0, 0, null, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
@@ -79,7 +70,6 @@ public class PDELocaleAttribute extends LocaleAttribute {
 	 * @param value
 	 * @return
 	 */
-	// Why we use "mcc = mobile country"?
 	private String getCountryCodeFolder(String value) {
 		return value; //$NON-NLS-1$
 	}
@@ -116,7 +106,7 @@ public class PDELocaleAttribute extends LocaleAttribute {
 	private Object getValueAndTypeFromQualifier(String strValue) {
 		Object result = null;
 		// return 0
-		//Pq tem esse substring?
+		
 		if (pdeType == PDELocaleAttributes.COUNTRY_CODE.ordinal()) {
 			result = strValue.substring(3);
 		// return 1
@@ -139,7 +129,7 @@ public class PDELocaleAttribute extends LocaleAttribute {
 	/***
 	 * Sets the values of this attribute.
 	 * 
-	 * The object received as param will be parsed according to the android type
+	 * The object received as param will be parsed according to the pde type
 	 * of the attribute.
 	 * 
 	 * So, this method WILL fail if you pass an attribute type that is not the
@@ -158,6 +148,16 @@ public class PDELocaleAttribute extends LocaleAttribute {
 		}else {
 			throw new IllegalArgumentException(Messages.Unknown_PDE_Type);
 		}
+		isSet = true;
+	}
+	
+	/***
+	 * Sets this attribute.
+	 * 
+	 * All attributes may exist for a given language but they will only be used
+	 * for creating the path if they are set.
+	 */
+	public void setAttribute() {
 		isSet = true;
 	}
 	
@@ -195,15 +195,7 @@ public class PDELocaleAttribute extends LocaleAttribute {
 		displayValue = intValue.toString();
 	}
 
-	/***
-	 * Sets this attribute.
-	 * 
-	 * All attributes may exist for a given language but they will only be used
-	 * for creating the path if they are set.
-	 */
-	public void setAttribute() {
-		isSet = true;
-	}
+
 
 	/**
 	 * Sets the type and values of this attribute according to the object
@@ -232,7 +224,7 @@ public class PDELocaleAttribute extends LocaleAttribute {
 		displayName = "Language"; //$NON-NLS-1$
 		type = LocaleAttribute.STRING_TYPE;
 		fixedSize = 2;
-		maximumSize = 2;
+		maximumSize = 5;
 		allowedValues = null;
 		setStringValue(value);
 		folderValue = getLanguageFolder(displayValue);
@@ -252,12 +244,12 @@ public class PDELocaleAttribute extends LocaleAttribute {
 		if (type == FIXED_TEXT_TYPE) {
 			setValuesBasedOnDisplayValue((String) value);
 		} else {
-			if (fixedSize > 0) {
+			/*if (fixedSize > 0) {
 				if (((String) value).length() != fixedSize) {
 					throw new IllegalArgumentException(
 							Messages.Invalid_PDE_Value_Size + fixedSize);
 				}
-			}
+			}*/
 
 			if (maximumSize > 0) {
 				if (((String) value).length() > maximumSize) {

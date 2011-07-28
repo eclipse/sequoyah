@@ -19,7 +19,7 @@
             class="org.eclipse.sequoyah.localization.editor.model.StringEditorPart"
             default="true"
             icon="icons/loc_icon.png"
-            id="org.eclipse.sequoyah.localization.tools.extensions.implementation.android.localizationEditor"
+            id="org.eclipse.sequoyah.localization.tools.extensions.implementation.pde.localizationEditor"
             matchingStrategy="org.eclipse.sequoyah.localization.tools.editor.StringEditorMatchingStrategy"
             name="Localization Files Editor">
       </editor>

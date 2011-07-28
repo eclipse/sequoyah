@@ -24,6 +24,8 @@
  * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array key) 
  * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (validate key)
  * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
+ * Lucas Tiago de Castro Jesus (GSoC) - Bug [ ] - Add GetColumnID
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
 
@@ -110,7 +112,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 				SoundLocalizationFileManager.class);
 		typesMap.put(VideoLocalizationFile.class,
 				VideoLocalizationFileManager.class);
-
 	}
 
 	/*
@@ -244,6 +245,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	 * ILocalizationSchema #promptCollumnName()
 	 */
 	@Override
+
 	public ColumnInfo promptCollumnName(final IProject project) {
 		ColumnInfo newColumn = null;
 
@@ -265,7 +267,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 
 		return newColumn;
 	}
-
+	
 	@Override
 	public RowInfo[] promptSingleRowName(final IProject iProject, int quantity) {
 		RowInfo[] rowInfo = new RowInfo[quantity];
@@ -324,8 +326,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 							false);
 			ILocalizationSchema schema = projLocMgr
 					.getProjectLocalizationSchema();
+						
 			LocaleInfo locale = schema.getLocaleInfoFromID(schema
 					.getDefaultID());
+			
 			if (locale != null) {
 				LocalizationFile mainFile = projLocMgr.getLocalizationProject()
 						.getLocalizationFile(locale);
@@ -555,6 +559,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	public String getLocaleToolTip(IPath path) {
 		LocaleInfo locale = getLocaleInfoFromPath(path);
 		List<LocaleAttribute> attributes = locale.getLocaleAttributes();
+		
 		String result = ""; //$NON-NLS-1$
 		for (Iterator<LocaleAttribute> iterator = attributes.iterator(); iterator
 				.hasNext();) {
@@ -574,6 +579,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 			result = DEFAULT_LOCALE_TOOLTIP;
 		}
 		return result;
+	}
+	
+	public String getColumnID(IFile file) {
+		return file.getFullPath().removeLastSegments(1).lastSegment();		
 	}
 
 	/*
@@ -629,6 +638,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	 * ILocalizationSchema #getLocalizationFileExtensions()
 	 */
 	@Override
+	//Extensao do arquivo que é para ser localizado
 	public List<String> getLocalizationFileExtensions() {
 		List<String> localizationFileExtensions = new ArrayList<String>();
 		localizationFileExtensions.add(FILE_EXTENSION);
@@ -642,7 +652,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	 * ILocalizationSchema
 	 * #getLocalizationFiles(org.eclipse.core.resources.IProject)
 	 */
-	@Override
+	@Override	
 	public Map<LocaleInfo, IFile> getLocalizationFiles(IProject project) {
 
 		Map<LocaleInfo, IFile> localizationFiles = new LinkedHashMap<LocaleInfo, IFile>();
@@ -739,6 +749,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	 * ILocalizationSchema #isLocalizationFile(org.eclipse.core.resources.IFile)
 	 */
 	@Override
+
 	public boolean isLocalizationFile(IFile file) {
 
 		boolean result = false;
@@ -884,7 +895,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		folder = path.removeLastSegments(1);
 		String folderName = folder.lastSegment();
 		String id = folderName.replace(LOCALIZATION_FILES_FOLDER, ""); //$NON-NLS-1$
-
 		return getLocaleInfoFromID(id);
 
 	}
@@ -937,6 +947,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 				localeID = localeID + localeAttribute.getFolderValue();
 			}
 		}
+
 		return localeID;
 	}
 
@@ -957,7 +968,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		List<LocaleAttribute> localeAttributes = new ArrayList<LocaleAttribute>();
 
 		for (int i = 1; i < segments.length; i++) {
-
 			if (segments[i].equals("")) { //$NON-NLS-1$
 				// Do nothiing
 			} else if (isCountryCodeSegment(segments[i])
@@ -1242,4 +1252,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		}
 		return result;
 	}
+	
+	
 }

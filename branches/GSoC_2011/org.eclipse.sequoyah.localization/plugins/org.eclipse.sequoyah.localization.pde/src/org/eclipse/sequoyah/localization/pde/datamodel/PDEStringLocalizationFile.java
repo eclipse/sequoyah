@@ -1,16 +1,11 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Mobility, Inc.
+ * 
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
- * Matheus Tait Lima (Eldorado)
- * 
- * Contributors:
- * Paulo Faria (Eldorado) - Add methods for not to lose comments on save
- * Daniel Pastore (Eldorado) - Bug 323036 - Add support to other Localizable Resources
- * Matheus Lima (Eldorado) - Bug 326793 - Updating data model so the Array Strings is now a new class
+ * Lucas Tiago de Castro Jesus (GSoC)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde.datamodel;
 
@@ -19,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.eclipse.sequoyah.localization.pde.manager.LocalizationFileManagerFactory;
 import org.eclipse.sequoyah.localization.pde.manager.StringLocalizationFileManager;
@@ -50,10 +46,10 @@ public class PDEStringLocalizationFile extends StringLocalizationFile {
 	/**
 	 * Saved Properties (it is used not to lose comments on updates)
 	 */
-	private Document savedPDEDocument = null;
+	private Properties savedPDEProperty = null;
 
 	/**
-	 * Kept to remove a single entry to be removed from savedPDEDocument in the
+	 * Kept to remove a single entry to be removed from savedPDEProperty in the
 	 * next save action
 	 */
 	private Map<String, StringNode> singleEntryToRemove = new HashMap<String, StringNode>();
@@ -72,16 +68,16 @@ public class PDEStringLocalizationFile extends StringLocalizationFile {
 	/**
 	 * @return the savedPDEDocument
 	 */
-	public Document getSavedPDEDocument() {
-		return savedPDEDocument;
+	public Properties getSavedPDEProperty() {
+		return savedPDEProperty;
 	}
 
 	/**
 	 * @param savedPDEDocument
 	 *            the savedPDEDocument to set
 	 */
-	public void setSavedPDEDocument(Document savedPDEDocument) {
-		this.savedPDEDocument = savedPDEDocument;
+	public void setSavedPDEProperty(Properties savedPDEProperty) {
+		this.savedPDEProperty = savedPDEProperty;
 	}
 
 	/**
@@ -93,7 +89,7 @@ public class PDEStringLocalizationFile extends StringLocalizationFile {
 			removeNode(stringNode.getKey());
 			this.setDirty(true);
 			// check if it's is an array
-			if (!(stringNode instanceof StringArrayNode)) {
+			if (stringNode instanceof StringNode) {
 				// mark single entry to be removed
 				singleEntryToRemove.put(stringNode.getKey(), stringNode);
 			}
@@ -109,7 +105,7 @@ public class PDEStringLocalizationFile extends StringLocalizationFile {
 	public StringNode addStringNode(StringNode stringNode) {
 		StringNode node = super.addStringNode(stringNode);
 		// check if it's is an array
-		if (!(stringNode instanceof StringArrayNode)) {
+		if (stringNode instanceof StringNode) {
 			if (singleEntryToRemove.containsKey(stringNode.getKey())) {
 				singleEntryToRemove.remove(stringNode.getKey());
 			}

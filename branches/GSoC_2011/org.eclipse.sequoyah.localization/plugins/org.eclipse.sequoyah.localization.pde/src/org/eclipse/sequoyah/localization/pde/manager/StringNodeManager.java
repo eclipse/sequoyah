@@ -1,20 +1,21 @@
 /********************************************************************************
- * Copyright (c) 2010 Motorola Mobility, Inc.
+ * 
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- * Marcel Gorri (Eldorado) - Bug 326793 -  Improvements on the String Arrays handling  
- * Matheus Lima (Eldorado) - Bug [326793] - Fixed array support for the String Localization Editor
- * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (Refactor visitDomXYZ and NodeManagers)
+ * Initial Contributors:
+ * Lucas Tiago de Castro Jesus (GSoC)
+ * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde.manager;
 
 import static org.w3c.dom.Node.COMMENT_NODE;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Map;
+import java.util.Properties;
 
 import org.eclipse.sequoyah.localization.pde.IPDELocalizationSchemaConstants;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
@@ -43,73 +44,65 @@ public class StringNodeManager extends NodeManager implements
 		bean.setStringNodes(((StringLocalizationFile) locFile).getStringNodes());
 	}
 
-	@Override
-	public void updateLocalizationFileContent(Document document,
+	public void updateLocalizationFileContent(Properties property,
 			ArrayList<StringNode> stringNodes) {
 		/*
 		 * Get string nodes
 		 */
-		NodeList stringNodeList = document.getElementsByTagName(PDE_STRING_TAG);
-
+		
 		String key = null;
 		String value = null;
+		
+		for (Enumeration keyProperties = property.propertyNames(); keyProperties.hasMoreElements();) {
+			key = (String) keyProperties.nextElement();
+			value = property.getProperty(key);
+			
+			StringNode stringNodeObj = new StringNode(key, value);
+			stringNodes.add(stringNodeObj);
+	     }
+		/*
 		for (int i = 0; i < stringNodeList.getLength(); i++) {
 			Element stringNode = (Element) stringNodeList.item(i);
 			key = stringNode.getAttributeNode(PDE_STRING_ATTR_NAME)
 					.getNodeValue();
-			String comment = null;
-			if (stringNode.hasChildNodes()) {
-				NodeList childs = stringNode.getChildNodes();
-				for (int j = 0; j < childs.getLength(); j++) {
-					Node childN = childs.item(j);
-					if (childN.getNodeType() == COMMENT_NODE) {
-						comment = childN.getNodeValue();
-					}
-				}
-
-			}
 			// get formatted text from single (non-array) item
 			Node auxNode = stringNode.getFirstChild();
 			StringBuffer valueText = new StringBuffer();
 			getStringByNodes(valueText, auxNode);
 			value = valueText.toString();
-
+			
 			stringNode.toString();
 			StringNode stringNodeObj = new StringNode(key, value);
-			if (comment != null) {
-				NodeComment nodeComment = new NodeComment();
-				nodeComment.setComment(comment);
-				stringNodeObj.setNodeComment(nodeComment);
-			}
+
 			stringNodes.add(stringNodeObj);
-		}
+		}*/
 	}
 
-	@Override
-	public void createFile(Document document, Element resources,
+	public void createFile(Properties property, Element resources,
 			LocalizationFile localizationFile) {
 
 		for (StringNode stringNode : ((StringLocalizationFile) localizationFile)
 				.getStringNodes()) {
-			addSingleEntry(document, resources, stringNode);
+			addSingleEntry(property, resources, stringNode);
 		}
 	}
 
 	/**
 	 * Adds single entry into Properties PDE Localization file
 	 * 
-	 * @param document
+	 * @param property
 	 * @param resources
 	 * @param stringNode
 	 */
-	public void addSingleEntry(Document document, Element resources,
+	public void addSingleEntry(Properties property, Element resources,
 			StringNode stringNode) {
+		property.setProperty(stringNode.getKey(), stringNode.getValue());
 		//Create an element of the type PDE_STRING_TAG = "string"
-		Element string = document.createElement(PDE_STRING_TAG);
+		//Element string = document.createElement(PDE_STRING_TAG);
 		//Set the attribute name = value of the key
-		string.setAttribute(PDE_STRING_ATTR_NAME,stringNode.getKey());
-		string.appendChild(document.createTextNode(stringNode.getValue()));
-		resources.appendChild(string);
+		//string.setAttribute(PDE_STRING_ATTR_NAME,stringNode.getKey());
+		//string.appendChild(document.createTextNode(stringNode.getValue()));
+		//resources.appendChild(string);
 	}
 
 	@Override

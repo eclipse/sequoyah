@@ -13,6 +13,7 @@
  * Marcel Gorri (Eldorado) - Alter signatures to implement automatic translations
  * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array key)
  * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
+ * Lucas Tiago de Castro Jesus (GSoC) - Bug [] -  Add ColumnID
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.classes;
 
@@ -241,6 +242,8 @@ public abstract class ILocalizationSchema {
 	 * @return the tooltip
 	 */
 	public abstract String getLocaleToolTip(IPath path);
+	
+	public abstract String getColumnID(IFile file);
 
 	/**
 	 * Given an ID of, retrieves the correspondent LocaleInfo from the set of

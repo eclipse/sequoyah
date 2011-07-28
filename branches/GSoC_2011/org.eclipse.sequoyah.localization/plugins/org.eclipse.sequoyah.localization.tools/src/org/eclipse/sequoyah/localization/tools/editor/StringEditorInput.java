@@ -23,6 +23,7 @@
  * Carlos Alberto Souto Junior (Eldorado) - Bug [326793] - Added new tooltip support method for StringArrayItem
  * Paulo Faria (Eldorado) - Bug 326793 -  Fix: Array item was moving from one line to the other in non-default languages
  * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Remove column: mark file for deletion based on filename
+ * Lucas Tiago de Castro Jesus (GSoC) - Bug [ ] - Remove ColumnID from here and create one for each schema
  *   
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
@@ -111,7 +112,10 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		}
 
 		public void fileChanged(IFile file) {
-			notifyInputChanged(getColumnID(file));
+			ILocalizationSchema schema = projectLocalizationManager
+			.getProjectLocalizationSchema();
+			
+			notifyInputChanged(schema.getColumnID(file));
 		}
 	};
 
@@ -120,6 +124,9 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		public void editorContentChanged(IEditorInput input, String newContent) {
 			IFileEditorInput fileInput = input instanceof IFileEditorInput ? (IFileEditorInput) input
 					: null;
+			
+			ILocalizationSchema schema = projectLocalizationManager
+			.getProjectLocalizationSchema();
 			if (fileInput != null) {
 				LocalizationFile locFile = projectLocalizationManager
 						.getLocalizationProject().getLocalizationFile(
@@ -127,7 +134,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				try {
 					projectLocalizationManager.getProjectLocalizationSchema()
 							.updateLocalizationFileContent(locFile, newContent);
-					notifyInputChanged(getColumnID(locFile.getFile()));
+					notifyInputChanged(schema.getColumnID(locFile.getFile()));
 				} catch (SequoyahException e) {
 					BasePlugin.logError(
 							"Impossible to update file content for file: " //$NON-NLS-1$
@@ -317,10 +324,6 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		}
 	}
 
-	private String getColumnID(IFile file) {
-		return file.getFullPath().removeLastSegments(1).lastSegment();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -341,7 +344,8 @@ public class StringEditorInput extends AbstractStringEditorInput {
 				.hasNext();) {
 			LocalizationFile localizationFile = iterator.next();
 
-			String columnID = getColumnID(localizationFile.getFile());
+			//String columnID = getColumnID(localizationFile.getFile());
+			String columnID = schema.getColumnID(localizationFile.getFile());
 			String toolTip = schema.getLocaleToolTip(localizationFile.getFile()
 					.getFullPath());
 
@@ -1306,10 +1310,10 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	public boolean canHandle(IFile file) {
 		boolean canHandle = false;
 		ILocalizationSchema localizationSchema = LocalizationManager
-				.getInstance().getLocalizationSchema(file.getProject());
-		if (localizationSchema != null) {
+				.getInstance().getLocalizationSchema(file.getProject());		
+		if (localizationSchema != null) {			
 			canHandle = localizationSchema.isLocalizationFile(file);
-		}
+		}		
 		return canHandle;
 	}
 
@@ -1335,6 +1339,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		LocalizationFile locFile = projectLocalizationManager
 				.getLocalizationProject().getLocalizationFile(
 						editorInput.getFile());
+		
 		return (String) projectLocalizationManager
 				.getProjectLocalizationSchema().getLocalizationFileContent(
 						locFile);

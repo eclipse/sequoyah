@@ -1,14 +1,11 @@
 /********************************************************************************
- * Copyright (c) 2009-2010 Motorola Mobility, Inc.
+ * 
  * All rights reserved. This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Initial Contributors:
- * Matheus Tait Lima (Eldorado)
- * 
- * Contributors:
- * name (company) - description.
+ * Lucas Tiago de Castro Jesus (GSoC)
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde.i18n;
 
@@ -24,7 +21,7 @@ public class Messages extends NLS {
 
 	public static String PDELocalizationSchema_6;
 
-	public static String PDELocalizationSchema_Default_Andr_Localization_File_Tooltip;
+	public static String PDELocalizationSchema_Default_PDE_Localization_File_Tooltip;
 
 	public static String PDELocalizationSchema_NewArrayKeyPrefix;
 
