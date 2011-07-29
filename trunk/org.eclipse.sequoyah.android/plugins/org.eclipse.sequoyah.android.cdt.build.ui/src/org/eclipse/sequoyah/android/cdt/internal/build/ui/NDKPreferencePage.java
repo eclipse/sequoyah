@@ -94,7 +94,7 @@ public class NDKPreferencePage extends PreferencePage implements
 	// search for arm-eabi folder
 	private static FileFilter armFilter = new FileFilter() {
 		public boolean accept(File file) {
-			return file.getName().toLowerCase().indexOf("arm-eabi") > -1; //$NON-NLS-1$
+			return file.getName().toLowerCase().indexOf("arm") > -1; //$NON-NLS-1$
 		}
 	};
 
