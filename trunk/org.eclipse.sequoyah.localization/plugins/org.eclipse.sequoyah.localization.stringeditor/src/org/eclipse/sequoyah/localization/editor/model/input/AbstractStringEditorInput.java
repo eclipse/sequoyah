@@ -12,7 +12,8 @@
  * Vinicius Rigoni Hernandes (Eldorado) - Bug [289885] - Localization Editor doesn't recognize external file changes
  * Marcel Gorri (Eldorado) - Adapting localization framework for automatic translations
  * Marcelo Marzola Bossoni (Eldorado) - Fix erroneous externalized strings/make this editor a multipage one
- * Paulo Faria (Eldorado) - Bug [326793] -  Fixing undo/redo edit for array items 
+ * Paulo Faria (Eldorado) - Bug [326793] -  Fixing undo/redo edit for array items
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [353518] - Return messages from translator errors 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.input;
 
@@ -63,7 +64,7 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	 * @param monitor
 	 * @return true if the translation was succefull
 	 */
-	public abstract boolean translateColumn(String srcColumnID,
+	public abstract IStatus translateColumn(String srcColumnID,
 			TranslationInfo newColumnInfo, IProgressMonitor monitor);
 
 	/**
@@ -74,7 +75,7 @@ public abstract class AbstractStringEditorInput implements IEditorInput {
 	 * @param monitor
 	 * @return true if the translation was succefull
 	 */
-	public abstract boolean translateCells(String srcColumnID,
+	public abstract IStatus translateCells(String srcColumnID,
 			TranslationInfo[] newColumnInfo, IProgressMonitor monitor);
 
 	/**

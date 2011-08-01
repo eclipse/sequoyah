@@ -9,6 +9,7 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [352375] - Let translators contribute with translate dialog
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [353518] - Return messages from translator errors
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.i18n;
 
@@ -27,6 +28,10 @@ public class Messages extends NLS {
 	public static String StringEditorInput_ErrorInitializingEditor;
 
 	public static String StringEditorInput_ErrorManagerNotInitialized;
+
+	public static String StringEditorInput_ErrorTranslatingCells;
+
+	public static String StringEditorInput_ErrorTranslatingFromFile;
 
 	public static String LocaleAttribute_Exception_AllowedTypesNeeded;
 
