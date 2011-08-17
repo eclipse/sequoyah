@@ -13,6 +13,7 @@ package org.eclipse.sequoyah.localization.pde;
 import java.awt.Dimension;
 import java.util.HashMap;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.sequoyah.localization.pde.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 
@@ -161,6 +162,7 @@ public class PDELocaleAttribute extends LocaleAttribute {
 		isSet = true;
 	}
 	
+
 	/**
 	 * Sets the type and values of this attribute according to the object
 	 * received.

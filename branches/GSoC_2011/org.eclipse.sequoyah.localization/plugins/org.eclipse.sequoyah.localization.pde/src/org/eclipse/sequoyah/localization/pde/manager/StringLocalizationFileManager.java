@@ -10,40 +10,22 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde.manager;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -52,33 +34,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
-import org.eclipse.sequoyah.device.common.utilities.FileUtil;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahExceptionStatus;
-import org.eclipse.sequoyah.localization.pde.manager.NodeManagerProvider;
-import org.eclipse.sequoyah.localization.pde.manager.StringNodeManager;
-import org.eclipse.sequoyah.localization.pde.PDELocalizationPlugin;
 import org.eclipse.sequoyah.localization.pde.IPDELocalizationSchemaConstants;
+import org.eclipse.sequoyah.localization.pde.PDELocalizationPlugin;
 import org.eclipse.sequoyah.localization.pde.datamodel.PDEStringLocalizationFile;
 import org.eclipse.sequoyah.localization.pde.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileBean;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFileFactory;
 import org.eclipse.sequoyah.localization.tools.datamodel.StringLocalizationFile;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayItemNode;
-import org.eclipse.sequoyah.localization.tools.datamodel.node.StringArrayNode;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.StringNode;
 import org.w3c.dom.Attr;
-import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.bootstrap.DOMImplementationRegistry;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSInput;
-import org.w3c.dom.ls.LSParser;
-import org.w3c.dom.ls.LSParserFilter;
 
 /**
  * This class deals specifically with localized String / text content.
@@ -124,14 +95,16 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	public LocalizationFile loadFile(LocalizationFile locFile)
 			throws SequoyahException {
 		Properties property = new Properties();
+		
 		if (!locFile.getFile().exists()) {
-	
+			
 			LocalizationFileBean bean = new LocalizationFileBean(locFile);
 			bean.setType(StringLocalizationFile.class.getName());
 			for (NodeManager nodeManager : NodeManagerProvider.getInstance()
 					.getNodeManagers()) {
 				// according to NodeManagerProvider, the first element is a
 				// StringNodeManager and the second is an ArrayStringNodeManager
+				
 				nodeManager.loadFile(bean, locFile);
 			}
 
@@ -144,8 +117,10 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 						"Could not create StringLocalizationFile: ", e); //$NON-NLS-1$
 			}
 		}
+	
 		try {
-			property.load(new FileInputStream(locFile.getFile().getLocation().toString()));					
+			property.load(new FileInputStream(locFile.getFile().getLocation().toString()));
+			updateLocalizationFileContent(locFile, property);
 		} catch (Exception e) {			
 			SequoyahExceptionStatus status = new SequoyahExceptionStatus(
 					IStatus.ERROR,
@@ -156,6 +131,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 							+ ". " + e.getMessage(), e); //$NON-NLS-1$
 			throw new SequoyahException(status);
 		}
+		
 		updateLocalizationFileContent(locFile, property);
 		
 		return locFile;
@@ -167,6 +143,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	
 	private void updateLocalizationFileContent(
 			LocalizationFile localizationFile, Properties property) {
+		
 		
 		ArrayList<StringNode> stringNodes = new ArrayList<StringNode>();
 		for (NodeManager nodeManager : NodeManagerProvider.getInstance()
@@ -206,6 +183,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			if (!localizationFile.getFile().exists()) {
 				
 				localizationFile.getFile().getLocation();
+				
 				IPath fileToSave = null;
 				if (localizationFile.getLocalizationProject() != null) {
 					fileToSave = new Path(localizationFile
@@ -229,6 +207,15 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 			}
 			
 			Properties property = new Properties();
+			
+			Element resources = null;
+
+			for (NodeManager nodeManager : NodeManagerProvider.getInstance()
+					.getNodeManagers()) {
+				// according to NodeManagerProvider, the first element is a
+				// StringNodeManager and the second is an ArrayStringNodeManager
+				nodeManager.createFile(property, resources, localizationFile);
+			}
 			
 			savePDEProperty(localizationFile.getFile().getLocation().toFile(),
 					property);
@@ -294,6 +281,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 * )
 	 */
 	@Override
+	//TODO Quem chama esse updateFile deve ser corrigido para passar o path certo
 	public void updateFile(LocalizationFile locFile) throws SequoyahException {
 		PDEStringLocalizationFile pdeLocalizationFile = (PDEStringLocalizationFile) locFile;
 		
@@ -320,12 +308,14 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	 * @param document
 	 * @throws SequoyahException
 	 */
+	
 	private void updateFile(LocalizationFile locFile, Properties property)
 			throws SequoyahException {
-
+		
 		PDEStringLocalizationFile PDELocalizationFile = (PDEStringLocalizationFile) locFile;
 		if (property == null) {
 			// file not created yet, do it
+			
 			createFile(PDELocalizationFile);
 			property = PDELocalizationFile.getSavedPDEProperty();
 		} else {
@@ -461,6 +451,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	public void visitToUpdateDOMChildren(Properties property, Node visitingNode,
 			String attrName,
 			Map<String, StringNode> singleStringsToUpdateOrAdd) {
+		
 		for (Enumeration keyProperties = property.propertyNames(); keyProperties.hasMoreElements();) {
 			String key = (String) keyProperties.nextElement();
 			StringNode foundStringNode = singleStringsToUpdateOrAdd

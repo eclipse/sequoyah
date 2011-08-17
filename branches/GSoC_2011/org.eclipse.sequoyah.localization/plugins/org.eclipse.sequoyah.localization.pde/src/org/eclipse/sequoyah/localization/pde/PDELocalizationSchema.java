@@ -20,23 +20,29 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.pde.PDELocaleAttribute;
@@ -61,6 +67,7 @@ import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.sequoyah.localization.tools.managers.ProjectLocalizationManager;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -82,7 +89,56 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 		typesMap.put(PDEStringLocalizationFile.class,
 				StringLocalizationFileManager.class);
 	}
+	
+	private IContainer localizationFolder;
+	
+	public IContainer getLocalizationFolder() {
+		return this.localizationFolder;
+	}
+	
+	public void setLocalizationFolder(IContainer folder){
+		this.localizationFolder = folder;
+	}
+	
+	private String localizationFileName = LOCALIZATION_FILE_NAME;
+	//private String localizationFileName = LOCALIZATION_FILE_NAME;
+	
+	public String getLocalizationFileName() {
+		return this.localizationFileName;
+	}
+	
+	public void setLocalizationFileName(){
+		
+		IWorkbenchWindow window =
+		    PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		ISelection selection = window.getSelectionService().getSelection("org.eclipse.jdt.ui.PackageExplorer");
 
+		if (selection instanceof IStructuredSelection) {
+	        IStructuredSelection ssel = (IStructuredSelection) selection;
+	        Object obj = ssel.getFirstElement();
+	        IFile file = (IFile) Platform.getAdapterManager().getAdapter(obj,
+	                IFile.class);
+	        if (file == null) {
+	            if (obj instanceof IAdaptable) {
+	                file = (IFile) ((IAdaptable) obj).getAdapter(IFile.class);
+	            }
+	        }
+	        if (file != null) {	
+	        	String fileFullName = file.getName();
+	        	
+	        	setLocalizationFolder(file.getParent());   	
+	        	
+	        	int n = fileFullName.length();
+	        	int pos = n;
+	        	for(int i = 0 ; i < n && pos == n; i++)
+	        		if(fileFullName.charAt(i) == '_' || fileFullName.charAt(i) == '.')
+	        			pos = i;
+	        	
+	        	System.out.println("String_loc_File: " + file.getProjectRelativePath() + " " + fileFullName.substring(0,pos));
+	        	this.localizationFileName = fileFullName.substring(0,pos);
+	        }
+	    }
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -140,8 +196,8 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	 */
 	@Override
 	public String getIDforLanguage(String langID) {
-		String columnID = LOCALIZATION_FILE_NAME;
-
+		//String columnID = LOCALIZATION_FILE_NAME;
+		String columnID = localizationFileName;
 		if (langID.contains("_")) { //$NON-NLS-1$
 			String[] langParts = langID.split("_"); //$NON-NLS-1$
 			columnID += "_" + langParts[0] + "_" + langParts[1]; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -345,12 +401,11 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 				});
 
 		if (dialog.open() == IDialogConstants.OK_ID) {
-
 			newColumn = new TranslationInfo(dialog.getValue(),
 					dialog.getValue(), null, true, dialog.getFromLanguage(),
 					dialog.getToLanguage(), null, dialog.getTranslator());
 		}
-
+	
 		return newColumn;
 	}
 
@@ -453,12 +508,10 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	 */
 	private String isValid2(String value, IProject project) {
 
-		String result = null;
-
-		if (value.startsWith(LOCALIZATION_FILE_NAME)) {
-
-			PDELocalizationSchema schema = new PDELocalizationSchema();
-			String id = value.replace(LOCALIZATION_FILE_NAME, ""); //$NON-NLS-1$
+		String result = null;		
+		if (value.startsWith(localizationFileName)){
+			PDELocalizationSchema schema = new PDELocalizationSchema();	
+			String id = value.replace(localizationFileName, "");
 			LocaleInfo info = schema.getLocaleInfoFromID(id);
 			ProjectLocalizationManager manager = null;
 			try {
@@ -470,7 +523,8 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 
 			if ((info.getLocaleAttributes().size() > 0)
 					|| (value
-							.equalsIgnoreCase(PDELocalizationSchema.LOCALIZATION_FILES_FOLDER))) {
+							//.equalsIgnoreCase(PDELocalizationSchema.LOCALIZATION_FILES_FOLDER))) {
+							.equalsIgnoreCase(localizationFileName))) {
 				LocalizationFile file = manager.getLocalizationProject()
 						.getLocalizationFile(info);
 				if ((file != null) && !file.isToBeDeleted()) {
@@ -527,6 +581,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	 */
 	@Override
 	public String getLocaleToolTip(IPath path) {
+		
 		LocaleInfo locale = getLocaleInfoFromPath(path);
 		
 		List<LocaleAttribute> attributes = locale.getLocaleAttributes();
@@ -552,8 +607,9 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 		return result;
 	}
 
-	public String getColumnID(IFile file) {
+	public String getColumnID(IFile file) {		
 		return file.getFullPath().lastSegment().replace(FILE_EXTENSION,"");
+		
 	}
 	/*
 	 * (non-Javadoc)
@@ -586,6 +642,39 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 		localizationFileExtensions.add(FILE_EXTENSION);
 		return localizationFileExtensions;
 	}
+	
+	public boolean isi18nFolder(IResource folder) throws CoreException{
+		System.out.println("Estamos testando quem: " + folder.getName());
+		//if ((folder != null)
+			//	&& (folder instanceof IFolder)){
+			IResource[] files = ((IFolder) folder).members();
+			for (IResource file : files) {
+				System.out.println(" >Que arquivo: " + file.getName());
+				if ((file instanceof IFile)
+						&& (isLocalizationFile((IFile) file)) && file.getName().startsWith(localizationFileName)) {
+					return true;			
+				}
+			}
+		//}
+		return false;
+		/*return (folder != null) &&
+			(folder instanceof IFolder) &&
+			folder.getName().endsWith(LOCALIZATION_FILES_FOLDER);*/
+	}
+	
+	
+	public IResource Findi18nFolder(IResource folder) throws CoreException{
+		IResource[] nextFolders = ((IFolder) folder).members();
+		
+		IResource localizationFolder = null;
+		for(IResource nextFolder: nextFolders){				
+			if(nextFolder!= null && (nextFolder instanceof IFolder) && localizationFolder == null){
+				if(isi18nFolder(nextFolder)) localizationFolder = nextFolder;
+				else localizationFolder = Findi18nFolder(nextFolder);
+			}				
+		}	
+		return localizationFolder;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -598,36 +687,59 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	public Map<LocaleInfo, IFile> getLocalizationFiles(IProject project) {
 
 		Map<LocaleInfo, IFile> localizationFiles = new LinkedHashMap<LocaleInfo, IFile>();
-		boolean hasDefault = false;
 		
+		boolean hasDefault = false;
 		try {
-			IResource localizationFolder = project.findMember(LOCALIZATION_FILES_FOLDER);
-			if ((localizationFolder != null)
-					&& (localizationFolder instanceof IFolder)) {
-				IResource[] files = ((IFolder) localizationFolder).members();
-				for (IResource file : files) {
-					if ((file instanceof IFile)
-							&& (isLocalizationFile((IFile) file))) {
+			//IResource localizationFolder = project.findMember(LOCALIZATION_FILES_FOLDER);
+			//ArrayList<IResource> localizationFolders = new ArrayList<IResource>();
+			/*IResource localizationFolder = null;
+			//System.out.println("localizationFolder raiz: " +  project.getFolder(project.getFullPath()).getName());
+			//BEGIN: TEST
+			IResource[] Folders = project.members();
+			for(IResource folder: Folders){				
+				if((folder instanceof IFolder) && localizationFolder == null && !folder.getName().toString().equals("bin")){
+					System.out.println("localizationFolder.getName(): " + folder.getName());
+					if(isi18nFolder(folder)) localizationFolder = folder;
+					else localizationFolder = Findi18nFolder(folder);
+				}				
+			}			
+			
+			if(localizationFolder == null && project != null && isi18nFolder((IFolder) project.getFolder(project.getFullPath()))){				
+				localizationFolder = (IFolder) project.getFolder(project.getProjectRelativePath());
+			}*/
+			
+			//END: TEST
+		//	if ((localizationFolder != null)
+			//			&& (localizationFolder instanceof IFolder)) {
+			IContainer localizationFolder = getLocalizationFolder();
+			if (localizationFolder != null){
+					System.out.println(">> localizationFolder: " + localizationFolder.getFullPath());
+			//		setLocalizationFolder(localizationFolder);
+					
+					IResource[] files = ((IContainer) localizationFolder).members();
+					for (IResource file : files) {
+						if ((file instanceof IFile)
+								&& (isLocalizationFile((IFile) file)) && file.getName().startsWith(localizationFileName)) {
 									// TODO WARNING 2 put LocalizationFiles in
 									// the map, not an IFile
 						
-						localizationFiles.put(
-								getLocaleInfoFromPath(file
-								.getProjectRelativePath()),
-								(IFile) file);
+							localizationFiles.put(
+									getLocaleInfoFromPath(file
+											.getProjectRelativePath()),
+											(IFile) file);
 						
-						if (localizationFolder.getName().equals(
-							LOCALIZATION_FILES_FOLDER) && ((IFolder) localizationFolder).getFile(LOCALIZATION_FILE_NAME+FILE_EXTENSION).exists()) {
-							hasDefault = true;
+							if (file.getName().toString().equals(localizationFileName+FILE_EXTENSION)){
+								hasDefault = true;
+							}
 						}
 					}
 				}
-			}
+			
 			
 			if(!hasDefault){		
-				
-				final IFolder i18nFolder = project.
-					getFolder(LOCALIZATION_FILES_FOLDER);
+				/*final IFolder i18nFolder = project.
+					getFolder(LOCALIZATION_FILES_FOLDER);*/
+				final IFolder i18nFolder = (IFolder) localizationFolder;
 				try {						
 						if (!i18nFolder.exists()) {
 							// try to create the folder
@@ -654,19 +766,19 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 						// create the default file
 					
 						if (i18nFolder.exists()) {
-							IFile valuesFile = ((IFolder) i18nFolder)
-									.getFile(LOCALIZATION_FILE_NAME+FILE_EXTENSION);
+							IFile messagesFile = ((IFolder) i18nFolder)
+									.getFile(localizationFileName+FILE_EXTENSION);
 					
 							localizationFiles.put(
-									getLocaleInfoFromPath(valuesFile
+									getLocaleInfoFromPath(messagesFile
 											.getProjectRelativePath()),
-									valuesFile);
+									messagesFile);
 						}
 						
 					} catch (Exception e) {
 						// do nothing, just exit
 					}
-				}			
+				}				
 		} catch (CoreException e) {
 			//
 		}
@@ -701,9 +813,10 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	 * ILocalizationSchema #loadAllFiles()
 	 */
 	@Override
-	public Map<LocaleInfo, LocalizationFile> loadAllFiles(IProject project)
-			throws SequoyahException {
-
+	public Map<LocaleInfo, LocalizationFile> loadAllFiles(IProject project) throws SequoyahException {
+		
+		setLocalizationFileName();
+				
 		Map<LocaleInfo, LocalizationFile> filesMap = new LinkedHashMap<LocaleInfo, LocalizationFile>();
 		Map<LocaleInfo, IFile> localizationFiles = getLocalizationFiles(project);
 		
@@ -712,7 +825,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 			if (fileName.endsWith(FILE_EXTENSION)) {
 				// Selecting the StringLocalizationFileManager for resources of
 				// type string file
-				
+			
 				filesMap.put(
 						entry.getKey(),
 						loadFile(StringLocalizationFileManager.class.getName(),
@@ -731,7 +844,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	@Override
 	public LocalizationFile loadFile(String type, IFile file)
 			throws SequoyahException {
-
+		
 		ILocalizationFileManager manager = LocalizationFileManagerFactory
 				.getInstance().createLocalizationFileManager(type);
 
@@ -760,7 +873,6 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	@Override
 	public void updateFile(LocalizationFile localizationFile)
 			throws SequoyahException {
-
 		Class aClass = typesMap.get(localizationFile.getClass());
 		ILocalizationFileManager manager = LocalizationFileManagerFactory
 				.getInstance().createLocalizationFileManager(aClass.getName());
@@ -820,11 +932,11 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	 * @return LanguageInfo object with the attributes of this language
 	 */
 	private LocaleInfo getLocaleInfoFromPath(IPath path) {
-
+		
 		IPath file = path;
 		//folder = path.removeLastSegments(1);
 		String fileName = file.lastSegment();
-		String id = fileName.replace(LOCALIZATION_FILE_NAME, ""); //$NON-NLS-1$
+		String id = fileName.replace(localizationFileName, ""); //$NON-NLS-1$
 		id = id.replace(FILE_EXTENSION, ""); //$NON-NLS-1$
 		return getLocaleInfoFromID(id);
 
@@ -838,17 +950,28 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	public String getPathFromLocaleInfo(LocaleInfo lang) {
 		
 		String result;
-		if (lang.getLocaleAttributes().size() > 0) {
+		IResource localizationFolder = getLocalizationFolder();
+				
+		if(localizationFolder.getProjectRelativePath().isEmpty()){
+			System.out.println("O arquivo esta na raiz");
+			//result = localizationFolder.getFullPath() + "/" + localizationFileName + QUALIFIER_SEP
+			//+ getLocaleID(lang) + FILE_EXTENSION;
+			result = localizationFileName + QUALIFIER_SEP
+			+ getLocaleID(lang) + FILE_EXTENSION;
+		}
+		else if(lang.getLocaleAttributes().size() > 0) {
 			// There are qualifiers to concatenate in the folder name
-			result = LOCALIZATION_FILES_FOLDER + File.separator
-					+ LOCALIZATION_FILE_NAME + QUALIFIER_SEP
+			result = localizationFolder.getProjectRelativePath() + "/"
+					+ localizationFileName + QUALIFIER_SEP
 					+ getLocaleID(lang) + FILE_EXTENSION;
 		} else {
 			// It is a default location file (no language qualifier)
-			result = LOCALIZATION_FILES_FOLDER + File.separator
-					+ LOCALIZATION_FILE_NAME + FILE_EXTENSION;
+			result = localizationFolder.getProjectRelativePath() + "/"
+					+ localizationFileName + FILE_EXTENSION;
 
 		}
+		
+		System.out.println("result: " + result);
 		return result;
 
 	}
@@ -856,39 +979,41 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	public LocaleInfo getLocaleInfoFromID(String ID) {
 
 		LocaleInfo result = new LocaleInfo();
+		System.out.println("getLocaleInfoFromID: " + ID);
+		if(ID != null){
+			String[] segments = ID.split(QUALIFIER_SEP);
+			int lastQualifier = -1;
 
-		String[] segments = ID.split(QUALIFIER_SEP);
-		int lastQualifier = -1;
+			List<LocaleAttribute> localeAttributes = new ArrayList<LocaleAttribute>();
+		//	Handle with qualifiers like en_US, pt_BR...
+			if(segments.length == 3){
+				segments[1] = segments[1] + QUALIFIER_SEP + segments[2];
+				segments[2] = "";
+			}
+			for (int i = 1; i < segments.length; i++) {
+				if (segments[i].equals("")) { //$NON-NLS-1$
+				// 	Do nothing
+				} else if (isCountryCodeSegment(segments[i])
+						&& (lastQualifier < PDELocaleAttributes.COUNTRY_CODE
+								.ordinal())) {
+					lastQualifier = PDELocaleAttributes.COUNTRY_CODE.ordinal();
+					localeAttributes.add(new PDELocaleAttribute(segments[i],
+							PDELocaleAttributes.COUNTRY_CODE.ordinal()));
+					
+				} else if (isLanguageSegment(segments[i])
+						&& (lastQualifier < PDELocaleAttributes.LANGUAGE
+								.ordinal())) {
+					lastQualifier = PDELocaleAttributes.LANGUAGE.ordinal();
+					localeAttributes.add(new PDELocaleAttribute(segments[i],
+							PDELocaleAttributes.LANGUAGE.ordinal()));
+				} else {
+					localeAttributes = new ArrayList<LocaleAttribute>();
+				}
 
-		List<LocaleAttribute> localeAttributes = new ArrayList<LocaleAttribute>();
-		//Handle with qualifiers like en_US, pt_BR...
-		if(segments.length == 3){
-			segments[1] = segments[1] + QUALIFIER_SEP + segments[2];
-			segments[2] = "";
-		}
-		for (int i = 1; i < segments.length; i++) {
-			if (segments[i].equals("")) { //$NON-NLS-1$
-				// Do nothing
-			} else if (isCountryCodeSegment(segments[i])
-					&& (lastQualifier < PDELocaleAttributes.COUNTRY_CODE
-							.ordinal())) {
-				lastQualifier = PDELocaleAttributes.COUNTRY_CODE.ordinal();
-				localeAttributes.add(new PDELocaleAttribute(segments[i],
-						PDELocaleAttributes.COUNTRY_CODE.ordinal()));
-				
-			} else if (isLanguageSegment(segments[i])
-					&& (lastQualifier < PDELocaleAttributes.LANGUAGE
-							.ordinal())) {
-				lastQualifier = PDELocaleAttributes.LANGUAGE.ordinal();
-				localeAttributes.add(new PDELocaleAttribute(segments[i],
-						PDELocaleAttributes.LANGUAGE.ordinal()));
-			} else {
-				localeAttributes = new ArrayList<LocaleAttribute>();
 			}
 
+			result.setLocaleAttributes(localeAttributes);
 		}
-
-		result.setLocaleAttributes(localeAttributes);
 		return result;
 	}
 	
@@ -927,6 +1052,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 				localeID = localeID + localeAttribute.getFolderValue();
 			}
 		}
+		System.out.println("localeID: " + localeID);
 		return localeID;
 	}
 
@@ -947,7 +1073,10 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 
 	@Override
 	public String getDefaultID() {
-		return LOCALIZATION_FILES_FOLDER;
+		//return LOCALIZATION_FILES_FOLDER;
+		//System.out.println("localizationFolder.getFullPath().lastSegment() " + localizationFolder.getProjectRelativePath().lastSegment());
+		if(localizationFolder.getProjectRelativePath().isEmpty()) return "";
+		return localizationFolder.getProjectRelativePath().lastSegment();
 	}
 	
 	
