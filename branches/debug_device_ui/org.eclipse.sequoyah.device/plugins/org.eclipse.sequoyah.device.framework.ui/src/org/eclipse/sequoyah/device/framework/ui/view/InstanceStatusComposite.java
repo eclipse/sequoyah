@@ -79,6 +79,8 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
+import org.eclipse.sequoyah.device.common.utilities.logger.ILogger;
+import org.eclipse.sequoyah.device.common.utilities.logger.Logger;
 import org.eclipse.sequoyah.device.framework.DeviceUtils;
 import org.eclipse.sequoyah.device.framework.events.IInstanceListener;
 import org.eclipse.sequoyah.device.framework.events.InstanceAdapter;
@@ -152,6 +154,8 @@ public class InstanceStatusComposite extends Composite
 	private static final String ERROR_DIALOG_TITLE = Messages.InstanceStatusComposite_8; 
 	private static final String ERROR_NO_WIZARD_MESSAGE = Messages.InstanceStatusComposite_9; 
 	private static final int DEFAULT_MENU_IMAGE_SIZE = 16;
+	
+	private static ILogger logger = Logger.log(InstanceStatusComposite.class);
 
 
 	/**
@@ -317,10 +321,13 @@ public class InstanceStatusComposite extends Composite
 		ArrayList<Transfer> types = new ArrayList<Transfer>();
 		types.add(FileTransfer.getInstance());
 		types.add(TextTransfer.getInstance());
+		
+		logger.info("InstanceStatusComposite is adding drop support");
 		viewer.addDropSupport(DND.DROP_COPY | DND.DROP_DEFAULT | DND.DROP_MOVE
 				| DND.DROP_LINK | DND.DROP_TARGET_MOVE,
 				types.toArray(new Transfer[0]),
 				new InstanceStatusCompositeDropAdapter());
+		logger.info("Done");
 
         createActions();   
 		fillMenuContext();

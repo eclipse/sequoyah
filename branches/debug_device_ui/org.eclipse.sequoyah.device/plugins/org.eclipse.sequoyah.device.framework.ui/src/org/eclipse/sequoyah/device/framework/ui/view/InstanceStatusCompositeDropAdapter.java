@@ -12,6 +12,8 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.ui.view;
 
+import org.eclipse.sequoyah.device.common.utilities.logger.ILogger;
+import org.eclipse.sequoyah.device.common.utilities.logger.Logger;
 import org.eclipse.sequoyah.device.framework.factory.DeviceTypeRegistry;
 import org.eclipse.sequoyah.device.framework.model.IDeviceType;
 import org.eclipse.sequoyah.device.framework.model.IDeviceTypeDropSupport;
@@ -37,6 +39,8 @@ public class InstanceStatusCompositeDropAdapter implements DropTargetListener {
 	private IInstance currentInstance = null;
 
 	private IDeviceTypeDropSupport currentDropSupport = null;
+	
+	private static ILogger logger = Logger.log(InstanceStatusCompositeDropAdapter.class);
 
 	/*
 	 * (non-Javadoc)
@@ -77,16 +81,21 @@ public class InstanceStatusCompositeDropAdapter implements DropTargetListener {
 	 * DropTargetEvent)
 	 */
 	public void dragOver(DropTargetEvent event) {
+	    logger.info("Entering dragOver");
 		event.detail = DND.DROP_NONE;
 		IInstance instance = getInstance(event);
 		currentInstance = instance;
 		if (instance != null) {
+		    logger.info("Dragging over instance: " + instance.getName());
 			IDeviceTypeDropSupport dropSupport = getDropSupport(instance);
 			currentDropSupport = dropSupport;
-			if (dropSupport != null
-					&& dropSupport.canDrop(instance, event.currentDataType,
-							event)) {
-				event.detail = eventDetails;
+            if (dropSupport != null) {
+                boolean canDrop = dropSupport.canDrop(instance, event.currentDataType,
+                        event);
+                logger.info("Got dropSupport! canDrop = " + canDrop);
+                if(canDrop) {
+                    event.detail = eventDetails;
+                }
 			}
 		}
 
