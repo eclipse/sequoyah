@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-us" xml:lang="en-us">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="DC.Type" content="task"/>
+<meta name="DC.Title" content="Configuring your development environment for native development"/>
+<meta name="abstract" content="After installing the Android NDK and a few other needed components, Eclipse can be configured to let you develop Android applications that include native (C/C++) code."/>
+<meta name="description" content="After installing the Android NDK and a few other needed components, Eclipse can be configured to let you develop Android applications that include native (C/C++) code."/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_native-apps-about.html"/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_project-adding-native.html"/>
+<meta name="copyright" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
+<meta name="DC.Rights.Owner" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
+<meta name="DC.Format" content="XHTML"/>
+<meta name="DC.Identifier" content="t_config-for-native"/>
+<meta name="DC.Language" content="en-us"/>
+<link rel="stylesheet" type="text/css" href="../commonltr.css"/>
+<title>Configuring your development environment for native development</title>
+</head>
+<body id="t_config-for-native"><a name="t_config-for-native"><!-- --></a>
+<a class="hdr-none"/>
+
+  <h1 class="topictitle1">Configuring your development environment for native development</h1>
+
+  
+  
+  <div><p>After installing the Android NDK and a few other needed components, Eclipse can be configured to let you
+    develop Android applications that include native (C/C++) code.</p>
+
+    <div class="p">Native support requires that the following be installed:<ul>
+        <li>The Eclipse CDT plugin (version 7 or later)</li>
+
+        <li>The Sequoyah Android feature</li>
+
+        <li>Android NDK</li>
+
+        <li>Cygwin (only on systems running Microsoft Windows)</li>
+
+        <li>The Java JDK (the JRE is not sufficient; you need the full JDK)</li>
+
+      </ul>
+<p>Your development computer's system path (not the Eclipse path) should include the directory containing the
+        Android NDK, and, on Microsoft Windows, the directory containing the Cygwin binaries.</p>
+<p>For instructions on
+        locating and installing the above components, and on setting your computer's system path, see the <em>MOTODEV
+          Studio for Android Installation Guide</em>.</p>
+</div>
+
+    <div class="section"/>
+
+    <ol>
+      <li>
+        <span>Specify the location of the NDK from within your development environment: navigate to the <span class="menucascade"><span class="uicontrol">Android</span> &gt; <span class="uicontrol">Android NDK</span></span> preferences page and
+          specify the path to the directory containing the NDK using the <span class="uicontrol">NDK Location</span>
+        field.</span>
+      </li>
+
+    </ol>
+
+    <div class="section">Now that you have configured your development environment to enable native development, enable it in those
+      Android projects that have (or will have) native code.</div>
+
+  </div>
+
+<div>
+<div class="familylinks">
+<div class="parentlink"><strong>Parent topic:</strong> <a href="../topics/t_native-apps-about.html" title="From within Eclipse you can develop Android applications that include native code. Once you have installed the necessary components and properly configured your development environment, for Android projects that have been enabled for native support your C/C++ code is compiled into a shared library that is included when the Java portions of your project are built. The Sequoyah Android feature provides other native application support: for instance, you can generate C++ classes from native method declarations in your Java source files.">Native Android Application Development</a></div>
+</div>
+<div class="relinfo"><strong>Related tasks</strong><br/>
+<div><a href="../topics/t_project-adding-native.html" title="Android projects that have native support build the native components along with those rest of the project. At build time the Sequoyah Android feature compiles the native (C/C++) code into a shared library and then includes that shared library in the project APK.">Adding native support to an Android project</a></div>
+</div>
+</div>
+
+</body>
+</html>
