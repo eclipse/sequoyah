@@ -23,7 +23,7 @@
  * Carlos Alberto Souto Junior (Eldorado) - Bug [326793] - Added new tooltip support method for StringArrayItem
  * Paulo Faria (Eldorado) - Bug 326793 -  Fix: Array item was moving from one line to the other in non-default languages
  * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Remove column: mark file for deletion based on filename
- * Lucas Tiago de Castro Jesus (GSoC) - Bug [ ] - Remove ColumnID from here and create one for each schema
+ * Lucas Tiago de Castro Jesus (GSoC) - Bug [353164] - Remove ColumnID from here and create one for each schema
  *   
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;

@@ -6,7 +6,11 @@
  * 
  * Initial Contributors:
  * Lucas Tiago de Castro Jesus (GSoC)
+ * 
+ * Contributors:
+ * Name (Company) - [Bug #] - Description
  ********************************************************************************/
+
 package org.eclipse.sequoyah.localization.pde.i18n;
 
 import org.eclipse.osgi.util.NLS;

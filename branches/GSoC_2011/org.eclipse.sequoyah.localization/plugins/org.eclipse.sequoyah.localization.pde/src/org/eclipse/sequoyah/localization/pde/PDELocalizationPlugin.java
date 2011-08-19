@@ -8,8 +8,9 @@
  * Lucas Tiago de Castro Jesus (GSoC)
  * 
  * Contributors:
- * name (company) - description.
+ * Name (Company) - [Bug #] - Description
  ********************************************************************************/
+
 package org.eclipse.sequoyah.localization.pde;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;

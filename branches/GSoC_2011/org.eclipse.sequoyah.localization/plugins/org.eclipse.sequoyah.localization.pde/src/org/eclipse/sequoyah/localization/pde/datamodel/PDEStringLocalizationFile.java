@@ -6,7 +6,11 @@
  * 
  * Initial Contributors:
  * Lucas Tiago de Castro Jesus (GSoC)
+ * 
+ * Contributors:
+ * Name (Company) - [Bug #] - Description
  ********************************************************************************/
+
 package org.eclipse.sequoyah.localization.pde.datamodel;
 
 import java.util.ArrayList;

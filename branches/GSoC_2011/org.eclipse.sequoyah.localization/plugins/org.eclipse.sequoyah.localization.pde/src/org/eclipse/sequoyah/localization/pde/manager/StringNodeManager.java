@@ -7,7 +7,10 @@
  * Initial Contributors:
  * Lucas Tiago de Castro Jesus (GSoC)
  * 
+ * Contributors:
+ * Name (Company) - [Bug #] - Description
  ********************************************************************************/
+
 package org.eclipse.sequoyah.localization.pde.manager;
 
 import static org.w3c.dom.Node.COMMENT_NODE;
@@ -96,13 +99,7 @@ public class StringNodeManager extends NodeManager implements
 	 */
 	public void addSingleEntry(Properties property, Element resources,
 			StringNode stringNode) {
-		property.setProperty(stringNode.getKey(), stringNode.getValue());
-		//Create an element of the type PDE_STRING_TAG = "string"
-		//Element string = document.createElement(PDE_STRING_TAG);
-		//Set the attribute name = value of the key
-		//string.setAttribute(PDE_STRING_ATTR_NAME,stringNode.getKey());
-		//string.appendChild(document.createTextNode(stringNode.getValue()));
-		//resources.appendChild(string);
+		property.setProperty(stringNode.getKey(), stringNode.getValue());		
 	}
 
 	@Override

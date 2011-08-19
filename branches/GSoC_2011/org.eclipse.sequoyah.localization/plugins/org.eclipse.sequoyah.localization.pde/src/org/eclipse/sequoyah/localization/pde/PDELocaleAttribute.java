@@ -7,6 +7,8 @@
  * Initial Contributors:
  * Lucas Tiago de Castro Jesus (GSoC)
  * 
+ * Contributors:
+ * Name (Company) - [Bug #] - Description
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde;
 
@@ -161,7 +163,7 @@ public class PDELocaleAttribute extends LocaleAttribute {
 	public void setAttribute() {
 		isSet = true;
 	}
-	
+
 
 	/**
 	 * Sets the type and values of this attribute according to the object

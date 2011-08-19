@@ -24,7 +24,7 @@
  * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (add array key) 
  * Paulo Faria (Eldorado) - Bug [326793] - Starting new LFE workflow improvements (validate key)
  * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
- * Lucas Tiago de Castro Jesus (GSoC) - Bug [ ] - Add GetColumnID
+ * Lucas Tiago de Castro Jesus (GSoC) - Bug [353164] - Add GetColumnID
  * 
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.android;
@@ -580,10 +580,6 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		}
 		return result;
 	}
-	
-	public String getColumnID(IFile file) {
-		return file.getFullPath().removeLastSegments(1).lastSegment();		
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -762,6 +758,10 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 			}
 		}
 		return result;
+	}
+	
+	public String getColumnID(IFile file) {
+		return file.getFullPath().removeLastSegments(1).lastSegment();		
 	}
 
 	/*

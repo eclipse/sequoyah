@@ -7,6 +7,8 @@
  * Initial Contributors:
  * Lucas Tiago de Castro Jesus (GSoC)
  * 
+ * Contributors:
+ * Name (Company) - [Bug #] - Description
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.pde.manager;
 
@@ -578,6 +580,7 @@ public class StringLocalizationFileManager extends ILocalizationFileManager
 	@Override
 	public Object getLocalizationFileContent(LocalizationFile locFile) {
 		String text = null;
+		
 		if (locFile instanceof PDEStringLocalizationFile) {
 			PDEStringLocalizationFile localizationFile = (PDEStringLocalizationFile) locFile;
 

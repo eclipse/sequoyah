@@ -6,7 +6,11 @@
  * 
  * Initial Contributors:
  * Lucas Tiago de Castro Jesus (GSoC)
+ * 
+ * Contributors:
+ * Name (Company) - [Bug #] - Description
  ********************************************************************************/
+
 package org.eclipse.sequoyah.localization.pde;
 
 import java.awt.Dimension;
@@ -101,8 +105,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	}
 	
 	private String localizationFileName = LOCALIZATION_FILE_NAME;
-	//private String localizationFileName = LOCALIZATION_FILE_NAME;
-	
+		
 	public String getLocalizationFileName() {
 		return this.localizationFileName;
 	}
@@ -134,7 +137,6 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	        		if(fileFullName.charAt(i) == '_' || fileFullName.charAt(i) == '.')
 	        			pos = i;
 	        	
-	        	System.out.println("String_loc_File: " + file.getProjectRelativePath() + " " + fileFullName.substring(0,pos));
 	        	this.localizationFileName = fileFullName.substring(0,pos);
 	        }
 	    }
@@ -218,8 +220,8 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	public IStatus isValueValid(String localeID, String key, String value) {
 		Status result = new Status(IStatus.OK,
 				PDELocalizationPlugin.PLUGIN_ID, ""); //$NON-NLS-1$
-
-		if (localeID.toLowerCase().equals(MANDATORY_ID.toLowerCase())) {
+		
+		if (localeID.toLowerCase().equals(localizationFileName.toLowerCase())) {
 
 			if ((value == null)) {
 				result = new Status(IStatus.ERROR,
@@ -276,7 +278,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 		// Ask user for the ID
 		InputDialog dialog = new InputDialog(PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell(), NEW_COLUMN_TITLE,
-				NEW_COLUMN_DESCRIPTION, NEW_COLUMN_TEXT, //$NON-NLS-2$
+				NEW_COLUMN_DESCRIPTION, localizationFileName, //$NON-NLS-2$
 				new IInputValidator() {
 
 					public String isValid(String newText) {
@@ -393,7 +395,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 		TranslateColumnInputDialog dialog = new TranslateColumnInputDialog(
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 				project, selectedColumn, NEW_TRANSLATE_COLUMN_TITLE,
-				NEW_COLUMN_DESCRIPTION, NEW_COLUMN_TEXT, new IInputValidator() {
+				NEW_COLUMN_DESCRIPTION, localizationFileName, new IInputValidator() {
 
 					public String isValid(String newText) {
 						return isValid2(newText, project);
@@ -643,39 +645,8 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 		return localizationFileExtensions;
 	}
 	
-	public boolean isi18nFolder(IResource folder) throws CoreException{
-		System.out.println("Estamos testando quem: " + folder.getName());
-		//if ((folder != null)
-			//	&& (folder instanceof IFolder)){
-			IResource[] files = ((IFolder) folder).members();
-			for (IResource file : files) {
-				System.out.println(" >Que arquivo: " + file.getName());
-				if ((file instanceof IFile)
-						&& (isLocalizationFile((IFile) file)) && file.getName().startsWith(localizationFileName)) {
-					return true;			
-				}
-			}
-		//}
-		return false;
-		/*return (folder != null) &&
-			(folder instanceof IFolder) &&
-			folder.getName().endsWith(LOCALIZATION_FILES_FOLDER);*/
-	}
 	
 	
-	public IResource Findi18nFolder(IResource folder) throws CoreException{
-		IResource[] nextFolders = ((IFolder) folder).members();
-		
-		IResource localizationFolder = null;
-		for(IResource nextFolder: nextFolders){				
-			if(nextFolder!= null && (nextFolder instanceof IFolder) && localizationFolder == null){
-				if(isi18nFolder(nextFolder)) localizationFolder = nextFolder;
-				else localizationFolder = Findi18nFolder(nextFolder);
-			}				
-		}	
-		return localizationFolder;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -690,32 +661,9 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 		
 		boolean hasDefault = false;
 		try {
-			//IResource localizationFolder = project.findMember(LOCALIZATION_FILES_FOLDER);
-			//ArrayList<IResource> localizationFolders = new ArrayList<IResource>();
-			/*IResource localizationFolder = null;
-			//System.out.println("localizationFolder raiz: " +  project.getFolder(project.getFullPath()).getName());
-			//BEGIN: TEST
-			IResource[] Folders = project.members();
-			for(IResource folder: Folders){				
-				if((folder instanceof IFolder) && localizationFolder == null && !folder.getName().toString().equals("bin")){
-					System.out.println("localizationFolder.getName(): " + folder.getName());
-					if(isi18nFolder(folder)) localizationFolder = folder;
-					else localizationFolder = Findi18nFolder(folder);
-				}				
-			}			
 			
-			if(localizationFolder == null && project != null && isi18nFolder((IFolder) project.getFolder(project.getFullPath()))){				
-				localizationFolder = (IFolder) project.getFolder(project.getProjectRelativePath());
-			}*/
-			
-			//END: TEST
-		//	if ((localizationFolder != null)
-			//			&& (localizationFolder instanceof IFolder)) {
 			IContainer localizationFolder = getLocalizationFolder();
 			if (localizationFolder != null){
-					System.out.println(">> localizationFolder: " + localizationFolder.getFullPath());
-			//		setLocalizationFolder(localizationFolder);
-					
 					IResource[] files = ((IContainer) localizationFolder).members();
 					for (IResource file : files) {
 						if ((file instanceof IFile)
@@ -855,6 +803,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 
 		localizationFile
 				.setLocaleInfo(getLocaleInfoFromPath(file.getFullPath()));
+		
 		localizationFile.setFile(file);
 
 		LocalizationFile locFile = manager.loadFile(localizationFile);
@@ -918,13 +867,6 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 		return false;
 	}
 
-	/*
-	 * 
-	 */
-	private boolean isKnownNode(Node visitingNode) {
-		return visitingNode.getNodeName().equals(PDE_STRING_TAG);
-	}
-
 	/**
 	 * Given a localization file path, returns the language information
 	 * (attributes) of this localization file according to the file name.
@@ -953,9 +895,6 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 		IResource localizationFolder = getLocalizationFolder();
 				
 		if(localizationFolder.getProjectRelativePath().isEmpty()){
-			System.out.println("O arquivo esta na raiz");
-			//result = localizationFolder.getFullPath() + "/" + localizationFileName + QUALIFIER_SEP
-			//+ getLocaleID(lang) + FILE_EXTENSION;
 			result = localizationFileName + QUALIFIER_SEP
 			+ getLocaleID(lang) + FILE_EXTENSION;
 		}
@@ -970,8 +909,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 					+ localizationFileName + FILE_EXTENSION;
 
 		}
-		
-		System.out.println("result: " + result);
+				
 		return result;
 
 	}
@@ -979,7 +917,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 	public LocaleInfo getLocaleInfoFromID(String ID) {
 
 		LocaleInfo result = new LocaleInfo();
-		System.out.println("getLocaleInfoFromID: " + ID);
+	
 		if(ID != null){
 			String[] segments = ID.split(QUALIFIER_SEP);
 			int lastQualifier = -1;
@@ -1052,7 +990,7 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 				localeID = localeID + localeAttribute.getFolderValue();
 			}
 		}
-		System.out.println("localeID: " + localeID);
+		
 		return localeID;
 	}
 
@@ -1073,8 +1011,6 @@ public class PDELocalizationSchema extends ILocalizationSchema implements
 
 	@Override
 	public String getDefaultID() {
-		//return LOCALIZATION_FILES_FOLDER;
-		//System.out.println("localizationFolder.getFullPath().lastSegment() " + localizationFolder.getProjectRelativePath().lastSegment());
 		if(localizationFolder.getProjectRelativePath().isEmpty()) return "";
 		return localizationFolder.getProjectRelativePath().lastSegment();
 	}
