@@ -28,12 +28,6 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class InstanceStatusCompositeDropAdapter implements DropTargetListener {
 
-	/**
-	 * Save the details for further usage Check {@link DND} for available
-	 * constants
-	 */
-	private int eventDetails = 0;
-
 	private IInstance currentInstance = null;
 
 	private IDeviceTypeDropSupport currentDropSupport = null;
@@ -46,7 +40,6 @@ public class InstanceStatusCompositeDropAdapter implements DropTargetListener {
 	 * DropTargetEvent)
 	 */
 	public void dragEnter(DropTargetEvent event) {
-		eventDetails = event.detail;
 	}
 
 	/*
@@ -57,7 +50,6 @@ public class InstanceStatusCompositeDropAdapter implements DropTargetListener {
 	 * DropTargetEvent)
 	 */
 	public void dragLeave(DropTargetEvent event) {
-
 	}
 
 	/*
@@ -77,7 +69,7 @@ public class InstanceStatusCompositeDropAdapter implements DropTargetListener {
 	 * DropTargetEvent)
 	 */
 	public void dragOver(DropTargetEvent event) {
-		event.detail = DND.DROP_NONE;
+        event.detail = DND.DROP_NONE;
 		IInstance instance = getInstance(event);
 		currentInstance = instance;
 		if (instance != null) {
@@ -86,12 +78,12 @@ public class InstanceStatusCompositeDropAdapter implements DropTargetListener {
 			if (dropSupport != null
 					&& dropSupport.canDrop(instance, event.currentDataType,
 							event)) {
-				event.detail = eventDetails;
+				event.detail = DND.DROP_MOVE;
 			}
 		}
 
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
