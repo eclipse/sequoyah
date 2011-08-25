@@ -9,6 +9,7 @@
 <meta name="abstract" content="Allows you to translate a selected set of text strings from one language to one or more other languages."/>
 <meta name="description" content="Allows you to translate a selected set of text strings from one language to one or more other languages."/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-selected-string-translating.html"/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_localize-configuring.html"/>
 <meta name="copyright" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
 <meta name="DC.Rights.Owner" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
 <meta name="DC.Format" content="XHTML"/>
@@ -27,23 +28,29 @@
   <div><p>Allows you to translate a selected set of text strings from one language to one or more other languages.</p>
 
     <div class="section">
-      <p>This dialog appears when you right-click a text string (or set of selected text strings) in the Android Localization Files Editor and select
-          <span class="uicontrol">Translate cell(s)</span> from the menu that appears. It allows you to specify how all of the
-        selected text strings are to be translated to one or more new languages.</p>
+      <p>This dialog appears when you right-click a text string (or set of selected text strings) in the Android
+        Localization Files Editor and select <span class="uicontrol">Translate cell(s)</span> from the menu that appears. It
+        allows you to specify how all of the selected text strings are to be translated to one or more new languages.</p>
+
+      <div class="important"><span class="importanttitle">Important:</span> In order to use this feature you must have configured the editor with a key you have previously obtained from Google.</div>
 
     </div>
 
     <table cellpadding="4" cellspacing="0" summary="" border="1" class="simpletableborder">
       <tr>
-        <td valign="top"><span class="uicontrol">Translator</span></td>
+        <td valign="top">
+          <span class="uicontrol">Translator</span>
+        </td>
 
         <td valign="top">The translation service to be used to translate the selected set of text strings to the new
-        language(s).</td>
+          language(s).</td>
 
       </tr>
 
       <tr>
-        <td valign="top"><span class="uicontrol">From</span></td>
+        <td valign="top">
+          <span class="uicontrol">From</span>
+        </td>
 
         <td valign="top">The language the selected strings are in; the translation service translates from the language
           indicated here to the target language(s).</td>
@@ -51,9 +58,13 @@
       </tr>
 
       <tr>
-        <td valign="top"><span class="uicontrol">To</span></td>
+        <td valign="top">
+          <span class="uicontrol">To</span>
+        </td>
 
-        <td valign="top">The target languages: the languages into which the selected strings are to be translated. Note that you can only translate into languages for which there already exists a localization file (and therefore there is a corresponding column shown in the Android Localization Files Editor).</td>
+        <td valign="top">The target languages: the languages into which the selected strings are to be translated. Note that you
+          can only translate into languages for which there already exists a localization file (and therefore there is a
+          corresponding column shown in the Android Localization Files Editor).</td>
 
       </tr>
 
@@ -63,6 +74,7 @@
 
 <div><div class="relinfo"><strong>Related tasks</strong><br/>
 <div><a href="../topics/t_localize-selected-string-translating.html" title="Using the Localization Files Editor, you can translate selected strings from one language to one or more other languages.">Translating selected strings to a new language</a></div>
+<div><a href="../topics/t_localize-configuring.html" title="The Localization Files Editor requires that you supply a key for the translation service.">Configuring the Localization Files Editor</a></div>
 </div>
 </div>
 

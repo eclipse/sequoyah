@@ -3,6 +3,8 @@
 <toc label="Sequoyah User Guide" topic="topics/t_localize-about.html">
    <topic label="Tasks">
       <topic label="Localizing Text Strings" href="topics/t_localize-about.html">
+         <topic label="Configuring the Localization Files Editor"
+                href="topics/t_localize-configuring.html"/>
          <topic label="Creating a new locale" href="topics/t_localize-new-locale-creating.html"/>
          <topic label="Adding new strings" href="topics/t_localize-new-string-adding.html"/>
          <topic label="Adding new string arrays" href="topics/t_localize-new-array-adding.html"/>

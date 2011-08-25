@@ -9,6 +9,7 @@
 <meta name="abstract" content="Allows you to translate a complete set of text strings from one language to another."/>
 <meta name="description" content="Allows you to translate a complete set of text strings from one language to another."/>
 <meta name="DC.Relation" scheme="URI" content="../topics/t_localize-all-string-translating.html"/>
+<meta name="DC.Relation" scheme="URI" content="../topics/t_localize-configuring.html"/>
 <meta name="copyright" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
 <meta name="DC.Rights.Owner" content="Motorola Mobility, Inc. 2009-2011" type="primary"/>
 <meta name="DC.Format" content="XHTML"/>
@@ -31,11 +32,15 @@
           <span class="uicontrol">Translate column</span> from the menu that appears. It allows you to specify how all of the
         text strings in the selected column are to be translated to a new language.</p>
 
-    </div>
+       <div class="important"><span class="importanttitle">Important:</span> In order to use this feature you must have configured the editor with a key you have previously obtained from Google.</div>
+
+   </div>
 
     <table cellpadding="4" cellspacing="0" summary="" border="1" class="simpletableborder">
       <tr>
-        <td valign="top"><em>Localization file ID</em></td>
+        <td valign="top">
+          <em>Localization file ID</em>
+        </td>
 
         <td valign="top">The name of the localization strings file to be created for the translated text strings. Note that this
           file must not already exist. When <span class="uicontrol">Automatically add language ID to column name</span> is
@@ -44,7 +49,9 @@
       </tr>
 
       <tr>
-        <td valign="top"><span class="uicontrol">Translator</span></td>
+        <td valign="top">
+          <span class="uicontrol">Translator</span>
+        </td>
 
         <td valign="top">The translation service to be used to translate the selected set of text strings to the new
         language.</td>
@@ -52,7 +59,9 @@
       </tr>
 
       <tr>
-        <td valign="top"><span class="uicontrol">Translate from</span></td>
+        <td valign="top">
+          <span class="uicontrol">Translate from</span>
+        </td>
 
         <td valign="top">The language the selected strings are in; the translation service translates from the language
           indicated here to the target language.</td>
@@ -60,14 +69,18 @@
       </tr>
 
       <tr>
-        <td valign="top"><span class="uicontrol">Translate into</span></td>
+        <td valign="top">
+          <span class="uicontrol">Translate into</span>
+        </td>
 
         <td valign="top">The target language: the language into which the selected strings are to be translated.</td>
 
       </tr>
 
       <tr>
-        <td valign="top"><span class="uicontrol">Automatically add language ID to column name</span></td>
+        <td valign="top">
+          <span class="uicontrol">Automatically add language ID to column name</span>
+        </td>
 
         <td valign="top">If selected, the language ID corresponding to the selected target language is appended to the target
           localization file name.</td>
@@ -80,6 +93,7 @@
 
 <div><div class="relinfo"><strong>Related tasks</strong><br/>
 <div><a href="../topics/t_localize-all-string-translating.html" title="Using the Localization Files Editor, you can translate all of the strings in one language to another.">Translating all strings from one language to another</a></div>
+<div><a href="../topics/t_localize-configuring.html" title="The Localization Files Editor requires that you supply a key for the translation service.">Configuring the Localization Files Editor</a></div>
 </div>
 </div>
 
