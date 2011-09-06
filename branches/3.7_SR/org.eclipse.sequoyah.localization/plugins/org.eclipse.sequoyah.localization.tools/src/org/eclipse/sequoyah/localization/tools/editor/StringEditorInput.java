@@ -23,7 +23,7 @@
  * Carlos Alberto Souto Junior (Eldorado) - Bug [326793] - Added new tooltip support method for StringArrayItem
  * Paulo Faria (Eldorado) - Bug 326793 -  Fix: Array item was moving from one line to the other in non-default languages
  * Daniel Drigo Pastore (Eldorado) - Bug [326793] - Remove column: mark file for deletion based on filename
- *   
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [353518] - Return messages from translator errors
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.editor;
 
@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahExceptionStatus;
@@ -393,10 +394,10 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	 * IStringEditorInput #translate (java.lang.String, TranslatedColumnInfo)
 	 */
 	@Override
-	public boolean translateColumn(String srcColumnID,
+	public IStatus translateColumn(String srcColumnID,
 			TranslationInfo destColumnInfo, IProgressMonitor monitor) {
 
-		boolean result = true;
+		IStatus result = Status.OK_STATUS;
 		ILocalizationSchema schema = projectLocalizationManager
 				.getProjectLocalizationSchema();
 
@@ -423,7 +424,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			result = translateColumn((StringLocalizationFile) existingFile,
 					(StringLocalizationFile) newFile, destColumnInfo, monitor);
 
-			if (result) {
+			if (result.isOK()) {
 				projectLocalizationManager.getLocalizationProject()
 						.addLocalizationFile((StringLocalizationFile) newFile);
 				newFile.setDirty(true);
@@ -431,6 +432,12 @@ public class StringEditorInput extends AbstractStringEditorInput {
 
 		} else {
 			monitor.setCanceled(true);
+			result = new Status(
+					IStatus.ERROR,
+					LocalizationToolsPlugin.PLUGIN_ID,
+					NLS.bind(
+							Messages.StringEditorInput_ErrorTranslatingFromFile,
+							srcColumnID));
 			BasePlugin.logError("Error translating from file '" + srcColumnID //$NON-NLS-1$
 					+ ". File does not exist."); //$NON-NLS-1$
 		}
@@ -445,8 +452,10 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	 * @return
 	 */
 	@Override
-	public boolean translateCells(String srcColumnID,
+	public IStatus translateCells(String srcColumnID,
 			TranslationInfo[] newColumnsInfo, IProgressMonitor monitor) {
+
+		IStatus status = Status.OK_STATUS;
 
 		try {
 
@@ -487,28 +496,36 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			}
 			monitor.done();
 		} catch (Exception e) {
+			status = new Status(IStatus.ERROR,
+					LocalizationToolsPlugin.PLUGIN_ID,
+					Messages.StringEditorInput_ErrorTranslatingCells, e);
 			BasePlugin.logError(e.getMessage());
 			monitor.setCanceled(true);
-			return false;
 		}
 
-		return true;
+		return status;
 	}
 
 	/**
 	 * Call the translator for each cell, populating the new column
 	 */
-	private boolean translateColumn(StringLocalizationFile source,
+	private IStatus translateColumn(StringLocalizationFile source,
 			StringLocalizationFile target, TranslationInfo destColumnInfo,
 			IProgressMonitor monitor) {
 
-		boolean success = source.getStringNodes().size() > 0 ? translateStringNodes(
-				source, target, destColumnInfo, monitor) : true;
+		IStatus status = Status.OK_STATUS;
 
-		success &= translateStringArrayNodes(source, target, destColumnInfo,
-				monitor);
+		if (source.getStringNodes().size() > 0) {
+			status = translateStringNodes(source, target, destColumnInfo,
+					monitor);
+		}
 
-		return success;
+		if (status.isOK()) {
+			status = translateStringArrayNodes(source, target, destColumnInfo,
+					monitor);
+		}
+
+		return status;
 	}
 
 	/**
@@ -520,11 +537,12 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	 * @param monitor
 	 * @return
 	 */
-	private boolean translateStringNodes(StringLocalizationFile source,
+	private IStatus translateStringNodes(StringLocalizationFile source,
 			StringLocalizationFile target, TranslationInfo destColumnInfo,
 			IProgressMonitor monitor) {
 		List<StringNode> originalStringNodes = source.getStringNodes();
 		ArrayList<String> stringValues = new ArrayList<String>();
+		IStatus status = Status.OK_STATUS;
 
 		monitor.beginTask(Messages.TranslationProgress_Connecting,
 				originalStringNodes.size());
@@ -537,7 +555,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 		}
 		monitor.done();
 
-		List<TranslationResult> translationResults;
+		List<TranslationResult> translationResults = null;
 		try {
 			ITranslator translator = TranslatorManager.getInstance()
 					.getTranslatorByName(destColumnInfo.getTranslator());
@@ -547,32 +565,37 @@ public class StringEditorInput extends AbstractStringEditorInput {
 					destColumnInfo.getFromLang(), destColumnInfo.getToLang(),
 					monitor);
 		} catch (Exception e) {
+			status = new Status(IStatus.ERROR,
+					LocalizationToolsPlugin.PLUGIN_ID, e.getLocalizedMessage(),
+					e);
 			BasePlugin.logError(e.getMessage());
 			monitor.setCanceled(true);
-			return false;
 		}
-		monitor.done();
 
-		int i = 0;
-		monitor.beginTask(Messages.ParsingAnswer, translationResults.size());
-		for (Iterator<TranslationResult> iterator = translationResults
-				.iterator(); iterator.hasNext();) {
-			monitor.worked(1);
-			TranslationResult translationResult = iterator.next();
-			String translatedString = translationResult.getTranslatedWord();
+		if (status.isOK()) {
+			monitor.done();
 
-			StringNode newNode = null;
-			newNode = new StringNode(originalStringNodes.get(i).getKey(),
-					translatedString);
+			int i = 0;
+			monitor.beginTask(Messages.ParsingAnswer, translationResults.size());
+			for (Iterator<TranslationResult> iterator = translationResults
+					.iterator(); iterator.hasNext();) {
+				monitor.worked(1);
+				TranslationResult translationResult = iterator.next();
+				String translatedString = translationResult.getTranslatedWord();
 
-			i++;
-			target.addStringNode(newNode);
-			destColumnInfo.addCell(newNode.getKey(),
-					new CellInfo(newNode.getValue(), "")); //$NON-NLS-1$
+				StringNode newNode = null;
+				newNode = new StringNode(originalStringNodes.get(i).getKey(),
+						translatedString);
+
+				i++;
+				target.addStringNode(newNode);
+				destColumnInfo.addCell(newNode.getKey(),
+						new CellInfo(newNode.getValue(), "")); //$NON-NLS-1$
+			}
+			monitor.done();
 		}
-		monitor.done();
 
-		return true;
+		return status;
 	}
 
 	/**
@@ -584,10 +607,11 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	 * @param monitor
 	 * @return
 	 */
-	private boolean translateStringArrayNodes(StringLocalizationFile source,
+	private IStatus translateStringArrayNodes(StringLocalizationFile source,
 			StringLocalizationFile target, TranslationInfo destColumnInfo,
 			IProgressMonitor monitor) {
 
+		IStatus status = Status.OK_STATUS;
 		List<StringArrayNode> originalStringArrayNodes = source
 				.getStringArrays();
 
@@ -608,7 +632,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			ITranslator translator = TranslatorManager.getInstance()
 					.getTranslatorByName(destColumnInfo.getTranslator());
 
-			for (int k = 0; k < size; k++) {
+			for (int k = 0; k < size && status.isOK(); k++) {
 				try {
 					String oldValue = currentArray.getArrayItemByIndex(k)
 							.getValue();
@@ -623,24 +647,28 @@ public class StringEditorInput extends AbstractStringEditorInput {
 								destColumnInfo.getToLang(), new Date(), true);
 					}
 				} catch (Exception e) {
+					status = new Status(IStatus.ERROR,
+							LocalizationToolsPlugin.PLUGIN_ID,
+							e.getLocalizedMessage(), e);
 					BasePlugin.logError(e.getMessage());
 					monitor.setCanceled(true);
-					return false;
 				}
+				if (status.isOK()) {
+					String translatedString = translationResult
+							.getTranslatedWord();
 
-				String translatedString = translationResult.getTranslatedWord();
+					if (k == 0) {
+						newStringArrayNode = new StringArrayNode(
+								originalStringArrayNodes.get(j).getKey());
+						parentCell = new CellInfo(true);
+						destColumnInfo.addCell(originalStringArrayNodes.get(j)
+								.getKey(), parentCell);
+					}
 
-				if (k == 0) {
-					newStringArrayNode = new StringArrayNode(
-							originalStringArrayNodes.get(j).getKey());
-					parentCell = new CellInfo(true);
-					destColumnInfo.addCell(originalStringArrayNodes.get(j)
-							.getKey(), parentCell);
+					newStringArrayNode.addValue(translatedString, k);
+					CellInfo info = new CellInfo(translatedString, ""); //$NON-NLS-1$
+					parentCell.addChild(info, k, false);
 				}
-
-				newStringArrayNode.addValue(translatedString, k);
-				CellInfo info = new CellInfo(translatedString, ""); //$NON-NLS-1$
-				parentCell.addChild(info, k, false);
 
 			}
 			if (newStringArrayNode != null) {
@@ -649,10 +677,12 @@ public class StringEditorInput extends AbstractStringEditorInput {
 			monitor.worked(1);
 			j++;
 		}
-		target.setStringArrayNodes(newStringArrayNodesList);
+		if (status.isOK()) {
+			target.setStringArrayNodes(newStringArrayNodesList);
 
-		monitor.done();
-		return true;
+			monitor.done();
+		}
+		return status;
 	}
 
 	/*
@@ -976,7 +1006,7 @@ public class StringEditorInput extends AbstractStringEditorInput {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

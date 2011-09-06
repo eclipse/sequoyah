@@ -66,6 +66,13 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="brandingImage" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

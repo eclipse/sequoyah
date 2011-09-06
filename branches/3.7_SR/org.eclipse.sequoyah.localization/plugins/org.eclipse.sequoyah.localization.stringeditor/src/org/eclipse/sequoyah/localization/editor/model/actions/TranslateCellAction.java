@@ -8,7 +8,7 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * <name> (<company>) - Bug [<bugid>] - <bugDescription>
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [353518] - Show translator errors messages
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.actions;
 
@@ -18,7 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -35,8 +37,8 @@ import org.eclipse.ui.PlatformUI;
 public class TranslateCellAction extends Action {
 
 	/**
-	 * 
-	 */
+     * 
+     */
 	private final StringEditorPart stringEditorPart;
 
 	public TranslateCellAction(StringEditorPart stringEditorPart) {
@@ -138,11 +140,11 @@ public class TranslateCellAction extends Action {
 										.getColumn(
 												stringEditorPart
 														.getActiveColumn());
-
-								if (stringEditorPart.getEditorInput()
-										.translateCells(
+								IStatus translateStatus = stringEditorPart
+										.getEditorInput().translateCells(
 												originalColumn.getText(),
-												newColumnsInfo, monitor)) {
+												newColumnsInfo, monitor);
+								if (translateStatus.isOK()) {
 
 									int size = newColumnsInfo.length;
 									List<String> keysList = new LinkedList<String>();
@@ -185,10 +187,13 @@ public class TranslateCellAction extends Action {
 										// only add the translation if the new
 										// value is different from the old one
 										if ((newValue != null)
-												&& (oldValue == null || (oldValue.getValue() == null && newValue.getValue() != null) || (oldValue != null && newValue
+												&& ((oldValue == null)
+														|| ((oldValue
+																.getValue() == null) && (newValue
+																.getValue() != null)) || ((oldValue != null) && (newValue
 														.getValue()
 														.compareTo(
-																oldValue.getValue()) != 0))) {
+																oldValue.getValue()) != 0)))) {
 											keysList.add(key);
 											columnsList.add(column);
 											oldValuesList.add(oldValue);
@@ -229,13 +234,16 @@ public class TranslateCellAction extends Action {
 
 								} else {
 									monitor.setCanceled(true);
-									MessageDialog
-											.openInformation(
+									ErrorDialog
+											.openError(
 													stringEditorPart
 															.getEditorSite()
 															.getShell(),
 													Messages.StringEditorPart_TranslationError,
-													Messages.StringEditorPart_TranslationErrorCheckConnetion);
+													Messages.StringEditorPart_TranslationError
+															+ "\n"
+															+ Messages.StringEditorPart_TranslationErrorCheckConnetion,
+													translateStatus);
 								}
 
 							}

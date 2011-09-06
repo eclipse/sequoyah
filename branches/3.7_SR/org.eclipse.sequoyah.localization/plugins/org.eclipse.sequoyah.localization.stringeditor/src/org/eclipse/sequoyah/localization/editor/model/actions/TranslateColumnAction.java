@@ -8,14 +8,16 @@
  * Marcelo Marzola Bossoni (Eldorado)
  * 
  * Contributors:
- * <name> (<company>) - Bug [<bugid>] - <bugDescription>
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [353518] - Show translator errors messages
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.editor.model.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.sequoyah.localization.editor.datatype.TranslationInfo;
@@ -27,8 +29,8 @@ import org.eclipse.ui.PlatformUI;
 
 public class TranslateColumnAction extends Action {
 	/**
-	 * 
-	 */
+     * 
+     */
 	private final StringEditorPart stringEditorPart;
 
 	public TranslateColumnAction(StringEditorPart stringEditorPart) {
@@ -69,10 +71,11 @@ public class TranslateColumnAction extends Action {
 												.getColumnByID(newColumnInfo
 														.getId()) == null)) {
 
-									if (stringEditorPart.getEditorInput()
-											.translateColumn(
+									IStatus translateStatus = stringEditorPart
+											.getEditorInput().translateColumn(
 													originalColumn.getText(),
-													newColumnInfo, monitor)) {
+													newColumnInfo, monitor);
+									if (translateStatus.isOK()) {
 
 										stringEditorPart.getEditorInput()
 												.getValues(
@@ -87,19 +90,22 @@ public class TranslateColumnAction extends Action {
 												.executeOperation(operation);
 									} else {
 										monitor.setCanceled(true);
-										MessageDialog
-												.openInformation(
+										ErrorDialog
+												.openError(
 														stringEditorPart
 																.getEditorSite()
 																.getShell(),
 														Messages.StringEditorPart_TranslationError,
-														Messages.StringEditorPart_TranslationErrorCheckConnetion);
+														Messages.StringEditorPart_TranslationError
+																+ "\n"
+																+ Messages.StringEditorPart_TranslationErrorCheckConnetion,
+														translateStatus);
 									}
 
 								} else {
 									monitor.setCanceled(true);
 									MessageDialog
-											.openInformation(
+											.openError(
 													stringEditorPart
 															.getEditorSite()
 															.getShell(),

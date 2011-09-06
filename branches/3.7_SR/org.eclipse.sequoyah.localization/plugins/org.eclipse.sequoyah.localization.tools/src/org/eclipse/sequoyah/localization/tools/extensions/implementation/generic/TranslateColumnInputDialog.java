@@ -10,6 +10,7 @@
  * Marcel Gorri (Eldorado)
  * 
  * Contributors:
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [352375] - Let translators contribute with translate dialog
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.implementation.generic;
 
@@ -18,16 +19,19 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
+import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.sequoyah.localization.tools.managers.PreferencesManager;
 import org.eclipse.sequoyah.localization.tools.managers.TranslatorManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -51,13 +55,11 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
  * These data will be used for translation purposes
  */
 @SuppressWarnings("restriction")
-public class TranslateColumnInputDialog extends InputDialog {
+public class TranslateColumnInputDialog extends TitleAreaDialog implements ITranslateDialog {
 
 	private IProject project = null;
 
 	private ILocalizationSchema localizationSchema;
-
-	private final String initialValue;
 
 	// Translators
 	private String translator;
@@ -71,8 +73,6 @@ public class TranslateColumnInputDialog extends InputDialog {
 
 	private String fromLanguage;
 
-	private Text columnName = null;
-
 	private String selectedColumn = null;
 
 	// "To" information
@@ -85,18 +85,37 @@ public class TranslateColumnInputDialog extends InputDialog {
 	private PreferenceDialog networkPreferencesDialog;
 
 	private PreferenceManager prefMan;
+	
+	private Composite customArea = null;
 
 	private static final String PROXY_PREFERENCE_PAGE_ID = "org.eclipse.ui.net.NetPreferences"; //$NON-NLS-1$
 
+	private Composite mainComposite;
+	
+	private final IInputValidator validator;
+	
+	private final String inputDescription;
+	
+	private final String initialValue;
+	
+	private final String dialogTitle;
+	
+	private Text inputText;
+	
+	private String inputValue;
+	
 	/**
 	 * The constructor
 	 */
 	public TranslateColumnInputDialog(Shell parentShell, IProject project,
-			String selectedColumn, String dialogTitle, String dialogMessage,
-			String initialValue, IInputValidator validator) {
-		super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
+			String selectedColumn, String dialogTitle, String inputDescription, String initalValue,
+			IInputValidator validator) {
+		super(parentShell);
+		this.inputDescription = inputDescription;
+		this.dialogTitle = dialogTitle;
+		this.initialValue = initalValue;
 		this.project = project;
-		this.initialValue = initialValue;
+		this.validator = validator;
 		this.selectedColumn = selectedColumn;
 		this.localizationSchema = LocalizationManager.getInstance()
 				.getLocalizationSchema(project);
@@ -138,13 +157,32 @@ public class TranslateColumnInputDialog extends InputDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
-		Composite languagesComposite = (Composite) super
+		mainComposite = (Composite) super
 				.createDialogArea(parent);
-		this.columnName = this.getText();
+		mainComposite.setLayout(new GridLayout());
+		
+		Composite inputArea = new Composite(mainComposite, SWT.NONE);
+		inputArea.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+		inputArea.setLayout(new GridLayout(2, false));
+		
+		Label label = new Label(mainComposite, SWT.NONE);
+		label.setText(inputDescription);
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+		
+		inputText = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
+		inputText.setText(initialValue);
+		inputText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		inputText.addModifyListener(new ModifyListener() {
+			
+			public void modifyText(ModifyEvent e) {
+				inputValue = inputText.getText();
+				validate();
+			}
+		});
 
 		ComboListener listener = new ComboListener();
 
-		Group translationDetailsGroup = new Group(languagesComposite,
+		Group translationDetailsGroup = new Group(mainComposite,
 				SWT.SHADOW_ETCHED_OUT);
 		translationDetailsGroup
 				.setText(Messages.TranslationDialog_LanguageAreaLabel);
@@ -201,33 +239,62 @@ public class TranslateColumnInputDialog extends InputDialog {
 
 		LanguagesUtil.createImageStatus(translationDetailsGroup, null);
 
-		Label empty = new Label(translationDetailsGroup, SWT.NONE);
+		new Label(translationDetailsGroup, SWT.NONE);
 
 		// Automatic language ID
 		automaticallyAddLangID = new Button(translationDetailsGroup, SWT.CHECK);
 		automaticallyAddLangID.setText(Messages.TranslateColumnInputDialog_0);
 		automaticallyAddLangID.setSelection(true);
 
-		createNetworkGroup(languagesComposite);
+		createNetworkGroup(mainComposite);
 
 		/*
 		 * Translator Branding Area
 		 */
-		Composite brandingComposite = new Composite(languagesComposite,
-				SWT.RIGHT);
+		Composite brandingComposite = new Composite(mainComposite,
+				SWT.NONE);
 		brandingComposite.setLayout(new GridLayout(1, false));
-		brandingComposite.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false,
+		brandingComposite.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true,
 				false));
 
 		translatorBrandingImage = new Label(brandingComposite, SWT.NONE);
-		translatorBrandingImage.setLayoutData(new GridData(SWT.FILL, SWT.TOP,
-				true, true));
+		translatorBrandingImage.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
+				false, false));
 
+		setTitle(dialogTitle);
+		
 		setInitialValues();
-
-		return languagesComposite;
+		
+		createCustomArea(false);
+		
+		validate();
+		
+		return mainComposite;
+	}
+	
+	
+	private void createCustomArea(boolean recomputeSize) {
+		if (customArea != null) {
+			customArea.dispose();
+		}
+		
+		if (translator != null) {
+			ITranslator aTranslator = TranslatorManager.getInstance().getTranslatorByName(translator);
+			if (translator != null) {
+				customArea = aTranslator.createCustomArea(mainComposite, this);
+				if (customArea != null) {
+					if (recomputeSize) {
+						mainComposite.getShell().setSize(mainComposite.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+					}
+					mainComposite.getShell().layout(true, true); 
+				}
+			}
+		}
+		
 	}
 
+	
+	
 	/**
 	 * Populate attributes with their initial values
 	 */
@@ -265,7 +332,7 @@ public class TranslateColumnInputDialog extends InputDialog {
 				toLanguage = toCombo.getText();
 				if (!toLanguage.equals(LanguagesUtil.getComboSeparator())) {
 					if (automaticallyAddLangID.getSelection()) {
-						columnName.setText(localizationSchema
+						inputText.setText(localizationSchema
 								.getIDforLanguage(LanguagesUtil
 										.getLanguageID(toLanguage)));
 					}
@@ -278,27 +345,39 @@ public class TranslateColumnInputDialog extends InputDialog {
 				TranslatorManager.getInstance().setTranslatorBranding(
 						translator, translatorBrandingImage);
 			}
-			validateSelection();
+			createCustomArea(true);
+			validate();
 		}
 	}
 
-	/**
-	 * Validate the current selection and enable/disable OK button
-	 */
-	private void validateSelection() {
+	
+	public void validate() {
+		String errorMessage = null;
+		errorMessage = validator.isValid(inputText.getText());
 
-		boolean result = true;
-
-		if (fromLanguage == null) {
-			result = false;
+		if (errorMessage == null) {
+			if (toLanguage == null || fromLanguage == null) {
+				errorMessage = Messages.TranslateColumnInputDialog_Error_ToOrFromNotSet;
+			}
 		}
-		if (toLanguage == null) {
-			result = false;
+		
+		if (errorMessage == null) {
+			errorMessage = TranslatorManager.getInstance().getTranslatorByName(translator).canTranslate(fromLanguage, new String[]{toLanguage});
 		}
-
-		getButton(IDialogConstants.OK_ID).setEnabled(result);
+		
+		setErrorMessage(errorMessage);
+		if (getButton(IDialogConstants.OK_ID) != null) {
+			getButton(IDialogConstants.OK_ID).setEnabled(errorMessage == null);
+		}
 	}
-
+	
+	@Override
+	public void create() {
+		super.create();
+		validate();
+	}
+	
+	
 	/**
 	 * Create Network group
 	 * 
@@ -342,7 +421,7 @@ public class TranslateColumnInputDialog extends InputDialog {
 
 		downloadText.setText(linkText);
 		downloadText.update();
-		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1,
+		GridData gridData = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, 1,
 				1);
 		downloadText.setLayoutData(gridData);
 
@@ -368,7 +447,6 @@ public class TranslateColumnInputDialog extends InputDialog {
 	 * @return true if the user has confirmed the network configurations or
 	 *         false otherwise
 	 */
-	@SuppressWarnings("restriction")
 	private boolean openNetworkPreferencesPage() {
 		// Creates the dialog every time, because it is disposed when it is
 		// closed.
@@ -379,5 +457,15 @@ public class TranslateColumnInputDialog extends InputDialog {
 		networkPreferencesDialog.open();
 		return networkPreferencesDialog.getReturnCode() == WorkbenchPreferenceDialog.OK;
 	}
+	
+	@Override
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText(dialogTitle);
+	}
 
+	
+	public String getValue() {
+		return inputValue;
+	}
 }

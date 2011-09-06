@@ -10,6 +10,8 @@
  * Contributors:
  * Matheus Tait Lima (Eldorado) - Adapting to work with automatic translation
  * Marcel Gorri (Eldorado) - Add new attribute - branding
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [352375] - Let translators contribute with translate dialog
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [353518] - Return messages from translator errors
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.classes;
 
@@ -17,7 +19,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.sequoyah.localization.tools.datamodel.node.TranslationResult;
+import org.eclipse.sequoyah.localization.tools.extensions.implementation.generic.ITranslateDialog;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 
 public abstract class ITranslator {
 
@@ -42,6 +46,10 @@ public abstract class ITranslator {
 	 *            target language
 	 * @return a TranslationResult object with the translation result
 	 * @throws Exception
+	 *             if any error has occurred. Notice that the
+	 *             {@link Exception#getLocalizedMessage()} text will be used to
+	 *             display messages to the user. So handle your exceptions with
+	 *             love and provide useful messages.
 	 */
 	public abstract TranslationResult translate(String word,
 			String fromLanguage, String toLanguage) throws Exception;
@@ -57,6 +65,10 @@ public abstract class ITranslator {
 	 *            target language
 	 * @return a list of TranslationResult objects with the translation results
 	 * @throws Exception
+	 *             if any error has occurred. Notice that the
+	 *             {@link Exception#getLocalizedMessage()} text will be used to
+	 *             display messages to the user. So handle your exceptions with
+	 *             love and provide useful messages.
 	 */
 	public abstract List<TranslationResult> translateAll(List<String> words,
 			String fromLanguage, String toLanguage, IProgressMonitor monitor)
@@ -133,5 +145,28 @@ public abstract class ITranslator {
 	public abstract List<TranslationResult> translateAll(List<String> words,
 			List<String> fromLanguage, List<String> toLanguage,
 			IProgressMonitor monitor) throws Exception;
+
+	/**
+	 * Create a custom area in the bottom of the localization dialog
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 * @param dialog
+	 *            the dialog being used.
+	 * @return the custom area or null if you don't want to customize the dialog
+	 */
+	public Composite createCustomArea(Composite parent,
+			final ITranslateDialog dialog) {
+		return null;
+	}
+
+	/**
+	 * Validate the current selection
+	 * 
+	 * @return the error message string or null if everything is ok.
+	 */
+	public String canTranslate(String fromLanguage, String[] toLanguages) {
+		return null;
+	}
 
 }

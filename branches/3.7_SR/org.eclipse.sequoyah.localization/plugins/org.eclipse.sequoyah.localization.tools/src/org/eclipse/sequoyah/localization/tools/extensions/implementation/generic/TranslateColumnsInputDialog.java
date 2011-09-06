@@ -11,6 +11,7 @@
  * 
  * Contributors:
  * Marcelo Marzola Bossoni (Eldorado) - Bug [326793] - Change from Table to Tree (display arrays as tree)
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - Bug [352375] - Let translators contribute with translate dialog
  ********************************************************************************/
 package org.eclipse.sequoyah.localization.tools.extensions.implementation.generic;
 
@@ -18,12 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
+import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
 import org.eclipse.sequoyah.localization.tools.managers.LocalizationManager;
 import org.eclipse.sequoyah.localization.tools.managers.PreferencesManager;
@@ -52,7 +55,7 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
  * These data will be used for translation purposes
  */
 @SuppressWarnings("restriction")
-public class TranslateColumnsInputDialog extends Dialog {
+public class TranslateColumnsInputDialog extends TitleAreaDialog implements ITranslateDialog {
 
 	private IProject project = null;
 
@@ -73,6 +76,8 @@ public class TranslateColumnsInputDialog extends Dialog {
 	private Combo fromCombo = null;
 
 	private String fromLanguage;
+	
+	private Composite customArea = null;
 
 	// "To" information
 	private List<DestinationColumn> destinationColumns = null;
@@ -84,6 +89,8 @@ public class TranslateColumnsInputDialog extends Dialog {
 	private PreferenceManager prefMan;
 
 	private static final String PROXY_PREFERENCE_PAGE_ID = "org.eclipse.ui.net.NetPreferences"; //$NON-NLS-1$
+
+	private Composite mainComposite;
 
 	/**
 	 * The constructor
@@ -191,40 +198,64 @@ public class TranslateColumnsInputDialog extends Dialog {
 
 		ComboListener comboListener = new ComboListener();
 
-		Composite parentComposite = new Composite(parent, SWT.NONE);
-		parentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+		mainComposite = new Composite(parent, SWT.NONE);
+		mainComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true));
-		parentComposite.setLayout(new GridLayout(1, true));
+		mainComposite.setLayout(new GridLayout(1, true));
 
 		/*
 		 * Translators Area
 		 */
-		createTranslatorArea(parentComposite, comboListener);
+		createTranslatorArea(mainComposite, comboListener);
 
 		/*
 		 * From Area
 		 */
-		createFromArea(parentComposite, comboListener, schema);
+		createFromArea(mainComposite, comboListener, schema);
 
 		/*
 		 * To Area
 		 */
-		createToArea(parentComposite, schema);
+		createToArea(mainComposite, schema);
 
 		/*
 		 * Network Area
 		 */
-		createNetworkGroup(parentComposite);
+		createNetworkGroup(mainComposite);
 
 		/*
 		 * Branding Area
 		 */
-		createTranslatorBrandingArea(parentComposite);
-
+		createTranslatorBrandingArea(mainComposite);
+		
 		// Set initial values
 		setInitialValues();
+		
+		createCustomArea(false);
+		
+		setTitle(dialogTitle);
 
 		return parent;
+	}
+	
+	private void createCustomArea(boolean recomputeSize) {
+		if (customArea != null) {
+			customArea.dispose();
+		}
+		
+		if (translator != null) {
+			ITranslator aTranslator = TranslatorManager.getInstance().getTranslatorByName(translator);
+			if (translator != null) {
+				customArea = aTranslator.createCustomArea(mainComposite, this);
+				if (customArea != null) {
+					if (recomputeSize) {
+						mainComposite.getShell().setSize(mainComposite.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+					}
+					mainComposite.getShell().layout(true, true); 
+				}
+			}
+		}
+		
 	}
 
 	/**
@@ -372,7 +403,7 @@ public class TranslateColumnsInputDialog extends Dialog {
 						((DestinationColumn) ((Button) e.getSource()).getData())
 								.setSelected(((Button) e.getSource())
 										.getSelection());
-						validateSelection();
+						validate();
 					}
 
 				});
@@ -407,7 +438,7 @@ public class TranslateColumnsInputDialog extends Dialog {
 							((DestinationColumn) ((Combo) e.getSource())
 									.getData()).setLang(null);
 						}
-						validateSelection();
+						validate();
 					}
 
 				});
@@ -439,7 +470,7 @@ public class TranslateColumnsInputDialog extends Dialog {
 				for (DestinationColumn destColumn : destinationColumns) {
 					destColumn.setSelected(true);
 				}
-				validateSelection();
+				validate();
 			}
 		});
 
@@ -453,7 +484,7 @@ public class TranslateColumnsInputDialog extends Dialog {
 				for (DestinationColumn destColumn : destinationColumns) {
 					destColumn.setSelected(false);
 				}
-				validateSelection();
+				validate();
 			}
 		});
 
@@ -520,7 +551,8 @@ public class TranslateColumnsInputDialog extends Dialog {
 				TranslatorManager.getInstance().setTranslatorBranding(
 						translator, translatorBrandingImage);
 			}
-			validateSelection();
+			createCustomArea(true);
+			validate();
 		}
 	}
 
@@ -583,36 +615,62 @@ public class TranslateColumnsInputDialog extends Dialog {
 	protected void initializeBounds() {
 		super.initializeBounds();
 		// call validate after creating dialog
-		validateSelection();
+		validate();
 	}
 
 	/**
 	 * Validate the current selection and enable/disable OK button
 	 */
-	private void validateSelection() {
+	public void validate() {
 
-		boolean result = true;
+		String errorMessage = null;
 
 		if (fromLanguage == null) {
-			result = false;
+			errorMessage = Messages.TranslateColumnInputDialog_Error_ToOrFromNotSet;
 		}
 
-		if (getDestinationColumns().size() == 0) {
-			result = false;
+		if (errorMessage == null && getDestinationColumns().size() == 0) {
+			errorMessage = Messages.TranslateColumnsInputDialog_Error_NoDestinationColumnSelected;
 		}
 
-		for (DestinationColumn destColumn : getDestinationColumns()) {
-			if (destColumn.getLang() == null) {
-				result = false;
-				break;
+		if (errorMessage == null) {
+			for (DestinationColumn destColumn : getDestinationColumns()) {
+				if (destColumn.getLang() == null) {
+					errorMessage = NLS.bind(Messages.TranslateColumnsInputDialog_Error_NoLanguageSet, destColumn.getText());
+					break;
+				}
 			}
 		}
 
-		if (translator == null || translator.length() == 0) {
-			result = false;
+		if (errorMessage == null && (translator == null || translator.length() == 0)) {
+			errorMessage = Messages.TranslateColumnsInputDialog_Error_NoTranslatorsAvailable;
+		}
+		
+		if (errorMessage == null) {
+			errorMessage = TranslatorManager.getInstance().getTranslatorByName(translator).canTranslate(fromLanguage, getDestinationColumnsNames());
 		}
 
-		getButton(IDialogConstants.OK_ID).setEnabled(result);
+		setErrorMessage(errorMessage);
+		if (getButton(IDialogConstants.OK_ID) != null) {
+			getButton(IDialogConstants.OK_ID).setEnabled(errorMessage == null);
+		}
+		
+	}
+	
+	@Override
+	public void create() {
+		super.create();
+		validate();
+	}
+
+	private String[] getDestinationColumnsNames() {
+		List<String> selected = new ArrayList<String>();
+		for (DestinationColumn column: destinationColumns) {
+			if (column.isSelected()) {
+				selected.add(column.getText());
+			}
+		}
+		return selected.toArray(new String[0]);
 	}
 
 	/**
