@@ -245,7 +245,7 @@ public class TranslateColumnsInputDialog extends TitleAreaDialog implements ITra
 		
 		if (translator != null) {
 			ITranslator aTranslator = TranslatorManager.getInstance().getTranslatorByName(translator);
-			if (translator != null) {
+			if (aTranslator != null) {
 				customArea = aTranslator.createCustomArea(mainComposite, this);
 				if (customArea != null) {
 					if (recomputeSize) {
