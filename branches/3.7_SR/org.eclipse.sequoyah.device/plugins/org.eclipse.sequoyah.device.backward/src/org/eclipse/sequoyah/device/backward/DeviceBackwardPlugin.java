@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.framework.DevicePlugin;
+import org.eclipse.sequoyah.device.framework.DevicePlugin.XML_LocationOption;
 import org.eclipse.sequoyah.device.framework.factory.InstanceRegistry;
 import org.eclipse.sequoyah.device.framework.manager.persistence.DeviceXmlReader;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
@@ -92,7 +94,40 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 		if (!getBackwardStatus()) {
 			moveDeviceInstancesData();
 		}
+		
+		if (isUsingOldHomeFile()) {
+			moveDeviceInstancesLocation();
+		}
 
+	}
+
+	private void moveDeviceInstancesLocation() {
+		File oldLocation = XML_LocationOption.USER_HOME.getLocation();
+		File newLocation = XML_LocationOption.NEW_USER_HOME.getLocation();
+		
+		if (oldLocation.renameTo(newLocation)) {
+			DevicePlugin.setDeviceXmlLocation(XML_LocationOption.NEW_USER_HOME);
+			if (Platform.OS_WIN32.equals(Platform.getOS())) {
+				String[] hideCommand = new String[] {"attrib", "+H", newLocation.getAbsolutePath()};
+				try {
+					Runtime.getRuntime().exec(hideCommand);
+				} catch (IOException e) {
+					BasePlugin.logError("Unable to hide Sequoyah's configuration directory");
+				}
+			}
+			InstanceRegistry.getInstance().reload();
+		}
+		
+		//cleanup parent directory (this actually is a "I know that the old path keeps an empty directory")
+		File parent = oldLocation.getParentFile();
+		if (parent.list().length == 0) {
+			parent.delete();
+		}
+		
+	}
+
+	private boolean isUsingOldHomeFile() {
+		return XML_LocationOption.USER_HOME.getLocation().exists() && !XML_LocationOption.NEW_USER_HOME.getLocation().exists();
 	}
 
 	/*

@@ -39,14 +39,14 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.sequoyah.device.framework"; //$NON-NLS-1$
 	public static final String DEVICE_TYPES_EXTENSION_POINT_ID = "org.eclipse.sequoyah.device.framework.deviceTypes"; //$NON-NLS-1$	
-	
+
 	@Deprecated
 	public static final String DEVICE_ID = "org.eclipse.sequoyah.device"; //$NON-NLS-1$ 
-	
+
 	public static final String SERVICE_ID = "org.eclipse.sequoyah.device.framework.service"; //$NON-NLS-1$
 	public static final String STATUS_ID = "org.eclipse.sequoyah.device.framework.status"; //$NON-NLS-1$
 	public static final String SERVICE_DEF_ID = "org.eclipse.sequoyah.device.framework.serviceDefinition"; //$NON-NLS-1$
-	public static final String ICON_DEVICE= "ICON_DEVICE"; //$NON-NLS-1$
+	public static final String ICON_DEVICE = "ICON_DEVICE"; //$NON-NLS-1$
 	public static final String ICON_SERVICE = "ICON_SERVICE"; //$NON-NLS-1$
 	public static final String ICON_MOVING = "ICON_MOVING"; //$NON-NLS-1$
 	public static final String ICON_BOOK = "ICON_BOOK"; //$NON-NLS-1$
@@ -59,19 +59,19 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 	public static final String ICON_INACTIVE = "ICON_INACTIVE"; //$NON-NLS-1$
 	public static final String ICON_PROPERTY = "ICON_PROPERTY"; //$NON-NLS-1$
 	public static final String SEQUOYAH_STATUS_UNAVAILABLE = "UNAVAILABLE"; //$NON-NLS-1$
-	public static final String SEQUOYAH_STATUS_IDLE="IDLE"; //$NON-NLS-1$
-	public static final String SEQUOYAH_STATUS_OFF="OFF"; //$NON-NLS-1$
-	public static final String SEQUOYAH_STATUS_INACTIVE ="INACTIVE"; //$NON-NLS-1$
+	public static final String SEQUOYAH_STATUS_IDLE = "IDLE"; //$NON-NLS-1$
+	public static final String SEQUOYAH_STATUS_OFF = "OFF"; //$NON-NLS-1$
+	public static final String SEQUOYAH_STATUS_INACTIVE = "INACTIVE"; //$NON-NLS-1$
 
 	public static final Properties DEFAULT_PROPERTIES = new Properties();
-	
+
 	private static final String DEVICE_XML_LOCATION = "DeviceXMLLocation";//non-//$NON-NLS-1$
-	
+
 	private static final String TML_DEVICE_DATAFILE = "sequoyah_devices.xml"; //$NON-NLS-1$
-	
+
 	// The shared instance
 	private static DevicePlugin plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -80,18 +80,25 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
+	 * )
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		
-		getPreferenceStore().setDefault(DEVICE_XML_LOCATION, XML_LocationOption.USER_HOME.name());
+
+		getPreferenceStore().setDefault(DEVICE_XML_LOCATION,
+				XML_LocationOption.NEW_USER_HOME.name());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
+	 * )
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
@@ -100,40 +107,46 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
 	public static DevicePlugin getDefault() {
 		return plugin;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.sequoyah.device.common.utilities.BasePlugin#initializeImageRegistry()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.sequoyah.device.common.utilities.BasePlugin#
+	 * initializeImageRegistry()
 	 */
 	@Override
 	protected void initializeImageRegistry() {
 		String path = getIconPath();
-		putImageInRegistry(ICON_DEVICE, path+"full/obj16/device.gif"); //$NON-NLS-1$	
-		putImageInRegistry(ICON_SERVICE, path+"full/obj16/service.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_START, path+"full/obj16/start.png"); //$NON-NLS-1$
-		putImageInRegistry(ICON_STOP, path+"full/obj16/stop.png"); //$NON-NLS-1$
-		putImageInRegistry(ICON_REFRESH, path+"full/obj16/refresh.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_INACTIVE, path+"full/obj16/inactive.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_MOVING, path+"movingBox.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_BOOK, path+"book.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_GAMEBOARD, path+"gameboard.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_NEW_BOOK, path+"newbook.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_REMOVE, path+"remove.gif"); //$NON-NLS-1$
-		putImageInRegistry(ICON_PROPERTY, path+"property.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_DEVICE, path + "full/obj16/device.gif"); //$NON-NLS-1$	
+		putImageInRegistry(ICON_SERVICE, path + "full/obj16/service.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_START, path + "full/obj16/start.png"); //$NON-NLS-1$
+		putImageInRegistry(ICON_STOP, path + "full/obj16/stop.png"); //$NON-NLS-1$
+		putImageInRegistry(ICON_REFRESH, path + "full/obj16/refresh.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_INACTIVE, path + "full/obj16/inactive.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_MOVING, path + "movingBox.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_BOOK, path + "book.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_GAMEBOARD, path + "gameboard.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_NEW_BOOK, path + "newbook.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_REMOVE, path + "remove.gif"); //$NON-NLS-1$
+		putImageInRegistry(ICON_PROPERTY, path + "property.gif"); //$NON-NLS-1$
 	}
 
 	public void earlyStartup() {
-		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.HOST, IPropertyConstants.DEFAULT_HOST);
-		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.DISPLAY, IPropertyConstants.DEFAULT_DISPLAY);
-		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.PORT, IPropertyConstants.DEFAULT_PORT);
+		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.HOST,
+				IPropertyConstants.DEFAULT_HOST);
+		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.DISPLAY,
+				IPropertyConstants.DEFAULT_DISPLAY);
+		DEFAULT_PROPERTIES.setProperty(IPropertyConstants.PORT,
+				IPropertyConstants.DEFAULT_PORT);
 		StatusManager.getInstance().listStatus();
 	}
-	
+
 	/*
 	 * get image with specified iconPath relative to the bundleName.
 	 * 
@@ -159,79 +172,102 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 		}
 		return image;
 	}
-	
+
 	/**
-	 * Specifies the possible locations for the XML file which contains the instances data.
+	 * Specifies the possible locations for the XML file which contains the
+	 * instances data.
 	 */
 	public enum XML_LocationOption {
+		NEW_USER_HOME {
+			@Override
+			public File getLocation() {
+				return new File(System.getProperty("user.home") + File.separator 
+						+ ".org.eclipse.sequoyah");
+			}
+		},
 		USER_HOME {
 			@Override
-			public File getLocation(){
-				return fileFromLocation(Platform.getUserLocation()); 		 
+			public File getLocation() {
+				return fileFromLocation(Platform.getUserLocation());
 			}
-		}, 
+		},
 		ECLIPSE_CONFIGURATION {
 			@Override
-			public File getLocation(){
+			public File getLocation() {
 				return fileFromLocation(Platform.getConfigurationLocation());
 			}
-			
+
 		},
 		PLUGIN_STATE {
 			@Override
 			public File getLocation() {
 				return getDefault().getStateLocation().toFile();
 			}
-			
+
 		};
-		
-		protected File fileFromLocation(Location location){
-			if (location == null) return null;
+
+		protected File fileFromLocation(Location location) {
+			if (location == null)
+				return null;
 			URL configURL = location.getURL();
-			if ((configURL != null) && (configURL.getProtocol().startsWith("file"))) {//non-//$NON-NLS-1$
+			if ((configURL != null)
+					&& (configURL.getProtocol().startsWith("file"))) {//non-//$NON-NLS-1$
 				return new File(configURL.getFile(), PLUGIN_ID);
-			}
-			else return null;
+			} else
+				return null;
 		}
+
 		public abstract File getLocation();
-		
+
 	};
-	
+
 	/**
 	 * Set the default location where the XML file is saved.
-	 * @param locationOption - one of the values defined in 
+	 * 
+	 * @param locationOption
+	 *            - one of the values defined in
 	 */
-	public static void setDeviceXmlLocation(XML_LocationOption locationOption){
-		
-		getDefault().getPreferenceStore().putValue(DEVICE_XML_LOCATION, locationOption.name());
-		
+	public static void setDeviceXmlLocation(XML_LocationOption locationOption) {
+
+		getDefault().getPreferenceStore().putValue(DEVICE_XML_LOCATION,
+				locationOption.name());
+
 	}
-	
-	public static File getDeviceXmlLocation() {
-		
-		String locationPref = getDefault().getPreferenceStore().getString(DEVICE_XML_LOCATION);
-		XML_LocationOption option;
-		File locationFile = null;
-		
+
+	public static XML_LocationOption getDeviceXmlLocationOption() {
+		String locationPref = getDefault().getPreferenceStore().getString(
+				DEVICE_XML_LOCATION);
+		XML_LocationOption option = null;
 		if (locationPref != "") { //$NON-NLS-1$
-			option = XML_LocationOption.valueOf(XML_LocationOption.class, locationPref);
+			option = XML_LocationOption.valueOf(XML_LocationOption.class,
+					locationPref);
+		}
+
+		return option;
+	}
+
+	public static File getDeviceXmlLocation() {
+
+		File locationFile = null;
+		XML_LocationOption option = getDeviceXmlLocationOption();
+		if (option != null) {
 			locationFile = option.getLocation();
 		}
-		
-		/* The default location for the file is the plug-in state folder
-		 *  in case it was not possible to retrieve the preferred location
+
+		/*
+		 * The default location for the file is the plug-in state folder in case
+		 * it was not possible to retrieve the preferred location
 		 */
 		if (locationFile != null) {
 			return locationFile;
-		}
-		else { 
+		} else {
 			return getDefault().getStateLocation().toFile();
 		}
 
 	}
 
-	public static String getDeviceXmlFileName(){
+	public static String getDeviceXmlFileName() {
 		return TML_DEVICE_DATAFILE;
 	}
-		
+
 }

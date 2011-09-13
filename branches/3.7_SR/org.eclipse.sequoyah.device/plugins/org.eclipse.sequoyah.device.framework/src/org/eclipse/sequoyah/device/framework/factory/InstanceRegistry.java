@@ -52,13 +52,8 @@ public class InstanceRegistry implements IInstanceRegistry {
 	*/
 	private InstanceRegistry(){
 		instances = new ArrayList<IInstance>();
-		File path = DevicePlugin.getDeviceXmlLocation();
-	    File file = new File(path, DevicePlugin.getDeviceXmlFileName());
-		Collection<IInstance> loadedInstances = DeviceXmlReader.loadInstances(file);
-		for (IInstance inst : loadedInstances)
-		{
-			addInstance(inst);
-		}
+		
+		reload();
 		
 		IWorkbench workbench = DevicePlugin.getDefault().getWorkbench();
 	    workbench.addWindowListener(new WindowListener());
@@ -69,6 +64,17 @@ public class InstanceRegistry implements IInstanceRegistry {
 		    }
 		};
 	    InstanceEventManager.getInstance().addInstanceListener(listener);
+	}
+	
+	public void reload() {
+		clear();
+		File path = DevicePlugin.getDeviceXmlLocation();
+	    File file = new File(path, DevicePlugin.getDeviceXmlFileName());
+		Collection<IInstance> loadedInstances = DeviceXmlReader.loadInstances(file);
+		for (IInstance inst : loadedInstances)
+		{
+			addInstance(inst);
+		}
 	}
 
 	private class WindowListener implements IWindowListener {
