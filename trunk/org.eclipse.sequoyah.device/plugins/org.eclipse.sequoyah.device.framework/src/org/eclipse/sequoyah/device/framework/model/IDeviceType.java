@@ -11,7 +11,6 @@
  * Daniel Barboza Franco (Eldorado Research Institute) - Bug [271695] - Support to non-persistent instances of devices
  * Mauren Brenner (Eldorado) - [281377] Support device types whose instances cannot be created by user
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
- * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - [352157] Added basic drag and drop support 
  *******************************************************************************/
 
 package org.eclipse.sequoyah.device.framework.model;
@@ -35,9 +34,9 @@ public interface IDeviceType {
 	public boolean isAbstract();
 
 	public boolean isPersistent();
-
+	
 	public boolean supportsUserInstances();
-
+	
 	public void setAbstract(boolean isAbstract);
 
 	public String getSuperClass();
@@ -58,8 +57,8 @@ public interface IDeviceType {
 
 	public IDeviceHandler getHandler();
 
-	public void setHandler(IDeviceHandler handler);
-
+	public void setHandler(IDeviceHandler handler);	
+	
 	public List<IService> getServices();
 
 	public void setServices(List<IService> services);

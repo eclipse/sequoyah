@@ -16,6 +16,8 @@ package org.eclipse.sequoyah.localization.tools.extensions.implementation.generi
 
 import java.util.List;
 
+import javax.sound.midi.Sequence;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -23,6 +25,7 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ITranslator;
 import org.eclipse.sequoyah.localization.tools.i18n.Messages;
@@ -265,7 +268,12 @@ public class TranslateColumnInputDialog extends TitleAreaDialog implements ITran
 		
 		setInitialValues();
 		
-		createCustomArea(false);
+		try {
+			createCustomArea(false);
+		} catch (SequoyahException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		validate();
 		
@@ -273,14 +281,14 @@ public class TranslateColumnInputDialog extends TitleAreaDialog implements ITran
 	}
 	
 	
-	private void createCustomArea(boolean recomputeSize) {
+	private void createCustomArea(boolean recomputeSize) throws SequoyahException{
 		if (customArea != null) {
 			customArea.dispose();
 		}
 		
 		if (translator != null) {
 			ITranslator aTranslator = TranslatorManager.getInstance().getTranslatorByName(translator);
-			if (translator != null) {
+			if (aTranslator != null) {
 				customArea = aTranslator.createCustomArea(mainComposite, this);
 				if (customArea != null) {
 					if (recomputeSize) {
@@ -290,7 +298,6 @@ public class TranslateColumnInputDialog extends TitleAreaDialog implements ITran
 				}
 			}
 		}
-		
 	}
 
 	
@@ -345,7 +352,12 @@ public class TranslateColumnInputDialog extends TitleAreaDialog implements ITran
 				TranslatorManager.getInstance().setTranslatorBranding(
 						translator, translatorBrandingImage);
 			}
-			createCustomArea(true);
+			try {
+				createCustomArea(true);
+			} catch (SequoyahException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			validate();
 		}
 	}
@@ -355,6 +367,10 @@ public class TranslateColumnInputDialog extends TitleAreaDialog implements ITran
 		String errorMessage = null;
 		errorMessage = validator.isValid(inputText.getText());
 
+		if (errorMessage == null && (translator == null || translator.length() == 0)) {
+			errorMessage = Messages.TranslateColumnsInputDialog_Error_NoTranslatorsAvailable;
+		}
+		
 		if (errorMessage == null) {
 			if (toLanguage == null || fromLanguage == null) {
 				errorMessage = Messages.TranslateColumnInputDialog_Error_ToOrFromNotSet;

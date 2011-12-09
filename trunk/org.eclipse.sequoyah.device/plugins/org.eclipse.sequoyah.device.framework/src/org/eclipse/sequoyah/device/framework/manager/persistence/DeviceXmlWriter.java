@@ -37,6 +37,8 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.framework.DevicePlugin;
 import org.eclipse.sequoyah.device.framework.factory.DeviceTypeRegistry;
 import org.eclipse.sequoyah.device.framework.factory.InstanceRegistry;
@@ -71,7 +73,18 @@ public class DeviceXmlWriter implements IDeviceXmlTags
                 transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
                 transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 
-                file.getParentFile().mkdirs();
+                if (!file.getParentFile().exists()) {
+                	file.getParentFile().mkdirs();
+                	if (Platform.OS_WIN32.equals(Platform.getOS())) {
+        				String[] hideCommand = new String[] {"attrib", "+H", file.getParentFile().getAbsolutePath()};
+        				try {
+        					Runtime.getRuntime().exec(hideCommand);
+        				} catch (IOException e) {
+        					BasePlugin.logError("Unable to hide Sequoyah's configuration directory");
+        				}
+        			}
+                }
+                
                 // initialize FileOutputStream with File object to save to file
                 FileOutputStream outputStream = new FileOutputStream(file
                         .getAbsoluteFile());

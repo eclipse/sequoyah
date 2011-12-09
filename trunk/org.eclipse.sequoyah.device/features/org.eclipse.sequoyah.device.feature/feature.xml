@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.sequoyah.device.feature"
       label="%featureName"
-      version="2.0.0.qualifier"
+      version="2.0.1.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.sequoyah.device.framework"
       license-feature="org.eclipse.sequoyah.license.feature"
@@ -19,7 +19,7 @@
    <license url="%licenseURL">
       %license
    </license>
-   
+
    <url>
       <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>
       <discovery label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>
