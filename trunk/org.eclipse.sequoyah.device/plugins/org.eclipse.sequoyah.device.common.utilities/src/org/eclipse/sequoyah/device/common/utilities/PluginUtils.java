@@ -11,6 +11,7 @@
  * Fabio Fantato (Eldorado Research Institute) - [243493] - PluginUtils has some compatibility issues with Ganymede release
  * Daniel Barboza Franco (Eldorado Research Institute) - [221740] - Sample implementation for Linux host
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Marcelo Marzola Bossoni (Instituto de Pesquisas Eldorado) - [352157] Add NPE check 
  ********************************************************************************/
 
 package org.eclipse.sequoyah.device.common.utilities;
@@ -434,7 +435,9 @@ public class PluginUtils
             {
                 if (elementName.equals(element.getName()))
                 {
-                	executable = element.createExecutableExtension(attribute);
+                	if (element.getAttribute(attribute) != null	&& element.getAttribute(attribute).trim().length() > 0) {
+						executable = element.createExecutableExtension(attribute);
+					}
                 }
             }
         }
