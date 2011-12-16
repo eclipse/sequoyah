@@ -765,7 +765,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 
 		Map<LocaleInfo, LocalizationFile> filesMap = new LinkedHashMap<LocaleInfo, LocalizationFile>();
 		Map<LocaleInfo, IFile> localizationFiles = getLocalizationFiles(project);
-		
+
 		for (Map.Entry<LocaleInfo, IFile> entry : localizationFiles.entrySet()) {
 			String fileName = entry.getValue().getName();
 			if (fileName.endsWith(LOCALIZATION_FILE_NAME)) {
@@ -979,7 +979,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.LANGUAGE.ordinal()));
 			} else if (isRegionSegment(segments[i])
-					&& (lastQualifier < AndroidLocaleAttributes.REGION
+					&& (lastQualifier == AndroidLocaleAttributes.LANGUAGE
 							.ordinal())) {
 				lastQualifier = AndroidLocaleAttributes.REGION.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
@@ -1070,6 +1070,27 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 				lastQualifier = AndroidLocaleAttributes.API_VERSION.ordinal();
 				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
 						AndroidLocaleAttributes.API_VERSION.ordinal()));
+			} else if (isSmallestWidthSegment(segments[i])
+					&& (lastQualifier < AndroidLocaleAttributes.SMALLEST_WIDTH
+							.ordinal())) {
+				lastQualifier = AndroidLocaleAttributes.SMALLEST_WIDTH
+						.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.SMALLEST_WIDTH.ordinal()));
+			} else if (isAvailableWidth(segments[i])
+					&& (lastQualifier < AndroidLocaleAttributes.AVAILABLE_WIDTH
+							.ordinal())) {
+				lastQualifier = AndroidLocaleAttributes.AVAILABLE_WIDTH
+						.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.AVAILABLE_WIDTH.ordinal()));
+			} else if (isAvailableHeight(segments[i])
+					&& (lastQualifier < AndroidLocaleAttributes.AVAILABLE_HEIGHT
+							.ordinal())) {
+				lastQualifier = AndroidLocaleAttributes.AVAILABLE_HEIGHT
+						.ordinal();
+				localeAttributes.add(new AndroidLocaleAttribute(segments[i],
+						AndroidLocaleAttributes.AVAILABLE_HEIGHT.ordinal()));
 			} else {
 				localeAttributes = new ArrayList<LocaleAttribute>();
 			}
@@ -1133,7 +1154,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	private boolean isOrientationSegment(String value) {
 		return ((value.equalsIgnoreCase("port") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("land") || value //$NON-NLS-1$
-				.equalsIgnoreCase("square"))); //$NON-NLS-1$
+					.equalsIgnoreCase("square"))); //$NON-NLS-1$
 
 	}
 
@@ -1145,7 +1166,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	private boolean isTouchTypeSegment(String value) {
 		return ((value.equalsIgnoreCase("notouch") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("stylus") || value //$NON-NLS-1$
-				.equalsIgnoreCase("finger"))); //$NON-NLS-1$
+					.equalsIgnoreCase("finger"))); //$NON-NLS-1$
 	}
 
 	private boolean isKeyboardStateSegment(String value) {
@@ -1157,7 +1178,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 	private boolean isTextInputSegment(String value) {
 		return ((value.equalsIgnoreCase("nokeys") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("qwerty") || value //$NON-NLS-1$
-				.equalsIgnoreCase("12key"))); //$NON-NLS-1$
+					.equalsIgnoreCase("12key"))); //$NON-NLS-1$
 
 	}
 
@@ -1165,7 +1186,7 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		return ((value.equalsIgnoreCase("dpad") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("trackball") //$NON-NLS-1$
 				|| value.equalsIgnoreCase("wheel") || value //$NON-NLS-1$
-				.equalsIgnoreCase("nonav"))); //$NON-NLS-1$
+					.equalsIgnoreCase("nonav"))); //$NON-NLS-1$
 
 	}
 
@@ -1242,4 +1263,62 @@ public class AndroidLocalizationSchema extends ILocalizationSchema implements
 		}
 		return result;
 	}
+	
+    private boolean isSmallestWidthSegment(String value)
+    {
+        boolean result = false;
+        if (value.startsWith("sw") && value.endsWith("dp"))
+        {
+            result = true;
+            String intPortion = value.substring(value.lastIndexOf("sw") + 2, value.indexOf("dp"));
+            try
+            {
+                Integer.parseInt(intPortion);
+            }
+            catch (NumberFormatException e)
+            {
+                result = false;
+            }
+        }
+        return result;
+
+    }
+
+    private boolean isAvailableWidth(String value)
+    {
+        boolean result = false;
+        if (value.startsWith("w") && value.endsWith("dp"))
+        {
+            result = true;
+            String intPortion = value.substring(value.lastIndexOf("w") + 1, value.indexOf("dp"));
+            try
+            {
+                Integer.parseInt(intPortion);
+            }
+            catch (NumberFormatException e)
+            {
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    private boolean isAvailableHeight(String value)
+    {
+        boolean result = false;
+        if (value.startsWith("h") && value.endsWith("dp"))
+        {
+            result = true;
+            String intPortion = value.substring(value.lastIndexOf("h") + 1, value.indexOf("dp"));
+            try
+            {
+                Integer.parseInt(intPortion);
+            }
+            catch (NumberFormatException e)
+            {
+                result = false;
+            }
+        }
+        return result;
+    }
 }

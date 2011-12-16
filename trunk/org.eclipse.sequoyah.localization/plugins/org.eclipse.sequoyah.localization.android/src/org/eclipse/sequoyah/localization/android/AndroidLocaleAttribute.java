@@ -24,7 +24,7 @@ import org.eclipse.sequoyah.localization.tools.datamodel.LocaleAttribute;
 public class AndroidLocaleAttribute extends LocaleAttribute {
 
 	public enum AndroidLocaleAttributes {
-		COUNTRY_CODE, NETWORK_CODE, LANGUAGE, REGION, SCREEN_SIZE, SCREEN_ASPECT, SCREEN_ORIENTATION, DOCK_MODE, NIGHT_MODE, PIXEL_DENSITY, TOUCH_TYPE, KEYBOARD_STATE, TEXT_INPUT_METHOD, NAVIGATION_KEY_STATE, NAVIGATION_METHOD, SCREEN_DIMENSION, API_VERSION, COUNT
+		COUNTRY_CODE, NETWORK_CODE, LANGUAGE, REGION, SCREEN_SIZE, SCREEN_ASPECT, SCREEN_ORIENTATION, SMALLEST_WIDTH, AVAILABLE_WIDTH, AVAILABLE_HEIGHT, DOCK_MODE, NIGHT_MODE, PIXEL_DENSITY, TOUCH_TYPE, KEYBOARD_STATE, TEXT_INPUT_METHOD, NAVIGATION_KEY_STATE, NAVIGATION_METHOD, SCREEN_DIMENSION, API_VERSION, COUNT
 	};
 
 	private int androidType;
@@ -189,6 +189,15 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 			result = new Dimension(x, y);
 		} else if (androidType == AndroidLocaleAttributes.API_VERSION.ordinal()) {
 			result = strValue.substring(0, strValue.length());
+		} else if (androidType == AndroidLocaleAttributes.SMALLEST_WIDTH
+				.ordinal()) {
+			result = strValue;
+		} else if (androidType == AndroidLocaleAttributes.AVAILABLE_WIDTH
+				.ordinal()) {
+			result = strValue;
+		} else if (androidType == AndroidLocaleAttributes.AVAILABLE_HEIGHT
+				.ordinal()) {
+			result = strValue;
 		}
 
 		return result;
@@ -262,6 +271,15 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 			setDimensionNode(value);
 		} else if (androidType == AndroidLocaleAttributes.API_VERSION.ordinal()) {
 			setAPIVersionNode(value);
+		} else if (androidType == AndroidLocaleAttributes.SMALLEST_WIDTH
+				.ordinal()) {
+			setSmallestWidthValue(value);
+		} else if (androidType == AndroidLocaleAttributes.AVAILABLE_WIDTH
+				.ordinal()) {
+			setAvailableWidthValue(value);
+		} else if (androidType == AndroidLocaleAttributes.AVAILABLE_HEIGHT
+				.ordinal()) {
+			setAvailableHeightValue(value);
 		} else {
 			throw new IllegalArgumentException(Messages.Unknown_Andr_Type);
 		}
@@ -629,6 +647,34 @@ public class AndroidLocaleAttribute extends LocaleAttribute {
 		maximumSize = 0;
 		setValuesBasedOnDisplayValue((String) value);
 	}
+	
+	private void setSmallestWidthValue(Object value)
+    {
+        displayName = "smallestWidth"; //$NON-NLS-1$
+        type = LocaleAttribute.FIXED_TEXT_TYPE;
+        fixedSize = 0;
+        maximumSize = 0;
+        setValuesBasedOnDisplayValue((String) value);
+    }
+
+    private void setAvailableWidthValue(Object value)
+    {
+
+        displayName = "Available width"; //$NON-NLS-1$
+        type = LocaleAttribute.FIXED_TEXT_TYPE;
+        fixedSize = 0;
+        maximumSize = 0;
+        setValuesBasedOnDisplayValue((String) value);
+    }
+
+    private void setAvailableHeightValue(Object value)
+    {
+        displayName = "Available height"; //$NON-NLS-1$
+        type = LocaleAttribute.FIXED_TEXT_TYPE;
+        fixedSize = 0;
+        maximumSize = 0;
+        setValuesBasedOnDisplayValue((String) value);
+    }
 
 	/***
 	 * Unsets this attribute.
