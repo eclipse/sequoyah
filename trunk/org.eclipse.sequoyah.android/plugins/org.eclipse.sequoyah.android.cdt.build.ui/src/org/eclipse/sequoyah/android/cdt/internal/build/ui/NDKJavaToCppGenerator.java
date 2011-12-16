@@ -107,7 +107,7 @@ public class NDKJavaToCppGenerator
      */
     private static Map<String, String> jniTypeToTemplateName = new HashMap<String, String>();
 
-    private static final String BIN_FOLDER_NAME = "bin";
+    private static final String BIN_FOLDER_NAME = "bin" + File.separator + "classes";
 
     static
     {
