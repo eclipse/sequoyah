@@ -21,7 +21,7 @@
    </license>
 
    <url>
-      <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>
+      <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.1/"/>
    </url>
 
    <requires>

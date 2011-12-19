@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.sequoyah.android.cdt.feature"
       label="%featureName"
-      version="1.1.3.qualifier"
+      version="1.1.4.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.sequoyah.android.cdt.build.ui"
       license-feature="org.eclipse.sequoyah.license.feature"
@@ -21,8 +21,8 @@
    </license>
 
    <url>
-      <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>
-      <discovery label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.0/"/>
+      <update label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.1/"/>
+      <discovery label="%sequoyahUpdateSiteName" url="http://download.eclipse.org/sequoyah/updates/2.1/"/>
    </url>
 
    <requires>
