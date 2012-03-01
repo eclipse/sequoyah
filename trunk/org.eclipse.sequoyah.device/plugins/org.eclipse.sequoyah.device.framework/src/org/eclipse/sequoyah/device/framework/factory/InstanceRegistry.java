@@ -14,22 +14,25 @@
  * Fabio Rigo (Eldorado) - Bug [288006] - Unify features of InstanceManager and InstanceRegistry
  * Daniel Barboza Franco - Bug [287875] - Save instances information on all updates
  * Daniel Pastore (Eldorado) - [289870] Moving and renaming Tml to Sequoyah
+ * Bruno Tomazela (Eldorado) - Bug [371126] - Device Management View shows incorrect devices (same device multiple times)
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.factory;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.sequoyah.device.framework.DevicePlugin;
 import org.eclipse.sequoyah.device.framework.events.IInstanceListener;
 import org.eclipse.sequoyah.device.framework.events.InstanceAdapter;
 import org.eclipse.sequoyah.device.framework.events.InstanceEvent;
-import org.eclipse.sequoyah.device.framework.events.InstanceEventManager;
 import org.eclipse.sequoyah.device.framework.events.InstanceEvent.InstanceEventType;
+import org.eclipse.sequoyah.device.framework.events.InstanceEventManager;
 import org.eclipse.sequoyah.device.framework.manager.persistence.DeviceXmlReader;
 import org.eclipse.sequoyah.device.framework.manager.persistence.DeviceXmlWriter;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
@@ -44,14 +47,19 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public class InstanceRegistry implements IInstanceRegistry {
 	
-	private List<IInstance> instances;
+    /*
+     * The list of available device instances.
+     * Use a Map instead of a List to ensure that duplicates are not allowed.
+     * Use the id of the instance as the key, and the instance itself as the value of the mapping.
+     */
+	private Map<String, IInstance> instances; 
 	private static InstanceRegistry _instance;
 
 	/**
 	* Constructor - Stores the device instances and provides basic query methods.
 	*/
 	private InstanceRegistry(){
-		instances = new ArrayList<IInstance>();
+		instances = new HashMap<String, IInstance>();
 		
 		reload();
 		
@@ -116,14 +124,17 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 * @return A list of instances.
 	 */
 	public List<IInstance> getInstances() {
-		return instances;
+		return new ArrayList<IInstance>(instances.values()); //returns a List of available instances
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.sequoyah.device.framework.model.IInstanceRegistry#setInstances(java.util.List)
 	 */
-	public void setInstances(List<IInstance> instance) {
-		this.instances = instance;
+	public void setInstances(List<IInstance> instances) {
+	    this.instances.clear();
+		for (IInstance instance: instances){
+		    addInstance(instance);
+		}
 	}
 
 	/**
@@ -131,7 +142,7 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 * @param instance - The instance to be added.
 	 */
 	public void addInstance(IInstance instance){
-		this.instances.add(instance);
+		this.instances.put(instance.getId(), instance); //adds an instance to the mapping, replacing the value if it already exists on the mapping.
 		InstanceEventManager.getInstance().notifyListeners(new InstanceEvent(InstanceEventType.INSTANCE_LOADED, instance));
 	}
 
@@ -140,7 +151,7 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 * @param instance - The instance to be removed.
 	 */
 	public void removeInstance(IInstance instance){
-		this.instances.remove(instance);
+		this.instances.remove(instance.getId()); //remove the mapping.
 		InstanceEventManager.getInstance().notifyListeners(new InstanceEvent(InstanceEventType.INSTANCE_UNLOADED, instance));
 	}
 
