@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.localization.tools.LocalizationToolsPlugin;
-import org.eclipse.sequoyah.localization.tools.datamodel.LocaleInfo;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationFile;
 import org.eclipse.sequoyah.localization.tools.datamodel.LocalizationProject;
 import org.eclipse.sequoyah.localization.tools.extensions.classes.ILocalizationSchema;
@@ -449,16 +448,15 @@ public class LocalizationManager
     {
         try
         {
-            //check if the file has a default editor already chosen by the user
-            if (file.getPersistentProperty(IDE.EDITOR_KEY) == null)
-            {
-                //only set the LFE as default editor if there is no default yet
-                IDE.setDefaultEditor(file, LocalizationToolsPlugin.EDITOR_ID);
-            }
+            //set LFE as default editor when a new strings.xml file is added
+            IDE.setDefaultEditor(file, LocalizationToolsPlugin.EDITOR_ID);
+
+            //also persist this change until the user explicitly open the file with another editor using "open with"
+            file.setPersistentProperty(IDE.EDITOR_KEY, LocalizationToolsPlugin.EDITOR_ID);
         }
         catch (CoreException e)
         {
-            //do nothing
+            //do nothing...
         }
     }
 
@@ -477,21 +475,6 @@ public class LocalizationManager
      */
     public void initialize()
     {
-        /*
-         * Configure the editor of each localization schema to handle the
-         * localization files
-         */
-        List<IProject> supportedProjects = getSupportedProjects();
-        ILocalizationSchema localizationSchema;
-        for (IProject project : supportedProjects)
-        {
-            localizationSchema = getLocalizationSchema(project);
-            Map<LocaleInfo, IFile> files = localizationSchema.getLocalizationFiles(project);
-            for (IFile file : files.values())
-            {
-                handleFileAddition(file);
-            }
-        }
         /*
          * Workspace listener to configure the editor in further situations
          */
