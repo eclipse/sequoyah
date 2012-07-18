@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.sequoyah.feature"
       label="Sequoyah Feature"
-      version="2.1.0.qualifier"
+      version="2.1.1.qualifier"
       license-feature="org.eclipse.sequoyah.license.feature"
       license-feature-version="1.0.0.qualifier">
 
