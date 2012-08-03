@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
-import org.eclipse.sequoyah.device.framework.model.AbstractMobileInstance;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
 import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.status.IStatusTransition;

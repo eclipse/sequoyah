@@ -121,7 +121,7 @@ public class DefaultDeviceTypeMenuWizardPage extends WizardPage {
 	public boolean isPageComplete() {
 		if (getErrorMessage() != null)
 			return false;
-		if (nameText.getText().trim() != "" && currentDeviceType != null) { //$NON-NLS-1$
+		if (!nameText.getText().trim().equals("") && currentDeviceType != null) { //$NON-NLS-1$
 			return true;
 		}
 	

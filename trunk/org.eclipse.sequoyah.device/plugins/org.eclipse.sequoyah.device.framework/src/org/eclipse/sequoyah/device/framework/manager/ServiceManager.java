@@ -18,14 +18,11 @@
 package org.eclipse.sequoyah.device.framework.manager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.PluginUtils;
@@ -33,11 +30,10 @@ import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.framework.DevicePlugin;
 import org.eclipse.sequoyah.device.framework.factory.DeviceTypeRegistry;
 import org.eclipse.sequoyah.device.framework.factory.ServiceFactory;
-import org.eclipse.sequoyah.device.framework.model.AbstractMobileInstance;
 import org.eclipse.sequoyah.device.framework.model.IDeviceType;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
-import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.model.IParallelService;
+import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.model.handler.IServiceHandler;
 
 public class ServiceManager {

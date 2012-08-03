@@ -45,7 +45,8 @@ public class StateMachineHandler {
 	private IStatusTransition transition = null;
 	private boolean transitioning = false;
 	
-    public StateMachineHandler(IInstance instance) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public StateMachineHandler(IInstance instance) {
 		
 		this.instance = instance;
 		
@@ -119,7 +120,6 @@ public class StateMachineHandler {
 	
 	public synchronized void setState(String dest) {
 		stmModel.setState(dest);
-		//TODO: use a specific listener for states
 		InstanceEventManager.getInstance().notifyListeners(new InstanceEvent(InstanceEventType.INSTANCE_TRANSITIONED, instance));
 	}
 	

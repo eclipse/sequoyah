@@ -70,7 +70,7 @@ public class PluginUtils
 		 	  selectedProject = resource.getProject();
 	 		}
 	 	catch (Exception npe){
-	 		
+	 		BasePlugin.logError("Exception: " + npe.getMessage());
 	 	}
 	 	return selectedProject;
 }
@@ -103,10 +103,10 @@ public class PluginUtils
 		 IStructuredSelection ss = (IStructuredSelection) sel;
 		 IResource element =(IResource) ss.getFirstElement();
 		 if (element instanceof IResource)
-		 return (IResource) element;
+		 return element;
 		 if (!(element instanceof IAdaptable))
 		 return null;
-		 IAdaptable adaptable = (IAdaptable)element;
+		 IAdaptable adaptable = element;
 		 Object adapter = adaptable.getAdapter(IResource.class);
 		 return (IResource) adapter;
 		 }

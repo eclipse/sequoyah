@@ -18,9 +18,7 @@ package org.eclipse.sequoyah.device.framework.model;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.sequoyah.device.framework.internal.model.DeviceServicesTransitions;
 import org.eclipse.sequoyah.device.framework.model.handler.IServiceHandler;

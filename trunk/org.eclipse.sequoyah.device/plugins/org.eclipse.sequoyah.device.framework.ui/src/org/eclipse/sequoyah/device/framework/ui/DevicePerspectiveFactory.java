@@ -59,6 +59,7 @@ public class DevicePerspectiveFactory implements IPerspectiveFactory {
 	 * Define actions 
 	 * @param layout
 	 */
+	@SuppressWarnings("deprecation")
 	private void defineActions(IPageLayout layout) {
         layout.addNewWizardShortcut(SHORTCUT_FOLDER);
         layout.addNewWizardShortcut(SHORTCUT_FILE);
@@ -70,6 +71,7 @@ public class DevicePerspectiveFactory implements IPerspectiveFactory {
 	 * Define layout
 	 * @param layout
 	 */
+	@SuppressWarnings("deprecation")
 	private void defineLayout(IPageLayout layout) {
         String editorArea = layout.getEditorArea();
         layout.setEditorAreaVisible(false);

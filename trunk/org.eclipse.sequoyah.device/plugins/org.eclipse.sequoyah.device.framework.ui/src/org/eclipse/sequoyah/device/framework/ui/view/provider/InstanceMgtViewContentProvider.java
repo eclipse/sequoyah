@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.framework.factory.DeviceTypeRegistry;
 import org.eclipse.sequoyah.device.framework.factory.InstanceRegistry;
 import org.eclipse.sequoyah.device.framework.model.IDeviceType;
@@ -93,13 +94,13 @@ public class InstanceMgtViewContentProvider implements ITreeContentProvider
                 String deviceId = instance.getDeviceTypeId();
                 ViewerDeviceNode deviceNode = deviceNodeMap.get(deviceId);
                 
-                if (deviceNode == null)
+                if (deviceNode != null)
                 {
-                    // TODO this should not happen; log something maybe?   
+                	deviceNode.addChild(new ViewerInstanceNode(deviceNode, instance));
                 }
                 else
                 {
-                    deviceNode.addChild(new ViewerInstanceNode(deviceNode, instance));
+                    BasePlugin.logError("deviceNode should not be null");
                 }
             }
             
@@ -123,14 +124,12 @@ public class InstanceMgtViewContentProvider implements ITreeContentProvider
 
     public void dispose()
     {
-        // TODO Auto-generated method stub
-
+        //do nothing
     }
 
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
     {
-        // TODO Auto-generated method stub
-
+        //do nothing
     }
 
 }

@@ -20,7 +20,6 @@ import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.framework.manager.ServiceManager;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
-import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 

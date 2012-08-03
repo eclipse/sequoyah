@@ -50,7 +50,6 @@ public class DeviceTypeCustomWizardPageHandler {
 	private static Map<String, ArrayList<IDeviceTypeCustomWizardPage>> customPages = new HashMap<String, ArrayList<IDeviceTypeCustomWizardPage>>();
 
 	public DeviceTypeCustomWizardPageHandler(NewDeviceWizard wizard) {
-		super();
 		this.wizard = wizard;
 	}
 

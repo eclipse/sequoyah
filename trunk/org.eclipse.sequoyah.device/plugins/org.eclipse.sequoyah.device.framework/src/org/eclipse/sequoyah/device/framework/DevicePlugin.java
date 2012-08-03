@@ -238,7 +238,7 @@ public class DevicePlugin extends BasePlugin implements IStartup {
 		String locationPref = getDefault().getPreferenceStore().getString(
 				DEVICE_XML_LOCATION);
 		XML_LocationOption option = null;
-		if (locationPref != "") { //$NON-NLS-1$
+		if (!locationPref.equals("")) { //$NON-NLS-1$
 			option = XML_LocationOption.valueOf(XML_LocationOption.class,
 					locationPref);
 		}

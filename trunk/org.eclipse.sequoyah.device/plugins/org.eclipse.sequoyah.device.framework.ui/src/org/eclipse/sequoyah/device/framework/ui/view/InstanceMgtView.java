@@ -40,7 +40,6 @@ import org.eclipse.sequoyah.device.framework.factory.DeviceTypeRegistry;
 import org.eclipse.sequoyah.device.framework.manager.ServiceManager;
 import org.eclipse.sequoyah.device.framework.model.IDeviceType;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
-import org.eclipse.sequoyah.device.framework.model.IParallelService;
 import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.ui.view.model.InstanceSelectionChangeEvent;
 import org.eclipse.sequoyah.device.framework.ui.view.model.InstanceSelectionChangeListener;
@@ -49,7 +48,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -68,9 +66,10 @@ public class InstanceMgtView extends ViewPart
 	private static String contextId;
 	private boolean useDropDown;
 	private String viewLayout;
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static HashMap<String, Action> serviceActionMap = new HashMap();
 	
-	private static final String LAYOUT_HORIZONTAL = "horizontal"; //$NON-NLS-1$
+	//private static final String LAYOUT_HORIZONTAL = "horizontal"; //$NON-NLS-1$
 	private static final String LAYOUT_VERTICAL = "vertical"; //$NON-NLS-1$
 
 	

@@ -33,7 +33,7 @@ import org.eclipse.ui.IWorkbench;
  */
 public class NewDeviceMenuWizard extends NewDeviceWizard implements INewWizard {
 
-	public static String DEFAULT_PAGE_ID = "$_default_page_$"; //$NON-NLS-1$
+	public static String NEW_DEVICE_MENU_DEFAULT_PAGE_ID = "$_default_page_$"; //$NON-NLS-1$
 	private String currentDeviceTypeId;
 	private DeviceTypeCustomMenuWizardPageHandler customWizardPageHandler = new DeviceTypeCustomMenuWizardPageHandler(
 			this);
@@ -41,7 +41,7 @@ public class NewDeviceMenuWizard extends NewDeviceWizard implements INewWizard {
 	private Properties properties;
 
 	public void addPages() {
-		firstPage = new DefaultDeviceTypeMenuWizardPage(DEFAULT_PAGE_ID, getCurrentDeviceTypeId());
+		firstPage = new DefaultDeviceTypeMenuWizardPage(NEW_DEVICE_MENU_DEFAULT_PAGE_ID, getCurrentDeviceTypeId());
 		addPage(firstPage);
 		setWindowTitle(DeviceWizardResources.SEQUOYAH_NewDeviceMenuWizard_Window_Title + firstPage.getDeviceType().getLabel());
 		super.addPages();
@@ -87,7 +87,7 @@ public class NewDeviceMenuWizard extends NewDeviceWizard implements INewWizard {
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-
+		//do nothing
 	}
 
 	public String getCurrentDeviceTypeId() {

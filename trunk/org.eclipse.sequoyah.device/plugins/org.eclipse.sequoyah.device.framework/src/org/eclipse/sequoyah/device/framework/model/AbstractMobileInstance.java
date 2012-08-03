@@ -38,7 +38,7 @@ public abstract class AbstractMobileInstance implements IInstance {
 	private StateMachineHandler stateMachineHandler;
 
 	public AbstractMobileInstance() {
-		super();
+		
 	}
 
 	/**
@@ -189,7 +189,7 @@ public abstract class AbstractMobileInstance implements IInstance {
 	 * @return The requested object if conversion is available
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(this.getClass())) {
 			return this;

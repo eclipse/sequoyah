@@ -71,7 +71,7 @@ public class InstanceMgtViewComparator extends ViewerComparator
     /**
      * @see org.eclipse.jface.viewers.ViewerComparator#compare(Viewer, Object, Object)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public int compare(Viewer treeViewer, Object e1, Object e2)
     {
         int compareResult;

@@ -51,7 +51,9 @@ import org.w3c.dom.Text;
 
 public class DeviceXmlWriter implements IDeviceXmlTags
 {
-    /**
+    private static FileOutputStream outputStream;
+
+	/**
      * Stores the instance data on a XML file located in the workspace root.
      */
     public static void saveInstances() {
@@ -85,14 +87,11 @@ public class DeviceXmlWriter implements IDeviceXmlTags
         			}
                 }
                 
-                // initialize FileOutputStream with File object to save to file
-                FileOutputStream outputStream = new FileOutputStream(file
+                outputStream = new FileOutputStream(file
                         .getAbsoluteFile());
                 StreamResult result = new StreamResult(outputStream);
                 DOMSource source = new DOMSource(document);
                 transformer.transform(source, result);
-                outputStream.close();
-
             } catch (IOException ie) {
                 ie.printStackTrace();
             } catch (TransformerConfigurationException e) {
@@ -101,6 +100,14 @@ public class DeviceXmlWriter implements IDeviceXmlTags
                 e.printStackTrace();
             } catch (TransformerException e) {
                 e.printStackTrace();
+            }
+            finally
+            {
+                try {
+					outputStream.close();
+				} catch (IOException e) {
+					BasePlugin.logError("Could not close stream: "+e.getMessage());
+				}
             }
         }
     }

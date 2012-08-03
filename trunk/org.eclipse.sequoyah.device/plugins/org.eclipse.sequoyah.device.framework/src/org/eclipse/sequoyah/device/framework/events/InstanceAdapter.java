@@ -16,23 +16,30 @@ package org.eclipse.sequoyah.device.framework.events;
 public abstract class InstanceAdapter implements IInstanceListener
 {
     public void instanceCreated(InstanceEvent e) {
+    	//do nothing
     }
 
     public void instanceDeleted(InstanceEvent e) {
+    	//do nothing
     }
 
     public void instanceLoaded(InstanceEvent e) {
+    	//do nothing
     }
 
     public void instanceUnloaded(InstanceEvent e) {
+    	//do nothing
     }
 
     public void instanceUpdated(InstanceEvent e) {
+    	//do nothing
     }
     
     public void instanceTransitioned(InstanceEvent e) {
+    	//do nothing
     }
     
-    public void instanceAboutToTransition(InstanceEvent e){        
+    public void instanceAboutToTransition(InstanceEvent e){  
+    	//do nothing
     }
 }

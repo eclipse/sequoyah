@@ -27,7 +27,6 @@ package org.eclipse.sequoyah.device.framework.ui.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.Separator;

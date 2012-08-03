@@ -19,16 +19,13 @@ package org.eclipse.sequoyah.device.framework.internal.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.sequoyah.device.framework.model.IDeviceType;
-import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.model.IParallelService;
+import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.model.handler.IServiceHandler;
 import org.eclipse.sequoyah.device.framework.status.IStatusTransition;
 

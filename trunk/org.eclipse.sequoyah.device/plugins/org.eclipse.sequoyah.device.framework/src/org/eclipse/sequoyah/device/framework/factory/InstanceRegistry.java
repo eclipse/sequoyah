@@ -92,15 +92,15 @@ public class InstanceRegistry implements IInstanceRegistry {
         }
 
         public void windowOpened(IWorkbenchWindow window) {
-
+        	//do nothing
         }
 
         public void windowDeactivated(IWorkbenchWindow window) {
-
+        	//do nothing
         }
 
         public void windowActivated(IWorkbenchWindow window) {
-
+        	//do nothing
         }
     }
 	

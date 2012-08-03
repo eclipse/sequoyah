@@ -29,7 +29,8 @@ public class InstanceEventManager extends EventManager
     private Collection<InstanceEvent> eventsToFire = Collections.synchronizedSet(new LinkedHashSet<InstanceEvent>());
           
     private Runnable eventNotifierLoop = new Runnable() {
-        public void run() {
+        @SuppressWarnings("incomplete-switch")
+		public void run() {
             while (InstanceEventManager.this.isListenerAttached()) {
                 if (eventsToFire != null) {
                     if (eventsToFire.isEmpty()) {                    
@@ -38,6 +39,7 @@ public class InstanceEventManager extends EventManager
                             try {
                                 eventsToFire.wait();
                             } catch (InterruptedException e) {
+                            	//do nothing
                             }
                         }
                     }

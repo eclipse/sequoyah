@@ -32,7 +32,6 @@ import org.eclipse.sequoyah.device.common.utilities.exception.AbstractExceptionS
 import org.eclipse.sequoyah.device.common.utilities.exception.SequoyahException;
 import org.eclipse.sequoyah.device.framework.model.IDeviceLauncher;
 import org.eclipse.sequoyah.device.service.start.exception.StartServiceExceptionHandler;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * Provide the default configuration to launch a new emulator based on External
@@ -45,12 +44,9 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 public class DeviceLauncherManager {
 
-    public static final String LAUNCHER_ID = "org.eclipse.sequoyah.device.service.start.launcher"; //$NON-NLS-1$
-    public static final String ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE = "org.eclipse.ui.externaltools.ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE"; //$NON-NLS-1$
-    public static final String ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE_VALUE = "${none}"; //$NON-NLS-1$
-    
-	static {
-	}
+	public static final String LAUNCHER_ID = "org.eclipse.sequoyah.device.service.start.launcher"; //$NON-NLS-1$
+	public static final String ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE = "org.eclipse.ui.externaltools.ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE"; //$NON-NLS-1$
+	public static final String ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE_VALUE = "${none}"; //$NON-NLS-1$
 
 	/**
 	 * Launch emulator
@@ -63,22 +59,31 @@ public class DeviceLauncherManager {
 	 *            is a string connection
 	 * @return a launcher to control that emulator instance
 	 */
-	public static ILaunch launch(IDeviceLauncher launcher,String name) {
+	public static ILaunch launch(IDeviceLauncher launcher, String name) {
 		ILaunch launch = null;
 		try {
-			BasePlugin.logInfo("launching "+name); //$NON-NLS-1$
+			BasePlugin.logInfo("launching " + name); //$NON-NLS-1$
 			ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfigurationType type = mgr.getLaunchConfigurationType(LAUNCHER_ID);
+			ILaunchConfigurationType type = mgr
+					.getLaunchConfigurationType(LAUNCHER_ID);
 			ILaunchConfigurationWorkingCopy copy;
 			copy = type.newInstance(null, name);
-			copy.setAttribute(ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE,ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE_VALUE);
-			copy.setAttribute(DeviceInstanceLaunchConfigurationDelegate.ATTR_LOCATION, launcher.getLocation());
-			copy.setAttribute(DeviceInstanceLaunchConfigurationDelegate.ATTR_TOOL_ARGUMENTS,launcher.getToolArguments());
-			copy.setAttribute(DeviceInstanceLaunchConfigurationDelegate.ATTR_WORKING_DIRECTORY,launcher.getWorkingDirectory());			
+			copy.setAttribute(ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE,
+					ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE_VALUE);
+			copy.setAttribute(
+					DeviceInstanceLaunchConfigurationDelegate.ATTR_LOCATION,
+					launcher.getLocation());
+			copy.setAttribute(
+					DeviceInstanceLaunchConfigurationDelegate.ATTR_TOOL_ARGUMENTS,
+					launcher.getToolArguments());
+			copy.setAttribute(
+					DeviceInstanceLaunchConfigurationDelegate.ATTR_WORKING_DIRECTORY,
+					launcher.getWorkingDirectory());
 			ILaunchConfiguration config = copy.doSave();
-			
+
 			File file = new File(launcher.getFileId());
-			if (file.exists()) file.delete();
+			if (file.exists())
+				file.delete();
 			launch = config.launch(ILaunchManager.DEBUG_MODE, null);
 			launcher.setPID(readPID(launcher.getFileId()));
 		} catch (Throwable e) {
@@ -87,47 +92,48 @@ public class DeviceLauncherManager {
 		return launch;
 	}
 
-	
-	
 	@SuppressWarnings("deprecation")
 	private static int readPID(String filename) throws SequoyahException {
 		int pid = 0;
 		File file = new File(filename);
 		FileInputStream fis = null;
-	    BufferedInputStream bis = null;
-	    DataInputStream dis = null;
-	    int count=0;
-	    while (!file.exists()&&(count<50)) {
-	    	try {
+		BufferedInputStream bis = null;
+		DataInputStream dis = null;
+		int count = 0;
+		while (!file.exists() && (count < 50)) {
+			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}   
-			count++;			
-	    }
-	    if (count>=50) {
-	    	throw StartServiceExceptionHandler.exception(AbstractExceptionStatus.CODE_ERROR_USER);
-	    }
-	    try {
-	      fis = new FileInputStream(file);
-	      bis = new BufferedInputStream(fis);
-	      dis = new DataInputStream(bis);
-	      while (dis.available() != 0) {
-	    	  pid = Integer.valueOf(dis.readLine());
-	      }
-	      fis.close();
-	      bis.close();
-	      dis.close();	      
-	    } catch (FileNotFoundException e) {
-	      e.printStackTrace();
-	    } catch (IOException e) {
-	      e.printStackTrace();
-	    } finally {
-	    	file.delete();
-	    }
+			}
+			count++;
+		}
+		if (count >= 50) {
+			throw StartServiceExceptionHandler
+					.exception(AbstractExceptionStatus.CODE_ERROR_USER);
+		}
+		try {
+			fis = new FileInputStream(file);
+			bis = new BufferedInputStream(fis);
+			dis = new DataInputStream(bis);
+			while (dis.available() != 0) {
+				pid = Integer.valueOf(dis.readLine());
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				fis.close();
+				bis.close();
+				dis.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			file.delete();
+		}
 		return pid;
 	}
-	
-	
+
 }

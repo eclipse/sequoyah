@@ -23,7 +23,7 @@ public class DeviceTypeCustomWizardPage implements IDeviceTypeCustomWizardPage {
 
 	public DeviceTypeCustomWizardPage(String id, IWizardPage pageClass,
 			IRunnableWithProgress operationClass) {
-		super();
+		
 		this.id = id;
 		this.pageClass = pageClass;
 		this.operationClass = operationClass;

@@ -19,13 +19,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.sequoyah.device.framework.manager.InstanceManager;
 import org.eclipse.sequoyah.device.framework.model.IDeviceLauncher;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
 import org.eclipse.sequoyah.device.framework.model.handler.IServiceHandler;
 import org.eclipse.sequoyah.device.framework.model.handler.ServiceHandler;
-import org.eclipse.sequoyah.device.service.start.launcher.DeviceLauncherManager;
 
 public class StartServiceHandler extends ServiceHandler {
 
@@ -33,7 +31,7 @@ public class StartServiceHandler extends ServiceHandler {
 		try {
 			IDeviceLauncher launcher = InstanceManager.createLauncher(instance);
 			if (launcher!=null){
-				ILaunch launch = DeviceLauncherManager.launch(launcher,instance.getName());
+				//ILaunch launch = DeviceLauncherManager.launch(launcher,instance.getName());
 				instance.setPID(launcher.getPID());
 			}
 		} catch (Throwable t) {

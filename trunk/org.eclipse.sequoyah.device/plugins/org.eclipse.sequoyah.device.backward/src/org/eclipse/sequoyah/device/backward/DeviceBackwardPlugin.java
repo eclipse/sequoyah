@@ -160,13 +160,15 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 	private boolean getBackwardStatus() {
 
 		boolean result = false;
+		FileReader oldDeviceXmlFileReader = null;
+		BufferedReader buffReader = null;
 
 		try {
 			if (oldDeviceXmlFileInfo.exists()) {
 
-				FileReader oldDeviceXmlFileReader = new FileReader(
+				oldDeviceXmlFileReader = new FileReader(
 						oldDeviceXmlFileInfo);
-				BufferedReader buffReader = new BufferedReader(
+				buffReader = new BufferedReader(
 						oldDeviceXmlFileReader);
 				String line;
 				while ((line = buffReader.readLine()) != null) {
@@ -174,13 +176,19 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 						result = true;
 					}
 				}
-
-				oldDeviceXmlFileReader.close();
-				buffReader.close();
-
 			}
 		} catch (Exception e) {
 			BasePlugin.logError("Could not get TmL devices backward status"); //$NON-NLS-1$
+		}
+		finally
+		{
+			try {
+				oldDeviceXmlFileReader.close();
+				buffReader.close();
+			} catch (IOException e) {
+				BasePlugin.logError("Could not close streams"); //$NON-NLS-1$
+			}
+			
 		}
 
 		return result;
@@ -191,14 +199,22 @@ public class DeviceBackwardPlugin extends AbstractUIPlugin implements IStartup {
 	 */
 	private void addBackwardStatus() {
 
-		FileWriter deviceXmlFileWriter;
+		FileWriter deviceXmlFileWriter = null;;
 		try {
 			deviceXmlFileWriter = new FileWriter(oldDeviceXmlFileInfo);
 			deviceXmlFileWriter.write(BACKWARD_MARK + "=" //$NON-NLS-1$
 					+ new Date().toString());
-			deviceXmlFileWriter.close();
 		} catch (IOException e) {
 			BasePlugin.logError("Could not set TmL devices backward status"); //$NON-NLS-1$
+		}
+		finally
+		{
+			try {
+				deviceXmlFileWriter.close();
+			} catch (IOException e) {
+				BasePlugin.logError("Could not close streams"); //$NON-NLS-1$
+			}
+			
 		}
 
 	}

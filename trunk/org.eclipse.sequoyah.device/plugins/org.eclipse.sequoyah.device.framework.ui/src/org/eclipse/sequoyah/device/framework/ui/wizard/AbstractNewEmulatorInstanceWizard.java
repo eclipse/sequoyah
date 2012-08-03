@@ -167,7 +167,6 @@ public abstract class AbstractNewEmulatorInstanceWizard extends Wizard implement
      * @param description
      *            is a strint that represents the pages�s description
      */
-    @SuppressWarnings("unchecked")
     private void addPage(WizardPage page, String title, String description)
     {
         page.setTitle(title);

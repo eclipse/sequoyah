@@ -16,7 +16,6 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.factory;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +33,8 @@ import org.eclipse.sequoyah.device.framework.exception.DeviceExceptionHandler;
 import org.eclipse.sequoyah.device.framework.exception.DeviceExceptionStatus;
 import org.eclipse.sequoyah.device.framework.internal.model.DeviceServicesTransitions;
 import org.eclipse.sequoyah.device.framework.internal.model.MobileService;
-import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.model.IParallelService;
+import org.eclipse.sequoyah.device.framework.model.IService;
 import org.eclipse.sequoyah.device.framework.model.handler.IServiceHandler;
 import org.eclipse.sequoyah.device.framework.status.IStatusTransition;
 import org.eclipse.sequoyah.device.framework.status.MobileStatusTransition;

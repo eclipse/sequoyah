@@ -13,7 +13,6 @@
 
 package org.eclipse.sequoyah.device.framework.statemachine;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
@@ -22,13 +21,14 @@ import org.eclipse.sequoyah.device.framework.status.IStatusTransition;
 public class StateMachine {
 
 	boolean machine[][];
+	@SuppressWarnings("rawtypes")
 	private Vector statesVector;
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public StateMachine(Set<IStatusTransition> transitions) {
 		
 		int size;
 		
-		HashSet h = new HashSet();
 		statesVector = new Vector();
 		
 		for (IStatusTransition transition:transitions) {

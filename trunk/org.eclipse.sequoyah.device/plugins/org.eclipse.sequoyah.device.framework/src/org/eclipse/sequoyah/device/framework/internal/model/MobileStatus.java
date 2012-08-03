@@ -17,7 +17,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.sequoyah.device.framework.DevicePlugin;
 import org.eclipse.sequoyah.device.framework.model.IInstance;
 import org.eclipse.sequoyah.device.framework.model.IStatus;
-import org.eclipse.sequoyah.device.framework.model.IStatus.eStatus;
 
 public class MobileStatus implements IStatus {
 	private eStatus status;

@@ -51,7 +51,7 @@ public abstract class LoggerFactory
      *
      * @return Ilogger instance
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static final ILogger getLogger(int log, Class _class)
     {
         getLogger(log).configureLogger(_class);
@@ -71,7 +71,7 @@ public abstract class LoggerFactory
      *
      * @return ILogger instance 
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static final ILogger getLogger(int log, Class _class, int logOutput, String logMinLevel,
                                           String logFileName)
     {

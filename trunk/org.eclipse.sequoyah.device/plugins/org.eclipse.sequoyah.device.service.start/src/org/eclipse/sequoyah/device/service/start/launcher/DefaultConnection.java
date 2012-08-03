@@ -28,14 +28,12 @@ public class DefaultConnection implements IConnection {
 	private int port;
 	
 	public DefaultConnection(String name) {
-		super();
 		this.display = IConnection. DEFAULT_DISPLAY;
 		this.host =  name;
 		this.port = IConnection.DEFAULT_PORT;
 	}
 
 	public DefaultConnection() {
-		super();
 		this.display = IConnection. DEFAULT_DISPLAY;
 		this.host =  IConnection.DEFAULT_HOST;
 		this.port = IConnection.DEFAULT_PORT;

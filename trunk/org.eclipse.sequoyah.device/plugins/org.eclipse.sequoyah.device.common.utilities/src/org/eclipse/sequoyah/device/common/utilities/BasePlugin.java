@@ -188,8 +188,6 @@ public abstract class BasePlugin extends AbstractUIPlugin
 	 * Constructor.
 	 */
 	public BasePlugin() {
-	    super();
-	    
 	    if (baseInst == null) {
 	        baseInst = this;
 	    }
@@ -337,7 +335,7 @@ public abstract class BasePlugin extends AbstractUIPlugin
 	 */
 	public ImageDescriptor getImageDescriptor(String key) {
 		Hashtable<String, ImageDescriptor> t = getImageDescriptorRegistry();
-		ImageDescriptor descriptor = (ImageDescriptor) t.get(key);
+		ImageDescriptor descriptor = t.get(key);
 		return descriptor;
 	}  
 	
@@ -362,7 +360,7 @@ public abstract class BasePlugin extends AbstractUIPlugin
 	public ImageDescriptor getImageDescriptorFromIDE(String relativePath) 
 	{
 		Hashtable<String, ImageDescriptor> registry = getImageDescriptorRegistry();
-		ImageDescriptor descriptor = (ImageDescriptor)registry.get(relativePath);
+		ImageDescriptor descriptor = registry.get(relativePath);
 		if (descriptor == null) {
 			String iconPath = "icons/full/"; //$NON-NLS-1$
 			String key = iconPath + relativePath;

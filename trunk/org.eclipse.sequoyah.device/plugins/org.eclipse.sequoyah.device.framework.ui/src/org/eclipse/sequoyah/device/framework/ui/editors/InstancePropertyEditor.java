@@ -67,7 +67,7 @@ public class InstancePropertyEditor extends PropertyPage {
 	 * Constructor - Creates a device instance property editor
 	 */
 	public InstancePropertyEditor() {
-		super();
+		
 	}
 
 	/**
@@ -123,6 +123,7 @@ public class InstancePropertyEditor extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@SuppressWarnings("rawtypes")
 	public Control createContents(Composite parent) {
 
 		String[] columnNames = {InstancePropertyEditor.COLUMN_NAME_KEY,

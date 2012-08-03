@@ -11,9 +11,6 @@
  ********************************************************************************/
 package org.eclipse.sequoyah.device.framework.model;
 
-import org.eclipse.core.runtime.IStatus;
-
-
 public interface IParallelService extends IService
 {
     boolean isParallelized();

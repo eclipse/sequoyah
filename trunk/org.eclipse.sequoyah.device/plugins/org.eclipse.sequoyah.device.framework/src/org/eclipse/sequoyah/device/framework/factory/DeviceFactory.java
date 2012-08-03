@@ -16,8 +16,6 @@ package org.eclipse.sequoyah.device.framework.factory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.sequoyah.device.common.utilities.BasePlugin;
 import org.eclipse.sequoyah.device.common.utilities.PluginUtils;
 import org.eclipse.sequoyah.device.common.utilities.exception.ExceptionHandler;
 import org.eclipse.sequoyah.device.framework.DevicePlugin;
@@ -33,11 +31,11 @@ public class DeviceFactory {
 	private static final String ATR_ID = "id"; //$NON-NLS-1$
 	private static final String ATR_LABEL = "label"; //$NON-NLS-1$
 	private static final String ATR_NAME = "name"; //$NON-NLS-1$
-	private static final String ATR_ICON = "icon"; //$NON-NLS-1$
-	private static final String ATR_DESCRIPTION = "description"; //$NON-NLS-1$
-	private static final String ATR_PROVIDER = "provider"; //$NON-NLS-1$
-	private static final String ATR_COPYRIGHT = "copyright"; //$NON-NLS-1$
-	private static final String ATR_VERSION = "version"; //$NON-NLS-1$
+	//private static final String ATR_ICON = "icon"; //$NON-NLS-1$
+	//private static final String ATR_DESCRIPTION = "description"; //$NON-NLS-1$
+	//private static final String ATR_PROVIDER = "provider"; //$NON-NLS-1$
+	//private static final String ATR_COPYRIGHT = "copyright"; //$NON-NLS-1$
+	//private static final String ATR_VERSION = "version"; //$NON-NLS-1$
 	private static final String ATR_HANDLER = "handler"; //$NON-NLS-1$
 	
 	public static IDeviceType createDevice(String deviceId) {
@@ -49,13 +47,6 @@ public class DeviceFactory {
 		
 		IDeviceType device = new MobileDeviceType(id,label);
 		device.setBundleName(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_NAME));
-		String iconName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_ICON);		
-		ImageDescriptor image = null;
-			try {
-			image = BasePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), iconName);
-		} catch (Throwable t) {
-			ExceptionHandler.showException(DeviceExceptionHandler.exception(DeviceExceptionStatus.CODE_ERROR_HANDLER_NOT_INSTANCED));
-		}
 		device.setProperties(DevicePlugin.DEFAULT_PROPERTIES);
 		try {
 			device.setHandler((IDeviceHandler)PluginUtils.getExecutableAttribute(fromPlugin, ELEMENT_DEVICE, ATR_HANDLER));

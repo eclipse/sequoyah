@@ -99,11 +99,11 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 		}
 
 		public void dispose() {
-
+			//do nothing
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
+			//do nothing
 		}
 	}
 
@@ -206,7 +206,7 @@ public class DefaultDeviceTypeWizardPage extends WizardPage {
 	public boolean isPageComplete() {
 		if (getErrorMessage() != null)
 			return false;
-		if (instanceName.trim() != "" && currentDeviceType != null) { //$NON-NLS-1$
+		if (!instanceName.trim().equals("") && currentDeviceType != null) { //$NON-NLS-1$
 			return true;
 		}
 

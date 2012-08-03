@@ -94,7 +94,7 @@ public class NewDeviceWizard extends Wizard implements INewWizard {
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-
+		//do nothing
 	}
 
 	public String getCurrentDeviceTypeId() {

@@ -40,7 +40,7 @@ public class Logger
      *
      * @return Ilogger instance
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static ILogger log(Class _class)
     {
     	if (log==null) {

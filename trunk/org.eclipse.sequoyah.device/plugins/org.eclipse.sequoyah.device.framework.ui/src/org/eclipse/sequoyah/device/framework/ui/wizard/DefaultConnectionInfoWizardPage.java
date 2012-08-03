@@ -123,9 +123,9 @@ public class DefaultConnectionInfoWizardPage extends WizardPage implements
 	public boolean isPageComplete() {
 		if (hostText == null || hostText.isDisposed())
 			return false;
-		if (hostText.getText().trim() != "" //$NON-NLS-1$
-				&& displayText.getText().trim() != "" //$NON-NLS-1$
-				&& portText.getText().trim() != "") //$NON-NLS-1$
+		if (!hostText.getText().trim().equals("") //$NON-NLS-1$
+				&& !displayText.getText().trim().equals("") //$NON-NLS-1$
+				&& !portText.getText().trim().equals("")) //$NON-NLS-1$
 			return true;
 		return false;
 	}

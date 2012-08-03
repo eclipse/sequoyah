@@ -51,7 +51,6 @@ public class DeviceTypeCustomMenuWizardPageHandler {
 	private static Map<String, ArrayList<IDeviceTypeCustomWizardPage>> customPages = new HashMap<String, ArrayList<IDeviceTypeCustomWizardPage>>();
 
 	public DeviceTypeCustomMenuWizardPageHandler(NewDeviceMenuWizard wizard) {
-		super();
 		this.wizard = wizard;
 	}
 
@@ -93,7 +92,7 @@ public class DeviceTypeCustomMenuWizardPageHandler {
 					if (page.getPageClass().equals(currentPage)) {
 						if (i == 0) {
 							return wizard
-									.getPage(NewDeviceMenuWizard.DEFAULT_PAGE_ID);
+									.getPage(NewDeviceMenuWizard.NEW_DEVICE_MENU_DEFAULT_PAGE_ID);
 						} else {
 							return pages.get(i - 1).getPageClass();
 						}

@@ -378,7 +378,7 @@ public class InstanceStatusComposite extends Composite
 		 // Get rid of existing menu items 
         MenuItem[] items = menu.getItems(); 
         for (int i = 0; i < items.length; i++) { 
-            ((MenuItem) items[i]).dispose(); 
+            items[i].dispose(); 
         }
 		
 	}
@@ -977,7 +977,6 @@ public class InstanceStatusComposite extends Composite
 		
 		public MenuDeleteListener(List <IInstance> instances)
         {
-            super();
             this.instances = instances;
         }
 		
@@ -992,7 +991,7 @@ public class InstanceStatusComposite extends Composite
 					{
 						String instanceNames = "";
 						for (IInstance instance: instances) {
-							instanceNames += (instanceNames == "") ? "" : ", ";
+							instanceNames += (instanceNames.equals("")) ? "" : ", ";
 							instanceNames += instance.getName();
 						}				
 						IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -1016,7 +1015,6 @@ public class InstanceStatusComposite extends Composite
         
         public MenuPropertiesListener(IInstance instance)
         {
-        	super();
             this.instance = instance;
         }
         
@@ -1179,6 +1177,7 @@ public class InstanceStatusComposite extends Composite
 		return desiredItem;
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	List getInstanceItems(TreeItem[] items) {
 		List instanceItems = new ArrayList();
 		for (TreeItem treeNode : items)
