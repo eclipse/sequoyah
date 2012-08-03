@@ -111,30 +111,20 @@ public class FileUtil {
 			targetFileChannel = new FileOutputStream(target).getChannel();
 			targetFileChannel.transferFrom(sourceFileChannel, 0,
 					sourceFileChannel.size());
-//			log(FileUtil.class).info(
-//					"The file " + source + " was successfully copied to "
-//							+ target + ".");
-		} catch (IOException e) {
-//			log(FileUtil.class).error(
-//					"Error copying file" + source + "to " + target + ".");
-			throw e;
 		} finally {
 			try {
 				if (sourceFileChannel != null) {
 					sourceFileChannel.close();
 				}
 			} catch (IOException e) {
-//				log(FileUtil.class).error("Error closing file " + source + ".");
-				throw e;
+				BasePlugin.logError("Could not close stream: "+e.getMessage());
 			}
-
 			try {
 				if (targetFileChannel != null) {
 					targetFileChannel.close();
 				}
 			} catch (IOException e) {
-//				log(FileUtil.class).error("Error closing file" + target + ".");
-				throw e;
+				BasePlugin.logError("Could not close stream: "+e.getMessage());
 			}
 		}
 	}
@@ -152,13 +142,10 @@ public class FileUtil {
 	 *             When the parameter isn't a directory
 	 */
 	public boolean deleteDirRecursively(File directory) throws IOException {
-		String dirName = ""; //$NON-NLS-1$
-
 		boolean success = true;
 
 		if (directory.exists()) {
 			if (directory.isDirectory()) {
-				dirName = directory.getName();
 				File[] children = directory.listFiles();
 
 				for (int i = 0; i < children.length; i++) {
@@ -173,19 +160,12 @@ public class FileUtil {
 			} else {
 				String errorMessage = directory.getName()
 						+ " is not a diretory."; //$NON-NLS-1$
-//				log(FileUtil.class).error(errorMessage);
 				throw new IOException(errorMessage);
 			}
 		} else {
 			String errorMessage = "The directory does not exist."; //$NON-NLS-1$
-//			log(FileUtil.class).error(errorMessage);
 			success = false;
 			throw new IOException(errorMessage);
-		}
-
-		if ((success) && (!dirName.equals(""))) { //$NON-NLS-1$
-//			log(FileUtil.class).info(
-//					"The directory " + dirName + "was successfully deleted.");
 		}
 
 		return success;
@@ -312,19 +292,13 @@ public class FileUtil {
 		List<File> homeDirList = getFilesComposingPath(getCanonicalFile(homeDir));
 		List<File> targetDirList = getFilesComposingPath(getCanonicalFile(targetFile));
 
-		if (homeDirList.size() == 0);
-//			log(FileUtil.class).debug("Home Dir has no parent.");
-
-		if (targetDirList.size() == 0);
-//			log(FileUtil.class).debug("Target Dir has no parent.");
-
 		// get the index of the last common directory between sourceFile and
 		// targetFile
 		int commonIndex = -1;
 
 		for (int i = 0; (i < homeDirList.size()) && (i < targetDirList.size()); i++) {
-			File aHomeDir = (File) homeDirList.get(i);
-			File aTargetDir = (File) targetDirList.get(i);
+			File aHomeDir = homeDirList.get(i);
+			File aTargetDir = targetDirList.get(i);
 
 			if (aHomeDir.equals(aTargetDir)) {
 				commonIndex = i;
@@ -342,7 +316,7 @@ public class FileUtil {
 		// enter into all directories of the target file
 		// stops when reachs the file name and extension
 		for (int i = commonIndex + 1; i < targetDirList.size(); i++) {
-			File targetDir = (File) targetDirList.get(i);
+			File targetDir = targetDirList.get(i);
 			relativePath.append(targetDir.getName());
 
 			if (i != (targetDirList.size() - 1)) {

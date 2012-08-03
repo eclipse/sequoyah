@@ -115,7 +115,7 @@ public class DeviceTypeRegistry implements IDeviceTypeRegistry {
 
 					for (Iterator<IDeviceType> iterator = deviceTypes.values()
 							.iterator(); iterator.hasNext();) {
-						IDeviceType deviceType = (IDeviceType) iterator.next();
+						IDeviceType deviceType = iterator.next();
 						// associate services with device types
 						deviceType.setServices(loadServices(deviceType));
 						deviceType.getProperties().putAll(

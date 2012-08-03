@@ -38,6 +38,7 @@ public class InstanceEventManager extends EventManager
                             try {
                                 eventsToFire.wait();
                             } catch (InterruptedException e) {
+                            	//do nothing
                             }
                         }
                     }

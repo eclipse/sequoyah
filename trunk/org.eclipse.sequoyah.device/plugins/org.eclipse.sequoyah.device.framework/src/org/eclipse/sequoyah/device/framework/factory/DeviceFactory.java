@@ -51,6 +51,7 @@ public class DeviceFactory {
 		device.setBundleName(PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_NAME));
 		String iconName = PluginUtils.getPluginAttribute(fromPlugin, ELEMENT_DEVICE, ATR_ICON);		
 		ImageDescriptor image = null;
+		//TODO: check this deprecated method
 			try {
 			image = BasePlugin.getPluginImage(fromPlugin.getDeclaringPluginDescriptor().getPlugin().getBundle(), iconName);
 		} catch (Throwable t) {

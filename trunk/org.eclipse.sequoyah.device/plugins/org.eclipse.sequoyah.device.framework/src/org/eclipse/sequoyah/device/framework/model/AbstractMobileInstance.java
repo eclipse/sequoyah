@@ -38,7 +38,7 @@ public abstract class AbstractMobileInstance implements IInstance {
 	private StateMachineHandler stateMachineHandler;
 
 	public AbstractMobileInstance() {
-		super();
+		
 	}
 
 	/**
